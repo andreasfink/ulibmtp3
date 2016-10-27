@@ -1,0 +1,16 @@
+# pkg-config source file
+
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Cflags: -I${includedir} 
+Libs: -L${libdir} -lulibmtp3
+
+Name: ulibmtp3
+Description: universal SS7 MTP3 library
+Version: @VERSION@
+Requires: ulib ulibm2pa
+
+
