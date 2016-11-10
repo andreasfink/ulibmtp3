@@ -3095,7 +3095,7 @@
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link
 {
     const char *patternBytes = "I need coffee!";
-    int patternLength = strlen(patternBytes);
+    unsigned long patternLength = strlen(patternBytes);
     NSData *pattern = [NSData dataWithBytes:patternBytes length:patternLength];
     
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
