@@ -24,7 +24,7 @@
                                           linkset:(NSString *)xlinkset
                                              link:(NSString *)xlink
 {
-    self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:YES];
+    self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:NO];
     if(self)
     {
         self.slc = xslc;

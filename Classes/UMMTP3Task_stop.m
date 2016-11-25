@@ -16,7 +16,7 @@
 
 - (UMMTP3Task_stop *)initWithReceiver:(UMLayerMTP3 *)rx
 {
-    self= [super initWithName:@"UMMTP3Task_stop" receiver:rx sender:NULL requiresSynchronisation:YES];
+    self= [super initWithName:@"UMMTP3Task_stop" receiver:rx sender:NULL requiresSynchronisation:NO];
     if(self)
     {
         

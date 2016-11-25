@@ -24,7 +24,7 @@
                                              m2pa:(UMLayerM2PA *)xm2pa
                                           linkset:(NSString *)xlinkset
 {
-    self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:YES];
+    self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:NO];
     if(self)
     {
         self.slc = xslc;

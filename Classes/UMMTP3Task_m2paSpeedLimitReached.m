@@ -23,7 +23,7 @@
                                                    slc:(int)xslc
                                                 userId:(id)uid;
 {
-    self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:YES];
+    self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:NO];
     if(self)
     {
         self.name = @"UMMTP3Task_m2paSpeedLimitReached";
