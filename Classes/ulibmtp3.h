@@ -15,6 +15,7 @@
 
 #import "UMLayerMTP3.h"
 #import "UMLayerMTP3UserProtocol.h"
+#import "UMLayerMTP3ProviderProtocol.h"
 #import "UMMTP3BlackList.h"
 #import "UMMTP3HeadingCode.h"
 #import "UMMTP3Label.h"
@@ -41,3 +42,7 @@
 #import "UMMTP3TransitPermission.h"
 #import "UMMTP3Variant.h"
 #import "UMMTP3WhiteList.h"
+#import "UMM3UATrafficMode.h"
+#import "UMM3UALink.h"
+
+

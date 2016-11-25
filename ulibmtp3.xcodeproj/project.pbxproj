@@ -41,6 +41,10 @@
 		A628513E1A46E3F40090FC94 /* UMMTP3WhiteList.m in Sources */ = {isa = PBXBuildFile; fileRef = A628513C1A46E3F40090FC94 /* UMMTP3WhiteList.m */; };
 		A62851411A46E4010090FC94 /* UMMTP3BlackList.h in Headers */ = {isa = PBXBuildFile; fileRef = A628513F1A46E4010090FC94 /* UMMTP3BlackList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A62851421A46E4010090FC94 /* UMMTP3BlackList.m in Sources */ = {isa = PBXBuildFile; fileRef = A62851401A46E4010090FC94 /* UMMTP3BlackList.m */; };
+		A6813F0C1DE818C0001FC87D /* UMLayerMTP3ProviderProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A6813F0B1DE8177C001FC87D /* UMLayerMTP3ProviderProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6813F141DE82266001FC87D /* UMM3UALink.h in Headers */ = {isa = PBXBuildFile; fileRef = A6813F121DE82266001FC87D /* UMM3UALink.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6813F151DE82266001FC87D /* UMM3UALink.m in Sources */ = {isa = PBXBuildFile; fileRef = A6813F131DE82266001FC87D /* UMM3UALink.m */; };
+		A6813F171DE82E33001FC87D /* UMM3UATrafficMode.h in Headers */ = {isa = PBXBuildFile; fileRef = A6813F161DE8232D001FC87D /* UMM3UATrafficMode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B717B21A3187450090FC94 /* UMMTP3Task_m2paStatusIndication.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B717B01A3187450090FC94 /* UMMTP3Task_m2paStatusIndication.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B717B31A3187450090FC94 /* UMMTP3Task_m2paStatusIndication.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B717B11A3187450090FC94 /* UMMTP3Task_m2paStatusIndication.m */; };
 		A6B717B61A31875C0090FC94 /* UMMTP3Task_m2paSctpStatusIndication.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B717B41A31875C0090FC94 /* UMMTP3Task_m2paSctpStatusIndication.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -133,6 +137,10 @@
 		A628513C1A46E3F40090FC94 /* UMMTP3WhiteList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3WhiteList.m; sourceTree = "<group>"; };
 		A628513F1A46E4010090FC94 /* UMMTP3BlackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3BlackList.h; sourceTree = "<group>"; };
 		A62851401A46E4010090FC94 /* UMMTP3BlackList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3BlackList.m; sourceTree = "<group>"; };
+		A6813F0B1DE8177C001FC87D /* UMLayerMTP3ProviderProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMLayerMTP3ProviderProtocol.h; sourceTree = "<group>"; };
+		A6813F121DE82266001FC87D /* UMM3UALink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMM3UALink.h; sourceTree = "<group>"; };
+		A6813F131DE82266001FC87D /* UMM3UALink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMM3UALink.m; sourceTree = "<group>"; };
+		A6813F161DE8232D001FC87D /* UMM3UATrafficMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM3UATrafficMode.h; sourceTree = "<group>"; };
 		A6B717B01A3187450090FC94 /* UMMTP3Task_m2paStatusIndication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3Task_m2paStatusIndication.h; sourceTree = "<group>"; };
 		A6B717B11A3187450090FC94 /* UMMTP3Task_m2paStatusIndication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3Task_m2paStatusIndication.m; sourceTree = "<group>"; };
 		A6B717B41A31875C0090FC94 /* UMMTP3Task_m2paSctpStatusIndication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3Task_m2paSctpStatusIndication.h; sourceTree = "<group>"; };
@@ -273,6 +281,9 @@
 				A60A36E71A305DDC0090FC94 /* UMMTP3Link.m */,
 				A60A36E11A305DCF0090FC94 /* UMMTP3LinkSet.h */,
 				A60A36E21A305DCF0090FC94 /* UMMTP3LinkSet.m */,
+				A6813F161DE8232D001FC87D /* UMM3UATrafficMode.h */,
+				A6813F121DE82266001FC87D /* UMM3UALink.h */,
+				A6813F131DE82266001FC87D /* UMM3UALink.m */,
 				A62851371A46E32A0090FC94 /* UMMTP3TransitPermission.h */,
 				A62851381A46E32A0090FC94 /* UMMTP3TransitPermission.m */,
 				A628513B1A46E3F40090FC94 /* UMMTP3WhiteList.h */,
@@ -283,6 +294,7 @@
 				A6B717E61A31B3B00090FC94 /* UMMTP3Label.h */,
 				A6B717E71A31B3B00090FC94 /* UMMTP3Label.m */,
 				A60A36D81A305B8A0090FC94 /* UMLayerMTP3UserProtocol.h */,
+				A6813F0B1DE8177C001FC87D /* UMLayerMTP3ProviderProtocol.h */,
 				A60A36DC1A305C240090FC94 /* UMLayerMTP3.h */,
 				A60A36DD1A305C240090FC94 /* UMLayerMTP3.m */,
 				A6B717EC1A31DAD80090FC94 /* UMMTP3LinkState.h */,
@@ -366,6 +378,7 @@
 				A6B717BA1A3187720090FC94 /* UMMTP3Task_m2paDataIndication.h in Headers */,
 				A6B717EE1A31DAD80090FC94 /* UMMTP3LinkState.h in Headers */,
 				A6B717BE1A3187850090FC94 /* UMMTP3Task_m2paCongestion.h in Headers */,
+				A6813F141DE82266001FC87D /* UMM3UALink.h in Headers */,
 				A6B717B21A3187450090FC94 /* UMMTP3Task_m2paStatusIndication.h in Headers */,
 				A6B717CA1A3187B30090FC94 /* UMMTP3Task_m2paProcessorRestored.h in Headers */,
 				A6B717EB1A31B91C0090FC94 /* UMMTP3HeadingCode.h in Headers */,
@@ -373,9 +386,11 @@
 				A6B717E81A31B3B00090FC94 /* UMMTP3Label.h in Headers */,
 				A6B717E51A31B3000090FC94 /* UMMTP3Variant.h in Headers */,
 				A6B717C21A3187940090FC94 /* UMMTP3Task_m2paCongestionCleared.h in Headers */,
+				A6813F171DE82E33001FC87D /* UMM3UATrafficMode.h in Headers */,
 				A6B717FE1A31DBB60090FC94 /* UMMTP3LinkSetState.h in Headers */,
 				A6B717D21A3187D90090FC94 /* UMMTP3Task_m2paSpeedLimitReachedCleared.h in Headers */,
 				A6B717CE1A3187C50090FC94 /* UMMTP3Task_m2paSpeedLimitReached.h in Headers */,
+				A6813F0C1DE818C0001FC87D /* UMLayerMTP3ProviderProtocol.h in Headers */,
 				A6B717C61A3187A30090FC94 /* UMMTP3Task_m2paProcessorOutage.h in Headers */,
 				A60A36ED1A3063490090FC94 /* UMMTP3Route.h in Headers */,
 				A6EB479C1A35BB8E0090FC94 /* UMMTP3Task_adminAttachOrder.h in Headers */,
@@ -436,7 +451,7 @@
 		A604D0F019B999AA0090FC94 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Andreas Fink";
 				TargetAttributes = {
 					A604D0F819B999AA0090FC94 = {
@@ -516,6 +531,7 @@
 				A60A36E91A305DDC0090FC94 /* UMMTP3Link.m in Sources */,
 				A6B717D31A3187D90090FC94 /* UMMTP3Task_m2paSpeedLimitReachedCleared.m in Sources */,
 				A6B717CB1A3187B30090FC94 /* UMMTP3Task_m2paProcessorRestored.m in Sources */,
+				A6813F151DE82266001FC87D /* UMM3UALink.m in Sources */,
 				A60A36F31A3063560090FC94 /* UMMTP3RoutingTable.m in Sources */,
 				A62851421A46E4010090FC94 /* UMMTP3BlackList.m in Sources */,
 			);
@@ -579,16 +595,21 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = /;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -622,16 +643,21 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = /;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -648,7 +674,7 @@
 		A604D12219B999AA0090FC94 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2GSNWPNR77;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -671,7 +697,7 @@
 		A604D12319B999AA0090FC94 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2GSNWPNR77;
 				DYLIB_COMPATIBILITY_VERSION = 1;
