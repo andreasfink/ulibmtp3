@@ -2727,26 +2727,29 @@
 
 - (void)sendTRA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    tra_sent++;
-    if(logLevel <=UMLOG_DEBUG)
+    @synchronized(links)
     {
-        [self logDebug:@"sendTRA (Traffic-restart-allowed signal)"];
-        [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
-        [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
-        [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
-        [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        tra_sent++;
+        if(logLevel <=UMLOG_DEBUG)
+        {
+            [self logDebug:@"sendTRA (Traffic-restart-allowed signal)"];
+            [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+            [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+            [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
+            [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+            [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+            [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        }
+        [self sendPdu:NULL
+                label:label
+              heading:MTP3_MGMT_TRA
+                 link:link
+                  slc:slc
+                   ni:ni
+                   mp:mp
+                   si:MTP3_SERVICE_INDICATOR_MGMT
+           ackRequest:NULL];
     }
-    [self sendPdu:NULL
-            label:label
-          heading:MTP3_MGMT_TRA
-             link:link
-              slc:slc
-               ni:ni
-               mp:mp
-               si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
 }
 
 /* group DLM */
@@ -3042,17 +3045,15 @@
 
 - (void)updateLinksetStatus
 {
-    int oldActiveLinks = activeLinks;
-  //  int oldInactiveLinks = inactiveLinks;
-  //  int oldReadyLinks = readyLinks;
-
-
+    int oldActiveLinks;
     int active = 0 ;
     int inactive = 0;
     int ready = 0;
-
+    BOOL sendTRA = YES;
     @synchronized(links)
     {
+        oldActiveLinks = activeLinks;
+
         NSArray *keys = [links allKeys];
         for (NSString *key in keys)
         {
@@ -3074,21 +3075,21 @@
                     break;
             }
         }
-    }
-    /* if we now have our first active link, we should send a first TRA */
-    if((oldActiveLinks == 0) && (active > 0))
-    {
-        UMMTP3Label *label = [[UMMTP3Label alloc]init];
-        label.opc = self.localPointCode;
-        label.dpc = self.adjacentPointCode;
-        [self sendTRA:label ni:networkIndicator mp:0 slc:0 link:NULL];
-    }
-    activeLinks = active;
-    inactiveLinks = inactive;
-    readyLinks = ready;
-    if(activeLinks > 0)
-    {
-        mtp3.ready = YES;
+        /* if we now have our first active link, we should send a first TRA */
+        if((oldActiveLinks == 0) && (active > 0))
+        {
+            UMMTP3Label *label = [[UMMTP3Label alloc]init];
+            label.opc = self.localPointCode;
+            label.dpc = self.adjacentPointCode;
+            [self sendTRA:label ni:networkIndicator mp:0 slc:0 link:NULL];
+        }
+        activeLinks = active;
+        inactiveLinks = inactive;
+        readyLinks = ready;
+        if(activeLinks > 0)
+        {
+            mtp3.ready = YES;
+        }
     }
 }
 
