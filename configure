@@ -608,6 +608,7 @@ build_vendor
 build_cpu
 build
 CUSER
+ULIBMTP3_VERSION
 VERSION
 CONFIG_HEADER
 CONFIG_DEFINE
@@ -1817,6 +1818,7 @@ PROJECT_NAME="ulibmtp3"
 AUTHOR="Andreas Fink <andreas@fink.org>"
 CONFIG_DEFINE="ULIBMTP3_CONFIG"
 VERSION=`head -n 1 VERSION`
+ULIBMTP3_VERSION=`head -n 1 VERSION`
 CONFIG_HEADER=ulibmtp3_config.h
 DEPENDENT_PKGCONFIGS="ulibm2pa"
 PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
@@ -1869,6 +1871,7 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
   esac
 
 ac_config_headers="$ac_config_headers ${CONFIG_HEADER}"
+
 
 
 
@@ -3097,6 +3100,8 @@ ac_config_files="$ac_config_files Makefile.linux"
 
 ac_config_files="$ac_config_files ulibmtp3.pc"
 
+ac_config_files="$ac_config_files Classes/ulibmtp3_version.h"
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -3791,6 +3796,7 @@ do
     "Makefile.osx") CONFIG_FILES="$CONFIG_FILES Makefile.osx" ;;
     "Makefile.linux") CONFIG_FILES="$CONFIG_FILES Makefile.linux" ;;
     "ulibmtp3.pc") CONFIG_FILES="$CONFIG_FILES ulibmtp3.pc" ;;
+    "Classes/ulibmtp3_version.h") CONFIG_FILES="$CONFIG_FILES Classes/ulibmtp3_version.h" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

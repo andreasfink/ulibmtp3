@@ -13,6 +13,7 @@
 #import "UMMTP3LinkSet.h"
 #import "UMMTP3LinkState.h"
 #import "UMLayerMTP3.h"
+#import "UMLayerMTP3ApplicationContextProtocol.h"
 
 @implementation UMMTP3Link
 
@@ -120,18 +121,18 @@
     speedLimitReached=NO;
 }
 
-- (void)setConfig:(NSDictionary *)cfg
+- (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
     if (cfg[@"slc"])
     {
         slc = [cfg[@"slc"] intValue];
         if(cfg[@"link-test-time"])
         {
-            linkTestTime  = [cfg[@"link-test-time"] intValue];
+            linkTestTime  = [cfg[@"linktest-timer"] intValue];
         }
         else
         {
-            linkTestTime = 30;
+            linkTestTime = 30.0;
         }
     }
 }

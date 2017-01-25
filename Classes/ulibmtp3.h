@@ -12,7 +12,7 @@
 #import <ulib/ulib.h>
 #import <ulibsctp/ulibsctp.h>
 #import <ulibm2pa/ulibm2pa.h>
-
+#import "UMLayerMTP3ApplicationContextProtocol.h"
 #import "UMLayerMTP3.h"
 #import "UMLayerMTP3UserProtocol.h"
 #import "UMLayerMTP3ProviderProtocol.h"
@@ -43,6 +43,7 @@
 #import "UMMTP3Variant.h"
 #import "UMMTP3WhiteList.h"
 #import "UMM3UATrafficMode.h"
-#import "UMM3UALink.h"
+#import "UMM3UAApplicationServerProcess.h"
+#import "UMM3UAApplicationServer.h"
 
 

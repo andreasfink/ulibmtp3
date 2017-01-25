@@ -30,7 +30,7 @@
 #import "UMMTP3HeadingCode.h"
 #import "UMMTP3RoutingTable.h"
 #import "UMMTP3Route.h"
-
+#import "UMM3UAApplicationServer.h"
 #import "UMMTP3Task_start.h"
 #import "UMMTP3Task_stop.h"
 #import "UMLayerMTP3UserProtocol.h"
@@ -235,14 +235,11 @@
                                                                                                  slc:xslc
                                                                                               userId:uid
                                                                                               status:s];
-    if(0)
-    {
-        [self queueFromLowerWithPriority:task];
-    }
-    else
-    {
-        [task main];
-    }
+#if 0
+    [self queueFromLowerWithPriority:task];
+#else
+    [task main];
+#endif
 }
 
 - (void) m2paSctpStatusIndication:(UMLayer *)caller
@@ -560,7 +557,33 @@
     [link speedLimitReachedClearedIndication];
 }
 
+- (void) m3uaCongestion:(UMM3UAApplicationServer *)as
+      affectedPointCode:(UMMTP3PointCode *)pc
+                   mask:(uint32_t)mask
+      networkAppearance:(uint32_t)network_appearance
+     concernedPointcode:(UMMTP3PointCode *)concernedPc
+    congestionIndicator:(uint32_t)congestionIndicator
+{
+    if(logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:@"m3uaCongestion"];
+    }
+    as.congestionLevel = 1;
+}
 
+- (void) m3uaCongestionCleared:(UMM3UAApplicationServer *)as
+      affectedPointCode:(UMMTP3PointCode *)pc
+                   mask:(int)mask
+      networkAppearance:(NSData *)network_appearance
+     concernedPointcode:(UMMTP3PointCode *)concernedPc
+    congestionIndicator:(NSData *)congestionIndicator
+{
+    if(logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:@"m3uaCongestion"];
+    }
+    as.congestionLevel = 0;
+}
 
 #pragma mark -
 #pragma mark Config Management
@@ -598,7 +621,7 @@
     return config;
 }
 
-- (void)setConfig:(NSDictionary *)cfg
+- (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
     [self readLayerConfig:cfg];
     
@@ -629,7 +652,7 @@
         UMMTP3LinkSet  *linkset = [[UMMTP3LinkSet alloc]init];
         linkset.name = linksetName;
         linkset.variant = self.variant;
-        linkset.config = linksetConfig;
+        [linkset setConfig:linksetConfig applicationContext:appContext];
         [self addLinkset:linkset];
     }
 }

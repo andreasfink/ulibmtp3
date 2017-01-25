@@ -14,6 +14,8 @@
 #import <ulibm2pa/ulibm2pa.h>
 
 #import "UMMTP3Variant.h"
+#import "UMLayerMTP3ApplicationContextProtocol.h"
+
 @class UMMTP3LinkSet;
 @class UMMTP3Link;
 @class UMMTP3Route;
@@ -32,6 +34,8 @@
 @class UMMTP3Task_adminCreateLink;
 @class UMMTP3Label;
 @class UMMTP3RoutingTable;
+@class UMM3UAApplicationServer;
+
 #import "UMLayerMTP3UserProtocol.h"
 typedef enum UMMTP3_Error
 {
@@ -160,6 +164,20 @@ typedef enum UMMTP3_Error
                                   slc:(int)xslc
                                userId:(id)ui;
 
+- (void) m3uaCongestion:(UMM3UAApplicationServer *)m3ualink
+      affectedPointCode:(UMMTP3PointCode *)pc
+                   mask:(uint32_t)mask
+      networkAppearance:(uint32_t)network_appearance
+     concernedPointcode:(UMMTP3PointCode *)concernedPc
+    congestionIndicator:(uint32_t)congestionIndicator;
+
+- (void) m3uaCongestionCleared:(UMM3UAApplicationServer *)m3ualink
+      affectedPointCode:(UMMTP3PointCode *)pc
+                   mask:(uint32_t)mask
+      networkAppearance:(uint32_t)network_appearance
+     concernedPointcode:(UMMTP3PointCode *)concernedPc
+    congestionIndicator:(uint32_t)congestionIndicator;
+
 #pragma mark -
 
 
@@ -189,7 +207,7 @@ typedef enum UMMTP3_Error
 #pragma mark Config Management
 
 
-- (void)setConfig:(NSDictionary *)cfg;
+- (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext;
 - (NSDictionary *)config;
 - (void)start;
 - (void)stop;

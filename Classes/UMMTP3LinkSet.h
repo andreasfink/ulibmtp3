@@ -13,6 +13,7 @@
 #import <ulibm2pa/ulibm2pa.h>
 #import "UMMTP3Variant.h"
 #import "UMMTP3TransitPermission.h"
+#import "UMLayerMTP3ApplicationContextProtocol.h"
 
 @class UMMTP3Link;
 @class UMLayerMTP3;
@@ -45,8 +46,11 @@
     int                         inactiveLinks;
     int                         readyLinks;
     int                         totalLinks;
+    int                         congestionLevel;
+    double                      speed;
 }
 
+@property(readwrite,assign) int congestionLevel;
 @property(readwrite,strong) UMLogFeed   *log;
 @property(readwrite,assign) UMLogLevel logLevel;
 @property(readwrite,strong) NSString *name;
@@ -125,8 +129,11 @@
 - (void)processTFC:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc status:(int)status ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
 /* Group TFM */
 - (void)processTFP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
+- (void)processTFP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link mask:(int)mask;
 - (void)processTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
+- (void)processTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link mask:(int)mask;
 - (void)processTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
+- (void)processTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link mask:(int)mask;
 /* Group RSM */
 - (void)processRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
 - (void)processRSR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
@@ -263,13 +270,17 @@
 
 
 - (NSDictionary *)config;
-- (void)setConfig:(NSDictionary *)config;
+- (void)setConfig:(NSDictionary *)config applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext;
+- (void)setDefaultValues;
+- (void)setDefaultValuesFromMTP3;
 
 
 
 - (void)fisuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc;
 - (void)lssuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc;
 - (void)msuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc;
+- (void)msuIndication2:(NSData *)data label:(UMMTP3Label *)label  si:(int)si ni:(int) ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
+
 - (BOOL) isFromAdjacentToLocal:(UMMTP3Label *)label;
 
 - (void)powerOn;

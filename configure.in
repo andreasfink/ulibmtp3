@@ -13,6 +13,7 @@ PROJECT_NAME="ulibmtp3"
 AUTHOR="Andreas Fink <andreas@fink.org>"
 CONFIG_DEFINE="ULIBMTP3_CONFIG"
 VERSION=`head -n 1 VERSION`
+ULIBMTP3_VERSION=`head -n 1 VERSION`
 CONFIG_HEADER=ulibmtp3_config.h
 DEPENDENT_PKGCONFIGS="ulibm2pa"
 PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
@@ -28,6 +29,7 @@ AC_SUBST(AUTHOR)
 AC_SUBST(CONFIG_DEFINE)
 AC_SUBST(CONFIG_HEADER)
 AC_SUBST(VERSION)
+AC_SUBST(ULIBMTP3_VERSION)
 
 dnl Set user who runs ./configure
 CUSER=`id -un`
@@ -144,6 +146,7 @@ AC_CONFIG_SECTION([Generating output files])
 AC_CONFIG_FILES([Makefile.osx])
 AC_CONFIG_FILES([Makefile.linux])
 AC_CONFIG_FILES([ulibmtp3.pc])
+AC_CONFIG_FILES([Classes/ulibmtp3_version.h])
 AC_OUTPUT
 case "$host" in
   *apple-darwin*) 

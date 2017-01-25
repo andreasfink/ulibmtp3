@@ -44,7 +44,7 @@
 #pragma mark -
 #pragma mark Config Management
 
-- (void)setConfig:(NSDictionary *)cfg;
+- (void)setConfig:(NSDictionary *)cfg applicationContext:(id)appContext;
 - (NSDictionary *)config;
 - (void)start;
 - (void)stop;

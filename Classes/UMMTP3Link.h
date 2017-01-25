@@ -2,7 +2,7 @@
 //  UMMTP3Link.h
 //  ulibmtp3
 //
-//  Created by Andreas Fink on 04/12/14.
+//  Created by Andreas Fink on 04.12.2014.
 //  Copyright (c) 2016 Andreas Fink
 //
 // This source is dual licensed either under the GNU GENERAL PUBLIC LICENSE
@@ -12,14 +12,15 @@
 #import <ulib/ulib.h>
 #import <ulibsctp/ulibsctp.h>
 #import <ulibm2pa/ulibm2pa.h>
+#import "UMLayerMTP3ApplicationContextProtocol.h"
 
 @class UMMTP3LinkSet;
 @class UMMTP3LinkState;
 typedef enum UMMTP3Link_attachmentStatus
 {
-    UMMTP3Link_attachmentStatus_detached=0,
-    UMMTP3Link_attachmentStatus_attachmentPending=1,
-    UMMTP3Link_attachmentStatus_attached=2,
+    UMMTP3Link_attachmentStatus_detached            =   0,
+    UMMTP3Link_attachmentStatus_attachmentPending   =   1,
+    UMMTP3Link_attachmentStatus_attached            =   2,
 } UMMTP3Link_attachmentStatus;
 
 @interface UMMTP3Link : UMObject
@@ -37,10 +38,8 @@ typedef enum UMMTP3Link_attachmentStatus
     BOOL                        congested;
     BOOL                        processorOutage;
     BOOL                        speedLimitReached;
-    //NSTimer                     *linkTestTimer;
     UMTimer                     *linkTestTimer;
     NSTimeInterval              linkTestTime;
-    
 }
 
 - (NSString *)name;
@@ -73,7 +72,7 @@ typedef enum UMMTP3Link_attachmentStatus
 - (void)speedLimitReachedIndication;
 - (void)speedLimitReachedClearedIndication;
 
-- (void)setConfig:(NSDictionary *)cfg;
+- (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext;
 - (NSDictionary *)config;
 - (void)attach;
 
