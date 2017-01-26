@@ -677,7 +677,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     /* ASP Up acknlowledgment */
 
-    if(logLevel == UMLOG_DEBUG)
+e    if(logLevel == UMLOG_DEBUG)
     {
         [self logDebug:@"processASPUP_ACK"];
         [self logDebug:@" status is now BUSY"];
