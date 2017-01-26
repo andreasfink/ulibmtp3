@@ -35,6 +35,7 @@
 @class UMMTP3Label;
 @class UMMTP3RoutingTable;
 @class UMM3UAApplicationServer;
+@class UMMTP3InstanceRoutingTable;
 
 #import "UMLayerMTP3UserProtocol.h"
 typedef enum UMMTP3_Error
@@ -51,7 +52,7 @@ typedef enum UMMTP3_Error
     UMMTP3Variant       variant;
     int                 networkIndicator;
     UMMTP3PointCode     *opc;
-    UMMTP3RoutingTable  *routingTable;
+    UMMTP3InstanceRoutingTable  *routingTable;
     UMSynchronizedDictionary *userPart;
     UMMTP3Route *defaultRoute;
     BOOL ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
@@ -217,4 +218,8 @@ typedef enum UMMTP3_Error
 - (void)setUserPart:(int)upid user:(id<UMLayerMTP3UserProtocol>)user;
 - (int)maxPduSize;
 
+
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name;
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)name;
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name;
 @end

@@ -7,7 +7,21 @@
 //
 
 #import <ulib/ulib.h>
+#import "UMMTP3RoutingTable.h"
 
-@interface UMMTP3InstanceRoutingTable : UMLayerTask
+
+/* in comparison to the link routing table, the instance routing table
+ can have more than one entry per pointcode. Hence its a 
+ UMSychronizedSortedDictionary of
+ UMSychronizedSortedDictionary of 
+ UMMTP3Route objects
+ The first key is the linkset name, the second one is the pointcode.
+ So its basically an UMSychronizedSortedDictionary of UMMTP3LinkRoutingTable objects
+ */
+
+@interface UMMTP3InstanceRoutingTable : UMMTP3RoutingTable
+{
+    UMSynchronizedDictionary *routingTablesByLinkset;
+}
 
 @end

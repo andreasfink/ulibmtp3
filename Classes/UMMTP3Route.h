@@ -10,7 +10,7 @@
 // the author.
 
 #import <ulib/ulib.h>
-
+#import "UMMTP3RoutePriority.h"
 @class UMMTP3PointCode;
 @class UMMTP3LinkSet;
 @class UMMTP3RouteMetrics;
@@ -92,9 +92,9 @@ typedef enum UMMTP3RouteTestStatus
 @interface UMMTP3Route : UMObject
 {
     NSString                    *name;
- 
+    NSString                    *linksetName;
+
     UMMTP3PointCode             *pointcode;
-    UMMTP3LinkSet       __weak  *linkset;
     UMMTP3RouteMetrics          *metrics;
     UMQueue                     *deliveryQueue;
     UMMTP3RouteStatus           status;
@@ -102,21 +102,24 @@ typedef enum UMMTP3RouteTestStatus
     time_t                      last_test;
     UMMTP3RouteCongestionLevel  congestion;
     UMTimer                     *t15;
-    double                      max_speed;
-    double                      speed[UMMTP3_CONGESTION_LEVEL_MAX+10];		 /* in messages per sec */;
-    double                      current_max_speed;
-    double                      current_speed;
     UMThroughputCounter         *speedometer;
-    int                         limit_has_been_hit;
-    int                         speedup_counter;
+
+//    double                      max_speed;
+//    double                      speed[UMMTP3_CONGESTION_LEVEL_MAX+10];		 /* in messages per sec */;
+//    double                      current_max_speed;
+//    double                      current_speed;
+//  int                         limit_has_been_hit;
+//  int                         speedup_counter;
 }
 
 @property(readwrite,strong) NSString *name;
 @property(readwrite,strong) UMMTP3PointCode *pointcode;
 @property(readwrite,weak) UMMTP3LinkSet *linkset;
+@property(readwrite,strong,atomic) NSString *linksetName;
+
 
 @property(readwrite,strong) UMQueue *deliveryQueue;
-@property(readwrite,assign) UMMTP3RouteStatus           status;
+@property(readwrite,assign,atomic) UMMTP3RouteStatus           status;
 @property(readwrite,assign) UMMTP3RouteTestStatus       tstatus;
 @property(readwrite,assign) UMMTP3RouteCongestionLevel  congestion;
 @property(readwrite,assign) time_t last_test;
@@ -131,5 +134,8 @@ typedef enum UMMTP3RouteTestStatus
 
 - (NSComparisonResult)routingPreference:(UMMTP3Route *)other;
 
+- (UMMTP3Route *)initWithPc:(UMMTP3PointCode *)pc
+                linksetName:(NSString *)linksetName
+                   priority:(UMMTP3RoutePriority)prio;
 
 @end

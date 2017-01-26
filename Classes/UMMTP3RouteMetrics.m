@@ -22,6 +22,16 @@
 @synthesize multi_exit_discrimators;
 
 
+- (UMMTP3RouteMetrics *)init
+{
+    self = [super init];
+    if(self)
+    {
+        local_preference = 100;
+        
+    }
+    return self;
+}
 - (int)combinedMetricsValue
 {
     return weight * local_preference;

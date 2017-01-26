@@ -677,7 +677,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     /* ASP Up acknlowledgment */
 
-e    if(logLevel == UMLOG_DEBUG)
+    if(logLevel == UMLOG_DEBUG)
     {
         [self logDebug:@"processASPUP_ACK"];
         [self logDebug:@" status is now BUSY"];
@@ -754,6 +754,7 @@ e    if(logLevel == UMLOG_DEBUG)
     {
         [linktest_timer start];
     }
+
     if(M3UA_STATUS_IS != self.m3ua_status)
     {
         [self routeUpdateAll:UMMTP3_ROUTE_ALLOWED];
@@ -1579,7 +1580,6 @@ e    if(logLevel == UMLOG_DEBUG)
 {
     @synchronized(self)
     {
-
         if(logLevel == UMLOG_DEBUG)
         {
             [self logDebug:@"reopen_timer1_fires"];

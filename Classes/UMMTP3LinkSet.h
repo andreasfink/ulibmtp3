@@ -22,7 +22,7 @@
 @class UMMTP3WhiteList;
 @class UMMTP3BlackList;
 @class UMMTP3RoutingTable;
-
+@class UMMTP3LinkRoutingTable;
 
 @interface UMMTP3LinkSet : UMObject
 {
@@ -38,7 +38,7 @@
     unsigned long               nationalOptions;
     UMMTP3WhiteList             *incomingWhiteList;
     UMMTP3BlackList             *incomingBlackList;
-    UMMTP3RoutingTable          *routingTable;
+    UMMTP3LinkRoutingTable      *routingTable;
     int                         tra_sent;
     int                         trw_received;
     BOOL                        sendTRA;

@@ -13,12 +13,27 @@
 
 @class UMMTP3Route;
 @class UMMTP3PointCode;
+@class UMMTP3LinkSet;
 
 @interface UMMTP3RoutingTable : UMLayer
 {
-    UMSynchronizedDictionary *routesByPointCode;
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc;
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset;
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset;
+
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
+
+- (void) addRoute:(UMMTP3Route *)route linksetName:(NSString *)linkset;
+- (void) removeRoute:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
+- (void) updateRoute:(UMMTP3Route *)route linksetName:(NSString *)linkset;
+
+
+
 
 @end
+

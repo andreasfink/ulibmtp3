@@ -34,6 +34,7 @@
 #import "UMMTP3Task_start.h"
 #import "UMMTP3Task_stop.h"
 #import "UMLayerMTP3UserProtocol.h"
+#import "UMMTP3InstanceRoutingTable.h"
 
 @implementation UMLayerMTP3
 
@@ -71,6 +72,7 @@
 {
     linksets = [[NSMutableDictionary alloc]init];
     userPart = [[UMSynchronizedDictionary  alloc]init];
+    routingTable = [[UMMTP3InstanceRoutingTable alloc]init];
 }
 
 
@@ -659,7 +661,7 @@
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)search_dpc
 {
-    UMMTP3Route *re =[routingTable findRouteForDestination:search_dpc];
+    UMMTP3Route *re = [routingTable findRouteForDestination:search_dpc linksetName:NULL];
     if(re==NULL)
     {
         return defaultRoute;
@@ -783,4 +785,22 @@
 {
     return 273;
 }
+
+
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name
+{
+    [routingTable updateRouteAvailable:pc linksetName:name];
+}
+
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)name
+
+{
+    [routingTable updateRouteRestricted:pc linksetName:name];
+}
+
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name
+{
+    [routingTable updateRouteUnavailable:pc linksetName:name];
+}
+
 @end

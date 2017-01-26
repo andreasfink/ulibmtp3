@@ -19,6 +19,7 @@
 
 
 @synthesize name;
+@synthesize linksetName;
 @synthesize pointcode;
 @synthesize deliveryQueue;
 @synthesize status;
@@ -73,5 +74,57 @@
         return NSOrderedAscending;
     }
     return NSOrderedSame;
+}
+
+- (UMMTP3Route *)initWithPc:(UMMTP3PointCode *)pc
+                linksetName:(NSString *)lsName
+                   priority:(UMMTP3RoutePriority)prio
+{
+    self = [super init];
+    if(self)
+    {
+        name = [self description];
+        linksetName = lsName;
+        pointcode = pc;
+        metrics = [[UMMTP3RouteMetrics alloc]init];
+        switch(prio)
+        {
+            case UMMTP3RoutePriority_1:
+                metrics.local_preference = 800;
+                break;
+            case UMMTP3RoutePriority_2:
+                metrics.local_preference = 400;
+                break;
+            case UMMTP3RoutePriority_3:
+                metrics.local_preference = 200;
+                break;
+            case UMMTP3RoutePriority_4:
+            case UMMTP3RoutePriority_undefined:
+                metrics.local_preference = 100;
+                break;
+            case UMMTP3RoutePriority_5:
+                metrics.local_preference = 50;
+                break;
+            case UMMTP3RoutePriority_6:
+                metrics.local_preference = 25;
+                break;
+            case UMMTP3RoutePriority_7:
+                metrics.local_preference = 12;
+                break;
+            case UMMTP3RoutePriority_8:
+                metrics.local_preference = 6;
+                break;
+            case UMMTP3RoutePriority_9:
+                metrics.local_preference = 3;
+                break;
+        }
+        deliveryQueue = [[UMQueue alloc]init];
+        status = UMMTP3_ROUTE_UNKNOWN;
+        tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
+        last_test = 0;
+        t15 = [[UMTimer alloc]init];
+        speedometer = [[UMThroughputCounter alloc]init];
+    }
+    return self;
 }
 @end

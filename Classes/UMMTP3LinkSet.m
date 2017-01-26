@@ -21,6 +21,8 @@
 #import "UMMTP3BlackList.h"
 #import "UMMTP3TransitPermission.h"
 #import "UMMTP3RoutingTable.h"
+#import "UMMTP3LinkRoutingTable.h"
+#import "UMMTP3InstanceRoutingTable.h"
 
 @implementation UMMTP3LinkSet
 @synthesize congestionLevel;
@@ -54,6 +56,7 @@
         readyLinks = -1;
         totalLinks = -1;
         congestionLevel = 0;
+        routingTable = [[UMMTP3LinkRoutingTable alloc]init];
     }
     return self;
 }
@@ -3937,6 +3940,24 @@
                 mp:0
                slc:link.slc
               link:link];
+}
+
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
+{
+    [routingTable updateRouteAvailable:pc linksetName:name];
+    [mtp3 updateRouteAvailable:pc linksetName:name];
+}
+
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc
+{
+    [routingTable updateRouteRestricted:pc linksetName:name];
+    [mtp3 updateRouteRestricted:pc linksetName:name];
+}
+
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+{
+    [routingTable updateRouteUnavailable:pc linksetName:name];
+    [mtp3 updateRouteUnavailable:pc linksetName:name];
 }
 
 @end

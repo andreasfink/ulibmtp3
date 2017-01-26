@@ -16,7 +16,6 @@
 @class UMM3UAApplicationServer;
 
 @interface UMM3UAApplicationServerProcess : UMLayer<UMLayerSctpUserProtocol>
-
 {
     NSString                    *name;
     UMLayerSctp                 *sctpLink;

@@ -226,7 +226,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
 }
 
-
 @implementation UMM3UAApplicationServer
 @synthesize m3ua_status;
 @synthesize trafficMode;

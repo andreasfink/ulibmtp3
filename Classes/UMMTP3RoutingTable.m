@@ -16,31 +16,49 @@
 @implementation UMMTP3RoutingTable
 
 
--(UMMTP3RoutingTable *)init
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset
 {
-    self = [super init];
-    if(self)
-    {
-        routesByPointCode = [[UMSynchronizedDictionary alloc]init];
-    }
-    return self;
+    return NULL;
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset
 {
-    
-    UMSynchronizedArray *routes = routesByPointCode[pc.description];
-    if(routes == NULL)
-    {
-        routes = routesByPointCode[@"default"];
-        if(routes == NULL)
-        {
-            return NULL;
-        }
-    }
-    NSMutableArray *r = [routes mutableCopy];
-    [r sortUsingSelector:@selector(routingPreference:)];
-    return (UMMTP3Route *)[r lastObject];
+    return NULL;
 }
+
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset
+{
+    return NULL;
+}
+
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset
+{
+    return NULL;
+}
+
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset
+{
+}
+
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset
+{
+}
+
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset
+{
+}
+
+- (void) addRoute:(UMMTP3Route *)route linksetName:(UMMTP3LinkSet *)linkset
+{
+}
+
+- (void) removeRoute:(UMMTP3PointCode *)pc linksetName:(UMMTP3LinkSet *)linkset
+{
+}
+
+- (void) updateRoute:(UMMTP3Route *)route linksetName:(UMMTP3LinkSet *)linkset
+{
+}
+
 
 @end

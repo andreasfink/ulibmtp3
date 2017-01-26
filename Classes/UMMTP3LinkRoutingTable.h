@@ -7,7 +7,19 @@
 //
 
 #import <ulib/ulib.h>
+#import "UMMTP3RoutingTable.h"
 
-@interface UMMTP3LinkRoutingTable : UMLayerTask
+/* in comparison to the instance routing table, the link routing table
+ can have only one entry per pointcode. Hence its a
+ UMSychronizedSortedDictionary of
+ UMMTP3Route objects
+ The  key is the pointcode's stringValue
+ */
+
+@interface UMMTP3LinkRoutingTable : UMMTP3RoutingTable
+{
+    UMSynchronizedDictionary *routesByPointCode;
+}
+
 
 @end
