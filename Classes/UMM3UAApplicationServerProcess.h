@@ -47,9 +47,24 @@
     NSTimeInterval      reopen_timer2_value;
     double              speed;
 
+    UMThroughputCounter	*speedometer;
+    UMThroughputCounter	*submission_speed;
+    time_t  link_up_time;
+    time_t  link_down_time;
+    time_t  link_congestion_time;
+    time_t  link_speed_excess_time;
+    time_t  link_congestion_cleared_time;
+    time_t  link_speed_excess_cleared_time;
+    BOOL     speed_within_limit;
 }
 
 @property (readwrite,weak)    UMM3UAApplicationServer  *as;
+@property (readwrite,strong)  NSString *name;
+@property (readwrite,assign,atomic) UMM3UA_Status m3ua_status;
+
+
+- (void)start;
+- (void)stop;
 
 - (void)powerOn;
 - (void)powerOff;

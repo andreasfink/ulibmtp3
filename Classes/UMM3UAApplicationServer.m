@@ -66,10 +66,6 @@
 
 #define	SCTP_PROTOCOL_IDENTIFIER_M3UA	3
 
-#define TRAFFIC_MODE_TYPE_OVERRIDE      1
-#define TRAFFIC_MODE_TYPE_LOADSHARE     2
-#define TRAFFIC_MODE_TYPE_BROADCAST     3
-
 #define SOURCE_POS_DICT @{ @"file": @(__FILE__) , @"line":@(__LINE__) , @"func":@(__func__) }
 
 #import "UMLayerMTP3.h"
@@ -232,7 +228,18 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 
 @implementation UMM3UAApplicationServer
+@synthesize m3ua_status;
+@synthesize trafficMode;
 
+- (UMM3UAApplicationServer *)init
+{
+    self = [super init];
+    if(self)
+    {
+        applicationServerProcesses = [[UMSynchronizedSortedDictionary alloc]init];
+    }
+    return self;
+}
 
 - (NSData *)getParam:(UMSynchronizedSortedDictionary *)p identifier:(uint16_t)param_id
 {
@@ -519,11 +526,13 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     if(logLevel == UMLOG_DEBUG)
     {
-        [self logDebug:@"powerOn"];
+        [self logDebug:@"start"];
     }
-    for(UMM3UAApplicationServerProcess *asp in applicationServerProcesses)
+    id keys = [applicationServerProcesses allKeys];
+    for(id key in keys)
     {
-        [asp powerOn];
+        UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+        [asp start];
     }
 }
 
@@ -531,14 +540,21 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     if(logLevel == UMLOG_DEBUG)
     {
-        [self logDebug:@"powerOff"];
+        [self logDebug:@"stop"];
     }
-    for(UMM3UAApplicationServerProcess *asp in applicationServerProcesses)
+    id keys = [applicationServerProcesses allKeys];
+    for(id key in keys)
     {
-        [asp powerOff];
+        UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+        [asp stop];
     }
 }
 
+- (void) addAsp:(UMM3UAApplicationServerProcess *)asp
+{
+    asp.as = self;
+    applicationServerProcesses[asp.name] = asp;
+}
 
 - (void) adminAttachConfirm:(UMLayer *)attachedLayer
                      userId:(id)uid
@@ -582,6 +598,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     variant = UMMTP3Variant_Undefined;
     networkIndicator = -1;
     speed = -1;
+    trafficMode = UMM3UATrafficMode_loadshare;
 
     for(NSString *key in cfg)
     {

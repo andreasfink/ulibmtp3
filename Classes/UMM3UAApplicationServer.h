@@ -36,6 +36,9 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
     UMSynchronizedSortedDictionary *applicationServerProcesses;
 }
 
+@property(readwrite,assign,atomic)  UMM3UA_Status       m3ua_status;
+@property(readwrite,assign,atomic)  UMM3UATrafficMode   trafficMode;
+
 
 /* UMSCTP callbacks */
 - (NSString *)layerName;
@@ -80,6 +83,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
                     reason:(NSString *)reason
                  errorInfo:(NSDictionary *)ei;
 
+- (void) addAsp:(UMM3UAApplicationServerProcess *)asp;
 
 - (void)setDefaultValues;
 - (void)setDefaultValuesFromMTP3;
@@ -91,5 +95,8 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
      networkAppearance:(int)network_appearance
     concernedPointcode:(UMMTP3PointCode *)concernedPc
    congestionIndicator:(int)congestionIndicator;
+
+- (void)start;
+- (void)stop;
 
 @end

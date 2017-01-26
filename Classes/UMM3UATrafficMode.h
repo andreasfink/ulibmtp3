@@ -9,7 +9,8 @@
 
 typedef enum UMM3UATrafficMode
 {
-    UMM3UATrafficMode_loadshare = 0,
+    UMM3UATrafficMode_undefined = 0,
     UMM3UATrafficMode_override  = 1,
-    UMM3UATrafficMode_broadcast = 2,
+    UMM3UATrafficMode_loadshare = 2,
+    UMM3UATrafficMode_broadcast = 3,
 } UMM3UATrafficMode;
