@@ -33,7 +33,6 @@
 @synthesize speedometer;
 @synthesize limit_has_been_hit;
 @synthesize speedup_counter;
-@synthesize linkset;
 @synthesize metrics;
 
 - (NSComparisonResult)routingPreference:(UMMTP3Route *)other
@@ -127,4 +126,75 @@
     }
     return self;
 }
+
+- (UMSynchronizedSortedDictionary *)objectValue
+{
+    UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc]init];
+
+    if(self.name)
+    {
+        dict[@"name"] = self.name;
+    }
+    if(self.linksetName)
+    {
+        dict[@"linkset-name"] = self.linksetName;
+    }
+    if(self.pointcode)
+    {
+        dict[@"pointcode"] = self.pointcode.stringValue;
+    }
+    if(self.metrics)
+    {
+        dict[@"metrics"] = self.metrics.objectValue;
+    }
+    switch(self.status)
+    {
+        case UMMTP3_ROUTE_UNUSED:
+            dict[@"status"] = @"unused";
+            break;
+        case UMMTP3_ROUTE_UNKNOWN:
+            dict[@"status"] = @"unknown";
+            break;
+        case UMMTP3_ROUTE_PROHIBITED:
+            dict[@"status"] = @"prohibited";
+            break;
+        case UMMTP3_ROUTE_RESTRICTED:
+            dict[@"status"] = @"restricted";
+            break;
+        case UMMTP3_ROUTE_ALLOWED:
+            dict[@"status"] = @"allowed";
+            break;
+    }
+
+    switch(self.tstatus)
+    {
+        case UMMTP3_TEST_STATUS_UNKNOWN:
+            dict[@"test-status"] = @"unused";
+            break;
+        case UMMTP3_TEST_STATUS_RUNNING:
+            dict[@"test-status"] = @"running";
+            break;
+        case UMMTP3_TEST_STATUS_SUCCESS:
+            dict[@"test-status"] = @"success";
+            break;
+        case UMMTP3_TEST_STATUS_FAILED:
+            dict[@"test-status"] = @"failed";
+            break;
+    }
+    if(self.last_test)
+    {
+        NSDate *d = [NSDate dateWithTimeIntervalSince1970:(self.last_test)];
+        dict[@"last-test"] = d.description;
+    }
+    else
+    {
+        dict[@"last-test"] = @"never";
+    }
+    if(self.speedometer)
+    {
+        dict[@"speedometer"] = [speedometer getSpeedStringTriple];
+    }
+    return dict;
+}
+
 @end

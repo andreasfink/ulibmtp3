@@ -17,10 +17,10 @@
 
 typedef enum UMMTP3RouteStatus
 {
-    UMMTP3_ROUTE_UNUSED		= 100,
+    UMMTP3_ROUTE_UNUSED         = 100,
     UMMTP3_ROUTE_UNKNOWN		= 101,
-    UMMTP3_ROUTE_PROHIBITED	= 102,
-    UMMTP3_ROUTE_RESTRICTED	= 103,
+    UMMTP3_ROUTE_PROHIBITED     = 102,
+    UMMTP3_ROUTE_RESTRICTED     = 103,
     UMMTP3_ROUTE_ALLOWED		= 104,
 } UMMTP3RouteStatus;
 
@@ -86,6 +86,7 @@ typedef enum UMMTP3RouteTestStatus
     UMMTP3_TEST_STATUS_UNKNOWN		= 0,
     UMMTP3_TEST_STATUS_RUNNING		= 1,
     UMMTP3_TEST_STATUS_SUCCESS		= 2,
+    UMMTP3_TEST_STATUS_FAILED		= 3,
 } UMMTP3RouteTestStatus;
 
 
@@ -114,7 +115,6 @@ typedef enum UMMTP3RouteTestStatus
 
 @property(readwrite,strong) NSString *name;
 @property(readwrite,strong) UMMTP3PointCode *pointcode;
-@property(readwrite,weak) UMMTP3LinkSet *linkset;
 @property(readwrite,strong,atomic) NSString *linksetName;
 
 
@@ -137,5 +137,7 @@ typedef enum UMMTP3RouteTestStatus
 - (UMMTP3Route *)initWithPc:(UMMTP3PointCode *)pc
                 linksetName:(NSString *)linksetName
                    priority:(UMMTP3RoutePriority)prio;
+
+- (UMSynchronizedSortedDictionary *)objectValue;
 
 @end

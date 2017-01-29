@@ -13,6 +13,8 @@
 #import "ulibmtp3_version.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 #import "UMM3UAApplicationServerProcess.h"
+#import "UMMTP3LinkRoutingTable.h"
+#import "UMMTP3HeadingCode.h"
 
 #define	M3UA_CLASS_TYPE_ERR			0x0000
 #define M3UA_CLASS_TYPE_NTFY		0x0001
@@ -70,86 +72,9 @@
 
 #import "UMLayerMTP3.h"
 
-static const char *m3ua_class_string(uint8_t pclass);
-static const char *m3ua_type_string(uint8_t pclass,uint8_t ptype);
 static const char *m3ua_param_name(uint16_t param_type);
-static const char *get_sctp_status_string(SCTP_Status status);
 
-static const char *m3ua_class_string(uint8_t pclass)
-{
-    switch(pclass)
-    {
-        case 0:
-            return "MGMT (Management)";
-        case 1:
-            return "Transfer";
-        case 2:
-            return "SSNM (SS7 Signalling Network Management)";
-        case 3:
-            return "ASPSM (ASP State Maintenance)";
-        case 4:
-            return "ASPTM (ASP Traffic Maintenance)";
-        case 9:
-            return "RKM (Routing Key Management)";
-    }
-    return "Reserved";
-}
 
-static const char *m3ua_type_string(uint8_t pclass,uint8_t ptype)
-{
-    uint16_t	classtype;
-
-    classtype = (pclass << 8) | ptype;
-
-    switch(classtype)
-    {
-        case M3UA_CLASS_TYPE_ERR: /* management */
-            return "ERR";
-        case M3UA_CLASS_TYPE_NTFY:
-            return "NTFY";
-        case M3UA_CLASS_TYPE_DATA:
-            return "DATA";
-        case M3UA_CLASS_TYPE_DUNA:
-            return "DUNA";
-        case M3UA_CLASS_TYPE_DAVA:
-            return "DAVA";
-        case M3UA_CLASS_TYPE_DAUD:
-            return "DAUD";
-        case M3UA_CLASS_TYPE_SCON:
-            return "SCON";
-        case M3UA_CLASS_TYPE_DUPU:
-            return "DUPU";
-        case M3UA_CLASS_TYPE_DRST:
-            return "DRST";
-        case M3UA_CLASS_TYPE_ASPUP:
-            return "ASPUP";
-        case M3UA_CLASS_TYPE_ASPDN:
-            return "ASPDN";
-        case M3UA_CLASS_TYPE_BEAT:
-            return "BEAT";
-        case M3UA_CLASS_TYPE_ASPUP_ACK:
-            return "ASPUP_ACK";
-        case M3UA_CLASS_TYPE_ASPDN_ACK:
-            return "ASPDN_ACK";
-        case M3UA_CLASS_TYPE_ASPAC:
-            return "ASPA";
-        case M3UA_CLASS_TYPE_ASPIA:
-            return "ASPIA";
-        case M3UA_CLASS_TYPE_ASPAC_ACK:
-            return "ASPAC_ACK";
-        case M3UA_CLASS_TYPE_ASPIA_ACK:
-            return "ASPIA_ACK";
-        case M3UA_CLASS_TYPE_REG_REQ:
-            return "REG_REQ";
-        case M3UA_CLASS_TYPE_REG_RSP:
-            return "REG_RSP";
-        case M3UA_CLASS_TYPE_DEREG_REQ:
-            return "DEREG_REQ";
-        case M3UA_CLASS_TYPE_DEREG_RSP:
-            return "DEREG_RSP";
-    }
-    return "Reserved";
-}
 
 static const char *m3ua_param_name(uint16_t param_type)
 {
@@ -209,26 +134,11 @@ static const char *m3ua_param_name(uint16_t param_type)
     return "unknown";
 }
 
-static const char *get_sctp_status_string(SCTP_Status status)
-{
-    switch(status)
-    {
-        case SCTP_STATUS_OFF:
-            return "SCTP_STATUS_OFF";
-        case SCTP_STATUS_OOS:
-            return "SCTP_STATUS_OOS";
-        case SCTP_STATUS_IS:
-            return "SCTP_STATUS_IS";
-        case SCTP_STATUS_M_FOOS:
-            return "SCTP_STATUS_M_FOOS";
-        default:
-            return "SCTP_UNKNOWN";
-    }
-}
-
 @implementation UMM3UAApplicationServer
 @synthesize m3ua_status;
 @synthesize trafficMode;
+@synthesize networkAppearance;
+@synthesize routingKey;
 
 - (UMM3UAApplicationServer *)init
 {
@@ -362,10 +272,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     correlation_id		= [self getParam:params identifier:M3UA_PARAM_CORRELATION_ID];
     routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
 
-#pragma unused(network_appearance)
-#pragma unused(correlation_id)
-#pragma unused(routing_context)
-
     if(logLevel == UMLOG_DEBUG)
     {
         [self logDebug:@"process_DATA"];
@@ -476,7 +382,14 @@ static const char *get_sctp_status_string(SCTP_Status status)
             /* Signalling network testing and maintenance messages */
             break;
         default:
-            [self msuIndication2:protocolData label:label si:si ni:ni mp:mp slc:0 link:NULL];
+            [self msuIndication2:protocolData
+                           label:label
+                              si:si
+                              ni:ni
+                              mp:mp
+               networkAppearance:network_appearance
+                   correlationId:correlation_id
+                  routingContext:routing_context];
             break;
     }
 }
@@ -485,24 +398,80 @@ static const char *get_sctp_status_string(SCTP_Status status)
 #pragma mark -
 #pragma mark Route Management
 
-- (void)routingUpdateRequired
+- (void)aspUp:(UMM3UAApplicationServerProcess *)asp
 {
-
+    upCount++;
 }
 
-- (void) routeAllowed:(UMMTP3PointCode *)pc
+- (void)aspDown:(UMM3UAApplicationServerProcess *)asp
 {
-
+    upCount--;
 }
 
--(void)routeProhibited:(UMMTP3PointCode *)pc
+- (void)aspActive:(UMM3UAApplicationServerProcess *)asp
 {
+    activeCount++;
+    [routingTable updateRouteAvailable:adjacentPointCode linksetName:name];
+    if(trafficMode == UMM3UATrafficMode_override)
+    {
+        NSArray *keys = [applicationServerProcesses allKeys];
+        for(id key in keys)
+        {
+            UMM3UAApplicationServerProcess *asp2 = applicationServerProcesses[key];
+            if(asp2 == asp)
+            {
+                continue;
+            }
+            if(asp2.active)
+            {
+                [asp goInactive];
+                break;
+            }
+        }
+    }
+}
 
+- (void)aspInactive:(UMM3UAApplicationServerProcess *)asp
+{
+    activeCount--;
+    BOOL somethingsActive = NO;
+    NSArray *keys = [applicationServerProcesses allKeys];
+    for(id key in keys)
+    {
+        UMM3UAApplicationServerProcess *asp2 = applicationServerProcesses[key];
+        if(asp2 == asp)
+        {
+            continue;
+        }
+        if(asp2.active)
+        {
+            somethingsActive = YES;
+            break;
+        }
+    }
+    if(somethingsActive == NO)
+    {
+        [routingTable updateRouteUnavailable:adjacentPointCode linksetName:name];
+    }
+}
+
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
+{
+    [routingTable updateRouteAvailable:pc linksetName:name];
+}
+
+-(void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+{
+    [routingTable updateRouteUnavailable:pc linksetName:name];
+}
+
+-(void)updateRouteRestricted:(UMMTP3PointCode *)pc forAsp:(UMM3UAApplicationServerProcess *)asp
+{
+    [routingTable updateRouteRestricted:pc linksetName:name];
 }
 
 - (void)routeUpdateAll:(UMMTP3RouteStatus)status
 {
-
 }
 
 - (void)allRoutesProhibited
@@ -601,7 +570,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
     for(NSString *key in cfg)
     {
-        id value = cfg[key];
+        NSString *value = [cfg[key] stringValue];
         if([key isCaseInsensitiveLike:@"name"])
         {
             self.name =  [value stringValue];
@@ -731,13 +700,216 @@ static const char *get_sctp_status_string(SCTP_Status status)
                   mask:(uint32_t)mask
      networkAppearance:(uint32_t)network_appearance
     concernedPointcode:(UMMTP3PointCode *)concernedPc
-   congestionIndicator:(uint32_t)congestionIndicator
+   congestionIndicator:(uint32_t)congestion_indicator
 {
     [mtp3 m3uaCongestion:self
        affectedPointCode:pc
                     mask:mask
-       networkAppearance:networkAppearance
+       networkAppearance:network_appearance
       concernedPointcode:concernedPc
-     congestionIndicator:congestionIndicator];
+     congestionIndicator:congestion_indicator];
+}
+
+
+- (void)protocolViolation
+{
+
+}
+
+- (void)msuIndication2:(NSData *)pdu
+                 label:(UMMTP3Label *)label
+                    si:(int)si
+                    ni:(int)ni
+                    mp:(int)mp
+     networkAppearance:(NSData *)network_appearance
+         correlationId:(NSData *)correlation_id
+        routingContext:(NSData *)routing_context
+{
+    int i;
+    const uint8_t *data = pdu.bytes;
+    NSUInteger maxlen = pdu.length;
+    @try
+    {
+        if(logLevel <= UMLOG_DEBUG)
+        {
+            [logFeed debugText:@" MSU (Message Signal Unit)"];
+        }
+
+        if(logLevel <= UMLOG_DEBUG)
+        {
+            [logFeed debugText:@" MSU (Message Signal Unit)"];
+            [logFeed debugText:[NSString stringWithFormat:@"   si: [%d]",si]];
+            [logFeed debugText:[NSString stringWithFormat:@"   ni: [%d]",ni]];
+            [logFeed debugText:[NSString stringWithFormat:@"   mp: [%d]",mp]];
+        }
+        if(ni != networkIndicator)
+        {
+            [logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,networkIndicator]];
+            // [self protocolViolation];
+            @throw([NSException exceptionWithName:@"MTP_PACKET_INVALID"
+                                           reason:NULL
+                                         userInfo:@{
+                                                    @"sysmsg" : @"non-matching netowkr indicator",
+                                                    @"func": @(__func__),
+                                                    @"obj":self,
+                                                    @"backtrace": UMBacktrace(NULL,0)
+                                                    }
+                    ]);
+
+        }
+        if(logLevel <= UMLOG_DEBUG)
+        {
+            [logFeed debugText:[NSString stringWithFormat:@"  opc: %@",label.opc.description]];
+            [logFeed debugText:[NSString stringWithFormat:@"  dpc: %@",label.dpc.description]];
+        }
+
+
+        UMMTP3PointCode *dpc = label.dpc;
+        BOOL forLocalInstance = NO;
+
+        if(localPointCode && [dpc isEqualToPointCode:localPointCode])
+        {
+            forLocalInstance = YES;
+        }
+        else if([dpc isEqualToPointCode:mtp3.opc])
+        {
+            forLocalInstance = YES;
+        }
+
+        NSError *e = NULL;
+        UMMTP3TransitPermission_result perm = [self screenIncomingLabel:label error:&e];
+        switch(perm)
+        {
+            case UMMTP3TransitPermission_errorResult:
+                @throw([NSException exceptionWithName:@"UMMTP3TransitPermission_errorResult"
+                                               reason:NULL
+                                             userInfo:@{
+                                                        @"sysmsg" : @"screening failed",
+                                                        @"func": @(__func__),
+                                                        @"obj":self,
+                                                        @"err":e,
+                                                        @"backtrace": UMBacktrace(NULL,0)
+                                                        }
+                        ]);
+                break;
+            case UMMTP3TransitPermission_explicitlyDenied:
+                [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly denied"]];
+                break;
+            case UMMTP3TransitPermission_implicitlyDenied:
+                [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly denied"]];
+                break;
+            case UMMTP3TransitPermission_explicitlyPermitted:
+                [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly permitted"]];
+                break;
+            case UMMTP3TransitPermission_implicitlyPermitted:
+                [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly permitted"]];
+                break;
+            default:
+                break;
+        }
+        if(forLocalInstance)
+        {
+            NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+            [mtp3 processIncomingPduLocal:label
+                                     data:pdu
+                               userpartId:si
+                                       ni:ni
+                                       mp:mp
+                              linksetName:name];
+        }
+        else
+        {
+            [mtp3 processIncomingPdu:label
+                             data:pdu
+                       userpartId:si
+                               ni:ni
+                               mp:mp
+                      linksetName:name];
+        }
+    }
+    @catch(NSException *e)
+    {
+        NSDictionary *d = e.userInfo;
+        NSString *desc = d[@"sysmsg"];
+        [logFeed majorErrorText:desc];
+        [self protocolViolation];
+        return;
+    }
+}
+
+- (NSArray *)activeApplicationServerProcessesToUse
+{
+    NSMutableArray *applicableProcesses = [[NSMutableArray alloc]init];
+
+    NSArray *keys = [applicationServerProcesses allKeys];
+    for(id key in keys)
+    {
+        UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+        if(asp.active)
+        {
+            [applicableProcesses addObject:asp];
+        }
+    }
+    if (trafficMode == UMM3UATrafficMode_broadcast)
+    {
+        return applicableProcesses;
+    }
+    NSInteger n = [applicableProcesses count];
+    if(n==1)
+    {
+        return applicableProcesses;
+    }
+    uint32_t r = arc4random_uniform(n);
+    return applicableProcesses[r];
+}
+
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
+{
+    NSArray *arr = [self activeApplicationServerProcessesToUse];
+    for(UMM3UAApplicationServerProcess *asp  in arr)
+    {
+        [asp advertizePointcodeAvailable:pc];
+    }
+}
+
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
+{
+    NSArray *arr = [self activeApplicationServerProcessesToUse];
+    for(UMM3UAApplicationServerProcess *asp  in arr)
+    {
+        [asp advertizePointcodeRestricted:pc];
+    }
+}
+
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
+{
+    NSArray *arr = [self activeApplicationServerProcessesToUse];
+    for(UMM3UAApplicationServerProcess *asp  in arr)
+    {
+        [asp advertizePointcodeUnavailable:pc];
+    }
+}
+
+-(void)sendPdu:(NSData *)data
+         label:(UMMTP3Label *)label
+       heading:(int)heading
+            ni:(int)ni
+            mp:(int)mp
+            si:(int)si
+    ackRequest:(NSDictionary *)ackRequest
+ correlationId:(uint32_t)correlation_id
+{
+    NSArray *asps = [self activeApplicationServerProcessesToUse];
+    for(UMM3UAApplicationServerProcess *asp in asps)
+    {
+        [asp sendPdu:data
+               label:label
+             heading:heading
+                  ni:ni
+                  mp:mp
+                  si:si
+          ackRequest:ackRequest
+       correlationId:correlation_id];
+    }
 }
 @end

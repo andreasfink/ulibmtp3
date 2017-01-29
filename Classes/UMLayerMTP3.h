@@ -196,13 +196,33 @@ typedef enum UMMTP3_Error
 - (void) _m2paSpeedLimitReachedTask:(UMMTP3Task_m2paSpeedLimitReached *)task;
 - (void) _m2paSpeedLimitReachedClearedTask:(UMMTP3Task_m2paSpeedLimitReachedCleared *)task;
 
+- (void)processIncomingPdu:(UMMTP3Label *)label
+                      data:(NSData *)data
+                userpartId:(int)upid
+                        ni:(int)ni
+                        mp:(int)mp
+               linksetName:(NSString *)linksetName;
+
+- (void)processIncomingPduForward:(UMMTP3Label *)label
+                             data:(NSData *)data
+                       userpartId:(int)upid
+                               ni:(int)ni
+                               mp:(int)mp
+                      linksetName:(NSString *)linksetName;
+
+
+- (void)processIncomingPduLocal:(UMMTP3Label *)label
+                           data:(NSData *)data
+                     userpartId:(int)upid
+                             ni:(int)ni
+                             mp:(int)mp
+                    linksetName:(NSString *)linksetName;
+
 - (void)processUserPart:(UMMTP3Label *)label
                    data:(NSData *)data
              userpartId:(int)upid
                      ni:(int)ni
-                     mp:(int)mp
-                    slc:(int)slc
-                   link:(UMMTP3Link *)link;
+                     mp:(int)mp;
 
 #pragma mark -
 #pragma mark Config Management
@@ -222,4 +242,6 @@ typedef enum UMMTP3_Error
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name;
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)name;
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name;
+- (UMMTP3RoutingTable *)routingTable;
+
 @end

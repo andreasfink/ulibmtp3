@@ -26,7 +26,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 #define	M3UA_DEFAULT_LINKTEST_TIMER	25-000 /* every so many miliseconds we send out a SLTM */
 #define M3UA_DEFAULT_SPEED      100;        /* default speed limit */
 
-@interface UMM3UAApplicationServer : UMMTP3LinkSet<UMLayerSctpUserProtocol>
+@interface UMM3UAApplicationServer : UMMTP3LinkSet
 {
     /* config params */
     UMM3UATrafficMode   trafficMode;
@@ -34,31 +34,19 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
     NSInteger           networkAppearance;
     UMM3UA_Status       m3ua_status;
     UMSynchronizedSortedDictionary *applicationServerProcesses;
+    int upCount;
+    int activeCount;
 }
 
 @property(readwrite,assign,atomic)  UMM3UA_Status       m3ua_status;
 @property(readwrite,assign,atomic)  UMM3UATrafficMode   trafficMode;
+@property(readwrite,assign,atomic)  NSInteger			routingKey;
+@property(readwrite,assign,atomic)  NSInteger           networkAppearance;
 
 
 /* UMSCTP callbacks */
 - (NSString *)layerName;
 
-- (void) sctpStatusIndication:(UMLayer *)caller
-                       userId:(id)uid
-                       status:(SCTP_Status)s;
-
-- (void) sctpDataIndication:(UMLayer *)caller
-                     userId:(id)uid
-                   streamId:(uint16_t)sid
-                 protocolId:(uint32_t)pid
-                       data:(NSData *)d;
-
-- (void) sctpMonitorIndication:(UMLayer *)caller
-                        userId:(id)uid
-                      streamId:(uint16_t)sid
-                    protocolId:(uint32_t)pid
-                          data:(NSData *)d
-                      incoming:(BOOL)in;
 
 - (void) adminAttachConfirm:(UMLayer *)attachedLayer
                      userId:(id)uid;
@@ -74,29 +62,42 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
                   userId:(id)uid
                   reason:(NSString *)reason;
 
-- (void)sentAckConfirmFrom:(UMLayer *)sender
-                  userInfo:(NSDictionary *)userInfo;
-
-- (void)sentAckFailureFrom:(UMLayer *)sender
-                  userInfo:(NSDictionary *)userInfo
-                     error:(NSString *)err
-                    reason:(NSString *)reason
-                 errorInfo:(NSDictionary *)ei;
-
 - (void) addAsp:(UMM3UAApplicationServerProcess *)asp;
 
-- (void)setDefaultValues;
-- (void)setDefaultValuesFromMTP3;
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext;
 
 - (void)m3uaCongestion:(UMM3UAApplicationServerProcess *)asp
      affectedPointCode:(UMMTP3PointCode *)pc
-                  mask:(int)mask
-     networkAppearance:(int)network_appearance
+                  mask:(uint32_t)mask
+     networkAppearance:(uint32_t)network_appearance
     concernedPointcode:(UMMTP3PointCode *)concernedPc
-   congestionIndicator:(int)congestionIndicator;
+   congestionIndicator:(uint32_t)congestionIndicator;
 
-- (void)start;
-- (void)stop;
+
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc;
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc;
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc;
+- (void)aspUp:(UMM3UAApplicationServerProcess *)asp;
+- (void)aspDown:(UMM3UAApplicationServerProcess *)asp;
+- (void)aspActive:(UMM3UAApplicationServerProcess *)asp;
+- (void)aspInactive:(UMM3UAApplicationServerProcess *)asp;
+
+- (void)msuIndication2:(NSData *)pdu
+                 label:(UMMTP3Label *)label
+                    si:(int)si
+                    ni:(int)ni
+                    mp:(int)mp
+     networkAppearance:(NSData *)network_appearance
+         correlationId:(NSData *)correlation_id
+        routingContext:(NSData *)routing_context;
+
+-(void)sendPdu:(NSData *)data
+         label:(UMMTP3Label *)label
+       heading:(int)heading
+            ni:(int)ni
+            mp:(int)mp
+            si:(int)si
+    ackRequest:(NSDictionary *)ackRequest
+ correlationId:(uint32_t)correlation_id;
 
 @end

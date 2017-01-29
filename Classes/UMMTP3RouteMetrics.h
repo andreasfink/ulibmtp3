@@ -32,5 +32,5 @@
 @property (readwrite,assign) int multi_exit_discrimators;
 
 - (int)combinedMetricsValue;
-
+- (UMSynchronizedSortedDictionary *)objectValue;
 @end

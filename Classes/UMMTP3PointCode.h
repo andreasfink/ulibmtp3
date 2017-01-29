@@ -33,6 +33,7 @@
 - (NSData *)asData;
 - (NSData *)asDataWithStatus:(int)status;
 - (NSString *)stringValue;
+- (int) integerValue;
 - (UMMTP3PointCode *)initWithString:(NSString *)str variant:(UMMTP3Variant)var;
 - (NSString *)logDescription;
 @end

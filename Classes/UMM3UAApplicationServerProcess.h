@@ -12,6 +12,7 @@
 #import "UMMTP3Variant.h"
 #import "UMMTP3PointCode.h"
 #import "UMM3UAStatus.h"
+#import "UMMTP3Label.h"
 
 @class UMM3UAApplicationServer;
 
@@ -22,14 +23,16 @@
     SCTP_Status                 sctp_status;
     UMM3UAApplicationServer __weak  *as;
     BOOL                        congested;
-    BOOL                        active;
+
+    UMM3UA_Status               status;
+
     BOOL                        speedLimitReached;
     double                      speedLimit;
     UMThroughputCounter         *speedCounter;
 
     UMMTP3PointCode             *adjacentPointCode;
     UMMTP3PointCode             *localPointCode;
-    UMM3UA_Status               m3ua_status;
+    //UMM3UA_Status               m3ua_status;
     BOOL                        aspup_received;
     BOOL                        standby_mode;
     NSMutableData       *incomingStream0;
@@ -59,8 +62,12 @@
 
 @property (readwrite,weak)    UMM3UAApplicationServer  *as;
 @property (readwrite,strong)  NSString *name;
-@property (readwrite,assign,atomic) UMM3UA_Status m3ua_status;
 
+@property (readwrite,assign,atomic) UMM3UA_Status status;
+@property (readonly) BOOL sctp_connecting;
+@property (readonly) BOOL sctp_up;
+@property (readonly) BOOL up;
+@property (readonly) BOOL active;
 
 - (void)start;
 - (void)stop;
@@ -68,9 +75,10 @@
 - (void)powerOn;
 - (void)powerOff;
 
+- (void)goInactive;
+- (void)goActive;
+
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id)appContext;
-- (void)setDefaultValues;
-- (void)setDefaultValuesFromMTP3;
 - (UMSynchronizedSortedDictionary *)config;
 
 - (void)processBEAT:(NSData *)params;
@@ -94,5 +102,18 @@
 - (void)processREG_RSP:(UMSynchronizedSortedDictionary *)params;
 - (void)processDEREG_REQ:(UMSynchronizedSortedDictionary *)params;
 - (void)processDEREG_RSP:(UMSynchronizedSortedDictionary *)params;
+
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc;
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc;
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc;
+
+-(void)sendPdu:(NSData *)data
+         label:(UMMTP3Label *)label
+       heading:(int)heading
+            ni:(int)ni
+            mp:(int)mp
+            si:(int)si
+    ackRequest:(NSDictionary *)ackRequest
+ correlationId:(uint32_t)correlation_id;
 
 @end

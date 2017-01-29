@@ -35,6 +35,7 @@
 #import "UMMTP3Task_stop.h"
 #import "UMLayerMTP3UserProtocol.h"
 #import "UMMTP3InstanceRoutingTable.h"
+#import "UMM3UAApplicationServerProcess.h"
 
 @implementation UMLayerMTP3
 
@@ -79,6 +80,14 @@
 #pragma mark -
 #pragma mark Linkset Handling
 
+- (void)refreshRoutingTable
+{
+    @synchronized(linksets)
+    {
+        routingTable = [[UMMTP3InstanceRoutingTable alloc] initWithLinkSetArray:linksets];
+    }
+}
+
 - (void)addLinkset:(UMMTP3LinkSet *)ls
 {
     @synchronized(linksets)
@@ -93,6 +102,7 @@
         ls.networkIndicator = self.networkIndicator;
         linksets[ls.name]=ls;
     }
+    [self refreshRoutingTable];
 }
 
 - (void)removeAllLinksets
@@ -102,6 +112,7 @@
         linksets = NULL;
         linksets = [[NSMutableDictionary alloc]init];
     }
+    [self refreshRoutingTable];
 }
 
 
@@ -112,6 +123,7 @@
         ls.mtp3 = NULL;
         [linksets removeObjectForKey:ls.name];
     }
+    [self refreshRoutingTable];
 }
 
 - (void)removeLinksetByName:(NSString *)n
@@ -122,6 +134,7 @@
         ls.mtp3 = NULL;
         [linksets removeObjectForKey:n];
     }
+    [self refreshRoutingTable];
 }
 
 - (UMMTP3LinkSet *)getLinksetByName:(NSString *)n
@@ -575,10 +588,10 @@
 
 - (void) m3uaCongestionCleared:(UMM3UAApplicationServer *)as
       affectedPointCode:(UMMTP3PointCode *)pc
-                   mask:(int)mask
-      networkAppearance:(NSData *)network_appearance
+                   mask:(uint32_t)mask
+      networkAppearance:(uint32_t)network_appearance
      concernedPointcode:(UMMTP3PointCode *)concernedPc
-    congestionIndicator:(NSData *)congestionIndicator
+    congestionIndicator:(uint32_t)congestionIndicator
 {
     if(logLevel <=UMLOG_DEBUG)
     {
@@ -688,7 +701,6 @@
                       route:route];
 }
 
-
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
                        opc:(UMMTP3PointCode *)fopc
                        dpc:(UMMTP3PointCode *)fdpc
@@ -696,20 +708,34 @@
                         mp:(int)mp
                      route:(UMMTP3Route *)route
 {
-    UMMTP3LinkSet *linkset = route.linkset;
-    
+    NSString *linksetName = route.linksetName;
+    UMMTP3LinkSet *linkset = linksets[linksetName];
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = fopc;
     label.dpc = fdpc;
-        
-    [linkset sendPdu:pdu
-               label:label
-             heading:-1
-                  ni:linkset.mtp3.networkIndicator
-                  mp:(int)mp
-                  si:si
-          ackRequest:NULL];
-     
+    if([linkset isKindOfClass:[UMM3UAApplicationServer class]])
+    {
+        [linkset sendPdu:pdu
+                   label:label
+                 heading:-1
+                      ni:linkset.mtp3.networkIndicator
+                      mp:(int)mp
+                      si:si
+              ackRequest:NULL
+           correlationId:0];
+    }
+    else
+    {
+        [linkset sendPdu:pdu
+                   label:label
+                 heading:-1
+                      ni:linkset.mtp3.networkIndicator
+                      mp:(int)mp
+                      si:si
+              ackRequest:NULL
+           correlationId:0];
+
+    }
     return UMMTP3_no_error;
 }
 
@@ -760,21 +786,227 @@
     userPart[@(upid)] = user;
 }
 
+
+
+- (void)processIncomingPdu:(UMMTP3Label *)label
+                             data:(NSData *)data
+                       userpartId:(int)si
+                               ni:(int)ni
+                               mp:(int)mp
+                      linksetName:(NSString *)linksetName
+{
+    if([label.dpc isEqualToPointCode:opc])
+    {
+        [self processIncomingPduLocal:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                   mp:mp
+                          linksetName:linksetName];
+    }
+    else
+    {
+        [self processIncomingPduForward:label
+                                   data:data
+                             userpartId:si
+                                     ni:ni
+                                     mp:mp
+                            linksetName:linksetName];
+    }
+}
+
+- (void)processIncomingPduForward:(UMMTP3Label *)label
+                                data:(NSData *)data
+                          userpartId:(int)si
+                                  ni:(int)ni
+                                  mp:(int)mp
+                         linksetName:(NSString *)linksetName
+{
+    UMMTP3Route *route = [routingTable findRouteForDestination:label.dpc excludeLinksetName:linksetName]; /* we never send back to the link the PDU came from to avoid loops */
+    if(route)
+    {
+        [self forwardPDU:data
+                     opc:label.opc
+                     dpc:label.dpc
+                      si:si
+                      mp:mp
+                   route:route];
+    }
+    if((linksetName == NULL) || (![defaultRoute.linksetName isEqualToString:linksetName]))
+    {
+        [self forwardPDU:data
+                     opc:label.opc
+                     dpc:label.dpc
+                      si:si
+                      mp:mp
+                   route:defaultRoute];
+
+    }
+    NSString *s = [NSString stringWithFormat:@"DroppingPDU from Linkset: %@ OPC:%@ DPC:%@ to avoid loop",linksetName,label.opc.stringValue, label.dpc.stringValue];
+    [self logMinorError:s];
+}
+
+
+- (void)processIncomingPduLocal:(UMMTP3Label *)label
+                                data:(NSData *)data
+                          userpartId:(int)si
+                                  ni:(int)ni
+                                  mp:(int)mp
+                         linksetName:(NSString *)linksetName
+
+{
+    switch(si)
+    {
+        case MTP3_SERVICE_INDICATOR_MGMT:
+        case MTP3_SERVICE_INDICATOR_MAINTENANCE_SPECIAL_MESSAGE:
+        case MTP3_SERVICE_INDICATOR_TEST:
+            @throw([NSException exceptionWithName:@"CODE_ERROR" reason:@"we never expect this here" userInfo:NULL]);
+            break;
+        case MTP3_SERVICE_INDICATOR_SCCP:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_TUP:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_ISUP:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_DUP_C:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_DUP_F:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_RES_TESTING:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_BROADBAND_ISUP:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_SAT_ISUP:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_B:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_C:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_D:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_E:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_F:
+        {
+            if(logLevel <= UMLOG_DEBUG)
+            {
+                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
+            }
+            [self processUserPart:label data:data userpartId:si ni:ni mp:mp];
+
+        }
+            break;
+    }
+}
+
 - (void)processUserPart:(UMMTP3Label *)label
                    data:(NSData *)data
-             userpartId:(int)upid
+             userpartId:(int)si
                      ni:(int)ni
                      mp:(int)mp
-                    slc:(int)slc
-                   link:(UMMTP3Link *)link
 {
-    id<UMLayerMTP3UserProtocol> inst = [self findUserPart:upid];
-    
+    id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
+
     [inst mtpTransfer:data
          callingLayer:self
                   opc:label.opc
                   dpc:label.dpc
-                   si:upid
+                   si:si
                    ni:ni
               options:@{}];
     /* FIXME: reply something if not reachable? */
@@ -803,4 +1035,8 @@
     [routingTable updateRouteUnavailable:pc linksetName:name];
 }
 
+- (UMMTP3RoutingTable *)routingTable
+{
+    return routingTable;
+}
 @end

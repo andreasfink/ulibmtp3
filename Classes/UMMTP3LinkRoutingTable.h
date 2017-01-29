@@ -18,8 +18,10 @@
 
 @interface UMMTP3LinkRoutingTable : UMMTP3RoutingTable
 {
-    UMSynchronizedDictionary *routesByPointCode;
+    UMSynchronizedSortedDictionary *routesByPointCode;
 }
 
-
+- (void) addDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName;
+- (void) removeDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName;
+- (NSString *)jsonString;
 @end

@@ -28,11 +28,11 @@
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
 
-- (void) addRoute:(UMMTP3Route *)route linksetName:(NSString *)linkset;
-- (void) removeRoute:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
-- (void) updateRoute:(UMMTP3Route *)route linksetName:(NSString *)linkset;
 
+- (void) addDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName;
+- (void) removeDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName;
 
+- (UMSynchronizedSortedDictionary *)objectValue;
 
 
 @end

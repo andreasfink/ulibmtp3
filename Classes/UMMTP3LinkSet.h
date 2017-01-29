@@ -129,11 +129,8 @@
 - (void)processTFC:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc status:(int)status ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
 /* Group TFM */
 - (void)processTFP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
-- (void)processTFP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link mask:(int)mask;
 - (void)processTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
-- (void)processTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link mask:(int)mask;
 - (void)processTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
-- (void)processTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link mask:(int)mask;
 /* Group RSM */
 - (void)processRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
 - (void)processRSR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
@@ -166,9 +163,6 @@
 - (void)processUPU:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc userpartId:(int)upid cause:(int)cause ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
 
 
-/* SI=3..15 */
-- (void)processUserPart:(UMMTP3Label *)label data:(NSData *)data userpartId:(int)upid ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
-
 -(void)sendPdu:(NSData *)data
          label:(UMMTP3Label *)label
        heading:(int)heading
@@ -178,6 +172,16 @@
             mp:(int)mp
             si:(int)si
     ackRequest:(NSDictionary *)ackRequest;
+
+
+-(void)sendPdu:(NSData *)data
+         label:(UMMTP3Label *)label
+       heading:(int)heading
+            ni:(int)ni
+            mp:(int)mp
+            si:(int)si
+    ackRequest:(NSDictionary *)ackRequest
+ correlationId:(uint32_t)correlation_id;
 
 /* this version automatically selects any link in the linkset and gets the SLC from the link */
 -(void)sendPdu:(NSData *)data
@@ -293,4 +297,9 @@
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc;
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link;
 - (void)updateLinksetStatus;
+
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc;
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc;
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc;
+
 @end

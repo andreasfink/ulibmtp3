@@ -21,7 +21,6 @@
 @synthesize origin;
 @synthesize multi_exit_discrimators;
 
-
 - (UMMTP3RouteMetrics *)init
 {
     self = [super init];
@@ -36,4 +35,17 @@
 {
     return weight * local_preference;
 }
+
+- (UMSynchronizedSortedDictionary *)objectValue
+{
+    UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc] init];
+    dict[@"weight"] = @(weight);
+    dict[@"local-preference"] = @(local_preference);
+    dict[@"aggregate"] = @(aggregate);
+    dict[@"as-path-legnth"] = @(as_path_legnth);
+    dict[@"origin-type"] = @(origin_type);
+    dict[@"multi-exit-discrimators"] = @(multi_exit_discrimators);
+    return dict;
+}
+
 @end

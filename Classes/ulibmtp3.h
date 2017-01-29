@@ -45,5 +45,8 @@
 #import "UMM3UATrafficMode.h"
 #import "UMM3UAApplicationServerProcess.h"
 #import "UMM3UAApplicationServer.h"
+#import "UMMTP3RoutingTable.h"
+#import "UMMTP3LinkRoutingTable.h"
+#import "UMMTP3InstanceRoutingTable.h"
 
 

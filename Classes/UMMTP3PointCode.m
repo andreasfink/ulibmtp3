@@ -291,6 +291,11 @@
     return [NSString stringWithFormat:@"%d", pc];
 }
 
+- (int)integerValue
+{
+    return pc;
+}
+
 - (NSString *)logDescription
 {
     return [self stringValue];

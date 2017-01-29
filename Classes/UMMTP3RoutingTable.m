@@ -60,5 +60,19 @@
 {
 }
 
+- (void) addDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
+{
+
+}
+
+- (void) removeDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
+{
+
+}
+
+- (UMSynchronizedDictionary *)objectValue
+{
+    return NULL;
+}
 
 @end

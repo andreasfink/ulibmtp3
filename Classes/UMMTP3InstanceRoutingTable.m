@@ -8,10 +8,29 @@
 
 #import "UMMTP3InstanceRoutingTable.h"
 #import "UMMTP3LinkRoutingTable.h"
+#import "UMMTP3LinkSet.h"
+#import "UMMTP3Route.h"
+#import "UMMTP3RouteMetrics.h"
 
 @implementation UMMTP3InstanceRoutingTable
 
--(UMMTP3RoutingTable *)init
+- (UMMTP3InstanceRoutingTable *)initWithLinkSetArray:(NSDictionary *)linksets
+{
+    self = [super init];
+    if(self)
+    {
+        routingTablesByLinkset = [[UMSynchronizedSortedDictionary alloc]init];
+        NSArray *keys = [linksets allKeys];
+        for (id key in keys)
+        {
+            UMMTP3LinkSet *ls = linksets[key];
+            routingTablesByLinkset[ls.name] = ls.routingTable;
+        }
+    }
+    return self;
+}
+
+-(UMMTP3InstanceRoutingTable *)init
 {
     self = [super init];
     if(self)
@@ -21,14 +40,104 @@
     return self;
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
 {
-    return NULL;
+    if(linksetName)
+    {
+        UMMTP3LinkRoutingTable *lrt = routingTablesByLinkset[linksetName];
+        return [lrt findRouteForDestination:pc linksetName:linksetName];
+    }
+
+    UMMTP3Route *bestRoute = NULL;
+    NSArray *keys = [routingTablesByLinkset allKeys];
+    for(NSString *ls in keys)
+    {
+        UMMTP3LinkRoutingTable *lrt = routingTablesByLinkset[ls];
+        UMMTP3Route *nextRoute = [lrt findRouteForDestination:pc linksetName:ls];
+        if(nextRoute == NULL)
+        {
+            continue;
+        }
+        if((bestRoute == NULL) && ((nextRoute.status == UMMTP3_ROUTE_RESTRICTED) || (nextRoute.status == UMMTP3_ROUTE_ALLOWED)))
+        {
+            bestRoute = nextRoute;
+        }
+        else
+        {
+            if((bestRoute.status == UMMTP3_ROUTE_RESTRICTED) && (nextRoute.status == UMMTP3_ROUTE_ALLOWED))
+            {
+                bestRoute = nextRoute;
+            }
+            else if((bestRoute.status == UMMTP3_ROUTE_RESTRICTED) && (nextRoute.status == UMMTP3_ROUTE_RESTRICTED))
+            {
+                if(nextRoute.metrics.combinedMetricsValue > bestRoute.metrics.combinedMetricsValue)
+                {
+                    bestRoute = nextRoute;
+                }
+            }
+            else if((bestRoute.status == UMMTP3_ROUTE_RESTRICTED) && (nextRoute.status == UMMTP3_ROUTE_ALLOWED))
+            {
+                bestRoute = nextRoute;
+            }
+            else if((bestRoute.status == UMMTP3_ROUTE_ALLOWED) && (nextRoute.status == UMMTP3_ROUTE_ALLOWED))
+            {
+                if(nextRoute.metrics.combinedMetricsValue > bestRoute.metrics.combinedMetricsValue)
+                {
+                    bestRoute = nextRoute;
+                }
+            }
+        }
+    }
+    return bestRoute;
 }
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset
 {
-    return NULL;
+    UMMTP3Route *bestRoute = NULL;
+    NSArray *keys = [routingTablesByLinkset allKeys];
+    for(NSString *ls in keys)
+    {
+        if([ls isEqualToString: linkset])
+        {
+            continue;
+        }
+        UMMTP3LinkRoutingTable *lrt = routingTablesByLinkset[ls];
+        UMMTP3Route *nextRoute = [lrt findRouteForDestination:pc linksetName:ls];
+        if(nextRoute == NULL)
+        {
+            continue;
+        }
+        if((bestRoute == NULL) && ((nextRoute.status == UMMTP3_ROUTE_RESTRICTED) || (nextRoute.status == UMMTP3_ROUTE_ALLOWED)))
+        {
+            bestRoute = nextRoute;
+        }
+        else
+        {
+            if((bestRoute.status == UMMTP3_ROUTE_RESTRICTED) && (nextRoute.status == UMMTP3_ROUTE_ALLOWED))
+            {
+                bestRoute = nextRoute;
+            }
+            else if((bestRoute.status == UMMTP3_ROUTE_RESTRICTED) && (nextRoute.status == UMMTP3_ROUTE_RESTRICTED))
+            {
+                if(nextRoute.metrics.combinedMetricsValue > bestRoute.metrics.combinedMetricsValue)
+                {
+                    bestRoute = nextRoute;
+                }
+            }
+            else if((bestRoute.status == UMMTP3_ROUTE_RESTRICTED) && (nextRoute.status == UMMTP3_ROUTE_ALLOWED))
+            {
+                bestRoute = nextRoute;
+            }
+            else if((bestRoute.status == UMMTP3_ROUTE_ALLOWED) && (nextRoute.status == UMMTP3_ROUTE_ALLOWED))
+            {
+                if(nextRoute.metrics.combinedMetricsValue > bestRoute.metrics.combinedMetricsValue)
+                {
+                    bestRoute = nextRoute;
+                }
+            }
+        }
+    }
+    return bestRoute;
 }
 
 - (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset
@@ -51,6 +160,7 @@
                 [result addObject:r];
             }
         }
+        return result;
     }
     return NULL;
 }
@@ -77,8 +187,22 @@
                 }
             }
         }
+        return result;
     }
     return NULL;
+}
+
+- (UMSynchronizedSortedDictionary *)objectValue
+{
+    UMSynchronizedSortedDictionary *d = [[UMSynchronizedSortedDictionary alloc]init];
+
+    NSArray *keys = [routingTablesByLinkset allKeys];
+    for(id key in keys)
+    {
+        UMMTP3LinkRoutingTable *table = routingTablesByLinkset[key];
+        d[key] = [table objectValue];
+    }
+    return d;
 }
 
 @end

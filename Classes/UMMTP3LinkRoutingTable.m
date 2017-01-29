@@ -22,14 +22,14 @@
     self = [super init];
     if(self)
     {
-        routesByPointCode = [[UMSynchronizedDictionary alloc]init];
+        routesByPointCode = [[UMSynchronizedSortedDictionary alloc]init];
     }
     return self;
 }
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
 {
-    UMMTP3Route *r = routesByPointCode[pc.stringValue];
+    UMMTP3Route *r = routesByPointCode[@(pc.integerValue)];
     if(r)
     {
        if(linksetName)
@@ -49,7 +49,7 @@
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linksetName
 {
-    UMMTP3Route *r = routesByPointCode[pc.stringValue];
+    UMMTP3Route *r = routesByPointCode[@(pc.integerValue)];
     if(r)
     {
         if(linksetName)
@@ -89,10 +89,11 @@
     }
     else
     {
-        r = [[UMMTP3Route alloc]init];
+        r = [[UMMTP3Route alloc]initWithPc:pc
+                               linksetName:linksetName
+                                  priority:UMMTP3RoutePriority_undefined];
         r.status = UMMTP3_ROUTE_ALLOWED;
-        r.linksetName = linksetName;
-        routesByPointCode[pc.stringValue] = r;
+        routesByPointCode[@(pc.integerValue)] = r;
     }
 }
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
@@ -104,19 +105,18 @@
     }
     else
     {
-        r = [[UMMTP3Route alloc]init];
+        r = [[UMMTP3Route alloc]initWithPc:pc
+                               linksetName:linksetName
+                                  priority:UMMTP3RoutePriority_undefined];
         r.status = UMMTP3_ROUTE_RESTRICTED;
-        r.linksetName = linksetName;
-        routesByPointCode[pc.stringValue] = r;
+        routesByPointCode[@(pc.integerValue)] = r;
     }
 }
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
 {
     UMMTP3Route *r = [self findRouteForDestination:pc linksetName:linksetName];
-    if(!r)
+    if(r)
     {
-        [self addRoute:pc linksetName:linksetName];
-
         r.status = UMMTP3_ROUTE_PROHIBITED;
     }
     else
@@ -125,27 +125,48 @@
                                linksetName:linksetName
                                   priority:UMMTP3RoutePriority_undefined];
         r.status = UMMTP3_ROUTE_PROHIBITED;
-        [self addRoute:r
-           linksetName:linksetName];
+        routesByPointCode[@(pc.integerValue)] = r;
     }
 }
 
 /* for routing tables which have only one entry per DPC. Like on a linkset */
-- (void) addRoute:(UMMTP3Route *)route
-          linksetName:(NSString *)linksetName
+- (void) addDestination:(UMMTP3PointCode *)pc
+            linksetName:(NSString *)linksetName
 {
-    routesByPointCode[route.pointcode.stringValue] = route;
+    UMMTP3Route *r = [[UMMTP3Route alloc]initWithPc:pc linksetName:linksetName priority:UMMTP3RoutePriority_undefined];
+    routesByPointCode[@(pc.integerValue)] = r;
 }
 
-- (void) removeRoute:(UMMTP3PointCode *)pc
+- (void) removeDestination:(UMMTP3PointCode *)pc
          linksetName:(NSString *)linksetName
 {
-
+    UMMTP3Route *r= routesByPointCode[@(pc.integerValue)];
+    if(r)
+    {
+        if( (NULL == linksetName) || ([r.linksetName isEqualToString:linksetName]))
+        {
+            [routesByPointCode removeObjectForKey:@(pc.integerValue)];
+        }
+    }
 }
 
-- (void) updateRoute:(UMMTP3Route *)route linkset:(UMMTP3LinkSet *)linkset priority:(int)priority
+- (UMSynchronizedDictionary *)objectValue
 {
-    
+    UMSynchronizedSortedDictionary *d = [[UMSynchronizedSortedDictionary alloc]init];
+    NSArray *keys = [routesByPointCode allKeys];
+    for (id key in keys)
+    {
+        UMMTP3Route *r = routesByPointCode[key];
+        d[key] = [r objectValue];
+    }
+    return d;
 }
+
+- (NSString *)jsonString
+{
+
+    return [routesByPointCode jsonString];
+}
+
 
 @end

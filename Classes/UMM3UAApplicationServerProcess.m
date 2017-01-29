@@ -229,7 +229,64 @@ static const char *get_sctp_status_string(SCTP_Status status)
 @implementation UMM3UAApplicationServerProcess
 @synthesize as;
 @synthesize name;
-@synthesize m3ua_status;
+@synthesize status;
+
+
+- (BOOL)sctp_connecting
+{
+    if(status == M3UA_STATUS_OOS)
+        return YES;
+    return NO;
+}
+
+- (BOOL)sctp_up
+{
+    switch(status)
+    {
+        case M3UA_STATUS_UNUSED:
+        case  M3UA_STATUS_OFF:
+        case M3UA_STATUS_OOS:
+            return NO;
+        case M3UA_STATUS_BUSY:
+        case M3UA_STATUS_INACTIVE:
+        case M3UA_STATUS_IS:
+            return YES;
+    }
+    return NO;
+}
+
+- (BOOL)up
+{
+    switch(status)
+    {
+        case M3UA_STATUS_UNUSED:
+        case  M3UA_STATUS_OFF:
+        case M3UA_STATUS_OOS:
+        case M3UA_STATUS_BUSY:
+            return NO;
+        case M3UA_STATUS_INACTIVE:
+        case M3UA_STATUS_IS:
+            return YES;
+    }
+    return NO;
+}
+
+- (BOOL)active
+{
+    switch(status)
+    {
+        case M3UA_STATUS_UNUSED:
+        case  M3UA_STATUS_OFF:
+        case M3UA_STATUS_OOS:
+        case M3UA_STATUS_BUSY:
+        case M3UA_STATUS_INACTIVE:
+            return NO;
+        case M3UA_STATUS_IS:
+            return YES;
+    }
+    return NO;
+
+}
 
 - (UMM3UAApplicationServerProcess *)init
 {
@@ -246,10 +303,39 @@ static const char *get_sctp_status_string(SCTP_Status status)
 }
 
 
+- (void)setParam:(UMSynchronizedSortedDictionary *)p identifier:(uint16_t)param_id value:(NSData *)data
+{
+    p[ @(param_id)] = data;
+}
+
 - (NSData *)getParam:(UMSynchronizedSortedDictionary *)p identifier:(uint16_t)param_id
 {
     return p[ @(param_id)];
 }
+
+- (uint32_t)getIntParam:(UMSynchronizedSortedDictionary *)p identifier:(uint16_t)param_id
+{
+    NSData *d = p[ @(param_id)];
+    const uint8_t *bytes = d.bytes;
+
+    if(d.length == 4)
+    {
+        uint32_t r = (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
+        return r;
+    }
+    else if(d.length == 2)
+    {
+        uint32_t r =  (bytes[0] << 8) | bytes[1];
+        return r;
+    }
+    else if(d.length == 1)
+    {
+        uint32_t r =  bytes[0];
+        return r;
+    }
+    return 0;
+}
+
 
 - (NSString *)paramName:(uint16_t)param_id
 {
@@ -482,7 +568,15 @@ static const char *get_sctp_status_string(SCTP_Status status)
             /* Signalling network testing and maintenance messages */
             break;
         default:
-            [as msuIndication2:protocolData label:label si:si ni:ni mp:mp slc:0 link:NULL];
+            [as msuIndication2:protocolData
+                         label:label
+                            si:si
+                            ni:ni
+                            mp:mp
+             networkAppearance:network_appearance
+                 correlationId:correlation_id
+                routingContext:routing_context];
+
             break;
     }
 }
@@ -493,9 +587,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processDUNA:(UMSynchronizedSortedDictionary *)params
 {
-    int mp;
     int sls = -200;
-    int 	ni;
     if(logLevel == UMLOG_DEBUG)
     {
         [self logDebug:@"processDUNA"];
@@ -505,25 +597,17 @@ static const char *get_sctp_status_string(SCTP_Status status)
     //  NSData *routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
     //  NSData *infoString          = [self getParam:params identifier:M3UA_PARAM_INFO_STRING];
     NSArray *affpcs = [self getAffectedPointcodes:params];
-
-    UMMTP3Label *label = [[UMMTP3Label alloc]init];
-    label.opc = adjacentPointCode;
-    label.dpc = localPointCode;
-    label.sls = sls;
-
     for (NSData *d in affpcs)
     {
         int mask;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [as processTFP:label destination:pc ni:ni mp:mp slc:0 link:NULL mask:mask];
+        [as updateRouteUnavailable:pc];
     }
 }
 
 - (void)processDAVA:(UMSynchronizedSortedDictionary *)params
 {
-    int mp;
     int sls = -200;
-    int 	ni;
 
     if(logLevel == UMLOG_DEBUG)
     {
@@ -534,17 +618,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
     //  NSData *routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
     //  NSData *infoString          = [self getParam:params identifier:M3UA_PARAM_INFO_STRING];
     NSArray *affpcs = [self getAffectedPointcodes:params];
-
-    UMMTP3Label *label = [[UMMTP3Label alloc]init];
-    label.opc = adjacentPointCode;
-    label.dpc = localPointCode;
-    label.sls = sls;
-
     for (NSData *d in affpcs)
     {
         int mask;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [as processTFA:label destination:pc ni:ni mp:mp slc:0 link:NULL mask:mask];
+        [as updateRouteAvailable:pc];
     }
 }
 
@@ -561,20 +639,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
     //  NSData *routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
     //  NSData *infoString          = [self getParam:params identifier:M3UA_PARAM_INFO_STRING];
     NSArray *affpcs = [self getAffectedPointcodes:params];
-
-    UMMTP3Label *label = [[UMMTP3Label alloc]init];
-    label.opc = adjacentPointCode;
-    label.dpc = localPointCode;
-    label.sls = sls;
-
     for (NSData *d in affpcs)
     {
         int mask;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-#pragma unused(pc)
-        /* FIXME: what to do here?
-         [self processTFP:label destination:pc ni:ni mp:mp slc:0 link:NULL mask:mask];
-         */
+        [as updateRouteRestricted:pc];
     }
 }
 
@@ -588,11 +657,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:@"processSCON"];
     }
 
-    NSData *network_appearance	= [self getParam:params identifier:M3UA_PARAM_NETWORK_APPEARANCE];
+    uint32_t network_appearance	= [self getIntParam:params identifier:M3UA_PARAM_NETWORK_APPEARANCE];
     //  NSData *routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
     //  NSData *infoString          = [self getParam:params identifier:M3UA_PARAM_INFO_STRING];
     UMMTP3PointCode *concernedPc = [self getConcernedPointcode:params];
-    NSData *congestionIndicator  = [self getParam:params identifier:M3UA_PARAM_CONGESTION_INDICATIONS];
+    uint32_t congestionIndicator  = [self getIntParam:params identifier:M3UA_PARAM_CONGESTION_INDICATIONS];
 
     NSArray *affpcs = [self getAffectedPointcodes:params];
 
@@ -655,16 +724,16 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     /* ASP Up */
     [self sendASPUP_ACK:NULL];
-    [self routingUpdateRequired];
+    self.status = M3UA_STATUS_INACTIVE;
+    [as aspUp:self];
 }
 
 - (void)processASPDN:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Down */
-    [self allRoutesProhibited];
     [self sendASPDN_ACK:NULL];
-    [self routingUpdateRequired];
-
+    self.status = M3UA_STATUS_BUSY;
+    [as aspDown:self];
 }
 
 - (void)processBEAT:(NSData *)data
@@ -680,9 +749,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
     if(logLevel == UMLOG_DEBUG)
     {
         [self logDebug:@"processASPUP_ACK"];
-        [self logDebug:@" status is now BUSY"];
     }
-    self.m3ua_status = M3UA_STATUS_BUSY;
+    self.status = M3UA_STATUS_INACTIVE;
     aspup_received = YES;
     if(standby_mode)
     {
@@ -703,8 +771,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processASPDN_ACK:(UMSynchronizedSortedDictionary *)params
 {
+    self.status = M3UA_STATUS_BUSY;
     /* ASP Down acknlowledgment */
-    [self routingUpdateRequired];
 }
 
 #pragma mark -
@@ -719,7 +787,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:@"processASPAC"];
     }
 
-    [self routeAllowed:adjacentPointCode];
+    [as aspActive:self];
+    self.status =  M3UA_STATUS_IS;
     [self sendASPAC_ACK:params];
 }
 
@@ -731,10 +800,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:@"processASPIA"];
     }
 
-    [self routeProhibited:adjacentPointCode];
-    self.m3ua_status = M3UA_STATUS_OOS;
-    [sctpLink powerdown];
-    [self routingUpdateRequired];
+    [as aspInactive:self];
+    self.status =  M3UA_STATUS_INACTIVE;
+    [self sendASPIA_ACK:params];
 }
 
 - (void)processASPAC_ACK:(UMSynchronizedSortedDictionary *)params
@@ -754,18 +822,16 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         [linktest_timer start];
     }
-
-    if(M3UA_STATUS_IS != self.m3ua_status)
-    {
-        [self routeUpdateAll:UMMTP3_ROUTE_ALLOWED];
-    }
-    self.m3ua_status = M3UA_STATUS_IS;
-    [self routingUpdateRequired];
+    self.status =  M3UA_STATUS_IS;
+    [as aspActive:self];
 }
 
 - (void)processASPIA_ACK:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Inactive acknowledgment */
+    self.status =  M3UA_STATUS_INACTIVE;
+    [as aspInactive:self];
+
 }
 
 #pragma mark -
@@ -795,6 +861,43 @@ static const char *get_sctp_status_string(SCTP_Status status)
 #pragma mark -
 #pragma mark Sending messages
 
+
+-(void)sendPdu:(NSData *)data
+         label:(UMMTP3Label *)label
+       heading:(int)heading
+            ni:(int)ni
+            mp:(int)mp
+            si:(int)si
+    ackRequest:(NSDictionary *)ackRequest
+ correlationId:(uint32_t)correlation_id
+{
+
+    uint8_t header[12];
+    uint32_t opc = label.opc.integerValue;
+    uint32_t dpc = label.dpc.integerValue;
+
+    header[0] = (opc & 0xFF000000) >> 24;
+    header[1] = (opc & 0x00FF0000) >> 16;
+    header[2] = (opc & 0x0000FF00) >> 8;
+    header[3] = (opc & 0x000000FF) >> 0;
+    header[4] = (dpc & 0xFF000000) >> 24;
+    header[5] = (dpc & 0x00FF0000) >> 16;
+    header[6] = (dpc & 0x0000FF00) >> 8;
+    header[7] = (dpc & 0x000000FF) >> 0;
+    header[8] = si & 0xFF;
+    header[9] = ni & 0xFF;
+    header[10] = mp & 0xFF;
+    header[11] = label.sls & 0xFF;
+    NSMutableData *pdu = [NSMutableData dataWithBytes:header length:12];
+    [pdu appendData:data];
+
+    UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+    pl[@(M3UA_PARAM_NETWORK_APPEARANCE)] = @(as.networkAppearance);
+    pl[@(M3UA_PARAM_ROUTING_CONTEXT)] = @(as.routingKey);
+    pl[@(M3UA_PARAM_PROTOCOL_DATA)] = pdu;
+    pl[@(M3UA_PARAM_CORRELATION_ID)] = @(correlation_id);
+    [self sendDATA:pl];
+}
 
 -(void)sendPduCT:(int)classType pdu:(NSData *)paramsPdu stream:(int)stream
 {
@@ -842,10 +945,16 @@ static const char *get_sctp_status_string(SCTP_Status status)
         {
             case 3:
                 [d appendByte:0x00];
+                break;
             case 2:
                 [d appendByte:0x00];
+                [d appendByte:0x00];
+                break;
             case 1:
                 [d appendByte:0x00];
+                [d appendByte:0x00];
+                [d appendByte:0x00];
+                break;
             case 0:
                 break;
         }
@@ -933,6 +1042,17 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [self sendPduCT:M3UA_CLASS_TYPE_ASPAC_ACK pdu:paramsPdu stream:0];
 }
 
+-(void)sendASPIA_ACK:(UMSynchronizedSortedDictionary *)params
+{
+    if(logLevel == UMLOG_DEBUG)
+    {
+        [self logDebug:@"sendASPIA_ACK"];
+    }
+    NSData *paramsPdu = [self paramsList:params];
+    [self sendPduCT:M3UA_CLASS_TYPE_ASPIA_ACK pdu:paramsPdu stream:0];
+}
+
+
 
 -(void)sendASPDN:(UMSynchronizedSortedDictionary *)params
 {
@@ -976,6 +1096,16 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [self sendPduCT:M3UA_CLASS_TYPE_DAVA pdu:paramsPdu stream:0];
 }
 
+-(void)sendDUNA:(UMSynchronizedSortedDictionary *)params
+{
+    if(logLevel == UMLOG_DEBUG)
+    {
+        [self logDebug:@"sendDUNA"];
+    }
+    NSData *paramsPdu = [self paramsList:params];
+    [self sendPduCT:M3UA_CLASS_TYPE_DUNA pdu:paramsPdu stream:0];
+}
+
 -(void)sendDATA:(UMSynchronizedSortedDictionary *)params
 {
     if(logLevel == UMLOG_DEBUG)
@@ -985,7 +1115,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_DATA pdu:paramsPdu stream:1];
 }
-
 
 -(void)sendBEAT:(NSData *)data
 {
@@ -1008,34 +1137,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 /////////////////////////////
 
-
-#pragma mark -
-#pragma mark Internal messages
-
-- (void)routingUpdateRequired
-{
-
-}
-
-- (void) routeAllowed:(UMMTP3PointCode *)pc
-{
-
-}
-
--(void)routeProhibited:(UMMTP3PointCode *)pc
-{
-
-}
-
-- (void)routeUpdateAll:(UMMTP3RouteStatus)status
-{
-
-}
-
-- (void)allRoutesProhibited
-{
-
-}
 
 
 #pragma mark -
@@ -1098,9 +1199,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
         {
             [self logDebug:@"powerOn"];
         }
-        if(M3UA_STATUS_IS == self.m3ua_status)
+        if(self.active)
         {
-            [self logMinorError:@" already in service"];
+            [self logMinorError:@" already active"];
             if(![reopen_timer2 isRunning])
             {
                 [self logDebug:@" starting reopen timer 2 which was not running"];
@@ -1116,7 +1217,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
             }
             return;
         }
-        [self routeProhibited:adjacentPointCode];
         if(logLevel == UMLOG_DEBUG)
         {
             [self logDebug:@" setting status OOS"];
@@ -1129,7 +1229,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
         aspup_received=0;
         [self sendASPUP:pl];
-        self.m3ua_status = M3UA_STATUS_OOS;
         sltm_serial = 0;
         [self logDebug:@" starting reopen timer 2"];
         [reopen_timer2 start];
@@ -1151,13 +1250,17 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [self logDebug:@"powerOff"];
         }
 
-        UMM3UA_Status old_status  = self.m3ua_status;
-        self.m3ua_status = M3UA_STATUS_OFF;
-        [reopen_timer1 stop];
-        [reopen_timer1 start];
-
-        if(M3UA_STATUS_OFF != old_status)
+        if(self.active)
         {
+            [self sendASPIA:NULL];
+            self.status=M3UA_STATUS_INACTIVE; /* we dont await ASPIA_ACK */
+        }
+        if(self.up)
+        {
+            [self sendASPDN:NULL];
+            self.status = M3UA_STATUS_BUSY;
+            [reopen_timer1 stop];
+            [reopen_timer1 start];
             [sctpLink closeFor:self];
         }
     }
@@ -1527,21 +1630,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
         {
             [self logDebug:@"reopen_timer1_fires"];
         }
-        switch(self.m3ua_status)
+        switch(status)
         {
-            case M3UA_STATUS_UNUSED:
-                if(logLevel == UMLOG_DEBUG)
-                {
-                    [self logDebug:@"M3UA_STATUS_UNUSED state. Ignoring timer event"];
-                }
-                [reopen_timer1 stop];
-                [reopen_timer2 stop];
-                [linktest_timer stop];
-                break;
             case M3UA_STATUS_OFF:
                 if(logLevel == UMLOG_DEBUG)
                 {
-                    [self logDebug:@"M3UA_STATUS_OFF state. Asking SCTP to power on the link"];
+                    [self logDebug:@"OFF state. Asking SCTP to power on the link"];
                 }
                 [reopen_timer1 stop];
                 [reopen_timer2 stop];
@@ -1552,24 +1646,41 @@ static const char *get_sctp_status_string(SCTP_Status status)
             case M3UA_STATUS_OOS:
                 if(logLevel == UMLOG_DEBUG)
                 {
-                    [self logDebug:@"M3UA_STATUS_OOS state. Ignoring Timer Event"];
+                    [self logDebug:@"OOS state. Ignoring Timer Event"];
                 }
                 [reopen_timer1 stop];
                 break;
             case M3UA_STATUS_BUSY:
                 if(logLevel == UMLOG_DEBUG)
                 {
-                    [self logDebug:@"M3UA_STATUS_BUSY state. Ignoring Timer Event"];
+                    [self logDebug:@"BUSY state. Ignoring Timer Event"];
                 }
                 [reopen_timer1 stop];
                 break;
-            case M3UA_STATUS_IS:
+            case M3UA_STATUS_INACTIVE:
                 if(logLevel == UMLOG_DEBUG)
                 {
-                    [self logDebug:@"M3UA_STATUS_IS state. Ignoring Timer Event"];
+                    [self logDebug:@"INACTIVE state. Ignoring Timer Event"];
                 }
                 [reopen_timer1 stop];
                 [reopen_timer2 stop];
+                [linktest_timer stop];
+                break;
+                if(logLevel == UMLOG_DEBUG)
+                {
+                    [self logDebug:@"INACTIVE state. Ignoring Timer Event"];
+                }
+                [reopen_timer1 stop];
+                break;
+
+            case M3UA_STATUS_IS:
+                if(logLevel == UMLOG_DEBUG)
+                {
+                    [self logDebug:@"IS state. Ignoring Timer Event"];
+                }
+                [reopen_timer1 stop];
+                [reopen_timer2 stop];
+                [linktest_timer stop];
                 break;
         }
     }
@@ -1584,7 +1695,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         {
             [self logDebug:@"reopen_timer1_fires"];
         }
-        switch(self.m3ua_status)
+        switch(self.status)
         {
             case M3UA_STATUS_UNUSED:
                 if(logLevel == UMLOG_DEBUG)
@@ -1603,21 +1714,30 @@ static const char *get_sctp_status_string(SCTP_Status status)
                  we have to restart from scratch */
                 if(logLevel == UMLOG_DEBUG)
                 {
-                    [self logDebug:@"SCTP is not in SCTP_STATUS_IS state. Asking SCTP to power off/on the link"];
+                    [self logDebug:@"Status is OFF/OOS or BUSY but still not in service state. Asking SCTP to power off/on the link"];
                 }
                 [sctpLink closeFor:self];
                 [reopen_timer1 stop];
                 [reopen_timer2 stop];
                 [reopen_timer1 start];
                 break;
-            case M3UA_STATUS_IS:
+            case M3UA_STATUS_INACTIVE:
                 if(logLevel == UMLOG_DEBUG)
                 {
-                    [self logDebug:@"SCTP has status IS. Stopping timers"];
+                    [self logDebug:@"Status M3UA_STATUS_INACTIVE. Stopping timers"];
                 }
                 [reopen_timer1 stop];
                 [reopen_timer2 stop];
                 break;
+            case M3UA_STATUS_IS:
+                if(logLevel == UMLOG_DEBUG)
+                {
+                    [self logDebug:@"Status M3UA_STATUS_IS. Stopping timers"];
+                }
+                [reopen_timer1 stop];
+                [reopen_timer2 stop];
+                break;
+
         }
     }
 }
@@ -1671,7 +1791,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         [self logInfo:@"sctpReportsUp"];
         [self powerOn];
-        self.m3ua_status = M3UA_STATUS_OOS;
+        self.status = M3UA_STATUS_BUSY;
         [speedometer clear];
         [submission_speed clear];
         speed_within_limit = YES;
@@ -1681,7 +1801,59 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (void)sctpReportsDown
 {
     [self logInfo:@"sctpReportsDown"];
-    self.m3ua_status = M3UA_STATUS_OFF;
+    self.status = M3UA_STATUS_OFF;
+}
+
+
+
+
+- (NSData *)affectedPointcode:(UMMTP3PointCode *)pc mask:(int)mask
+{
+    uint8_t bytes[4];
+
+    bytes[0] = mask & 0xFF;
+    bytes[1] = (pc.pc >> 16) & 0xFF;
+    bytes[2] = (pc.pc >> 8) & 0xFF;
+    bytes[3] = (pc.pc >> 0) & 0xFF;
+    return [NSData dataWithBytes:&bytes length:4];
+}
+
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
+{
+    UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:0]];
+    [self sendDAVA:pl];
+}
+
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
+{
+    UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:0]];
+    [self sendDAUD:pl];
+}
+
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
+{
+    UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:0]];
+    [self sendDUNA:pl];
+}
+
+
+- (void)goInactive
+{
+    if(self.active==YES)
+    {
+        [self sendASPIA:NULL];
+    }
+}
+
+- (void)goActive
+{
+    if(self.active==NO)
+    {
+        [self sendASPAC:NULL];
+    }
 
 }
 
