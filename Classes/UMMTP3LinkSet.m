@@ -2142,7 +2142,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteUnavailable:pc];
+    [self updateRouteUnavailable:pc mask:0];
 
 }
 
@@ -2159,7 +2159,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteRestricted:pc];
+    [self updateRouteRestricted:pc mask:0];
 }
 
 
@@ -2187,7 +2187,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteAvailable:pc];
+    [self updateRouteAvailable:pc mask:0];
 }
 
 
@@ -2937,15 +2937,25 @@
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id)appContext
 {
     [self removeAllLinks];
+    NSString *apcString = @"";
     for(NSString *key in cfg)
     {
         id value = cfg[key];
-        NSString *k1 = [key substringToIndex:10];
-        NSString *k2 = [key substringFromIndex:10];
-
+        NSString *k1;
+        NSString *k2;
+        if(key.length >10)
+        {
+            k1 = [key substringToIndex:10];
+            k2 = [key substringFromIndex:10];
+        }
+        else
+        {
+            k1 = key;
+            k2 = @"";
+        }
         if([key isCaseInsensitiveLike:@"apc"])
         {
-            self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:cfg[key] variant:variant];
+            apcString  = value;
         }
         else if([key isCaseInsensitiveLike:@"name"])
         {
@@ -2979,6 +2989,8 @@
         }
     }
     self.variant = mtp3.variant;
+    self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:mtp3.variant];
+
     self.name = name;
 
 }
@@ -3924,19 +3936,19 @@
               link:link];
 }
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    [routingTable updateRouteAvailable:pc linksetName:name];
+    [routingTable updateRouteAvailable:pc mask:mask linksetName:name];
 }
 
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    [routingTable updateRouteRestricted:pc linksetName:name];
+    [routingTable updateRouteRestricted:pc mask:mask linksetName:name];
 }
 
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    [routingTable updateRouteUnavailable:pc linksetName:name];
+    [routingTable updateRouteUnavailable:pc mask:mask linksetName:name];
 }
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc

@@ -96,6 +96,7 @@ typedef enum UMMTP3RouteTestStatus
     NSString                    *linksetName;
 
     UMMTP3PointCode             *pointcode;
+    int                         mask;               
     UMMTP3RouteMetrics          *metrics;
     UMQueue                     *deliveryQueue;
     UMMTP3RouteStatus           status;
@@ -115,6 +116,7 @@ typedef enum UMMTP3RouteTestStatus
 
 @property(readwrite,strong) NSString *name;
 @property(readwrite,strong) UMMTP3PointCode *pointcode;
+@property(readwrite,assign,atomic) int mask;
 @property(readwrite,strong,atomic) NSString *linksetName;
 
 
@@ -136,8 +138,10 @@ typedef enum UMMTP3RouteTestStatus
 
 - (UMMTP3Route *)initWithPc:(UMMTP3PointCode *)pc
                 linksetName:(NSString *)linksetName
-                   priority:(UMMTP3RoutePriority)prio;
+                   priority:(UMMTP3RoutePriority)prio
+                       mask:(int)mask;
 
 - (UMSynchronizedSortedDictionary *)objectValue;
+- (NSString *)routingTableKey;
 
 @end

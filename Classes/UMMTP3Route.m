@@ -21,6 +21,7 @@
 @synthesize name;
 @synthesize linksetName;
 @synthesize pointcode;
+@synthesize mask;
 @synthesize deliveryQueue;
 @synthesize status;
 @synthesize tstatus;
@@ -78,13 +79,16 @@
 - (UMMTP3Route *)initWithPc:(UMMTP3PointCode *)pc
                 linksetName:(NSString *)lsName
                    priority:(UMMTP3RoutePriority)prio
+                       mask:(int)xmask
 {
     self = [super init];
     if(self)
     {
+
         name = [self description];
         linksetName = lsName;
-        pointcode = pc;
+        pointcode = [pc maskedPointcode:xmask];
+        mask = xmask;
         metrics = [[UMMTP3RouteMetrics alloc]init];
         switch(prio)
         {
@@ -143,6 +147,7 @@
     {
         dict[@"pointcode"] = self.pointcode.stringValue;
     }
+    dict[@"mask"] = @(self.mask);
     if(self.metrics)
     {
         dict[@"metrics"] = self.metrics.objectValue;
@@ -195,6 +200,11 @@
         dict[@"speedometer"] = [speedometer getSpeedStringTriple];
     }
     return dict;
+}
+
+- (NSString *)routingTableKey
+{
+    return [pointcode maskedPointcodeString:mask];
 }
 
 @end

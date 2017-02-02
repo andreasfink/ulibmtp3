@@ -504,6 +504,8 @@
         [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
+    UMMTP3LinkSet *linkset = link.linkset;
+    [routingTable updateRouteRestricted:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
     [link congestionIndication];
 }
 
@@ -518,6 +520,8 @@
         [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
+    UMMTP3LinkSet *linkset = link.linkset;
+    [routingTable updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
     [link congestionClearedIndication];
 }
 
@@ -531,6 +535,8 @@
         [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
+    UMMTP3LinkSet *linkset = link.linkset;
+    [routingTable updateRouteUnavailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
     [link processorOutageIndication];
 }
 
@@ -544,6 +550,8 @@
         [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
+    UMMTP3LinkSet *linkset = link.linkset;
+    [routingTable updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
     [link processorRestoredIndication];
 }
 
@@ -557,6 +565,9 @@
         [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
+    UMMTP3LinkSet *linkset = link.linkset;
+    [routingTable updateRouteRestricted:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+
     [link speedLimitReachedIndication];
 }
 
@@ -569,6 +580,8 @@
         [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
+    UMMTP3LinkSet *linkset = link.linkset;
+    [routingTable updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
     [link speedLimitReachedClearedIndication];
 }
 
@@ -583,6 +596,7 @@
     {
         [self logDebug:@"m3uaCongestion"];
     }
+    [routingTable updateRouteRestricted:as.adjacentPointCode mask:0 linksetName:as.name];
     as.congestionLevel = 1;
 }
 
@@ -595,8 +609,9 @@
 {
     if(logLevel <=UMLOG_DEBUG)
     {
-        [self logDebug:@"m3uaCongestion"];
+        [self logDebug:@"m3uaCongestionCleared"];
     }
+    [routingTable updateRouteAvailable:as.adjacentPointCode mask:0 linksetName:as.name];
     as.congestionLevel = 0;
 }
 
@@ -1019,20 +1034,20 @@
 }
 
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
-    [routingTable updateRouteAvailable:pc linksetName:name];
+    [routingTable updateRouteAvailable:pc mask:(int)mask linksetName:name];
 }
 
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)name
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 
 {
-    [routingTable updateRouteRestricted:pc linksetName:name];
+    [routingTable updateRouteRestricted:pc mask:(int)mask linksetName:name];
 }
 
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
-    [routingTable updateRouteUnavailable:pc linksetName:name];
+    [routingTable updateRouteUnavailable:pc mask:(int)mask linksetName:name];
 }
 
 - (UMMTP3RoutingTable *)routingTable

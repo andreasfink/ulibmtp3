@@ -239,9 +239,9 @@ typedef enum UMMTP3_Error
 - (int)maxPduSize;
 
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name;
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)name;
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)name;
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name;
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name;
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name;
 - (UMMTP3RoutingTable *)routingTable;
 
 @end

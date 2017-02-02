@@ -36,4 +36,7 @@
 - (int) integerValue;
 - (UMMTP3PointCode *)initWithString:(NSString *)str variant:(UMMTP3Variant)var;
 - (NSString *)logDescription;
+- (UMMTP3PointCode *)maskedPointcode:(int)mask;
+- (NSString *)maskedPointcodeString:(int)mask;
+- (int)maxmask;
 @end

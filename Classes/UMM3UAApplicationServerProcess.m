@@ -599,9 +599,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
     NSArray *affpcs = [self getAffectedPointcodes:params];
     for (NSData *d in affpcs)
     {
-        int mask;
+        int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [as updateRouteUnavailable:pc];
+        [as updateRouteUnavailable:pc mask:mask forAsp:self];
     }
 }
 
@@ -620,9 +620,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
     NSArray *affpcs = [self getAffectedPointcodes:params];
     for (NSData *d in affpcs)
     {
-        int mask;
+        int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [as updateRouteAvailable:pc];
+        [as updateRouteAvailable:pc mask:mask forAsp:self];
     }
 }
 
@@ -641,9 +641,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
     NSArray *affpcs = [self getAffectedPointcodes:params];
     for (NSData *d in affpcs)
     {
-        int mask;
+        int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [as updateRouteRestricted:pc];
+        [as updateRouteRestricted:pc mask:mask forAsp:self];
     }
 }
 

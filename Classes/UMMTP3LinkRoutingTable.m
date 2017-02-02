@@ -29,39 +29,49 @@
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
 {
-    UMMTP3Route *r = routesByPointCode[@(pc.integerValue)];
-    if(r)
+    int maxmask = [pc maxmask];
+    for(int mask=0; mask <= maxmask; mask++)
     {
-       if(linksetName)
-       {
-           if([linksetName isEqualToString:r.linksetName])
-           {
-               return r;
-           }
-       }
-       else
-       {
-            return r;
-       }
+        NSString *key = [pc maskedPointcodeString:mask];
+        UMMTP3Route *r = routesByPointCode[key];
+        if(r)
+        {
+            if(linksetName)
+            {
+                if([linksetName isEqualToString:r.linksetName])
+                {
+                    return r;
+                }
+            }
+            else
+            {
+                return r;
+            }
+        }
     }
     return NULL;
 }
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linksetName
 {
-    UMMTP3Route *r = routesByPointCode[@(pc.integerValue)];
-    if(r)
+    int maxmask = [pc maxmask];
+    for(int mask=0;mask <= maxmask;mask++)
     {
-        if(linksetName)
+        NSString *key = [pc maskedPointcodeString:mask];
+        UMMTP3Route *r = routesByPointCode[key];
+        if(r)
         {
-            if(![linksetName isEqualToString:r.linksetName])
+            if(linksetName)
+            {
+                if(![linksetName isEqualToString:r.linksetName])
+                {
+                    return r;
+                }
+            }
+            else
             {
                 return r;
             }
-        }
-        else
-        {
-            return r;
         }
     }
     return NULL;
@@ -80,7 +90,7 @@
 }
 
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
 {
     UMMTP3Route *r = [self findRouteForDestination:pc linksetName:linksetName];
     if(r)
@@ -91,12 +101,15 @@
     {
         r = [[UMMTP3Route alloc]initWithPc:pc
                                linksetName:linksetName
-                                  priority:UMMTP3RoutePriority_undefined];
+                                  priority:UMMTP3RoutePriority_undefined
+                                      mask:mask];
         r.status = UMMTP3_ROUTE_ALLOWED;
-        routesByPointCode[@(pc.integerValue)] = r;
+        NSString *key = [pc maskedPointcodeString:mask];
+
+        routesByPointCode[r.routingTableKey] = r;
     }
 }
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
 {
     UMMTP3Route *r = [self findRouteForDestination:pc linksetName:linksetName];
     if(r)
@@ -105,14 +118,16 @@
     }
     else
     {
+
         r = [[UMMTP3Route alloc]initWithPc:pc
                                linksetName:linksetName
-                                  priority:UMMTP3RoutePriority_undefined];
+                                  priority:UMMTP3RoutePriority_undefined
+                                      mask:mask];
         r.status = UMMTP3_ROUTE_RESTRICTED;
-        routesByPointCode[@(pc.integerValue)] = r;
+        r.mask = mask;
     }
 }
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
 {
     UMMTP3Route *r = [self findRouteForDestination:pc linksetName:linksetName];
     if(r)
@@ -123,32 +138,13 @@
     {
         r = [[UMMTP3Route alloc]initWithPc:pc
                                linksetName:linksetName
-                                  priority:UMMTP3RoutePriority_undefined];
+                                  priority:UMMTP3RoutePriority_undefined
+                                      mask:mask];
         r.status = UMMTP3_ROUTE_PROHIBITED;
-        routesByPointCode[@(pc.integerValue)] = r;
+        routesByPointCode[r.routingTableKey] = r;
     }
 }
 
-/* for routing tables which have only one entry per DPC. Like on a linkset */
-- (void) addDestination:(UMMTP3PointCode *)pc
-            linksetName:(NSString *)linksetName
-{
-    UMMTP3Route *r = [[UMMTP3Route alloc]initWithPc:pc linksetName:linksetName priority:UMMTP3RoutePriority_undefined];
-    routesByPointCode[@(pc.integerValue)] = r;
-}
-
-- (void) removeDestination:(UMMTP3PointCode *)pc
-         linksetName:(NSString *)linksetName
-{
-    UMMTP3Route *r= routesByPointCode[@(pc.integerValue)];
-    if(r)
-    {
-        if( (NULL == linksetName) || ([r.linksetName isEqualToString:linksetName]))
-        {
-            [routesByPointCode removeObjectForKey:@(pc.integerValue)];
-        }
-    }
-}
 
 - (UMSynchronizedDictionary *)objectValue
 {

@@ -411,7 +411,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp
 {
     activeCount++;
-    [routingTable updateRouteAvailable:adjacentPointCode linksetName:name];
+    [routingTable updateRouteAvailable:adjacentPointCode mask:0 linksetName:name];
     if(trafficMode == UMM3UATrafficMode_override)
     {
         NSArray *keys = [applicationServerProcesses allKeys];
@@ -451,23 +451,23 @@ static const char *m3ua_param_name(uint16_t param_type)
     }
     if(somethingsActive == NO)
     {
-        [routingTable updateRouteUnavailable:adjacentPointCode linksetName:name];
+        [routingTable updateRouteUnavailable:adjacentPointCode mask:0 linksetName:name];
     }
 }
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
 {
-    [routingTable updateRouteAvailable:pc linksetName:name];
+    [routingTable updateRouteAvailable:pc mask:mask linksetName:name];
 }
 
--(void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+-(void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
 {
-    [routingTable updateRouteUnavailable:pc linksetName:name];
+    [routingTable updateRouteUnavailable:pc mask:mask linksetName:name];
 }
 
--(void)updateRouteRestricted:(UMMTP3PointCode *)pc forAsp:(UMM3UAApplicationServerProcess *)asp
+-(void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
 {
-    [routingTable updateRouteRestricted:pc linksetName:name];
+    [routingTable updateRouteRestricted:pc mask:mask linksetName:name];
 }
 
 - (void)routeUpdateAll:(UMMTP3RouteStatus)status
@@ -567,7 +567,8 @@ static const char *m3ua_param_name(uint16_t param_type)
     networkIndicator = -1;
     speed = -1;
     trafficMode = UMM3UATrafficMode_loadshare;
-
+    NSString *apc;
+    NSString *opc;
     for(NSString *key in cfg)
     {
         NSString *value = [cfg[key] stringValue];
@@ -581,7 +582,11 @@ static const char *m3ua_param_name(uint16_t param_type)
         }
         else if([key isCaseInsensitiveLike:@"apc"])
         {
-            self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:value variant:variant];
+            apc = value;
+        }
+        else if([key isCaseInsensitiveLike:@"opc"])
+        {
+            opc = value;
         }
         else if ([key isCaseInsensitiveLike:@"speed"])
         {
@@ -677,13 +682,21 @@ static const char *m3ua_param_name(uint16_t param_type)
             }
         }
     }
-    if(localPointCode == NULL)
-    {
-        localPointCode = mtp3.opc;
-    }
-    if(variant==UMMTP3Variant_Undefined)
+    if((mtp3) && (variant==UMMTP3Variant_Undefined))
     {
         variant = mtp3.variant;
+    }
+    if(variant == UMMTP3Variant_Undefined)
+    {
+        variant = UMMTP3Variant_ITU;
+    }
+    if(opc)
+    {
+        self.localPointCode = [[UMMTP3PointCode alloc]initWithString:opc variant:variant];
+    }
+    else
+    {
+        localPointCode = mtp3.opc;
     }
     if(networkIndicator == -1)
     {
@@ -693,6 +706,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         speed = 100.0;
     }
+    self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apc variant:variant];
 }
 
 - (void)m3uaCongestion:(UMM3UAApplicationServerProcess *)asp

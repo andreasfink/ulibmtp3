@@ -28,6 +28,7 @@
 
 - (UMMTP3PointCode *)initWithString:(NSString *)str variant:(UMMTP3Variant)var
 {
+    UMAssert(var != UMMTP3Variant_Undefined,@"Pointcode Variant is undefined");
     self = [super init];
     if(self)
     {
@@ -385,4 +386,40 @@
     return NULL;
 }
 
+- (UMMTP3PointCode *)maskedPointcode:(int)mask
+{
+    if(mask == 0)
+    {
+        return self;
+    }
+    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]init];
+    pc.variant = self.variant;
+    int maskbits;
+    if(variant == UMMTP3Variant_ITU)
+    {
+        maskbits = 0x3FFF;
+    }
+    else
+    {
+        int maskbits = 0xFFFFFF;
+    }
+    maskbits = maskbits << mask;
+    pc.pc = self.pc & maskbits;
+    return pc;
+}
+
+- (int)maxmask
+{
+    if(variant==UMMTP3Variant_ITU)
+    {
+        return 14;
+    }
+    return 24;
+}
+
+- (NSString *)maskedPointcodeString:(int)mask
+{
+    UMMTP3PointCode *pc = [self maskedPointcode:mask];
+    return [NSString stringWithFormat:@"%@/%d",pc.stringValue,([self maxmask]-mask)];
+}
 @end
