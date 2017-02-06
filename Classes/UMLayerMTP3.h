@@ -60,8 +60,8 @@ typedef enum UMMTP3_Error
 @property (readwrite,assign)    int                 networkIndicator;
 @property (readwrite,assign)    UMMTP3Variant       variant;
 @property (readwrite,strong)    UMMTP3PointCode     *opc;
-@property (readwrite,strong)    UMMTP3Route *defaultRoute;
-@property (readwrite,assign)    BOOL ready;
+@property (readwrite,strong)    UMMTP3Route         *defaultRoute;
+@property (readwrite,assign)    BOOL                ready;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
 

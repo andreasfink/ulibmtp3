@@ -409,11 +409,14 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)aspUp:(UMM3UAApplicationServerProcess *)asp
 {
     upCount++;
+    [self updateLinksetStatus];
+
 }
 
 - (void)aspDown:(UMM3UAApplicationServerProcess *)asp
 {
     upCount--;
+    [self updateLinksetStatus];
 }
 
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp
@@ -437,6 +440,7 @@ static const char *m3ua_param_name(uint16_t param_type)
             }
         }
     }
+    [self updateLinksetStatus];
 }
 
 - (void)aspInactive:(UMM3UAApplicationServerProcess *)asp
@@ -461,6 +465,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         [routingTable updateRouteUnavailable:adjacentPointCode mask:0 linksetName:name];
     }
+    [self updateLinksetStatus];
 }
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
