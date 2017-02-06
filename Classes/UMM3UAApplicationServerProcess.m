@@ -1549,52 +1549,52 @@ static const char *get_sctp_status_string(SCTP_Status status)
     for(NSString *key in cfg)
     {
         id value = cfg[key];
-        if([key isCaseInsensitiveLike:@"name"])
+        if([key isEqualToStringCaseInsensitive:@"name"])
         {
             name =  [value stringValue];
         }
-        else if([key isCaseInsensitiveLike:@"attach-to"])
+        else if([key isEqualToStringCaseInsensitive:@"attach-to"])
         {
             NSString *attachTo =  [value stringValue];
             sctpLink = [appContext getSCTP:attachTo];
         }
-        else if([key isCaseInsensitiveLike:@"m3ua-as"])
+        else if([key isEqualToStringCaseInsensitive:@"m3ua-as"])
         {
             NSString *as_name =  [value stringValue];
             as = [appContext getM3UA_AS:as_name];
         }
-        else if ([key isCaseInsensitiveLike:@"speed"])
+        else if ([key isEqualToStringCaseInsensitive:@"speed"])
         {
             speed = [value doubleValue];
         }
-        else if ([key isCaseInsensitiveLike:@"reopen-timer1"])
+        else if ([key isEqualToStringCaseInsensitive:@"reopen-timer1"])
         {
             reopen_timer1_value = [value doubleValue];
         }
-        else if ([key isCaseInsensitiveLike:@"reopen-timer2"])
+        else if ([key isEqualToStringCaseInsensitive:@"reopen-timer2"])
         {
             reopen_timer2_value = [value doubleValue];
         }
-        else if ([key isCaseInsensitiveLike:@"linktest-timer"])
+        else if ([key isEqualToStringCaseInsensitive:@"linktest-timer"])
         {
             linktest_timer_value = [value doubleValue];
         }
-        else if ([key isCaseInsensitiveLike:@"variant"])
+        else if ([key isEqualToStringCaseInsensitive:@"variant"])
         {
             NSString *s = [value stringValue];
-            if([s isCaseInsensitiveLike:@"itu"])
+            if([s isEqualToStringCaseInsensitive:@"itu"])
             {
                 variant = UMMTP3Variant_ITU;
             }
-            else if([s isCaseInsensitiveLike:@"ansi"])
+            else if([s isEqualToStringCaseInsensitive:@"ansi"])
             {
                 variant = UMMTP3Variant_ANSI;
             }
-            else if([s isCaseInsensitiveLike:@"china"])
+            else if([s isEqualToStringCaseInsensitive:@"china"])
             {
                 variant = UMMTP3Variant_China;
             }
-            else if([s isCaseInsensitiveLike:@"japan"])
+            else if([s isEqualToStringCaseInsensitive:@"japan"])
             {
                 variant = UMMTP3Variant_Japan;
             }
@@ -1630,7 +1630,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         {
             [self logDebug:@"reopen_timer1_fires"];
         }
-        switch(status)
+        switch(self.status)
         {
             case M3UA_STATUS_OFF:
                 if(logLevel == UMLOG_DEBUG)
