@@ -587,7 +587,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processDUNA:(UMSynchronizedSortedDictionary *)params
 {
-    int sls = -200;
     if(logLevel == UMLOG_DEBUG)
     {
         [self logDebug:@"processDUNA"];
@@ -607,8 +606,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processDAVA:(UMSynchronizedSortedDictionary *)params
 {
-    int sls = -200;
-
     if(logLevel == UMLOG_DEBUG)
     {
         [self logDebug:@"processDAVA"];
@@ -628,8 +625,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processDAUD:(UMSynchronizedSortedDictionary *)params
 {
-    int sls = -200;
-
     if(logLevel == UMLOG_DEBUG)
     {
         [self logDebug:@"processDAUD"];
@@ -1632,17 +1627,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
         }
         switch(self.status)
         {
-            case M3UA_STATUS_OFF:
-                if(logLevel == UMLOG_DEBUG)
-                {
-                    [self logDebug:@"OFF state. Asking SCTP to power on the link"];
-                }
-                [reopen_timer1 stop];
-                [reopen_timer2 stop];
-                [linktest_timer stop];
-                [sctpLink openFor:self];
-                [reopen_timer2 start];
-                break;
             case M3UA_STATUS_OOS:
                 if(logLevel == UMLOG_DEBUG)
                 {
@@ -1682,6 +1666,20 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 [reopen_timer2 stop];
                 [linktest_timer stop];
                 break;
+            case M3UA_STATUS_OFF:
+            case M3UA_STATUS_UNUSED:
+            default:
+                if(logLevel == UMLOG_DEBUG)
+                {
+                    [self logDebug:@"OFF state. Asking SCTP to power on the link"];
+                }
+                [reopen_timer1 stop];
+                [reopen_timer2 stop];
+                [linktest_timer stop];
+                [sctpLink openFor:self];
+                [reopen_timer2 start];
+                break;
+
         }
     }
 }
@@ -1753,8 +1751,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [self logDebug:@"linktest_timer_fires"];
         }
 
-        uint32_t traffic_mode_type = htonl(traffic_mode_type);
-
         if(aspup_received==1)
         {
             /* Lets send ASPAC or ASPIA */
@@ -1765,7 +1761,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             else
             {
                 UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-                pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(traffic_mode_type);
+                pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(as.trafficMode);
                 [self sendASPAC:pl];
             }
         }

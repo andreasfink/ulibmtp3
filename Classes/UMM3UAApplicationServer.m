@@ -16,6 +16,14 @@
 #import "UMMTP3LinkRoutingTable.h"
 #import "UMMTP3HeadingCode.h"
 
+/* for arc4random */
+#ifdef __APPLE__
+#include <stdlib.h>
+#else
+#include <bsd/stdlib.h>
+#endif
+
+
 #define	M3UA_CLASS_TYPE_ERR			0x0000
 #define M3UA_CLASS_TYPE_NTFY		0x0001
 #define	M3UA_CLASS_TYPE_DATA		0x0101
