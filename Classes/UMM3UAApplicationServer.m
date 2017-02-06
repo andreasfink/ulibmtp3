@@ -939,4 +939,46 @@ static const char *m3ua_param_name(uint16_t param_type)
        correlationId:correlation_id];
     }
 }
+
+- (void)updateLinksetStatus
+{
+    int oldActiveLinks;
+    int active = 0 ;
+    int inactive = 0;
+    int ready = 0;
+    @synchronized(applicationServerProcesses)
+    {
+        oldActiveLinks = activeLinks;
+
+        NSArray *keys = [applicationServerProcesses allKeys];
+        for (NSString *key in keys)
+        {
+            UMM3UAApplicationServerProcess *link = applicationServerProcesses[key];
+            switch(link.status)
+            {
+                case M3UA_STATUS_UNUSED:
+                case M3UA_STATUS_OFF:
+                case M3UA_STATUS_OOS:
+                    break;
+                case M3UA_STATUS_BUSY:
+                    ready++;
+                    break;
+                case M3UA_STATUS_INACTIVE:
+                    inactive++;
+                    break;
+                case M3UA_STATUS_IS:
+                    active++;
+                    break;
+            }
+        }
+        activeLinks = active;
+        inactiveLinks = inactive;
+        readyLinks = ready;
+        if(activeLinks > 0)
+        {
+            mtp3.ready = YES;
+        }
+    }
+}
+
 @end
