@@ -572,42 +572,42 @@ static const char *m3ua_param_name(uint16_t param_type)
     for(NSString *key in cfg)
     {
         NSString *value = [cfg[key] stringValue];
-        if([key isCaseInsensitiveLike:@"name"])
+        if([key isEqualToStringCaseInsensitive:@"name"])
         {
             self.name =  [value stringValue];
         }
-        else if([key isCaseInsensitiveLike:@"mtp3"])
+        else if([key isEqualToStringCaseInsensitive:@"mtp3"])
         {
             mtp3 = [appContext getMTP3:[value stringValue]];
         }
-        else if([key isCaseInsensitiveLike:@"apc"])
+        else if([key isEqualToStringCaseInsensitive:@"apc"])
         {
             apc = value;
         }
-        else if([key isCaseInsensitiveLike:@"opc"])
+        else if([key isEqualToStringCaseInsensitive:@"opc"])
         {
             opc = value;
         }
-        else if ([key isCaseInsensitiveLike:@"speed"])
+        else if ([key isEqualToStringCaseInsensitive:@"speed"])
         {
             speed = [value doubleValue];
         }
-        else if ([key isCaseInsensitiveLike:@"variant"])
+        else if ([key isEqualToStringCaseInsensitive:@"variant"])
         {
             NSString *s = [value stringValue];
-            if([s isCaseInsensitiveLike:@"itu"])
+            if([s isEqualToStringCaseInsensitive:@"itu"])
             {
                 variant = UMMTP3Variant_ITU;
             }
-            else if([s isCaseInsensitiveLike:@"ansi"])
+            else if([s isEqualToStringCaseInsensitive:@"ansi"])
             {
                 variant = UMMTP3Variant_ANSI;
             }
-            else if([s isCaseInsensitiveLike:@"china"])
+            else if([s isEqualToStringCaseInsensitive:@"china"])
             {
                 variant = UMMTP3Variant_China;
             }
-            else if([s isCaseInsensitiveLike:@"japan"])
+            else if([s isEqualToStringCaseInsensitive:@"japan"])
             {
                 variant = UMMTP3Variant_Japan;
             }
@@ -616,32 +616,32 @@ static const char *m3ua_param_name(uint16_t param_type)
                 [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA variant '%@'",s]];
             }
         }
-        else if ([key isCaseInsensitiveLike:@"network-indicator"])
+        else if ([key isEqualToStringCaseInsensitive:@"network-indicator"])
         {
             NSString *s = [value stringValue];
-            if((  [s isCaseInsensitiveLike:@"international"])
-               || ([s isCaseInsensitiveLike:@"int"])
-               || ([s isCaseInsensitiveLike:@"0"]))
+            if((  [s isEqualToStringCaseInsensitive:@"international"])
+               || ([s isEqualToStringCaseInsensitive:@"int"])
+               || ([s isEqualToStringCaseInsensitive:@"0"]))
             {
                 networkIndicator = 0;
             }
-            else if(([s isCaseInsensitiveLike:@"national"])
-                || ([s isCaseInsensitiveLike:@"nat"])
-                || ([s isCaseInsensitiveLike:@"2"]))
+            else if(([s isEqualToStringCaseInsensitive:@"national"])
+                || ([s isEqualToStringCaseInsensitive:@"nat"])
+                || ([s isEqualToStringCaseInsensitive:@"2"]))
             {
                 networkIndicator = 1;
             }
-            else if(([s isCaseInsensitiveLike:@"spare"])
-                || ([s isCaseInsensitiveLike:@"international-spare"])
-                || ([s isCaseInsensitiveLike:@"int-spare"])
-                || ([s isCaseInsensitiveLike:@"1"]))
+            else if(([s isEqualToStringCaseInsensitive:@"spare"])
+                || ([s isEqualToStringCaseInsensitive:@"international-spare"])
+                || ([s isEqualToStringCaseInsensitive:@"int-spare"])
+                || ([s isEqualToStringCaseInsensitive:@"1"]))
             {
                 networkIndicator = 2;
             }
-            else if(([s isCaseInsensitiveLike:@"reserved"])
-                || ([s isCaseInsensitiveLike:@"national-reserved"])
-                || ([s isCaseInsensitiveLike:@"nat-reserved"])
-                || ([s isCaseInsensitiveLike:@"3"]))
+            else if(([s isEqualToStringCaseInsensitive:@"reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"3"]))
             {
                 networkIndicator = 3;
             }
@@ -651,27 +651,27 @@ static const char *m3ua_param_name(uint16_t param_type)
                 networkIndicator = 0;
             }
         }
-        else if([key isCaseInsensitiveLike:@"routing-key"])
+        else if([key isEqualToStringCaseInsensitive:@"routing-key"])
         {
             routingKey = [value integerValue];
         }
-        else if([key isCaseInsensitiveLike:@"network-appearance"])
+        else if([key isEqualToStringCaseInsensitive:@"network-appearance"])
         {
             networkAppearance = [value integerValue];
         }
-        else if([key isCaseInsensitiveLike:@"traffic-mode"])
+        else if([key isEqualToStringCaseInsensitive:@"traffic-mode"])
         {
 
             NSString *s = [value stringValue];
-            if([s isCaseInsensitiveLike:@"loadshare"])
+            if([s isEqualToStringCaseInsensitive:@"loadshare"])
             {
                 trafficMode = UMM3UATrafficMode_loadshare;
             }
-            else if([s isCaseInsensitiveLike:@"override"])
+            else if([s isEqualToStringCaseInsensitive:@"override"])
             {
                 trafficMode = UMM3UATrafficMode_override;
             }
-            else if([s isCaseInsensitiveLike:@"broadcast"])
+            else if([s isEqualToStringCaseInsensitive:@"broadcast"])
             {
                 trafficMode = UMM3UATrafficMode_broadcast;
             }

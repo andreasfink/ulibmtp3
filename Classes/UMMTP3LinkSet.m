@@ -2953,15 +2953,15 @@
             k1 = key;
             k2 = @"";
         }
-        if([key isCaseInsensitiveLike:@"apc"])
+        if([key isEqualToStringCaseInsensitive:@"apc"])
         {
             apcString  = value;
         }
-        else if([key isCaseInsensitiveLike:@"name"])
+        else if([key isEqualToStringCaseInsensitive:@"name"])
         {
             self.name =  [value stringValue];
         }
-        else if([k1 isCaseInsensitiveLike:@"attach-slc"])
+        else if([k1 isEqualToStringCaseInsensitive:@"attach-slc"])
         {
             int slc = [k2 intValue];
             NSString *m2pa_name = cfg[key];
@@ -2971,11 +2971,11 @@
             link.linkset = self;
             links[link.name] = link;
         }
-        else if([key isCaseInsensitiveLike:@"speed"])
+        else if([key isEqualToStringCaseInsensitive:@"speed"])
         {
             speed =  [cfg[key] doubleValue];
         }
-        else if([key isCaseInsensitiveLike:@"attach-to"])
+        else if([key isEqualToStringCaseInsensitive:@"attach-to"])
         {
             NSString *attachTo = [value stringValue];
             mtp3 = [appContext getMTP3:attachTo];
