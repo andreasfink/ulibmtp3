@@ -1047,8 +1047,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [self sendPduCT:M3UA_CLASS_TYPE_ASPIA_ACK pdu:paramsPdu stream:0];
 }
 
-
-
 -(void)sendASPDN:(UMSynchronizedSortedDictionary *)params
 {
     if(logLevel == UMLOG_DEBUG)
@@ -1204,7 +1202,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             }
             if(![linktest_timer isRunning])
             {
-                if(linktest_timer_value > 0)
+                if((linktest_timer_value > 0) && (linktest_timer))
                 {
                     [self logDebug:@" starting linktest_timer which was not running"];
                     [linktest_timer start];
@@ -1227,7 +1225,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         sltm_serial = 0;
         [self logDebug:@" starting reopen timer 2"];
         [reopen_timer2 start];
-        if(linktest_timer_value > 0)
+        if((linktest_timer_value > 0) && (linktest_timer))
         {
             [self logDebug:@" starting linktest_timer"];
             [linktest_timer stop];
@@ -1601,12 +1599,17 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
     reopen_timer1 = [[UMTimer alloc]initWithTarget:self
                                           selector:@selector(reopen_timer1_fires:)];
+    reopen_timer1.duration = reopen_timer1_value * 1000000;
+
     reopen_timer2 = [[UMTimer alloc]initWithTarget:self
                                           selector:@selector(reopen_timer2_fires:)];
-    if(linktest_timer_value>0)
+    reopen_timer2.duration = reopen_timer2_value * 1000000;
+
+    if(linktest_timer_value>0.00)
     {
         linktest_timer = [[UMTimer alloc]initWithTarget:self
                                                selector:@selector(linktest_timer_fires:)];
+        linktest_timer.duration = linktest_timer_value * 1000000;
     }
 
 

@@ -23,7 +23,7 @@
 #define	M3UA_DEFAULT_REOPEN1_TIMER	  3.000	/* reopen SCTP link after 3 seconds of being down */
 #define	M3UA_DEFAULT_REOPEN2_TIMER	120.000	/* once reopen order has been given, wait up to 2 minutes
 for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 timer and power it on again */
-#define	M3UA_DEFAULT_LINKTEST_TIMER	25-000 /* every so many miliseconds we send out a SLTM */
+#define	M3UA_DEFAULT_LINKTEST_TIMER	25.000 /* every so many seconds we send out a SLTM */
 #define M3UA_DEFAULT_SPEED      100;        /* default speed limit */
 
 @interface UMM3UAApplicationServer : UMMTP3LinkSet
