@@ -1166,7 +1166,7 @@
 
 - (void)msuIndication2:(NSData *)pdu label:(UMMTP3Label *)label  si:(int)si ni:(int) ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    int i;
+    int i=0;
     const uint8_t *data = pdu.bytes;
     NSUInteger maxlen = pdu.length;
     @try
