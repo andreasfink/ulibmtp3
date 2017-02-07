@@ -298,8 +298,8 @@
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link;
 - (void)updateLinksetStatus;
 
-- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc;
-- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc;
-- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc;
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
 
 @end

@@ -3939,29 +3939,55 @@
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     [routingTable updateRouteAvailable:pc mask:mask linksetName:name];
+    [mtp3 updateRouteAvailable:pc mask:mask linksetName:name];
 }
 
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
     [routingTable updateRouteRestricted:pc mask:mask linksetName:name];
+    [mtp3 updateRouteRestricted:pc mask:mask linksetName:name];
 }
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     [routingTable updateRouteUnavailable:pc mask:mask linksetName:name];
+    [mtp3 updateRouteUnavailable:pc mask:mask linksetName:name];
 }
 
-- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
-
+    if(mask != 0)
+    {
+        NSLog(@"We dont support advertizements with mask other than 0");
+    }
+    UMMTP3Label *label = [[UMMTP3Label alloc]init];
+    label.opc = self.localPointCode;
+    label.dpc = self.adjacentPointCode;
+    [self sendTFA:label destination:pc ni:networkIndicator mp:0 slc:0 link:NULL];
 }
-- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
-{
 
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
+{
+    if(mask != 0)
+    {
+        NSLog(@"We dont support advertizements with mask other than 0");
+    }
+    UMMTP3Label *label = [[UMMTP3Label alloc]init];
+    label.opc = self.localPointCode;
+    label.dpc = self.adjacentPointCode;
+    [self sendTFR:label destination:pc ni:networkIndicator mp:0 slc:0 link:NULL];
 }
-- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
-{
 
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
+{
+    if(mask != 0)
+    {
+        NSLog(@"We dont support advertizements with mask other than 0");
+    }
+    UMMTP3Label *label = [[UMMTP3Label alloc]init];
+    label.opc = self.localPointCode;
+    label.dpc = self.adjacentPointCode;
+    [self sendTFP:label destination:pc ni:networkIndicator mp:0 slc:0 link:NULL];
 }
 
 @end

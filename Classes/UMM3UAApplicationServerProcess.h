@@ -103,9 +103,9 @@
 - (void)processDEREG_REQ:(UMSynchronizedSortedDictionary *)params;
 - (void)processDEREG_RSP:(UMSynchronizedSortedDictionary *)params;
 
-- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc;
-- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc;
-- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc;
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
 
 -(void)sendPdu:(NSData *)data
          label:(UMMTP3Label *)label

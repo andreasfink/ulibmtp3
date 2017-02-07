@@ -1036,18 +1036,51 @@
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
-    [routingTable updateRouteAvailable:pc mask:(int)mask linksetName:name];
+    @synchronized(linksets)
+    {
+        for(NSString *linksetName in linksets)
+        {
+            if([linksetName isEqualToString:name])
+            {
+                continue; /* we dont advertize to the same link  what we learned from it */
+            }
+            UMMTP3LinkSet *linkset = linksets[linksetName];
+            [linkset advertizePointcodeAvailable:pc mask:mask];
+        }
+    }
 }
 
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 
 {
-    [routingTable updateRouteRestricted:pc mask:(int)mask linksetName:name];
+    @synchronized(linksets)
+    {
+        for(NSString *linksetName in linksets)
+        {
+            if([linksetName isEqualToString:name])
+            {
+                continue; /* we dont advertize to the same link  what we learned from it */
+            }
+            UMMTP3LinkSet *linkset = linksets[linksetName];
+            [linkset advertizePointcodeRestricted:pc mask:mask];
+        }
+    }
 }
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
-    [routingTable updateRouteUnavailable:pc mask:(int)mask linksetName:name];
+    @synchronized(linksets)
+    {
+        for(NSString *linksetName in linksets)
+        {
+            if([linksetName isEqualToString:name])
+            {
+                continue; /* we dont advertize to the same link  what we learned from it */
+            }
+            UMMTP3LinkSet *linkset = linksets[linksetName];
+            [linkset advertizePointcodeUnavailable:pc mask:mask];
+        }
+    }
 }
 
 - (UMMTP3RoutingTable *)routingTable

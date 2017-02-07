@@ -1791,24 +1791,24 @@ static const char *get_sctp_status_string(SCTP_Status status)
     return [NSData dataWithBytes:&bytes length:4];
 }
 
-- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:0]];
+    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:mask]];
     [self sendDAVA:pl];
 }
 
-- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:0]];
+    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:mask]];
     [self sendDAUD:pl];
 }
 
-- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:0]];
+    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:mask]];
     [self sendDUNA:pl];
 }
 

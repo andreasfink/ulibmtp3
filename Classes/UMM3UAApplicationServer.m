@@ -890,30 +890,30 @@ static const char *m3ua_param_name(uint16_t param_type)
     return applicableProcesses[r];
 }
 
-- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     NSArray *arr = [self activeApplicationServerProcessesToUse];
     for(UMM3UAApplicationServerProcess *asp  in arr)
     {
-        [asp advertizePointcodeAvailable:pc];
+        [asp advertizePointcodeAvailable:pc mask:mask];
     }
 }
 
-- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
     NSArray *arr = [self activeApplicationServerProcessesToUse];
     for(UMM3UAApplicationServerProcess *asp  in arr)
     {
-        [asp advertizePointcodeRestricted:pc];
+        [asp advertizePointcodeRestricted:pc mask:mask];
     }
 }
 
-- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     NSArray *arr = [self activeApplicationServerProcessesToUse];
     for(UMM3UAApplicationServerProcess *asp  in arr)
     {
-        [asp advertizePointcodeUnavailable:pc];
+        [asp advertizePointcodeUnavailable:pc mask:mask];
     }
 }
 
