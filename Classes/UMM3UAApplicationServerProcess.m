@@ -366,7 +366,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
     *mask = bytes[0];
     int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:int_pc variant:variant];
+    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:int_pc variant:as.variant];
     return pc;
 }
 
@@ -401,7 +401,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     const uint8_t *bytes = affpc_data.bytes;
 
     int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:int_pc variant:variant];
+    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:int_pc variant:as.variant];
     return pc;
 }
 
@@ -473,12 +473,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
     i = 0;
     /* here M3UA starts */
     uint32_t opc_int = ntohl(*(uint32_t *)&data3[i]);
-    opc =     [[UMMTP3PointCode alloc]initWitPc:opc_int variant:variant];
+    opc =     [[UMMTP3PointCode alloc]initWitPc:opc_int variant:as.variant];
     i += 4;
 
     uint32_t dpc_int  = ntohl(*(uint32_t *)&data3[i]);
     i += 4;
-    dpc =     [[UMMTP3PointCode alloc]initWitPc:dpc_int variant:variant];
+    dpc =     [[UMMTP3PointCode alloc]initWitPc:dpc_int variant:as.variant];
 
     si	= data3[i++];
     ni	= data3[i++];
@@ -1536,8 +1536,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
     speed = M3UA_DEFAULT_SPEED;
     name = NULL;
-    variant = UMMTP3Variant_Undefined;
-
 
     for(NSString *key in cfg)
     {
@@ -1571,30 +1569,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
         else if ([key isEqualToStringCaseInsensitive:@"linktest-timer"])
         {
             linktest_timer_value = [value doubleValue];
-        }
-        else if ([key isEqualToStringCaseInsensitive:@"variant"])
-        {
-            NSString *s = [value stringValue];
-            if([s isEqualToStringCaseInsensitive:@"itu"])
-            {
-                variant = UMMTP3Variant_ITU;
-            }
-            else if([s isEqualToStringCaseInsensitive:@"ansi"])
-            {
-                variant = UMMTP3Variant_ANSI;
-            }
-            else if([s isEqualToStringCaseInsensitive:@"china"])
-            {
-                variant = UMMTP3Variant_China;
-            }
-            else if([s isEqualToStringCaseInsensitive:@"japan"])
-            {
-                variant = UMMTP3Variant_Japan;
-            }
-            else
-            {
-                [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA variant '%@'",s]];
-            }
         }
     }
     reopen_timer1 = [[UMTimer alloc]initWithTarget:self

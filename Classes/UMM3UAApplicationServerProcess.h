@@ -37,7 +37,7 @@
     BOOL                        standby_mode;
     NSMutableData       *incomingStream0;
     NSMutableData       *incomingStream1;
-    UMMTP3Variant       variant;
+//    UMMTP3Variant       variant;
 
     UMTimer             *linktest_timer;
     UMTimer             *reopen_timer1;
