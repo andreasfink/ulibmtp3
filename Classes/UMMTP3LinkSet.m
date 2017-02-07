@@ -1171,18 +1171,13 @@
     NSUInteger maxlen = pdu.length;
     @try
     {
-
         if(logLevel <= UMLOG_DEBUG)
         {
-            [logFeed debugText:@" MSU (Message Signal Unit)"];
-        }
-
-        if(logLevel <= UMLOG_DEBUG)
-        {
-            [logFeed debugText:@" MSU (Message Signal Unit)"];
             [logFeed debugText:[NSString stringWithFormat:@"   si: [%d]",si]];
             [logFeed debugText:[NSString stringWithFormat:@"   ni: [%d]",ni]];
             [logFeed debugText:[NSString stringWithFormat:@"   mp: [%d]",mp]];
+            [logFeed debugText:[NSString stringWithFormat:@"  opc: %@",label.opc.description]];
+            [logFeed debugText:[NSString stringWithFormat:@"  dpc: %@",label.dpc.description]];
         }
         if(ni != networkIndicator)
         {
@@ -1199,12 +1194,6 @@
                     ]);
 
         }
-        if(logLevel <= UMLOG_DEBUG)
-        {
-            [logFeed debugText:[NSString stringWithFormat:@"  opc: %@",label.opc.description]];
-            [logFeed debugText:[NSString stringWithFormat:@"  dpc: %@",label.dpc.description]];
-        }
-
         if(link && (link.m2pa_status != M2PA_STATUS_IS))
         {
             /* All messages to another destination received at a signalling point whose MTP is restarting are discarded.*/

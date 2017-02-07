@@ -760,11 +760,6 @@ static const char *m3ua_param_name(uint16_t param_type)
         if(logLevel <= UMLOG_DEBUG)
         {
             [logFeed debugText:@" MSU (Message Signal Unit)"];
-        }
-
-        if(logLevel <= UMLOG_DEBUG)
-        {
-            [logFeed debugText:@" MSU (Message Signal Unit)"];
             [logFeed debugText:[NSString stringWithFormat:@"   si: [%d]",si]];
             [logFeed debugText:[NSString stringWithFormat:@"   ni: [%d]",ni]];
             [logFeed debugText:[NSString stringWithFormat:@"   mp: [%d]",mp]];
