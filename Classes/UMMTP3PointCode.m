@@ -392,20 +392,20 @@
     {
         return self;
     }
-    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]init];
-    pc.variant = self.variant;
+    UMMTP3PointCode *pc2 = [[UMMTP3PointCode alloc]init];
+    pc2.variant = self.variant;
     int maskbits;
-    if(variant == UMMTP3Variant_ITU)
+    if(UMMTP3Variant_ITU == self.variant)
     {
         maskbits = 0x3FFF;
     }
     else
     {
-        int maskbits = 0xFFFFFF;
+        maskbits = 0xFFFFFF;
     }
     maskbits = maskbits << mask;
-    pc.pc = self.pc & maskbits;
-    return pc;
+    pc2.pc = self.pc & maskbits;
+    return pc2;
 }
 
 - (int)maxmask
@@ -419,7 +419,7 @@
 
 - (NSString *)maskedPointcodeString:(int)mask
 {
-    UMMTP3PointCode *pc = [self maskedPointcode:mask];
-    return [NSString stringWithFormat:@"%@/%d",pc.stringValue,([self maxmask]-mask)];
+    UMMTP3PointCode *pc2 = [self maskedPointcode:mask];
+    return [NSString stringWithFormat:@"%@/%d",pc2.stringValue,([self maxmask]-mask)];
 }
 @end

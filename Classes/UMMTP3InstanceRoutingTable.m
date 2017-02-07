@@ -35,7 +35,7 @@
     self = [super init];
     if(self)
     {
-        routingTablesByLinkset = [[UMSynchronizedDictionary alloc]init];
+        routingTablesByLinkset = [[UMSynchronizedSortedDictionary alloc]init];
     }
     return self;
 }

@@ -104,8 +104,6 @@
                                   priority:UMMTP3RoutePriority_undefined
                                       mask:mask];
         r.status = UMMTP3_ROUTE_ALLOWED;
-        NSString *key = [pc maskedPointcodeString:mask];
-
         routesByPointCode[r.routingTableKey] = r;
     }
 }
