@@ -28,7 +28,7 @@
 {
     UMLayerMTP3 __weak          *mtp3;
     NSString                    *name;
-    NSMutableDictionary         *links;
+    UMSynchronizedSortedDictionary *links;
     UMLogLevel                  logLevel;
     UMMTP3Variant               variant;
     UMMTP3PointCode             *localPointCode;
@@ -54,7 +54,7 @@
 @property(readwrite,strong) UMLogFeed   *log;
 @property(readwrite,assign) UMLogLevel logLevel;
 @property(readwrite,strong) NSString *name;
-@property(readwrite,strong) NSMutableDictionary *links;
+@property(readwrite,strong) UMSynchronizedSortedDictionary *links;
 @property(readwrite,weak)   UMLayerMTP3 *mtp3;
 @property(readwrite,assign) UMMTP3Variant variant;
 @property(readwrite,strong) UMMTP3PointCode *localPointCode;

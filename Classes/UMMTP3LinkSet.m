@@ -48,7 +48,7 @@
     self = [super init];
     if(self)
     {
-        links =[[NSMutableDictionary alloc]init];
+        links = [[UMSynchronizedSortedDictionary alloc]init];
         name = @"untitled";
 
         activeLinks = -1;
@@ -87,54 +87,45 @@
     @synchronized(links)
     {
         links = NULL;
-        links = [[NSMutableDictionary alloc]init];
+        links = [[UMSynchronizedSortedDictionary alloc]init];
         totalLinks=0;
     }
 }
 
 - (void)removeLinkByName:(NSString *)n
 {
-    @synchronized(links)
-    {
-        UMMTP3Link *lnk = links[n];
-        lnk.linkset = NULL;
-        [links removeObjectForKey:n];
-    }
+    UMMTP3Link *lnk = links[n];
+    lnk.linkset = NULL;
+    [links removeObjectForKey:n];
 }
 
 - (UMMTP3Link *)getLinkByName:(NSString *)n
 {
-    @synchronized(links)
-    {
-        return links[n];
-    }
+    return links[n];
 }
 
 - (UMMTP3Link *)getAnyLink
 {
-    @synchronized(links)
+    NSArray *linkKeys = [links allKeys];
+    NSMutableArray *activeLinkKeys = [[NSMutableArray alloc]init];
+    for(NSString *key in linkKeys)
     {
-        NSArray *linkKeys = [links allKeys];
-        NSMutableArray *activeLinkKeys = [[NSMutableArray alloc]init];
-        for(NSString *key in linkKeys)
-        {
-            UMMTP3Link *link = links[key];
-            if(link.m2pa_status == M2PA_STATUS_IS)
-            {
-                [activeLinkKeys addObject:key];
-            }
-        }
-        NSUInteger n = [activeLinkKeys count];
-        if(n==0)
-        {
-            return NULL;
-        }
-        linkSelector = linkSelector + 1;
-        linkSelector = linkSelector % n;
-        NSString *key = activeLinkKeys[linkSelector];
         UMMTP3Link *link = links[key];
-        return link;
-    }    
+        if(link.m2pa_status == M2PA_STATUS_IS)
+        {
+            [activeLinkKeys addObject:key];
+        }
+    }
+    NSUInteger n = [activeLinkKeys count];
+    if(n==0)
+    {
+        return NULL;
+    }
+    linkSelector = linkSelector + 1;
+    linkSelector = linkSelector % n;
+    NSString *key = activeLinkKeys[linkSelector];
+    UMMTP3Link *link = links[key];
+    return link;
 }
 
 /* as we use link names in the form <linkset>:<slc> we can not allow colons in linkset names so we remove them */
@@ -3813,11 +3804,7 @@
 - (UMMTP3Link *)linkForSlc:(int)slc
 {
     NSString *linkName = [NSString stringWithFormat:@"%@:%d",name,slc];
-    UMMTP3Link *link;
-    @synchronized(links)
-    {
-        link = links[linkName];
-    }
+    UMMTP3Link *link = links[linkName];
     return link;
 }
 
