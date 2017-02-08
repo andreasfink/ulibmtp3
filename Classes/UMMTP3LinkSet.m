@@ -56,6 +56,7 @@
         readyLinks = -1;
         totalLinks = -1;
         congestionLevel = 0;
+        networkIndicator = -1;
         routingTable = [[UMMTP3LinkRoutingTable alloc]init];
     }
     return self;
@@ -2212,6 +2213,8 @@
 {
     [self removeAllLinks];
     NSString *apcString = @"";
+    NSString *opc;
+
     for(NSString *key in cfg)
     {
         id value = cfg[key];
@@ -2249,6 +2252,46 @@
         {
             speed =  [cfg[key] doubleValue];
         }
+        else if([key isEqualToStringCaseInsensitive:@"opc"])
+        {
+            opc = value;
+        }
+        else if([key isEqualToStringCaseInsensitive:@"network-indicator"])
+        {
+
+            NSString *s = [value stringValue];
+            if((  [s isEqualToStringCaseInsensitive:@"international"])
+               || ([s isEqualToStringCaseInsensitive:@"int"])
+               || ([s isEqualToStringCaseInsensitive:@"0"]))
+            {
+                networkIndicator = 0;
+            }
+            else if(([s isEqualToStringCaseInsensitive:@"national"])
+                    || ([s isEqualToStringCaseInsensitive:@"nat"])
+                    || ([s isEqualToStringCaseInsensitive:@"2"]))
+            {
+                networkIndicator = 1;
+            }
+            else if(([s isEqualToStringCaseInsensitive:@"spare"])
+                    || ([s isEqualToStringCaseInsensitive:@"international-spare"])
+                    || ([s isEqualToStringCaseInsensitive:@"int-spare"])
+                    || ([s isEqualToStringCaseInsensitive:@"1"]))
+            {
+                networkIndicator = 2;
+            }
+            else if(([s isEqualToStringCaseInsensitive:@"reserved"])
+                    || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
+                    || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
+                    || ([s isEqualToStringCaseInsensitive:@"3"]))
+            {
+                networkIndicator = 3;
+            }
+            else
+            {
+                [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
+                networkIndicator = 0;
+            }
+        }
         else if([key isEqualToStringCaseInsensitive:@"attach-to"])
         {
             NSString *attachTo = [value stringValue];
@@ -2267,7 +2310,26 @@
     self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:mtp3.variant];
 
     self.name = name;
-
+    if((mtp3) && (variant==UMMTP3Variant_Undefined))
+    {
+        variant = mtp3.variant;
+    }
+    if(variant == UMMTP3Variant_Undefined)
+    {
+        variant = UMMTP3Variant_ITU;
+    }
+    if(opc)
+    {
+        self.localPointCode = [[UMMTP3PointCode alloc]initWithString:opc variant:variant];
+    }
+    else
+    {
+        localPointCode = mtp3.opc;
+    }
+    if(networkIndicator == -1)
+    {
+        networkIndicator = mtp3.networkIndicator;
+    }
 }
 
 #pragma mark -
@@ -3177,7 +3239,11 @@
             UMMTP3Label *label = [[UMMTP3Label alloc]init];
             label.opc = self.localPointCode;
             label.dpc = self.adjacentPointCode;
-            [self sendTRA:label ni:networkIndicator mp:0 slc:0 link:NULL];
+            [self sendTRA:label
+                       ni:networkIndicator
+                       mp:0
+                      slc:0
+                     link:NULL];
         }
         activeLinks = active;
         inactiveLinks = inactive;

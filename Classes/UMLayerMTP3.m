@@ -98,8 +98,14 @@
         ls.logFeed.subsection = @"mtp3_linkset";
         ls.logFeed.name = ls.name;
         ls.logLevel = self.logFeed.level;
-        ls.localPointCode = self.opc;
-        ls.networkIndicator = self.networkIndicator;
+        if(ls.localPointCode == NULL)
+        {
+            ls.localPointCode = self.opc;
+        }
+        if(ls.networkIndicator < 0)
+        {
+            ls.networkIndicator = self.networkIndicator;
+        }
         linksets[ls.name]=ls;
     }
     [self refreshRoutingTable];
