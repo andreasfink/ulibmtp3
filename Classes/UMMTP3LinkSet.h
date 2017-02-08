@@ -283,7 +283,17 @@
 - (void)fisuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc;
 - (void)lssuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc;
 - (void)msuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc;
-- (void)msuIndication2:(NSData *)data label:(UMMTP3Label *)label  si:(int)si ni:(int) ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link;
+
+- (void)msuIndication2:(NSData *)pdu
+                 label:(UMMTP3Label *)label
+                    si:(int)si
+                    ni:(int)ni
+                    mp:(int)mp
+                   slc:(int)slc
+                  link:(UMMTP3Link *)link
+     networkAppearance:(NSData *)network_appearance
+         correlationId:(NSData *)correlation_id
+        routingContext:(NSData *)routing_context;
 
 - (BOOL) isFromAdjacentToLocal:(UMMTP3Label *)label;
 
