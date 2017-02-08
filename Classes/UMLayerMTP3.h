@@ -48,12 +48,12 @@ typedef enum UMMTP3_Error
 
 @interface UMLayerMTP3 : UMLayer<UMLayerM2PAUserProtocol>
 {
-    NSMutableDictionary *linksets;
-    UMMTP3Variant       variant;
-    int                 networkIndicator;
-    UMMTP3PointCode     *opc;
-    UMMTP3InstanceRoutingTable  *routingTable;
-    UMSynchronizedDictionary *userPart;
+    UMSynchronizedSortedDictionary  *linksets;
+    UMMTP3Variant                   variant;
+    int                             networkIndicator;
+    UMMTP3PointCode                 *opc;
+    UMMTP3InstanceRoutingTable      *routingTable;
+    UMSynchronizedSortedDictionary  *userPart;
     UMMTP3Route *defaultRoute;
     BOOL ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
 }

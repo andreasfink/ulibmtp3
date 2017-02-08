@@ -24,6 +24,6 @@
     UMSynchronizedSortedDictionary *routingTablesByLinkset;
 }
 
-- (UMMTP3InstanceRoutingTable *)initWithLinkSetArray:(NSDictionary *)arr;
+- (UMMTP3InstanceRoutingTable *)initWithLinkSetSortedDict:(UMSynchronizedSortedDictionary *)arr;
 
 @end

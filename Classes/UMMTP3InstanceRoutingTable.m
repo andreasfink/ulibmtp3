@@ -14,7 +14,7 @@
 
 @implementation UMMTP3InstanceRoutingTable
 
-- (UMMTP3InstanceRoutingTable *)initWithLinkSetArray:(NSDictionary *)linksets
+- (UMMTP3InstanceRoutingTable *)initWithLinkSetSortedDict:(UMSynchronizedSortedDictionary *)linksets
 {
     self = [super init];
     if(self)

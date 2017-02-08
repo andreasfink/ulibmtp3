@@ -71,9 +71,9 @@
 
 - (void)genericInitialisation
 {
-    linksets = [[NSMutableDictionary alloc]init];
-    userPart = [[UMSynchronizedDictionary  alloc]init];
-    routingTable = [[UMMTP3InstanceRoutingTable alloc]init];
+    linksets        = [[UMSynchronizedSortedDictionary alloc]init];
+    userPart        = [[UMSynchronizedSortedDictionary  alloc]init];
+    routingTable    = [[UMMTP3InstanceRoutingTable alloc]init];
 }
 
 
@@ -84,7 +84,7 @@
 {
     @synchronized(linksets)
     {
-        routingTable = [[UMMTP3InstanceRoutingTable alloc] initWithLinkSetArray:linksets];
+        routingTable = [[UMMTP3InstanceRoutingTable alloc] initWithLinkSetSortedDict:linksets];
     }
 }
 
@@ -116,7 +116,7 @@
     @synchronized(linksets)
     {
         linksets = NULL;
-        linksets = [[NSMutableDictionary alloc]init];
+        linksets = [[UMSynchronizedSortedDictionary alloc]init];
     }
     [self refreshRoutingTable];
 }

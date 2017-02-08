@@ -576,7 +576,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
              networkAppearance:network_appearance
                  correlationId:correlation_id
                 routingContext:routing_context];
-
             break;
     }
 }
