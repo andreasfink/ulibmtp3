@@ -1196,6 +1196,7 @@
             /* All messages to another destination received at a signalling point whose MTP is restarting are discarded.*/
             if(![label.dpc isEqualToPointCode:localPointCode])
             {
+                [self logMinorError:@"MTP_DECODE: no-relay-during-startup"];
                 @throw([NSException exceptionWithName:@"MTP_DECODE"
                                                reason:NULL
                                              userInfo:@{
@@ -1276,6 +1277,7 @@
                         }
                         if ((i+len)>maxlen)
                         {
+                            [self logMinorError:@"MTP_DECODE: MTP_PACKET_TOO_SHORT"];
                             @throw([NSException exceptionWithName:@"MTP_PACKET_TOO_SHORT"
                                                            reason:NULL
                                                          userInfo:@{
@@ -1315,7 +1317,7 @@
                         }
                         if(slc != slc2)
                         {
-                            [logFeed majorErrorText:@"SLTA SLC received is not matching the links configured SLC"];
+                            [self logMajorError:@"MTP_DECODE: SLTA SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
                         if ((i+len)>maxlen)
@@ -1342,6 +1344,7 @@
                     }
                         break;
                     default:
+                        [self logMinorError:[NSString stringWithFormat: @"MTP_PACKET_INVALID: unknown-heading 0x%02X received. Ignored",heading]];
                         @throw([NSException exceptionWithName:@"MTP_PACKET_INVALID"
                                                        reason:NULL
                                                      userInfo:@{
@@ -1359,7 +1362,7 @@
                 /* Signalling network testing and maintenance messages */
                 if(logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network testing and maintenance messages",si]];
+                    [self logDebug:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network testing and maintenance messages",si]];
                 }
                 int heading;
                 GRAB_BYTE(heading,data,i);
@@ -1383,11 +1386,12 @@
                         }
                         if(slc != slc2)
                         {
-                            [logFeed majorErrorText:@"SLTM: SLC received is not matching the links configured SLC"];
+                            [self logMajorError:@"SLTM: SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
                         if ((i+len)>maxlen)
                         {
+                            [self logMajorError:[NSString stringWithFormat:@"MTP_PACKET_TOO_SHORT. i = %d, len=%d, maxlen=%d",i,len,maxlen]];
                             @throw([NSException exceptionWithName:@"MTP_PACKET_TOO_SHORT"
                                                            reason:NULL
                                                          userInfo:@{
@@ -1427,11 +1431,12 @@
                         }
                         if(slc != slc2)
                         {
-                            [logFeed majorErrorText:@"SLTA SLC received is not matching the links configured SLC"];
+                            [self logMajorError:@"SLTA SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
                         if ((i+len)>maxlen)
                         {
+                            [self logMajorError:[NSString stringWithFormat:@"MTP_PACKET_TOO_SHORT. i = %d, len=%d, maxlen=%d",i,len,maxlen]];
                             @throw([NSException exceptionWithName:@"MTP_PACKET_TOO_SHORT"
                                                            reason:NULL
                                                          userInfo:@{
@@ -1455,6 +1460,7 @@
                     }
                         break;
                     default:
+                        [self logMajorError:[NSString stringWithFormat:@"MTP_DECODE. unknown-heading 0x02x",heading]];
                         @throw([NSException exceptionWithName:@"MTP_DECODE"
                                                        reason:NULL
                                                      userInfo:@{
@@ -1885,8 +1891,9 @@
     {
         NSDictionary *d = e.userInfo;
         NSString *desc = d[@"sysmsg"];
+        NSLog(@"Exception %@",e);
         [logFeed majorErrorText:desc];
-        [self protocolViolation];
+       // [self protocolViolation];
         return;
     }
 }
@@ -2878,13 +2885,12 @@
 - (NSDictionary *)config
 {
     NSMutableDictionary *config = [[NSMutableDictionary alloc]init];
-    @synchronized(links)
+    NSArray *allkeys = [links allKeys];
+
+    for(id key in allkeys)
     {
-        for(NSString *key in links)
-        {
-            UMMTP3Link *link = links[key];
-            config[[NSString stringWithFormat:@"attach-slc%d",link.slc]] = link.name;
-        }
+        UMMTP3Link *link = links[key];
+        config[[NSString stringWithFormat:@"attach-slc%d",link.slc]] = link.name;
     }
     config[@"dpc"] = [adjacentPointCode stringValue];
     return config;
@@ -2965,6 +2971,7 @@
             if(mtp3 == NULL)
             {
                 NSString *s = [NSString stringWithFormat:@"Can not find mtp3 layer '%@' referred from mtp3 linkset '%@'",attachTo,name];
+                [self logMajorError:s];
                 @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
                                                reason:s
                                              userInfo:NULL]);
