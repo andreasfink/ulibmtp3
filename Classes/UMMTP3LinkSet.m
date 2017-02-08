@@ -3287,6 +3287,12 @@
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
+    if(logLevel <=UMLOG_DEBUG)
+    {
+        NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        [self logDebug:s];
+    }
+
     [routingTable updateRouteUnavailable:pc mask:mask linksetName:name];
     [mtp3 updateRouteUnavailable:pc mask:mask linksetName:name];
 }

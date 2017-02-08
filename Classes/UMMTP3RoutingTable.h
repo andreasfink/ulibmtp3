@@ -19,14 +19,39 @@
 {
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset;
-- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset;
-- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset;
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linkset;
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linkset;
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linkset;
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
+                                    mask:(int)mask
+                             linksetName:(NSString *)linksetName
+                                   exact:(BOOL)exact;
+
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
+                                    mask:(int)mask
+                      excludeLinksetName:(NSString *)linksetName
+                                   exact:(BOOL)exact;
+
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc
+                                 mask:(int)mask
+                          linksetName:(NSString *)linksetName
+                                exact:(BOOL)exact;
+
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc
+                                 mask:(int)mask
+                   excludeLinksetName:(NSString *)linksetName
+                                exact:(BOOL)exact;
+
+
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
+                        mask:(int)mask
+                 linksetName:(NSString *)linkset;
+
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc
+                         mask:(int)mask
+                  linksetName:(NSString *)linkset;
+
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+                          mask:(int)mask
+                   linksetName:(NSString *)linkset;
 
 - (UMSynchronizedSortedDictionary *)objectValue;
 

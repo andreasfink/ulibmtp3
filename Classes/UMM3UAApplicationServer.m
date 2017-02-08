@@ -758,15 +758,17 @@ static const char *m3ua_param_name(uint16_t param_type)
     }
     if (trafficMode == UMM3UATrafficMode_broadcast)
     {
+        /* in broadcast mode, we send to all */
         return applicableProcesses;
     }
+    /* in any other mode, we only send to one */
     NSInteger n = [applicableProcesses count];
-    if(n==1)
+    if(n<=1)
     {
         return applicableProcesses;
     }
     uint32_t r = arc4random_uniform(n);
-    return applicableProcesses[r];
+    return @[applicableProcesses[r]]; /* we return array including only one of many */
 }
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask

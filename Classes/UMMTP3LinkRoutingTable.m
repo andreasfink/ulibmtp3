@@ -27,12 +27,29 @@
     return self;
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
+                                    mask:(int)mask
+                             linksetName:(NSString *)linksetName
+                                   exact:(BOOL)exact
 {
-    int maxmask = [pc maxmask];
-    for(int mask=0; mask <= maxmask; mask++)
+    /* this route searches for routes matching exact (orBigger==NO) or super routes */
+    /* mask for a pointcode specific is 14 or 24 (ITU vs ANSI */
+    /* if orBigger=YES then it would look for x-xxx-x/14 and then for x-xxx-y/13 etc... */
+    /* the mask integer indicates how many bits are in the node part (so its value is 0 for a /14, 1 for /13 etc) */
+
+    int startmask = mask;
+    int endmask;
+    if(exact==YES)
     {
-        NSString *key = [pc maskedPointcodeString:mask];
+        endmask = startmask;
+    }
+    else
+    {
+        endmask = [pc maxmask];
+    }
+    for(int m=startmask; m <= endmask; m++)
+    {
+        NSString *key = [pc maskedPointcodeString:m];
         UMMTP3Route *r = routesByPointCode[key];
         if(r)
         {
@@ -52,12 +69,24 @@
     return NULL;
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linksetName
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
+                                    mask:(int)mask
+                      excludeLinksetName:(NSString *)linksetName
+                                   exact:(BOOL)exact
 {
-    int maxmask = [pc maxmask];
-    for(int mask=0;mask <= maxmask;mask++)
+    int startmask = mask;
+    int endmask;
+    if(exact==YES)
     {
-        NSString *key = [pc maskedPointcodeString:mask];
+        endmask = startmask;
+    }
+    else
+    {
+        endmask = [pc maxmask];
+    }
+    for(int m=startmask; m <= endmask; m++)
+    {
+        NSString *key = [pc maskedPointcodeString:m];
         UMMTP3Route *r = routesByPointCode[key];
         if(r)
         {
@@ -77,22 +106,34 @@
     return NULL;
 }
 
-- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc
+                                 mask:(int)mask
+                          linksetName:(NSString *)linksetName
+                                exact:(BOOL)exact
 {
-    UMMTP3Route *r = [self findRouteForDestination:pc linksetName:linksetName];
+    UMMTP3Route *r = [self findRouteForDestination:pc
+                                              mask:mask
+                                       linksetName:linksetName
+                                             exact:exact];
     return @[r];
 }
 
-- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linksetName
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc
+                                 mask:(int)mask
+                   excludeLinksetName:(NSString *)linksetName
+                                exact:(BOOL)exact
 {
-    UMMTP3Route *r = [self findRouteForDestination:pc excludeLinksetName:linksetName];
+    UMMTP3Route *r = [self findRouteForDestination:pc
+                                              mask:mask
+                                excludeLinksetName:linksetName
+                                             exact:exact];
     return @[r];
 }
 
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
 {
-    UMMTP3Route *r = [self findRouteForDestination:pc linksetName:linksetName];
+    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
     if(r)
     {
         r.status = UMMTP3_ROUTE_ALLOWED;
@@ -109,7 +150,7 @@
 }
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
 {
-    UMMTP3Route *r = [self findRouteForDestination:pc linksetName:linksetName];
+    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
     if(r)
     {
         r.status = UMMTP3_ROUTE_RESTRICTED;
@@ -127,7 +168,13 @@
 }
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
 {
-    UMMTP3Route *r = [self findRouteForDestination:pc linksetName:linksetName];
+    if(logLevel <=UMLOG_DEBUG)
+    {
+        NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        [self logDebug:s];
+    }
+
+    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
     if(r)
     {
         r.status = UMMTP3_ROUTE_PROHIBITED;

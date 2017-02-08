@@ -40,12 +40,16 @@
     return self;
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linksetName
+
+- (NSArray *)findRouteForDestination:(UMMTP3PointCode *)pc
+                                mask:(int)mask
+                         linksetName:(NSString *)linksetName
+                               exact:(BOOL)exact
 {
     if(linksetName)
     {
         UMMTP3LinkRoutingTable *lrt = routingTablesByLinkset[linksetName];
-        return [lrt findRouteForDestination:pc linksetName:linksetName];
+        return [lrt findRouteForDestination:pc mask:mask linksetName:linksetName exact:exact];
     }
 
     UMMTP3Route *bestRoute = NULL;
@@ -53,7 +57,7 @@
     for(NSString *ls in keys)
     {
         UMMTP3LinkRoutingTable *lrt = routingTablesByLinkset[ls];
-        UMMTP3Route *nextRoute = [lrt findRouteForDestination:pc linksetName:ls];
+        UMMTP3Route *nextRoute = [lrt findRouteForDestination:pc mask:mask linksetName:ls exact:exact];
         if(nextRoute == NULL)
         {
             continue;
@@ -91,7 +95,7 @@
     return bestRoute;
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc mask:(int)mask excludeLinksetName:(NSString *)linkset exact:(BOOL)exact
 {
     UMMTP3Route *bestRoute = NULL;
     NSArray *keys = [routingTablesByLinkset allKeys];
@@ -102,7 +106,7 @@
             continue;
         }
         UMMTP3LinkRoutingTable *lrt = routingTablesByLinkset[ls];
-        UMMTP3Route *nextRoute = [lrt findRouteForDestination:pc linksetName:ls];
+        UMMTP3Route *nextRoute = [lrt findRouteForDestination:pc  mask:mask linksetName:ls exact:exact];
         if(nextRoute == NULL)
         {
             continue;
@@ -140,12 +144,12 @@
     return bestRoute;
 }
 
-- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linkset exact:(BOOL)exact
 {
     if(linkset)
     {
         UMMTP3LinkRoutingTable *table = routingTablesByLinkset[linkset];
-        return [table findRoutesForDestination:pc linksetName:linkset];
+        return [table findRoutesForDestination:pc mask:mask linksetName:linkset exact:exact];
     }
     else
     {
@@ -154,7 +158,7 @@
         for(id key in keys)
         {
             UMMTP3LinkRoutingTable *table = routingTablesByLinkset[key];
-            UMMTP3Route *r = [table findRouteForDestination:pc linksetName:key];
+            UMMTP3Route *r = [table findRouteForDestination:pc mask:mask linksetName:key exact:exact];
             if(r)
             {
                 [result addObject:r];
@@ -165,11 +169,11 @@
     return NULL;
 }
 
-- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset
+- (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc mask:(int)mask excludeLinksetName:(NSString *)linkset exact:(BOOL)exact
 {
     if(linkset==NULL)
     {
-        return [self findRoutesForDestination:pc linksetName:NULL];
+        return [self findRoutesForDestination:pc mask:mask linksetName:NULL exact:exact];
     }
     else
     {
@@ -181,7 +185,7 @@
             if(![key isEqualToString:linkset])
             {
                 UMMTP3LinkRoutingTable *table = routingTablesByLinkset[key];
-                UMMTP3Route *r = [table findRouteForDestination:pc linksetName:key];
+                UMMTP3Route *r = [table findRouteForDestination:pc mask:mask linksetName:key exact:exact];
                 if(r)
                 {
                     [result addObject:r];

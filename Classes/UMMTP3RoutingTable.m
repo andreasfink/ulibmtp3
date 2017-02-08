@@ -16,12 +16,19 @@
 @implementation UMMTP3RoutingTable
 
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc linksetName:(NSString *)linkset
+
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
+                                    mask:(int)mask
+                             linksetName:(NSString *)linksetName
+                                   exact:(BOOL)exact
 {
     return NULL;
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc excludeLinksetName:(NSString *)linkset
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
+                                    mask:(int)mask
+                      excludeLinksetName:(NSString *)linksetName
+                                   exact:(BOOL)exact
 {
     return NULL;
 }

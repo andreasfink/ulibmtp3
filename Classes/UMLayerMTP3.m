@@ -695,7 +695,7 @@
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)search_dpc
 {
-    UMMTP3Route *re = [routingTable findRouteForDestination:search_dpc linksetName:NULL];
+    UMMTP3Route *re = [routingTable findRouteForDestination:search_dpc mask:0 linksetName:NULL exact:NO];
     if(re==NULL)
     {
         return defaultRoute;
@@ -776,7 +776,8 @@
 {
     @synchronized(linksets)
     {
-        for(NSString *linksetName in linksets)
+        NSArray *linksetNamesArray = [linksets allKeys];
+        for(NSString *linksetName in linksetNamesArray)
         {
             UMMTP3LinkSet *ls = linksets[linksetName];
             [ls powerOn];
@@ -843,7 +844,7 @@
                                   mp:(int)mp
                          linksetName:(NSString *)linksetName
 {
-    UMMTP3Route *route = [routingTable findRouteForDestination:label.dpc excludeLinksetName:linksetName]; /* we never send back to the link the PDU came from to avoid loops */
+    UMMTP3Route *route = [routingTable findRouteForDestination:label.dpc mask:0 excludeLinksetName:linksetName exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
     if(route)
     {
         [self forwardPDU:data
@@ -1044,7 +1045,8 @@
 {
     @synchronized(linksets)
     {
-        for(NSString *linksetName in linksets)
+        NSArray *linksetNames = [linksets allKeys];
+        for(NSString *linksetName in linksetNames)
         {
             if([linksetName isEqualToString:name])
             {
@@ -1061,7 +1063,8 @@
 {
     @synchronized(linksets)
     {
-        for(NSString *linksetName in linksets)
+        NSArray *linksetNames = [linksets allKeys];
+        for(NSString *linksetName in linksetNames)
         {
             if([linksetName isEqualToString:name])
             {
@@ -1077,7 +1080,8 @@
 {
     @synchronized(linksets)
     {
-        for(NSString *linksetName in linksets)
+        NSArray *linksetNames = [linksets allKeys];
+        for(NSString *linksetName in linksetNames)
         {
             if([linksetName isEqualToString:name])
             {
