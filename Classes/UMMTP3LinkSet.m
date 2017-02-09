@@ -1621,6 +1621,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
+    [self updateRouteAvailable:adjacentPointCode mask:0];
     mtp3.ready=YES;
 }
 
