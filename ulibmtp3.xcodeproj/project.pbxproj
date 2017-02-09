@@ -493,7 +493,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0800;
-				ORGANIZATIONNAME = "Andreas Fink";
+				ORGANIZATIONNAME = "Andreas Fink (andreas@fink.org)";
 				TargetAttributes = {
 					A604D0F819B999AA0090FC94 = {
 						DevelopmentTeam = 2GSNWPNR77;
@@ -778,7 +778,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "ulibmtp3Tests/ulibmtp3Tests-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.messagemover.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "me.fink.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -798,7 +798,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ulibmtp3/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "ulibmtp3Tests/ulibmtp3Tests-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.messagemover.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "me.fink.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;

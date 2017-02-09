@@ -3,7 +3,7 @@
 //  ulibmtp3
 //
 //  Created by Andreas Fink on 25.11.16.
-//  Copyright © 2016 Andreas Fink. All rights reserved.
+//  Copyright © 2017 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
 #import <ulib/ulib.h>
