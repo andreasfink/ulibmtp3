@@ -722,7 +722,7 @@
                         }
                         if ((i+len)>maxlen)
                         {
-                            [self logMajorError:[NSString stringWithFormat:@"MTP_PACKET_TOO_SHORT. i = %d, len=%d, maxlen=%d",i,len,maxlen]];
+                            [self logMajorError:[NSString stringWithFormat:@"MTP_PACKET_TOO_SHORT. i = %d, len=%d, maxlen=%d",(int)i,(int)len,(int)maxlen]];
                             @throw([NSException exceptionWithName:@"MTP_PACKET_TOO_SHORT"
                                                            reason:NULL
                                                          userInfo:@{
