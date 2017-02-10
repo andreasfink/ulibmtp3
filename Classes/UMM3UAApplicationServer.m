@@ -395,6 +395,8 @@ static const char *m3ua_param_name(uint16_t param_type)
                               si:si
                               ni:ni
                               mp:mp
+                             slc:0
+                            link:NULL
                networkAppearance:network_appearance
                    correlationId:correlation_id
                   routingContext:routing_context];
