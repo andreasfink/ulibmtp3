@@ -86,15 +86,6 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp;
 - (void)aspInactive:(UMM3UAApplicationServerProcess *)asp;
 
-- (void)msuIndication2:(NSData *)pdu
-                 label:(UMMTP3Label *)label
-                    si:(int)si
-                    ni:(int)ni
-                    mp:(int)mp
-     networkAppearance:(NSData *)network_appearance
-         correlationId:(NSData *)correlation_id
-        routingContext:(NSData *)routing_context;
-
 -(void)sendPdu:(NSData *)data
          label:(UMMTP3Label *)label
        heading:(int)heading

@@ -647,7 +647,8 @@
     NSMutableDictionary *linksetsConfig = [[NSMutableDictionary alloc]init];
     @synchronized(linksets)
     {
-        for(NSString *linksetName in linksets)
+        NSArray *linksetNames = [linkset allKeys];
+        for(NSString *linksetName in linksetNames)
         {
             UMMTP3LinkSet *linkset = linksets[linksetName];
             linksetsConfig[linksetName] = [linkset config];
@@ -789,7 +790,8 @@
 {
     @synchronized(linksets)
     {
-        for(NSString *linksetName in linksets)
+        NSArray *linksetNames = [linkset allKeys];
+        for(NSString *linksetName in linksetNames)
         {
             UMMTP3LinkSet *ls = linksets[linksetName];
             [ls powerOff];
