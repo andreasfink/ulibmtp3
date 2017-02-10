@@ -41,7 +41,7 @@
 }
 
 
-- (NSArray *)findRouteForDestination:(UMMTP3PointCode *)pc
+- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
                                 mask:(int)mask
                          linksetName:(NSString *)linksetName
                                exact:(BOOL)exact
