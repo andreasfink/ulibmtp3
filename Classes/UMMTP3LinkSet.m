@@ -354,7 +354,8 @@
 #define GRAB_BYTE(var,data,index,max)               \
         if (index<max)                              \
         {                                           \
-            var = data[index++];                    \
+            var = data[index];                      \
+            index++;                                \
         }                                           \
         else                                        \
         {                                           \
@@ -370,11 +371,11 @@
         }
 
 
-        int i = 0;
+        int idx = 0;
         int li;
         int sio;
-        GRAB_BYTE(li,data,i,maxlen);
-        GRAB_BYTE(sio,data,i,maxlen);
+        GRAB_BYTE(li,data,idx,maxlen);
+        GRAB_BYTE(sio,data,idx,maxlen);
         
         int si; /* service indicator */
         int ni; /* network indicator */
@@ -411,8 +412,8 @@
                 }
                 break;
         }
-        UMMTP3Label *label = [[UMMTP3Label alloc]initWithBytes:data pos:&i variant:variant];
-        NSData *pdu = [NSData dataWithBytes:&data[i] length:(maxlen - i)];
+        UMMTP3Label *label = [[UMMTP3Label alloc]initWithBytes:data pos:&idx variant:variant];
+        NSData *pdu = [NSData dataWithBytes:&data[idx] length:(maxlen - idx)];
         [self msuIndication2:pdu
                        label:label
                           si:si
@@ -447,7 +448,7 @@
         routingContext:(NSData *)routing_context
 
 {
-    int i=0;
+    int idx=0;
     const uint8_t *data = pdu.bytes;
     NSUInteger maxlen   = pdu.length;
     @try
@@ -527,6 +528,9 @@
                 break;
         }
 
+        NSData *pdu2 = [NSData dataWithBytes:&data[idx] length:(maxlen-idx)];
+
+
         switch(si & 0x0F)
         {
             case MTP3_SERVICE_INDICATOR_MAINTENANCE_SPECIAL_MESSAGE:
@@ -537,7 +541,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network testing and maintenance messages",si]];
                 }
                 int heading;
-                GRAB_BYTE(heading,data,i,maxlen);
+                GRAB_BYTE(heading,data,idx,maxlen);
                 switch(heading)
                 {
                     case MTP3_ANSI_TESTING_SSLTM:
@@ -545,7 +549,7 @@
                         int byte;
                         int slc2;
                         int len;
-                        GRAB_BYTE(byte,data,i,maxlen);
+                        GRAB_BYTE(byte,data,idx,maxlen);
                         if(variant == UMMTP3Variant_ANSI)
                         {
                             len = (byte & 0xF0) >> 4;
@@ -561,7 +565,7 @@
                             [logFeed majorErrorText:@"SLTM: SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
-                        if ((i+len)>maxlen)
+                        if ((idx + len)>maxlen)
                         {
                             [self logMinorError:@"MTP_DECODE: MTP_PACKET_TOO_SHORT"];
                             @throw([NSException exceptionWithName:@"MTP_PACKET_TOO_SHORT"
@@ -575,8 +579,8 @@
                                     ]);
                         }
                         NSMutableData *pattern = [[NSMutableData alloc]init];
-                        [pattern appendBytes:&data[i] length:len];
-                        i+=len;
+                        [pattern appendBytes:&data[idx] length:len];
+                        idx+=len;
                         [self processSSLTM:label
                                    pattern:pattern
                                         ni:ni
@@ -590,7 +594,7 @@
                         int byte;
                         int slc2;
                         int len;
-                        GRAB_BYTE(byte,data,i,maxlen);
+                        GRAB_BYTE(byte,data,idx,maxlen);
                         if(variant == UMMTP3Variant_ANSI)
                         {
                             len = (byte & 0xF0) >> 4;
@@ -606,7 +610,7 @@
                             [self logMajorError:@"MTP_DECODE: SLTA SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
-                        if ((i+len)>maxlen)
+                        if ((idx+len)>maxlen)
                         {
                             @throw([NSException exceptionWithName:@"MTP_DECODE"
                                                            reason:NULL
@@ -618,8 +622,8 @@
                                     ]);
                         }
                         NSMutableData *pattern = [[NSMutableData alloc]init];
-                        [pattern appendBytes:&data[i] length:len];
-                        i+=len;
+                        [pattern appendBytes:&data[idx] length:len];
+                        idx+=len;
                         [self processSSLTA:label
                                    pattern:pattern
                                         ni:ni
@@ -651,7 +655,7 @@
                     [self logDebug:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network testing and maintenance messages",si]];
                 }
                 int heading;
-                GRAB_BYTE(heading,data,i,maxlen);
+                GRAB_BYTE(heading,data,idx,maxlen);
                 switch(heading)
                 {
                     case MTP3_TESTING_SLTM:
@@ -659,7 +663,7 @@
                         int byte;
                         int slc2;
                         int len;
-                        GRAB_BYTE(byte,data,i,maxlen);
+                        GRAB_BYTE(byte,data,idx,maxlen);
                         if(variant == UMMTP3Variant_ANSI)
                         {
                             len = (byte & 0xF0) >> 4;
@@ -675,9 +679,9 @@
                             [self logMajorError:@"SLTM: SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
-                        if ((i+len)>maxlen)
+                        if ((idx+len)>maxlen)
                         {
-                            [self logMajorError:[NSString stringWithFormat:@"MTP_PACKET_TOO_SHORT. i = %d, len=%d, maxlen=%d",(int)i,(int)len,(int)maxlen]];
+                            [self logMajorError:[NSString stringWithFormat:@"MTP_PACKET_TOO_SHORT. i = %d, len=%d, maxlen=%d",(int)idx,(int)len,(int)maxlen]];
                             @throw([NSException exceptionWithName:@"MTP_PACKET_TOO_SHORT"
                                                            reason:NULL
                                                          userInfo:@{
@@ -689,8 +693,8 @@
 
                         }
                         NSMutableData *pattern = [[NSMutableData alloc]init];
-                        [pattern appendBytes:&data[i] length:len];
-                        i+=len;
+                        [pattern appendBytes:&data[idx] length:len];
+                        idx+=len;
                         [self processSLTM:label
                                   pattern:pattern
                                        ni:ni
@@ -704,7 +708,7 @@
                         int byte;
                         int slc2;
                         int len;
-                        GRAB_BYTE(byte,data,i,maxlen);
+                        GRAB_BYTE(byte,data,idx,maxlen);
                         if(variant == UMMTP3Variant_ANSI)
                         {
                             len = (byte & 0xF0) >> 4;
@@ -720,9 +724,9 @@
                             [self logMajorError:@"SLTA SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
-                        if ((i+len)>maxlen)
+                        if ((idx+len)>maxlen)
                         {
-                            [self logMajorError:[NSString stringWithFormat:@"MTP_PACKET_TOO_SHORT. i = %d, len=%d, maxlen=%d",(int)i,(int)len,(int)maxlen]];
+                            [self logMajorError:[NSString stringWithFormat:@"MTP_PACKET_TOO_SHORT. i = %d, len=%d, maxlen=%d",(int)idx,(int)len,(int)maxlen]];
                             @throw([NSException exceptionWithName:@"MTP_PACKET_TOO_SHORT"
                                                            reason:NULL
                                                          userInfo:@{
@@ -734,8 +738,8 @@
 
                         }
                         NSMutableData *pattern = [[NSMutableData alloc]init];
-                        [pattern appendBytes:&data[i] length:len];
-                        i+=len;
+                        [pattern appendBytes:&data[idx] length:len];
+                        idx+=len;
                         [self processSLTA:label
                                   pattern:pattern
                                        ni:ni
@@ -769,7 +773,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network management messages",si]];
                 }
                 int heading;
-                GRAB_BYTE(heading,data,i,maxlen);
+                GRAB_BYTE(heading,data,idx,maxlen);
                 switch(heading)
                 {
                     case MTP3_MGMT_COO:
@@ -779,15 +783,15 @@
                         {
                             int byte0;
                             int byte1;
-                            GRAB_BYTE(byte0,data,i,maxlen);
-                            GRAB_BYTE(byte1,data,i,maxlen);
+                            GRAB_BYTE(byte0,data,idx,maxlen);
+                            GRAB_BYTE(byte1,data,idx,maxlen);
                             slc = byte0 & 0xF;
                             fsn = byte0 >>4 | ((byte1 & 0x07) << 0x04);
                         }
                         else
                         {
                             slc = label.sls;
-                            GRAB_BYTE(fsn,data,i,maxlen);
+                            GRAB_BYTE(fsn,data,idx,maxlen);
                             fsn = fsn & 0x7F;
                         }
                         [self processCOO:label lastFSN:fsn ni:ni mp:mp slc:slc link:link];
@@ -801,15 +805,15 @@
                         {
                             int byte0;
                             int byte1;
-                            GRAB_BYTE(byte0,data,i,maxlen);
-                            GRAB_BYTE(byte1,data,i,maxlen);
+                            GRAB_BYTE(byte0,data,idx,maxlen);
+                            GRAB_BYTE(byte1,data,idx,maxlen);
                             slc = byte0 & 0xF;
                             fsn = byte0 >>4 | ((byte1 & 0x07) << 0x04);
                         }
                         else
                         {
                             slc = label.sls;
-                            GRAB_BYTE(fsn,data,i,maxlen);
+                            GRAB_BYTE(fsn,data,idx,maxlen);
                             fsn = fsn & 0x7F;
                         }
                         [self processCOA:label lastFSN:fsn ni:ni mp:mp slc:slc link:link];
@@ -823,15 +827,15 @@
                         {
                             int byte0;
                             int byte1;
-                            GRAB_BYTE(byte0,data,i,maxlen);
-                            GRAB_BYTE(byte1,data,i,maxlen);
+                            GRAB_BYTE(byte0,data,idx,maxlen);
+                            GRAB_BYTE(byte1,data,idx,maxlen);
                             slc = byte0 & 0xF;
                             cbc = byte0 >>4 | ((byte1 & 0x07) << 0x04);
                         }
                         else
                         {
                             slc = label.sls;
-                            GRAB_BYTE(cbc,data,i,maxlen);
+                            GRAB_BYTE(cbc,data,idx,maxlen);
                         }
                         [self processCBD:label changeBackCode:cbc ni:ni mp:mp slc:slc link:link];
                     }
@@ -843,8 +847,8 @@
                         {
                             int byte0;
                             int byte1;
-                            GRAB_BYTE(byte0,data,i,maxlen);
-                            GRAB_BYTE(byte1,data,i,maxlen);
+                            GRAB_BYTE(byte0,data,idx,maxlen);
+                            GRAB_BYTE(byte1,data,idx,maxlen);
                             slc = byte0 & 0xF;
                             cbc = byte0 >>4 | ((byte1 & 0x07) << 0x04);
                         }
@@ -852,7 +856,7 @@
                         {
                             slc = label.sls;
 
-                            GRAB_BYTE(cbc,data,i,maxlen);
+                            GRAB_BYTE(cbc,data,idx,maxlen);
                         }
                         [self processCBA:label changeBackCode:cbc ni:ni mp:mp slc:slc link:link];
                     }
@@ -869,38 +873,38 @@
                     case MTP3_MGMT_TFC: /* Transfer controlled */
                     {
                         int status;
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant status:&status maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant status:&status maxlen:maxlen];
                         [self processTFC:label destination:pc status:status ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TFP: /* Transfer Prohibited */
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
                         [self processTFP:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TFR: /* Transfer Restricted */
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
                         [self processTFR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TFA: /* Transfer Allowed */
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
                         [self processTFA:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_RST:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant];
                         [logFeed debugText:[NSString stringWithFormat:@"  H0/H1: [0x%02X] RST Signalling-route-set-test signal for prohibited destination",heading]];
                         [self processRST:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_RSR:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant];
                         [self processRSR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
@@ -939,8 +943,8 @@
                         {
                             int byte0;
                             int byte1;
-                            GRAB_BYTE(byte0,data,i,maxlen);
-                            GRAB_BYTE(byte1,data,i,maxlen);
+                            GRAB_BYTE(byte0,data,idx,maxlen);
+                            GRAB_BYTE(byte1,data,idx,maxlen);
                             cic  =  byte0 | ((byte1 & 0x0F)  << 8);
 
                         }
@@ -949,13 +953,13 @@
                             int byte0;
                             int byte1;
                             int byte2;
-                            GRAB_BYTE(byte0,data,i,maxlen);
-                            GRAB_BYTE(byte1,data,i,maxlen);
-                            GRAB_BYTE(byte2,data,i,maxlen);
+                            GRAB_BYTE(byte0,data,idx,maxlen);
+                            GRAB_BYTE(byte1,data,idx,maxlen);
+                            GRAB_BYTE(byte2,data,idx,maxlen);
                             cic  = (byte0 >> 4) | (byte1 << 4) | ((byte2 & 0x03) << 12);
                             slc2 = byte0 & 0x03;
                         }
-                        i+=2;
+                        idx +=2;
                         [self processDLC:label cic:cic ni:ni mp:mp slc:slc2 link:link];
                         break;
                     }
@@ -970,8 +974,8 @@
                         break;
                     case MTP3_MGMT_UPU:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant];
-                        int field = data[i++];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant];
+                        int field = data[idx++];
                         int upid = field & 0x0F;
                         int cause = (field >>4) & 0x0F;
 
@@ -993,33 +997,33 @@
 
                     case MTP3_MGMT_TCP:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
                         [self processTCP:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TCR:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
                         [self processTCR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TCA:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
                         [self processTCA:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
 
                     case MTP3_MGMT_RCP:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
                         [self processRCP:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
 
                     case MTP3_MGMT_RCR:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&i variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
                         [self processRCR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
@@ -1031,14 +1035,14 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SCCP:
             {
-                NSData *pdu = [NSData dataWithBytes:&data[i] length:(maxlen-i)];
+                NSData *pdu2 = [NSData dataWithBytes:&data[idx] length:(maxlen-idx)];
                 if(logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
-                    [logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu]];
-                    [logFeed debugText:[NSString stringWithFormat:@"  i=: %d ",i]];
+                    [logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu2]];
+                    [logFeed debugText:[NSString stringWithFormat:@"  idx=: %d ",idx]];
                 }
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [mtp3 processIncomingPdu:label data:pdu2 userpartId:si ni:ni mp:mp linksetName:name];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_TUP:
@@ -1047,7 +1051,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1058,7 +1062,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1069,7 +1073,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1080,7 +1084,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1091,7 +1095,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1102,7 +1106,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1113,7 +1117,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1124,7 +1128,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1135,7 +1139,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1146,7 +1150,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1157,7 +1161,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }
@@ -1168,7 +1172,7 @@
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
+                NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
 
             }

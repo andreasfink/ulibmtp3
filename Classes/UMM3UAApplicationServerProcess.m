@@ -557,7 +557,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     label.opc = opc;
     label.dpc = dpc;
     label.sls = sls;
-
+    NSData *protocolData2 = [NSData dataWithBytes:&data3[i] length:protocolData.length-i];
     switch(si)
     {
         case 0x00:
@@ -568,7 +568,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             /* Signalling network testing and maintenance messages */
             break;
         default:
-            [as msuIndication2:protocolData
+            [as msuIndication2:protocolData2
                          label:label
                             si:si
                             ni:ni
