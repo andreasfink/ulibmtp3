@@ -1994,6 +1994,7 @@
         [pdu appendByte:([pattern length]<<4)];
     }
     [pdu appendData:pattern];
+    label.sls = slc;
     [self sendPdu:pdu
             label:label
           heading:MTP3_TESTING_SLTM
@@ -2023,6 +2024,7 @@
         [pdu appendByte:([pattern length]<<4)];
     }
     [pdu appendData:pattern];
+    label.sls = slc;
     [self sendPdu:pdu
             label:label
           heading:MTP3_ANSI_TESTING_SSLTA
@@ -2118,6 +2120,18 @@
                 [pdu appendByte:((ni & 0x3) << 6) | (si & 0xF)];
             }
             break;
+    }
+    if(slc < 0)
+    {
+        @synchronized (self)
+        {
+            label.sls = last_sls;
+            last_sls = (last_sls+1) % 16;
+        }
+    }
+    else
+    {
+        label.sls = slc;
     }
     [label appendToMutableData:pdu];
     if(heading >= 0)

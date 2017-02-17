@@ -48,6 +48,7 @@
     int                         totalLinks;
     int                         congestionLevel;
     double                      speed;
+    int                         last_sls;
 }
 
 @property(readwrite,assign) int congestionLevel;
