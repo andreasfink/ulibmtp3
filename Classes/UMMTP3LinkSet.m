@@ -528,9 +528,6 @@
                 break;
         }
 
-        NSData *pdu2 = [NSData dataWithBytes:&data[idx] length:(maxlen-idx)];
-
-
         switch(si & 0x0F)
         {
             case MTP3_SERVICE_INDICATOR_MAINTENANCE_SPECIAL_MESSAGE:
@@ -750,7 +747,7 @@
                     }
                         break;
                     default:
-                        [self logMajorError:[NSString stringWithFormat:@"MTP_DECODE. unknown-heading 0x02x",heading]];
+                        [self logMajorError:[NSString stringWithFormat:@"MTP_DECODE. unknown-heading 0x%02x",heading]];
                         @throw([NSException exceptionWithName:@"MTP_DECODE"
                                                        reason:NULL
                                                      userInfo:@{
