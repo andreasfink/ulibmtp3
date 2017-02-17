@@ -1031,11 +1031,12 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SCCP:
             {
+                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
                 if(logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
+                    [logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu]];
                 }
-                NSData *pdu = [NSData dataWithBytes:data+i length:maxlen-i];
                 [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
             }
                 break;
