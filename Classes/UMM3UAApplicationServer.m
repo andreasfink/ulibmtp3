@@ -769,7 +769,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         return applicableProcesses;
     }
-    uint32_t r = arc4random_uniform(n);
+    uint32_t r = [UMUtil random:n];
     return @[applicableProcesses[r]]; /* we return array including only one of many */
 }
 
