@@ -643,14 +643,14 @@ static const char *m3ua_param_name(uint16_t param_type)
                 || ([s isEqualToStringCaseInsensitive:@"nat"])
                 || ([s isEqualToStringCaseInsensitive:@"2"]))
             {
-                networkIndicator = 1;
+                networkIndicator = 2;
             }
             else if(([s isEqualToStringCaseInsensitive:@"spare"])
                 || ([s isEqualToStringCaseInsensitive:@"international-spare"])
                 || ([s isEqualToStringCaseInsensitive:@"int-spare"])
                 || ([s isEqualToStringCaseInsensitive:@"1"]))
             {
-                networkIndicator = 2;
+                networkIndicator = 1;
             }
             else if(([s isEqualToStringCaseInsensitive:@"reserved"])
                 || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
