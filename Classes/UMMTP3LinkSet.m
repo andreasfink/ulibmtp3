@@ -470,7 +470,7 @@
             @throw([NSException exceptionWithName:@"MTP_PACKET_INVALID"
                                            reason:NULL
                                          userInfo:@{
-                                                    @"sysmsg" : @"non-matching netowkr indicator",
+                                                    @"sysmsg" : @"non-matching network indicator",
                                                     @"func": @(__func__),
                                                     @"obj":self,
                                                     @"backtrace": UMBacktrace(NULL,0)
@@ -2288,14 +2288,14 @@
                     || ([s isEqualToStringCaseInsensitive:@"nat"])
                     || ([s isEqualToStringCaseInsensitive:@"2"]))
             {
-                networkIndicator = 1;
+                networkIndicator = 2;
             }
             else if(([s isEqualToStringCaseInsensitive:@"spare"])
                     || ([s isEqualToStringCaseInsensitive:@"international-spare"])
                     || ([s isEqualToStringCaseInsensitive:@"int-spare"])
                     || ([s isEqualToStringCaseInsensitive:@"1"]))
             {
-                networkIndicator = 2;
+                networkIndicator = 1;
             }
             else if(([s isEqualToStringCaseInsensitive:@"reserved"])
                     || ([s isEqualToStringCaseInsensitive:@"national-reserved"])

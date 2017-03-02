@@ -679,7 +679,39 @@
     NSString *pcStr = cfg[@"opc"];
     self.opc = [[UMMTP3PointCode alloc]initWithString:pcStr variant:variant];
     NSDictionary *linksetsConfig = cfg[@"linksets"];
-    networkIndicator = [cfg[@"ni"]intValue];
+    NSString *s = [cfg[@"ni"]stringValue];
+
+    if((  [s isEqualToStringCaseInsensitive:@"international"])
+       || ([s isEqualToStringCaseInsensitive:@"int"])
+       || ([s isEqualToStringCaseInsensitive:@"0"]))
+    {
+        networkIndicator = 0;
+    }
+    else if(([s isEqualToStringCaseInsensitive:@"national"])
+            || ([s isEqualToStringCaseInsensitive:@"nat"])
+            || ([s isEqualToStringCaseInsensitive:@"2"]))
+    {
+        networkIndicator = 2;
+    }
+    else if(([s isEqualToStringCaseInsensitive:@"spare"])
+            || ([s isEqualToStringCaseInsensitive:@"international-spare"])
+            || ([s isEqualToStringCaseInsensitive:@"int-spare"])
+            || ([s isEqualToStringCaseInsensitive:@"1"]))
+    {
+        networkIndicator = 1;
+    }
+    else if(([s isEqualToStringCaseInsensitive:@"reserved"])
+            || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
+            || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
+            || ([s isEqualToStringCaseInsensitive:@"3"]))
+    {
+        networkIndicator = 3;
+    }
+    else
+    {
+        [self logMajorError:[NSString stringWithFormat:@"Unknown MTP3 network-indicator '%@' defaulting to international",s]];
+        networkIndicator = 0;
+    }
 
     [self removeAllLinksets];
     for(NSString *linksetName in linksetsConfig)
