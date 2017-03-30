@@ -222,7 +222,9 @@ typedef enum UMMTP3_Error
                    data:(NSData *)data
              userpartId:(int)upid
                      ni:(int)ni
-                     mp:(int)mp;
+                     mp:(int)mp
+            linksetName:(NSString *)linksetName;
+
 
 #pragma mark -
 #pragma mark Config Management
