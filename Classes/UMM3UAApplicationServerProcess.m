@@ -1628,12 +1628,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 [reopen_timer2 stop];
                 [linktest_timer stop];
                 break;
-                if(logLevel == UMLOG_DEBUG)
-                {
-                    [self logDebug:@"INACTIVE state. Ignoring Timer Event"];
-                }
-                [reopen_timer1 stop];
-                break;
 
             case M3UA_STATUS_IS:
                 if(logLevel == UMLOG_DEBUG)
