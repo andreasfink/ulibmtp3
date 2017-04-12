@@ -361,9 +361,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
     if(len != 4)
     {
         [self parameterLengthError:M3UA_PARAM_AFFECTED_POINT_CODE];
+        *mask = 0;
         return NULL;
     }
-
     *mask = bytes[0];
     int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
     UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:int_pc variant:as.variant];
@@ -668,14 +668,17 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
     for (NSData *d in affpcs)
     {
-        int mask;
-        UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [as m3uaCongestion:self
-         affectedPointCode:pc
-                      mask:mask
-         networkAppearance:network_appearance
-        concernedPointcode:concernedPc
-       congestionIndicator:congestionIndicator];
+        int mask = 14;
+        UMMTP3PointCode *aff_pc = [self extractAffectedPointCode:d mask:&mask];
+        if(aff_pc)
+        {
+            [as m3uaCongestion:self
+             affectedPointCode:aff_pc
+                          mask:mask
+             networkAppearance:network_appearance
+            concernedPointcode:concernedPc
+           congestionIndicator:congestionIndicator];
+        }
     }
 }
 
