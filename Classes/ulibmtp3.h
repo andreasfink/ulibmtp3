@@ -49,6 +49,9 @@
 #import "UMMTP3LinkRoutingTable.h"
 #import "UMMTP3InstanceRoutingTable.h"
 #import "UMSyntaxToken_Pointcode.h"
+#import "UMMTP3Filter_Result.h"
+#import "UMMTP3PduFilter.h"
+#import "UMMTP3PointcodeFilter.h"
 
 
 
