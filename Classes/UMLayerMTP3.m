@@ -675,7 +675,10 @@
     {
         variant = UMMTP3Variant_China;
     }
-
+    else /* defaults to ITU */
+    {
+        variant = UMMTP3Variant_ITU;
+    }
     NSString *pcStr = cfg[@"opc"];
     self.opc = [[UMMTP3PointCode alloc]initWithString:pcStr variant:variant];
     NSDictionary *linksetsConfig = cfg[@"linksets"];
