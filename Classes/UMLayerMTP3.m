@@ -661,7 +661,7 @@
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
     [self readLayerConfig:cfg];
-    
+
     NSString *var = cfg[@"variant"];
     if([var isEqualToString:@"itu"])
     {
