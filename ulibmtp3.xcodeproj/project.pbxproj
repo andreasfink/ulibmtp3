@@ -746,7 +746,7 @@
 		A604D12219B999AA0090FC94 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2GSNWPNR77;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -759,7 +759,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = me.fink.ulibmtp3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -782,7 +782,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = me.fink.ulibmtp3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
