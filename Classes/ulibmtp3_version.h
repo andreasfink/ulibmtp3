@@ -7,4 +7,4 @@
 //
 
 
-#define ULIBMTP3_VERSION "1.8.1"
+#define ULIBMTP3_VERSION "1.8.2"
