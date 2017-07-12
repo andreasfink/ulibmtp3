@@ -1179,10 +1179,8 @@
     @catch(NSException *e)
     {
         NSDictionary *d = e.userInfo;
-        NSString *desc = d[@"sysmsg"];
-        NSLog(@"Exception %@",e);
-        [logFeed majorErrorText:desc];
-       // [self protocolViolation];
+        //NSString *desc = d[@"sysmsg"];
+        [logFeed majorErrorText:[NSString stringWithFormat:@"Exception %@",e]];
         return;
     }
 }
