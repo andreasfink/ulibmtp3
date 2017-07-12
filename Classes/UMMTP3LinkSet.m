@@ -1178,7 +1178,7 @@
     }
     @catch(NSException *e)
     {
-        NSDictionary *d = e.userInfo;
+        //NSDictionary *d = e.userInfo;
         //NSString *desc = d[@"sysmsg"];
         [logFeed majorErrorText:[NSString stringWithFormat:@"Exception %@",e]];
         return;
