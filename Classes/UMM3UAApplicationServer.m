@@ -810,16 +810,23 @@ static const char *m3ua_param_name(uint16_t param_type)
  correlationId:(uint32_t)correlation_id
 {
     NSArray *asps = [self activeApplicationServerProcessesToUse];
-    for(UMM3UAApplicationServerProcess *asp in asps)
+    if(asps.count < 1)
     {
-        [asp sendPdu:data
-               label:label
-             heading:heading
-                  ni:ni
-                  mp:mp
-                  si:si
-          ackRequest:ackRequest
-       correlationId:correlation_id];
+        [logFeed majorErrorText:[NSString stringWithFormat:@"Dropping PDU due to no active ASPs present"]];
+    }
+    else
+    {
+        for(UMM3UAApplicationServerProcess *asp in asps)
+        {
+            [asp sendPdu:data
+                   label:label
+                 heading:heading
+                      ni:ni
+                      mp:mp
+                      si:si
+              ackRequest:ackRequest
+           correlationId:correlation_id];
+        }
     }
 }
 

@@ -772,6 +772,10 @@
     label.dpc = fdpc;
     if([linkset isKindOfClass:[UMM3UAApplicationServer class]])
     {
+        if(logLevel <= UMLOG_DEBUG)
+        {
+            [logFeed debugText:[NSString stringWithFormat:@"sending PDU to application server %@",linkset.name]];
+        }
         [linkset sendPdu:pdu
                    label:label
                  heading:-1
@@ -783,6 +787,10 @@
     }
     else
     {
+        if(logLevel <= UMLOG_DEBUG)
+        {
+            [logFeed debugText:[NSString stringWithFormat:@"sending PDU to m2pa linkset %@",linkset.name]];
+        }
         [linkset sendPdu:pdu
                    label:label
                  heading:-1

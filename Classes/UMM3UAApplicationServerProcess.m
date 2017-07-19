@@ -895,6 +895,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
     pl[@(M3UA_PARAM_ROUTING_CONTEXT)] = @(as.routingKey);
     pl[@(M3UA_PARAM_PROTOCOL_DATA)] = pdu;
     pl[@(M3UA_PARAM_CORRELATION_ID)] = @(correlation_id);
+    
+    if(logLevel <= UMLOG_DEBUG)
+    {
+        [logFeed debugText:[NSString stringWithFormat:@"sending PDU %@pdu"]];
+    }
     [self sendDATA:pl];
 }
 
@@ -1095,7 +1100,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendDUNA:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendDUNA"];
     }
@@ -1105,7 +1110,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendDATA:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendDATA"];
     }
