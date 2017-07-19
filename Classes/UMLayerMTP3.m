@@ -765,8 +765,21 @@
                         mp:(int)mp
                      route:(UMMTP3Route *)route
 {
+    
+    if(logLevel <= UMLOG_DEBUG)
+    {
+        [logFeed debugText:[NSString stringWithFormat:@"routed to route '%@'",route.name]];
+        [logFeed debugText:[NSString stringWithFormat:@" linkset '%@'",route.linksetName]];
+        [logFeed debugText:[NSString stringWithFormat:@" pointcode '%@'",route.pointcode]];
+    }
+
     NSString *linksetName = route.linksetName;
     UMMTP3LinkSet *linkset = linksets[linksetName];
+    if(linkset==NULL)
+    {
+        [logFeed majorErrorText:[NSString stringWithFormat:@"linkset named '%@' not found",linksetName]];
+        return UMMTP3_error_no_route_to_destination;
+    }
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = fopc;
     label.dpc = fdpc;
