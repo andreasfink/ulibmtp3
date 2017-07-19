@@ -898,7 +898,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     
     if(logLevel <= UMLOG_DEBUG)
     {
-        [logFeed debugText:[NSString stringWithFormat:@"sending PDU %@pdu"]];
+        [logFeed debugText:[NSString stringWithFormat:@"sending PDU %@",pdu]];
     }
     [self sendDATA:pl];
 }
