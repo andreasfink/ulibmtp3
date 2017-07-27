@@ -484,6 +484,15 @@ static const char *m3ua_param_name(uint16_t param_type)
     [routingTable updateRouteRestricted:pc mask:mask linksetName:name];
 }
 
+-(UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc
+                                mask:(int)mask
+                              forAsp:(UMM3UAApplicationServerProcess *)asp
+{
+    return [routingTable isRouteAvailable:pc
+                                     mask:mask
+                              linksetName:name];
+}
+
 - (void)routeUpdateAll:(UMMTP3RouteStatus)status
 {
 }

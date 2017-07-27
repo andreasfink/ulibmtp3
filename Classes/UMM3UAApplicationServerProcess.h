@@ -87,6 +87,7 @@
 - (void)processDATA:(UMSynchronizedSortedDictionary *)params;
 - (void)processDUNA:(UMSynchronizedSortedDictionary *)params;
 - (void)processDAVA:(UMSynchronizedSortedDictionary *)params;
+- (void)processDAUD:(UMSynchronizedSortedDictionary *)params;
 - (void)processSCON:(UMSynchronizedSortedDictionary *)params;
 - (void)processDUPU:(UMSynchronizedSortedDictionary *)params;
 - (void)processDRST:(UMSynchronizedSortedDictionary *)params;

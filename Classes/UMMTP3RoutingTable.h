@@ -10,8 +10,7 @@
 // the author.
 
 #import <ulib/ulib.h>
-
-@class UMMTP3Route;
+#import "UMMTP3Route.h"
 @class UMMTP3PointCode;
 @class UMMTP3LinkSet;
 
@@ -39,7 +38,6 @@
                    excludeLinksetName:(NSString *)linksetName
                                 exact:(BOOL)exact;
 
-
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc
                         mask:(int)mask
                  linksetName:(NSString *)linkset;
@@ -53,6 +51,8 @@
                    linksetName:(NSString *)linkset;
 
 - (UMSynchronizedSortedDictionary *)objectValue;
+
+- (UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName;
 
 @end
 

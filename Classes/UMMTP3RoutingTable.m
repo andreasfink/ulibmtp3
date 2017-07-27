@@ -79,4 +79,19 @@
     return NULL;
 }
 
+
+- (UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
+{
+    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
+    if(r)
+    {
+        return r.status;
+    }
+    else
+    {
+        return UMMTP3_ROUTE_UNKNOWN;
+    }
+}
+
+
 @end

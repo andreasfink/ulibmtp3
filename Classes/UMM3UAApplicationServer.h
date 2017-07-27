@@ -13,6 +13,8 @@
 #import "UMMTP3LinkSet.h"
 #import "UMM3UATrafficMode.h"
 #import "UMM3UAStatus.h"
+#import "UMMTP3Route.h"
+
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 /* note: a M3UA "link" is the same as what in traditional SS7 is called a linkset */
 /* it corresponds to an association of two MTP nodes */
@@ -95,4 +97,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
     ackRequest:(NSDictionary *)ackRequest
  correlationId:(uint32_t)correlation_id;
 
+-(UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc
+                                mask:(int)mask
+                              forAsp:(UMM3UAApplicationServerProcess *)asp;
 @end
