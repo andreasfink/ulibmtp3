@@ -14,8 +14,12 @@
 @synthesize variant;
 @synthesize pc;
 
+- (UMMTP3PointCode *)initWitPc:(int)pcode variant:(UMMTP3Variant)var; /* typo version for backwards compatibility */
+{
+    return [self initWithPc:pcode variant:var];
+}
 
-- (UMMTP3PointCode *)initWitPc:(int)pcode variant:(UMMTP3Variant)var
+- (UMMTP3PointCode *)initWithPc:(int)pcode variant:(UMMTP3Variant)var
 {
     self = [super init];
     if(self)
@@ -422,4 +426,12 @@
     UMMTP3PointCode *pc2 = [self maskedPointcode:mask];
     return [NSString stringWithFormat:@"%@/%d",pc2.stringValue,([self maxmask]-mask)];
 }
+
+
+- (UMMTP3PointCode *)copyWithZone:(NSZone *)zone
+{
+    return [[UMMTP3PointCode allocWithZone:zone]initWithPc:pc variant:variant];
+}
+
+
 @end

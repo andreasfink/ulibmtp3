@@ -21,7 +21,8 @@
 @property(readwrite,assign) UMMTP3Variant variant;
 @property(readwrite,assign) int pc;
 
-- (UMMTP3PointCode *)initWitPc:(int)pcode variant:(UMMTP3Variant)var;
+- (UMMTP3PointCode *)initWitPc:(int)pcode variant:(UMMTP3Variant)var; /* typo version for backwards compatibility */
+- (UMMTP3PointCode *)initWithPc:(int)pcode variant:(UMMTP3Variant)var;
 - (UMMTP3PointCode *)initWithBytes:(const unsigned char *)data pos:(int *)p variant:(UMMTP3Variant) var;
 
 /* These do throw NSErrors if length is not ok */

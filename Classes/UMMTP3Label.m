@@ -58,8 +58,8 @@
             }
                 break;
         }
-        opc = [[UMMTP3PointCode alloc]initWitPc:xopc variant:variant];
-        dpc = [[UMMTP3PointCode alloc]initWitPc:xdpc variant:variant];
+        opc = [[UMMTP3PointCode alloc]initWithPc:xopc variant:variant];
+        dpc = [[UMMTP3PointCode alloc]initWithPc:xdpc variant:variant];
     }
     return self;
 }
