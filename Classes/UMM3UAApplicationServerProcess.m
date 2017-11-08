@@ -298,6 +298,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         speedometer = [[UMThroughputCounter alloc]init];
         submission_speed = [[UMThroughputCounter alloc]init];
         speed_within_limit = YES;
+        logLevel = UMLOG_MAJOR;
     }
     return self;
 }

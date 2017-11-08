@@ -57,6 +57,7 @@
         totalLinks = -1;
         congestionLevel = 0;
         networkIndicator = -1;
+        logLevel = UMLOG_MAJOR;
         routingTable = [[UMMTP3LinkRoutingTable alloc]init];
     }
     return self;

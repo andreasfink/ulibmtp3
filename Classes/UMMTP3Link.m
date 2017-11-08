@@ -39,6 +39,7 @@
     if(self)
     {
         linkState = [[UMMTP3LinkState alloc]init];
+        logLevel = UMLOG_MAJOR;
     }
     return self;
 }
