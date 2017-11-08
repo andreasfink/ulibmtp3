@@ -135,6 +135,11 @@
             linkTestTime = 30.0;
         }
     }
+    logLevel = UMLOG_MAJOR;
+    if(cfg[@"log-level"])
+    {
+        logLevel = [cfg[@"log-level"] intValue];
+    }
 }
 
 - (NSDictionary *)config

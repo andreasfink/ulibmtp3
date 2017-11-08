@@ -1571,12 +1571,18 @@ static const char *get_sctp_status_string(SCTP_Status status)
     speed = M3UA_DEFAULT_SPEED;
     name = NULL;
 
+    logLevel = UMLOG_MAJOR;
+
     for(NSString *key in cfg)
     {
         id value = cfg[key];
         if([key isEqualToStringCaseInsensitive:@"name"])
         {
             name =  [value stringValue];
+        }
+        else if([key isEqualToStringCaseInsensitive:@"log-level"])
+        {
+            logLevel = [cfg[@"log-level"] intValue];
         }
         else if([key isEqualToStringCaseInsensitive:@"attach-to"])
         {

@@ -40,6 +40,7 @@ typedef enum UMMTP3Link_attachmentStatus
     BOOL                        speedLimitReached;
     UMTimer                     *linkTestTimer;
     NSTimeInterval              linkTestTime;
+    UMLogLevel                  logLevel;
 }
 
 - (NSString *)name;

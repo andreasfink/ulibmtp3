@@ -592,12 +592,18 @@ static const char *m3ua_param_name(uint16_t param_type)
     trafficMode = UMM3UATrafficMode_loadshare;
     NSString *apc;
     NSString *opc;
+
+    logLevel = UMLOG_MAJOR;
     for(NSString *key in cfg)
     {
         NSString *value = [cfg[key] stringValue];
         if([key isEqualToStringCaseInsensitive:@"name"])
         {
             self.name =  [value stringValue];
+        }
+        else if([key isEqualToStringCaseInsensitive:@"log-level"])
+        {
+            logLevel = [cfg[@"log-level"] intValue];
         }
         else if([key isEqualToStringCaseInsensitive:@"mtp3"])
         {
