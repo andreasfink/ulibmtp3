@@ -200,31 +200,34 @@
     int sf = data[1];
     if(logLevel <= UMLOG_DEBUG)
     {
-        [logFeed debugText:@" LSSU (m3link Status Signal Unit) (We should not get this on M2PA data link)"];
-        [logFeed debugText:[NSString stringWithFormat:@" Status Field (SF): [%d]",sf]];
-        switch(sf & 0x07)
+        if(logLevel <=UMLOG_DEBUG)
         {
-            case 0:
-                [logFeed debugText:@"  {SIO} OUT OF ALIGNMENT"];
-                break;
-            case 1:
-                [logFeed debugText:@"  {SIN} NORMAL ALIGNMENT"];
-                break;
-            case 2:
-                [logFeed debugText:@"  {SIE} EMERGENCY ALIGNMENT"];
-                break;
-            case 3:
-                [logFeed debugText:@"  {SIOS} OUT OF SERVICE"];
-                break;
-            case 4:
-                [logFeed debugText:@"  {SIPO} PROCESSOR OUTAGE"];
-                break;
-            case 5:
-                [logFeed debugText:@"  {SIB} BUSY"];
-                break;
-            default:
-                [logFeed debugText:@"  {unknown}"];
-                break;
+            [logFeed debugText:@" LSSU (m3link Status Signal Unit) (We should not get this on M2PA data link)"];
+            [logFeed debugText:[NSString stringWithFormat:@" Status Field (SF): [%d]",sf]];
+            switch(sf & 0x07)
+            {
+                case 0:
+                    [logFeed debugText:@"  {SIO} OUT OF ALIGNMENT"];
+                    break;
+                case 1:
+                    [logFeed debugText:@"  {SIN} NORMAL ALIGNMENT"];
+                    break;
+                case 2:
+                    [logFeed debugText:@"  {SIE} EMERGENCY ALIGNMENT"];
+                    break;
+                case 3:
+                    [logFeed debugText:@"  {SIOS} OUT OF SERVICE"];
+                    break;
+                case 4:
+                    [logFeed debugText:@"  {SIPO} PROCESSOR OUTAGE"];
+                    break;
+                case 5:
+                    [logFeed debugText:@"  {SIB} BUSY"];
+                    break;
+                default:
+                    [logFeed debugText:@"  {unknown}"];
+                    break;
+            }
         }
     }
 }
@@ -238,7 +241,10 @@
     {
         /* an empty packet to ack the outstanding FSN/BSN */
         /* kind of a FISU */
-        [log debugText:@" empty MSU"];
+        if(logLevel < UMLOG_DEBUG)
+        {
+            [log debugText:@" empty MSU"];
+        }
         return;
     }
     size_t li = data[0] & 0x3F; /* length indicator */
@@ -514,17 +520,37 @@
                         ]);
                 break;
             case UMMTP3TransitPermission_explicitlyDenied:
-                [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly denied"]];
+            {
+                if(logLevel < UMLOG_DEBUG)
+                {
+                    [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly denied"]];
+                }
                 break;
+            }
             case UMMTP3TransitPermission_implicitlyDenied:
-                [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly denied"]];
-                break;
+            {
+                if(logLevel < UMLOG_DEBUG)
+                {
+                    [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly denied"]];
+                    break;
+                }
+            }
             case UMMTP3TransitPermission_explicitlyPermitted:
-                [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly permitted"]];
+            {
+                if(logLevel < UMLOG_DEBUG)
+                {
+                    [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly permitted"]];
+                }
                 break;
+            }
             case UMMTP3TransitPermission_implicitlyPermitted:
-                [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly permitted"]];
+            {
+                if(logLevel < UMLOG_DEBUG)
+                {
+                    [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly permitted"]];
+                }
                 break;
+            }
             default:
                 break;
         }
@@ -896,7 +922,10 @@
                     case MTP3_MGMT_RST:
                     {
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant];
-                        [logFeed debugText:[NSString stringWithFormat:@"  H0/H1: [0x%02X] RST Signalling-route-set-test signal for prohibited destination",heading]];
+                        if(logLevel < UMLOG_DEBUG)
+                        {
+                            [logFeed debugText:[NSString stringWithFormat:@"  H0/H1: [0x%02X] RST Signalling-route-set-test signal for prohibited destination",heading]];
+                        }
                         [self processRST:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
