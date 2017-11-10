@@ -298,7 +298,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         speedometer = [[UMThroughputCounter alloc]init];
         submission_speed = [[UMThroughputCounter alloc]init];
         speed_within_limit = YES;
-        logLevel = UMLOG_MAJOR;
+        self.logLevel = UMLOG_MAJOR;
     }
     return self;
 }
@@ -439,7 +439,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     int 	ni;
     const uint8_t *data3;
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"process_DATA"];
     }
@@ -459,7 +459,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 #pragma unused(correlation_id)
 #pragma unused(routing_context)
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"process_DATA"];
         [self logDebug:[NSString stringWithFormat: @" PDU: %@", [protocolData hexString]]];
@@ -486,7 +486,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     mp	= data3[i++];
     sls = data3[i++];
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"Originating Pointcode OPC: %@",opc.description];
         [self logDebug:s];
@@ -494,7 +494,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:s];
     }
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         switch(si)
         {
@@ -520,8 +520,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 [self logDebug:@" Service Indicator: [0x07] DUP (facility related)"];
                 break;
             case 0x08:
-                if(logLevel == UMLOG_DEBUG)
-                    [self logDebug:@" Service Indicator: [0x08] MTP Testing User Part"];
+                [self logDebug:@" Service Indicator: [0x08] MTP Testing User Part"];
                 break;
             case 0x09:
                 [self logDebug:@" Service Indicator: [0x09] Broadband ISUP"];
@@ -589,7 +588,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processDUNA:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processDUNA"];
     }
@@ -608,7 +607,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processDAVA:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processDAVA"];
     }
@@ -629,7 +628,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 /* audit request */
 - (void)processDAUD:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processDAUD"];
     }
@@ -674,7 +673,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     /* Signalling Congestion */
     int sls = -200;
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processSCON"];
     }
@@ -717,7 +716,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     int sls = -200;
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processDRST"];
     }
@@ -771,7 +770,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     /* ASP Up acknlowledgment */
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processASPUP_ACK"];
     }
@@ -783,7 +782,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
     else
     {
-        if(logLevel == UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"processASPUP_ACK"];
             [self logDebug:@" status is now BUSY"];
@@ -807,7 +806,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (void)processASPAC:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Active*/
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processASPAC"];
     }
@@ -820,7 +819,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (void)processASPIA:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Inactive */
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processASPIA"];
     }
@@ -832,7 +831,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processASPAC_ACK:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processASPAC_ACK"];
         [self logDebug:@" status is now IS"];
@@ -1011,7 +1010,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
              streamId:streamId
            protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
            ackRequest:NULL];
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"SEND_PDU:"];
         [self logDebug:[[NSString alloc]initWithFormat:@" class: %d",(int)pclass]];
@@ -1024,7 +1023,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendASPUP:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPUP"];
     }
@@ -1034,7 +1033,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendASPUP_ACK:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPUP_ACK"];
     }
@@ -1044,7 +1043,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendASPIA:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPIA"];
     }
@@ -1054,7 +1053,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendASPAC:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPAC"];
     }
@@ -1064,7 +1063,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendASPAC_ACK:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPAC_ACK"];
     }
@@ -1074,7 +1073,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendASPIA_ACK:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPIA_ACK"];
     }
@@ -1084,7 +1083,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendASPDN:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPDN"];
     }
@@ -1094,7 +1093,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendASPDN_ACK:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPDN_ACK"];
     }
@@ -1105,7 +1104,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendDAUD:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendDAUD"];
     }
@@ -1116,7 +1115,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendDAVA:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendDAVA"];
     }
@@ -1146,7 +1145,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendBEAT:(NSData *)data
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendBEAT"];
     }
@@ -1155,7 +1154,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendBEAT_ACK:(NSData *)data
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendBEAT_ACK"];
     }
@@ -1182,7 +1181,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     SCTP_Status	old_status;
     old_status = sctp_status;
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"sctpStatusIndication: %s->%s",
                        get_sctp_status_string(old_status),
@@ -1223,7 +1222,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     @synchronized(self)
     {
-        if(logLevel == UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"powerOn"];
         }
@@ -1245,7 +1244,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             }
             return;
         }
-        if(logLevel == UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@" setting status OOS"];
             [self logDebug:@" sending ASPUP"];
@@ -1273,7 +1272,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     @synchronized (self)
     {
-        if(logLevel == UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"powerOff"];
         }
@@ -1326,7 +1325,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         packlen = ntohl(*(uint32_t *)&data[4]);
         if(packlen <= len)
         {
-            if(logLevel == UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self logDebug:@"M3UA Packet:"];
                 [self logDebug:[NSString stringWithFormat:@" Version: %d",(int)pversion]];
@@ -1388,7 +1387,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4)];
         pos += param_len2;
 
-        if(logLevel == UMLOG_DEBUG)
+        if(logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"M3UA Packet:"];
             [self logDebug:[NSString stringWithFormat:@"  Parameter: 0x%04x (%s)",param_type,m3ua_param_name(param_type)]];
@@ -1472,7 +1471,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                  protocolId:(uint32_t)pid
                        data:(NSData *)data
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sctpDataIndication"];
         [self logDebug:[NSString stringWithFormat:@" rx-streamid: %d",streamID]];
@@ -1639,28 +1638,28 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     @synchronized(self)
     {
-        if(logLevel == UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"reopen_timer1_fires"];
         }
         switch(self.status)
         {
             case M3UA_STATUS_OOS:
-                if(logLevel == UMLOG_DEBUG)
+                if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"OOS state. Ignoring Timer Event"];
                 }
                 [reopen_timer1 stop];
                 break;
             case M3UA_STATUS_BUSY:
-                if(logLevel == UMLOG_DEBUG)
+                if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"BUSY state. Ignoring Timer Event"];
                 }
                 [reopen_timer1 stop];
                 break;
             case M3UA_STATUS_INACTIVE:
-                if(logLevel == UMLOG_DEBUG)
+                if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"INACTIVE state. Ignoring Timer Event"];
                 }
@@ -1670,7 +1669,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 break;
 
             case M3UA_STATUS_IS:
-                if(logLevel == UMLOG_DEBUG)
+                if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"IS state. Ignoring Timer Event"];
                 }
@@ -1681,7 +1680,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             case M3UA_STATUS_OFF:
             case M3UA_STATUS_UNUSED:
             default:
-                if(logLevel == UMLOG_DEBUG)
+                if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"OFF state. Asking SCTP to power on the link"];
                 }
@@ -1701,14 +1700,14 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     @synchronized(self)
     {
-        if(logLevel == UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"reopen_timer1_fires"];
         }
         switch(self.status)
         {
             case M3UA_STATUS_UNUSED:
-                if(logLevel == UMLOG_DEBUG)
+                if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"M3UA_STATUS_UNUSED state. Ignoring timer event"];
                 }
@@ -1722,7 +1721,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 /* reopen timer 1 has expired and the sctp link has been asked to power on
                  after that reopen timer 2 has excpired. So if its still not in "on" state
                  we have to restart from scratch */
-                if(logLevel == UMLOG_DEBUG)
+                if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"Status is OFF/OOS or BUSY but still not in service state. Asking SCTP to power off/on the link"];
                 }
@@ -1732,7 +1731,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 [reopen_timer1 start];
                 break;
             case M3UA_STATUS_INACTIVE:
-                if(logLevel == UMLOG_DEBUG)
+                if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"Status M3UA_STATUS_INACTIVE. Stopping timers"];
                 }
@@ -1740,7 +1739,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 [reopen_timer2 stop];
                 break;
             case M3UA_STATUS_IS:
-                if(logLevel == UMLOG_DEBUG)
+                if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"Status M3UA_STATUS_IS. Stopping timers"];
                 }
@@ -1758,7 +1757,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     @synchronized(self)
     {
 
-        if(logLevel == UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"linktest_timer_fires"];
         }
@@ -1779,7 +1778,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         }
         if(linktest_timer_value > 0)
         {
-            if(logLevel == UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self logDebug:@"restarting linktest timers"];
             }
