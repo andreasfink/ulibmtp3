@@ -154,7 +154,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     if(self)
     {
         applicationServerProcesses = [[UMSynchronizedSortedDictionary alloc]init];
-        logLevel = UMLOG_MAJOR;
+        self.logLevel = UMLOG_MAJOR;
     }
     return self;
 }
@@ -265,7 +265,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     int 	ni;
     const uint8_t *data3;
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"process_DATA"];
     }
@@ -281,7 +281,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     correlation_id		= [self getParam:params identifier:M3UA_PARAM_CORRELATION_ID];
     routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"process_DATA"];
         [self logDebug:[NSString stringWithFormat: @" PDU: %@", [protocolData hexString]]];
@@ -308,7 +308,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     mp	= data3[i++];
     sls = data3[i++];
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"Originating Pointcode OPC: %@",opc.description];
         [self logDebug:s];
@@ -316,7 +316,7 @@ static const char *m3ua_param_name(uint16_t param_type)
         [self logDebug:s];
     }
 
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         switch(si)
         {
@@ -342,8 +342,7 @@ static const char *m3ua_param_name(uint16_t param_type)
                 [self logDebug:@" Service Indicator: [0x07] DUP (facility related)"];
                 break;
             case 0x08:
-                if(logLevel == UMLOG_DEBUG)
-                    [self logDebug:@" Service Indicator: [0x08] MTP Testing User Part"];
+                [self logDebug:@" Service Indicator: [0x08] MTP Testing User Part"];
                 break;
             case 0x09:
                 [self logDebug:@" Service Indicator: [0x09] Broadband ISUP"];
@@ -516,7 +515,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)powerOn
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"start"];
     }
@@ -530,7 +529,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)powerOff
 {
-    if(logLevel == UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"stop"];
     }
@@ -594,7 +593,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     NSString *apc;
     NSString *opc;
 
-    logLevel = UMLOG_MAJOR;
+    self.logLevel = UMLOG_MAJOR;
     for(NSString *key in cfg)
     {
         NSString *value = [cfg[key] stringValue];
@@ -604,7 +603,7 @@ static const char *m3ua_param_name(uint16_t param_type)
         }
         else if([key isEqualToStringCaseInsensitive:@"log-level"])
         {
-            logLevel = [cfg[@"log-level"] intValue];
+            self.logLevel = [cfg[@"log-level"] intValue];
         }
         else if([key isEqualToStringCaseInsensitive:@"mtp3"])
         {

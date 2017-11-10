@@ -97,7 +97,7 @@
         ls.logFeed = [self.logFeed copy];
         ls.logFeed.subsection = @"mtp3_linkset";
         ls.logFeed.name = ls.name;
-        ls.logLevel = self.logFeed.level;
+        ls.logLevel = self.logLevel;
         if(ls.localPointCode == NULL)
         {
             ls.localPointCode = self.opc;

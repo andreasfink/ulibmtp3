@@ -28,7 +28,6 @@
 @synthesize congestionLevel;
 @synthesize links;
 @synthesize mtp3;
-@synthesize logLevel;
 @synthesize log;
 @synthesize variant;
 @synthesize localPointCode;
@@ -57,7 +56,7 @@
         totalLinks = -1;
         congestionLevel = 0;
         networkIndicator = -1;
-        logLevel = UMLOG_MAJOR;
+        _logLevel = UMLOG_MAJOR;
         routingTable = [[UMMTP3LinkRoutingTable alloc]init];
     }
     return self;
@@ -176,7 +175,7 @@
 
 - (void)fisuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc
 {
-    if(logLevel <= UMLOG_DEBUG)
+    if(_logLevel <= UMLOG_DEBUG)
     {
         [logFeed debugText:@" FISU (Fill-in Signal Unit). (We should not get this on M2PA data link)"];
     }
@@ -198,36 +197,33 @@
     }
 
     int sf = data[1];
-    if(logLevel <= UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
-        if(logLevel <=UMLOG_DEBUG)
+        [logFeed debugText:@" LSSU (m3link Status Signal Unit) (We should not get this on M2PA data link)"];
+        [logFeed debugText:[NSString stringWithFormat:@" Status Field (SF): [%d]",sf]];
+        switch(sf & 0x07)
         {
-            [logFeed debugText:@" LSSU (m3link Status Signal Unit) (We should not get this on M2PA data link)"];
-            [logFeed debugText:[NSString stringWithFormat:@" Status Field (SF): [%d]",sf]];
-            switch(sf & 0x07)
-            {
-                case 0:
-                    [logFeed debugText:@"  {SIO} OUT OF ALIGNMENT"];
-                    break;
-                case 1:
-                    [logFeed debugText:@"  {SIN} NORMAL ALIGNMENT"];
-                    break;
-                case 2:
-                    [logFeed debugText:@"  {SIE} EMERGENCY ALIGNMENT"];
-                    break;
-                case 3:
-                    [logFeed debugText:@"  {SIOS} OUT OF SERVICE"];
-                    break;
-                case 4:
-                    [logFeed debugText:@"  {SIPO} PROCESSOR OUTAGE"];
-                    break;
-                case 5:
-                    [logFeed debugText:@"  {SIB} BUSY"];
-                    break;
-                default:
-                    [logFeed debugText:@"  {unknown}"];
-                    break;
-            }
+            case 0:
+                [logFeed debugText:@"  {SIO} OUT OF ALIGNMENT"];
+                break;
+            case 1:
+                [logFeed debugText:@"  {SIN} NORMAL ALIGNMENT"];
+                break;
+            case 2:
+                [logFeed debugText:@"  {SIE} EMERGENCY ALIGNMENT"];
+                break;
+            case 3:
+                [logFeed debugText:@"  {SIOS} OUT OF SERVICE"];
+                break;
+            case 4:
+                [logFeed debugText:@"  {SIPO} PROCESSOR OUTAGE"];
+                break;
+            case 5:
+                [logFeed debugText:@"  {SIB} BUSY"];
+                break;
+            default:
+                [logFeed debugText:@"  {unknown}"];
+                break;
         }
     }
 }
@@ -241,7 +237,7 @@
     {
         /* an empty packet to ack the outstanding FSN/BSN */
         /* kind of a FISU */
-        if(logLevel < UMLOG_DEBUG)
+        if(_logLevel <= UMLOG_DEBUG)
         {
             [log debugText:@" empty MSU"];
         }
@@ -388,7 +384,7 @@
         int ni; /* network indicator */
         int mp; /* message priority */
 
-        if(logLevel <= UMLOG_DEBUG)
+        if(_logLevel <= UMLOG_DEBUG)
         {
             [logFeed debugText:@" MSU (Message Signal Unit)"];
         }
@@ -460,7 +456,7 @@
     NSUInteger maxlen   = pdu.length;
     @try
     {
-        if(logLevel <= UMLOG_DEBUG)
+        if(_logLevel <= UMLOG_DEBUG)
         {
             [logFeed debugText:[NSString stringWithFormat:@"  data2: [%@]",pdu]];
             [logFeed debugText:[NSString stringWithFormat:@" maxlen: [%d]",(int)maxlen]];
@@ -521,7 +517,7 @@
                 break;
             case UMMTP3TransitPermission_explicitlyDenied:
             {
-                if(logLevel < UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly denied"]];
                 }
@@ -529,7 +525,7 @@
             }
             case UMMTP3TransitPermission_implicitlyDenied:
             {
-                if(logLevel < UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly denied"]];
                     break;
@@ -537,7 +533,7 @@
             }
             case UMMTP3TransitPermission_explicitlyPermitted:
             {
-                if(logLevel < UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly permitted"]];
                 }
@@ -545,7 +541,7 @@
             }
             case UMMTP3TransitPermission_implicitlyPermitted:
             {
-                if(logLevel < UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly permitted"]];
                 }
@@ -560,7 +556,7 @@
             case MTP3_SERVICE_INDICATOR_MAINTENANCE_SPECIAL_MESSAGE:
             {
                 /* Signalling network testing and maintenance messages */
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network testing and maintenance messages",si]];
                 }
@@ -674,7 +670,7 @@
             case MTP3_SERVICE_INDICATOR_TEST:
             {
                 /* Signalling network testing and maintenance messages */
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network testing and maintenance messages",si]];
                 }
@@ -792,7 +788,7 @@
             {
                 /* Signalling network management messages */
 
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network management messages",si]];
                 }
@@ -922,7 +918,7 @@
                     case MTP3_MGMT_RST:
                     {
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant];
-                        if(logLevel < UMLOG_DEBUG)
+                        if(_logLevel < UMLOG_DEBUG)
                         {
                             [logFeed debugText:[NSString stringWithFormat:@"  H0/H1: [0x%02X] RST Signalling-route-set-test signal for prohibited destination",heading]];
                         }
@@ -1063,7 +1059,7 @@
             case MTP3_SERVICE_INDICATOR_SCCP:
             {
                 NSData *pdu2 = [NSData dataWithBytes:&data[idx] length:(maxlen-idx)];
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
                     [logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu2]];
@@ -1074,7 +1070,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_TUP:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
                 }
@@ -1085,7 +1081,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_ISUP:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
@@ -1096,7 +1092,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_DUP_C:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
                 }
@@ -1107,7 +1103,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_DUP_F:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
                 }
@@ -1118,7 +1114,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_RES_TESTING:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
                 }
@@ -1129,7 +1125,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_BROADBAND_ISUP:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
@@ -1140,7 +1136,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SAT_ISUP:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
                 }
@@ -1151,7 +1147,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_B:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
                 }
@@ -1162,7 +1158,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_C:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
                 }
@@ -1173,7 +1169,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_D:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
                 }
@@ -1184,7 +1180,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_E:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
                 }
@@ -1195,7 +1191,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_F:
             {
-                if(logLevel <= UMLOG_DEBUG)
+                if(_logLevel <= UMLOG_DEBUG)
                 {
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
                 }
@@ -1307,7 +1303,7 @@
 /* Group CHM */
 - (void)processCOO:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processCOO (Changeover-order signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1321,7 +1317,7 @@
 
 - (void)processCOA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processCOA (Changeover-acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1336,7 +1332,7 @@
 
 - (void)processCBD:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processCBD (Changeback-declaration signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1351,7 +1347,7 @@
 
 - (void)processCBA:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processCBA (Changeback-acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1366,7 +1362,7 @@
 /* Group ECM */
 - (void)processECO:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processECO (Emergency-changeover-order signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1379,7 +1375,7 @@
 
 - (void)processECA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processECA (Emergency-changeover-acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1394,7 +1390,7 @@
 /* Group FCM */
 - (void)processRCT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processRCT (Signalling-route-set-congestion-test signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1407,7 +1403,7 @@
 
 - (void)processTFC:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc status:(int)status ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFC (Transfer-controlled signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1439,7 +1435,7 @@
 
 - (void)processTFP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFP (Transfer-prohibited signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1456,7 +1452,7 @@
 
 - (void)processTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFR (Transfer-restricted signal (national option))"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1484,7 +1480,7 @@
 
 - (void)processTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFA (Transfer-allowed signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1502,7 +1498,7 @@
 /* Group RSM */
 - (void)processRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processRST (Signalling-route-set-test signal for prohibited destination)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1516,7 +1512,7 @@
 
 - (void)processRSR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processRSR (Signalling-route-set-test signal for restricted destination (national option))"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1532,7 +1528,7 @@
 /* Group MIM */
 - (void)processLIN:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processLIN (Link inhibit signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1545,7 +1541,7 @@
 
 - (void)processLUN:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processLUN (Link uninhibit signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1559,7 +1555,7 @@
 
 - (void)processLIA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processLIA (Link inhibit acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1573,7 +1569,7 @@
 
 - (void)processLUA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processLUA (Link uninhibit acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1587,7 +1583,7 @@
 
 - (void)processLID:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processLID (Link inhibit denied signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1601,7 +1597,7 @@
 
 - (void)processLFU:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processLFU (Link forced uninhibit signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1615,7 +1611,7 @@
 
 - (void)processLLT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processLLT (Link local inhibit test signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1628,7 +1624,7 @@
 
 - (void)processLRT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processLRT (Link remote inhibit test signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1643,7 +1639,7 @@
 - (void)processTRA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
     [self updateLinksetStatus];
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTRA (Traffic-restart-allowed signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1716,7 +1712,7 @@
         [self protocolViolation];
         return;
     }
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTRW (Traffic Restart Waiting (ANSI only))"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1777,7 +1773,7 @@
         [self logMajorError:[NSString stringWithFormat:@" linkset: %@",self.name]];
         return;
     }
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTCA"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1803,7 +1799,7 @@
         [self logMajorError:[NSString stringWithFormat:@" linkset: %@",self.name]];
         return;
     }
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTCP"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1828,7 +1824,7 @@
         [self logMajorError:[NSString stringWithFormat:@" linkset: %@",self.name]];
         return;
     }
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTCR"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1853,7 +1849,7 @@
         [self logMajorError:[NSString stringWithFormat:@" linkset: %@",self.name]];
         return;
     }
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processRCP"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1878,7 +1874,7 @@
         [self logMajorError:[NSString stringWithFormat:@" linkset: %@",self.name]];
         return;
     }
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processRCR"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1896,7 +1892,7 @@
 /* group DLM */
 - (void)processDLC:(UMMTP3Label *)label cic:(int)cic ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processDLC (Signalling-data-link-connection-order signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1911,7 +1907,7 @@
 
 - (void)processCSS:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processCSS (Connection-successful signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1925,7 +1921,7 @@
 
 - (void)processCNS:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processCNS (Connection-not-successful signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1939,7 +1935,7 @@
 
 - (void)processCNP:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processCNP (Connection-not-possible signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1954,7 +1950,7 @@
 /* group UFC */
 - (void)processUPU:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc userpartId:(int)upid cause:(int)cause ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processUPU (User part unavailable signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2383,7 +2379,7 @@
 /* Group CHM */
 - (void)sendCOO:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCOO (Changeover-order signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2420,7 +2416,7 @@
 
 - (void)sendCOA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCOA (Changeover-acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2456,7 +2452,7 @@
 
 - (void)sendCBD:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCBD (Changeback-declaration signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2492,7 +2488,7 @@
 
 - (void)sendCBA:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCBA (Changeback-acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2529,7 +2525,7 @@
 /* Group ECM */
 - (void)sendECO:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendECO (Emergency-changeover-order signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2552,7 +2548,7 @@
 
 - (void)sendECA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendECA (Emergency-changeover-acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2576,7 +2572,7 @@
 /* Group FCM */
 - (void)sendRCT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendRCT (Signalling-route-set-congestion-test signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2605,7 +2601,7 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFC (Transfer-controlled signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2631,7 +2627,7 @@
 /* Group TFM */
 - (void)sendTFP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFP (Transfer-prohibited signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2655,7 +2651,7 @@
 
 - (void)sendTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFR (Transfer-restricted signal (national option))"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2679,7 +2675,7 @@
 
 - (void)sendTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFA (Transfer-allowed signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2704,7 +2700,7 @@
 /* Group RSM */
 - (void)sendRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendRST (Signalling-route-set-test signal for prohibited destination)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2727,7 +2723,7 @@
 }
 - (void)sendRSR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendRSR (Signalling-route-set-test signal for restricted destination (national option))"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2752,7 +2748,7 @@
 /* Group MIM */
 - (void)sendLIN:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLIN (Link inhibit signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2775,7 +2771,7 @@
 
 - (void)sendLUN:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLUN (Link uninhibit signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2798,7 +2794,7 @@
 
 - (void)sendLIA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLIA (Link inhibit acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2821,7 +2817,7 @@
 
 - (void)sendLUA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLUA (Link uninhibit acknowledgement signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2844,7 +2840,7 @@
 
 - (void)sendLID:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLID (Link inhibit denied signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2867,7 +2863,7 @@
 
 - (void)sendLFU:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLFU (Link forced uninhibit signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2890,7 +2886,7 @@
 
 - (void)sendLLT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLLT (Link local inhibit test signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2913,7 +2909,7 @@
 
 - (void)sendLRT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLRT (Link remote inhibit test signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2939,7 +2935,7 @@
     @synchronized(links)
     {
         tra_sent++;
-        if(logLevel <=UMLOG_DEBUG)
+        if(_logLevel <=UMLOG_DEBUG)
         {
             [self logDebug:@"sendTRA (Traffic-restart-allowed signal)"];
             [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -2964,7 +2960,7 @@
 /* group DLM */
 - (void)sendDLC:(UMMTP3Label *)label cic:(int)cic ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendDLC (Signalling-data-link-connection-order signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -3008,7 +3004,7 @@
 
 - (void)sendCSS:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCSS (Connection-successful signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -3031,7 +3027,7 @@
 
 - (void)sendCNS:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCNS (Connection-not-successful signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -3054,7 +3050,7 @@
 
 - (void)sendCNP:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCNP (Connection-not-possible signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -3077,7 +3073,7 @@
 /* group UFC */
 - (void)sendUPU:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc userpartId:(int)upid cause:(int)cause ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendUPU (User part unavailable signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -3112,7 +3108,7 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendUPA"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -3147,7 +3143,7 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendUPT"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -3333,7 +3329,7 @@
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(_logLevel <=UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
         [self logDebug:s];

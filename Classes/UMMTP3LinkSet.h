@@ -29,7 +29,7 @@
     UMLayerMTP3 __weak          *mtp3;
     NSString                    *name;
     UMSynchronizedSortedDictionary *links;
-    UMLogLevel                  logLevel;
+    UMLogLevel                  _logLevel;
     UMMTP3Variant               variant;
     UMMTP3PointCode             *localPointCode;
     UMMTP3PointCode             *adjacentPointCode;
