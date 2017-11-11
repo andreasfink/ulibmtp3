@@ -20,8 +20,6 @@
 
 @synthesize name;
 @synthesize attachmentStatus;
-@synthesize m2pa_status;
-@synthesize sctp_status;
 @synthesize m2pa;
 @synthesize linkset;
 @synthesize slc;
@@ -67,26 +65,26 @@
 
 - (void)sctpStatusUpdate:(SCTP_Status)s
 {
-    sctp_status = s;
+    self.sctp_status = s;
 }
 
-- (void)m2paStatusUpdate:(M2PA_Status)s
+- (void)m2paStatusUpdate:(M2PA_Status)newStatus
 {
-    M2PA_Status old_status = m2pa_status;
-    m2pa_status = s;
+    M2PA_Status old_status = self.m2pa_status;
+    self.m2pa_status = newStatus;
     
-    if((old_status == M2PA_STATUS_OFF) && (m2pa_status == M2PA_STATUS_OOS))
+    if((old_status == M2PA_STATUS_OFF) && (newStatus == M2PA_STATUS_OOS))
     {
         [m2pa startFor:linkset.mtp3];
     }
-    if(s==M2PA_STATUS_ALIGNED_READY)
+    if(newStatus==M2PA_STATUS_ALIGNED_READY)
     {
     }
-    if((old_status != M2PA_STATUS_IS) && (m2pa_status == M2PA_STATUS_IS))
+    if((old_status != M2PA_STATUS_IS) && (newStatus == M2PA_STATUS_IS))
     {
         [self startLinkTestTimer];
     }
-    else if((old_status == M2PA_STATUS_IS) && (m2pa_status != M2PA_STATUS_IS))
+    else if((old_status == M2PA_STATUS_IS) && (newStatus != M2PA_STATUS_IS))
     {
         [self stopLinkTestTimer];
     }
