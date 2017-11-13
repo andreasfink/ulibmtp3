@@ -1258,8 +1258,14 @@ static const char *get_sctp_status_string(SCTP_Status status)
         UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
         pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
 
+
         aspup_received=0;
         [self sendASPUP:pl];
+        self.status = M3UA_STATUS_BUSY;
+        [speedometer clear];
+        [submission_speed clear];
+        speed_within_limit = YES;
+
         sltm_serial = 0;
         [self logDebug:@" starting reopen timer 2"];
         [reopen_timer2 start];
@@ -1295,6 +1301,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
         {
             [self sendASPDN:NULL];
             self.status = M3UA_STATUS_BUSY;
+            [speedometer clear];
+            [submission_speed clear];
+            speed_within_limit = YES;
+
             [reopen_timer1 stop];
             [reopen_timer1 start];
             [sctpLink closeFor:self];
@@ -1819,20 +1829,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
      ** called upon SCTP reporting a association to be up
      */
 
-    [_aspLock lock];
-    @try
-    {
-        [self logInfo:@"sctpReportsUp"];
-        [self powerOn];
-        self.status = M3UA_STATUS_BUSY;
-        [speedometer clear];
-        [submission_speed clear];
-        speed_within_limit = YES;
-    }
-    @finally
-    {
-        [_aspLock unlock];
-    }
+    [self logInfo:@"sctpReportsUp"];
+    [self powerOn];
 }
 
 - (void)sctpReportsDown
