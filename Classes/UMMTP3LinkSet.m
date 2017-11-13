@@ -2339,6 +2339,10 @@
             networkIndicator = 0;
         }
     }
+    if(cfg[@"log-level"])
+    {
+        _logLevel = [cfg[@"log-level"] intValue];
+    }
 
     self.variant = mtp3.variant;
     self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:mtp3.variant];
