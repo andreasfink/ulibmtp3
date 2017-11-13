@@ -2257,32 +2257,29 @@
     NSString *apcString = @"";
     NSString *opc;
 
-    for(NSString *key in cfg)
+
+    if(cfg[@"apc"])
     {
-        id value = cfg[key];
-        NSString *k1;
-        NSString *k2;
-        if(key.length >10)
+        apcString  = [cfg[@"apc"] stringValue];
+    }
+    if(cfg[@"name"])
+    {
+        self.name =  [cfg[@"name"] stringValue];
+    }
+    if(cfg[@"speed"])
+    {
+        speed =  [cfg[@"speed"] doubleValue];
+    }
+    if(cfg[@"opc"])
+    {
+        opc = [cfg[@"speed"] stringValue];
+    }
+
+    for(int slc=0;slc<16;slc++)
+    {
+        NSString *key = [NSString stringWithFormat:@"attach-slc%d",slc];
+        if(cfg[name])
         {
-            k1 = [key substringToIndex:10];
-            k2 = [key substringFromIndex:10];
-        }
-        else
-        {
-            k1 = key;
-            k2 = @"";
-        }
-        if([key isEqualToStringCaseInsensitive:@"apc"])
-        {
-            apcString  = value;
-        }
-        else if([key isEqualToStringCaseInsensitive:@"name"])
-        {
-            self.name =  [value stringValue];
-        }
-        else if([k1 isEqualToStringCaseInsensitive:@"attach-slc"])
-        {
-            int slc = [k2 intValue];
             NSString *m2pa_name = cfg[key];
             UMMTP3Link *link = [[UMMTP3Link alloc]init];
             link.slc = slc;
@@ -2290,67 +2287,61 @@
             link.linkset = self;
             links[link.name] = link;
         }
-        else if([key isEqualToStringCaseInsensitive:@"speed"])
-        {
-            speed =  [cfg[key] doubleValue];
-        }
-        else if([key isEqualToStringCaseInsensitive:@"opc"])
-        {
-            opc = value;
-        }
-        else if([key isEqualToStringCaseInsensitive:@"network-indicator"])
-        {
+    }
 
-            NSString *s = [value stringValue];
-            if((  [s isEqualToStringCaseInsensitive:@"international"])
-               || ([s isEqualToStringCaseInsensitive:@"int"])
-               || ([s isEqualToStringCaseInsensitive:@"0"]))
-            {
-                networkIndicator = 0;
-            }
-            else if(([s isEqualToStringCaseInsensitive:@"national"])
-                    || ([s isEqualToStringCaseInsensitive:@"nat"])
-                    || ([s isEqualToStringCaseInsensitive:@"2"]))
-            {
-                networkIndicator = 2;
-            }
-            else if(([s isEqualToStringCaseInsensitive:@"spare"])
-                    || ([s isEqualToStringCaseInsensitive:@"international-spare"])
-                    || ([s isEqualToStringCaseInsensitive:@"int-spare"])
-                    || ([s isEqualToStringCaseInsensitive:@"1"]))
-            {
-                networkIndicator = 1;
-            }
-            else if(([s isEqualToStringCaseInsensitive:@"reserved"])
-                    || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
-                    || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
-                    || ([s isEqualToStringCaseInsensitive:@"3"]))
-            {
-                networkIndicator = 3;
-            }
-            else
-            {
-                [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
-                networkIndicator = 0;
-            }
-        }
-        else if([key isEqualToStringCaseInsensitive:@"attach-to"])
+    if(cfg[@"attach-to"])
+    {
+        NSString *attachTo = [cfg[@"attach-to"] stringValue];
+        mtp3 = [appContext getMTP3:attachTo];
+        if(mtp3 == NULL)
         {
-            NSString *attachTo = [value stringValue];
-            mtp3 = [appContext getMTP3:attachTo];
-            if(mtp3 == NULL)
-            {
-                NSString *s = [NSString stringWithFormat:@"Can not find mtp3 layer '%@' referred from mtp3 linkset '%@'",attachTo,name];
-                [self logMajorError:s];
-                @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
-                                               reason:s
-                                             userInfo:NULL]);
-            }
+            NSString *s = [NSString stringWithFormat:@"Can not find mtp3 layer '%@' referred from mtp3 linkset '%@'",attachTo,name];
+            [self logMajorError:s];
+            @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
+                                           reason:s
+                                         userInfo:NULL]);
         }
     }
+
+
+    if(cfg[@"network-indicator"])
+    {
+        NSString *s = [cfg[@"network-indicator"] stringValue];
+        if((  [s isEqualToStringCaseInsensitive:@"international"])
+           || ([s isEqualToStringCaseInsensitive:@"int"])
+           || ([s isEqualToStringCaseInsensitive:@"0"]))
+        {
+            networkIndicator = 0;
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"national"])
+                || ([s isEqualToStringCaseInsensitive:@"nat"])
+                || ([s isEqualToStringCaseInsensitive:@"2"]))
+        {
+            networkIndicator = 2;
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"spare"])
+                || ([s isEqualToStringCaseInsensitive:@"international-spare"])
+                || ([s isEqualToStringCaseInsensitive:@"int-spare"])
+                || ([s isEqualToStringCaseInsensitive:@"1"]))
+        {
+            networkIndicator = 1;
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"3"]))
+        {
+            networkIndicator = 3;
+        }
+        else
+        {
+            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
+            networkIndicator = 0;
+        }
+    }
+
     self.variant = mtp3.variant;
     self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:mtp3.variant];
-
     self.name = name;
     if((mtp3) && (variant==UMMTP3Variant_Undefined))
     {

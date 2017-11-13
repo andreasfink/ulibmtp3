@@ -1573,44 +1573,41 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
     logLevel = UMLOG_MAJOR;
 
-    for(NSString *key in cfg)
+    if(cfg[@"name"])
     {
-        id value = cfg[key];
-        if([key isEqualToStringCaseInsensitive:@"name"])
-        {
-            name =  [value stringValue];
-        }
-        else if([key isEqualToStringCaseInsensitive:@"log-level"])
-        {
-            logLevel = [cfg[@"log-level"] intValue];
-        }
-        else if([key isEqualToStringCaseInsensitive:@"attach-to"])
-        {
-            NSString *attachTo =  [value stringValue];
-            sctpLink = [appContext getSCTP:attachTo];
-        }
-        else if([key isEqualToStringCaseInsensitive:@"m3ua-as"])
-        {
-            NSString *as_name =  [value stringValue];
-            as = [appContext getM3UA_AS:as_name];
-        }
-        else if ([key isEqualToStringCaseInsensitive:@"speed"])
-        {
-            speed = [value doubleValue];
-        }
-        else if ([key isEqualToStringCaseInsensitive:@"reopen-timer1"])
-        {
-            reopen_timer1_value = [value doubleValue];
-        }
-        else if ([key isEqualToStringCaseInsensitive:@"reopen-timer2"])
-        {
-            reopen_timer2_value = [value doubleValue];
-        }
-        else if ([key isEqualToStringCaseInsensitive:@"linktest-timer"])
-        {
-            linktest_timer_value = [value doubleValue];
-        }
+        name =  [cfg[@"name"] stringValue];
     }
+    if(cfg[@"log-level"])
+    {
+        logLevel = [cfg[@"log-level"] intValue];
+    }
+    if(cfg[@"attach-to"])
+    {
+        NSString *attachTo =  [cfg[@"attach-to"] stringValue];
+        sctpLink = [appContext getSCTP:attachTo];
+    }
+    if(cfg[@"m3ua-as"])
+    {
+        NSString *as_name =  [cfg[@"m3ua-as"] stringValue];
+        as = [appContext getM3UA_AS:as_name];
+    }
+    if (cfg[@"speed"])
+    {
+        speed = [cfg[@"speed"] doubleValue];
+    }
+    if (cfg[@"reopen-timer1"])
+    {
+        reopen_timer1_value = [cfg[@"reopen-timer1"] doubleValue];
+    }
+    if (cfg[@"reopen-timer2"])
+    {
+        reopen_timer2_value = [cfg[@"reopen-timer2"] doubleValue];
+    }
+    if (cfg[@"linktest-timer"])
+    {
+        linktest_timer_value = [cfg[@"linktest-timer"] doubleValue];
+    }
+
     reopen_timer1 = [[UMTimer alloc]initWithTarget:self
                                           selector:@selector(reopen_timer1_fires:)];
     reopen_timer1.duration = reopen_timer1_value * 1000000;

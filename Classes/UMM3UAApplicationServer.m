@@ -594,123 +594,129 @@ static const char *m3ua_param_name(uint16_t param_type)
     NSString *opc;
 
     self.logLevel = UMLOG_MAJOR;
-    for(NSString *key in cfg)
+
+
+    if(cfg[@"name"])
     {
-        NSString *value = [cfg[key] stringValue];
-        if([key isEqualToStringCaseInsensitive:@"name"])
+        self.name =  [cfg[@"name"] stringValue];
+    }
+    if(cfg[@"log-level"])
+    {
+        self.logLevel = [cfg[@"log-level"] intValue];
+    }
+
+    if(cfg[@"mtp3"])
+    {
+        mtp3 = [appContext getMTP3:[cfg[@"mtp3"] stringValue]];
+    }
+
+    if(cfg[@"apc"])
+    {
+        apc = [cfg[@"apc"] stringValue];
+    }
+    if(cfg[@"opc"])
+    {
+        opc = [cfg[@"opc"] stringValue];
+    }
+
+    if (cfg[@"speed"])
+    {
+        speed = [cfg[@"speed"] doubleValue];
+    }
+
+    if (cfg[@"variant"])
+    {
+        NSString *s = [cfg[@"variant"] stringValue];
+        if([s isEqualToStringCaseInsensitive:@"itu"])
         {
-            self.name =  [value stringValue];
+            variant = UMMTP3Variant_ITU;
         }
-        else if([key isEqualToStringCaseInsensitive:@"log-level"])
+        else if([s isEqualToStringCaseInsensitive:@"ansi"])
         {
-            self.logLevel = [cfg[@"log-level"] intValue];
+            variant = UMMTP3Variant_ANSI;
         }
-        else if([key isEqualToStringCaseInsensitive:@"mtp3"])
+        else if([s isEqualToStringCaseInsensitive:@"china"])
         {
-            mtp3 = [appContext getMTP3:[value stringValue]];
+            variant = UMMTP3Variant_China;
         }
-        else if([key isEqualToStringCaseInsensitive:@"apc"])
+        else if([s isEqualToStringCaseInsensitive:@"japan"])
         {
-            apc = value;
+            variant = UMMTP3Variant_Japan;
         }
-        else if([key isEqualToStringCaseInsensitive:@"opc"])
+        else
         {
-            opc = value;
+            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA variant '%@'",s]];
         }
-        else if ([key isEqualToStringCaseInsensitive:@"speed"])
+    }
+
+    if (cfg[@"network-indicator"])
+    {
+        NSString *s = [cfg[@"network-indicator"] stringValue];
+        if((  [s isEqualToStringCaseInsensitive:@"international"])
+           || ([s isEqualToStringCaseInsensitive:@"int"])
+           || ([s isEqualToStringCaseInsensitive:@"0"]))
         {
-            speed = [value doubleValue];
+            networkIndicator = 0;
         }
-        else if ([key isEqualToStringCaseInsensitive:@"variant"])
-        {
-            NSString *s = [value stringValue];
-            if([s isEqualToStringCaseInsensitive:@"itu"])
-            {
-                variant = UMMTP3Variant_ITU;
-            }
-            else if([s isEqualToStringCaseInsensitive:@"ansi"])
-            {
-                variant = UMMTP3Variant_ANSI;
-            }
-            else if([s isEqualToStringCaseInsensitive:@"china"])
-            {
-                variant = UMMTP3Variant_China;
-            }
-            else if([s isEqualToStringCaseInsensitive:@"japan"])
-            {
-                variant = UMMTP3Variant_Japan;
-            }
-            else
-            {
-                [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA variant '%@'",s]];
-            }
-        }
-        else if ([key isEqualToStringCaseInsensitive:@"network-indicator"])
-        {
-            NSString *s = [value stringValue];
-            if((  [s isEqualToStringCaseInsensitive:@"international"])
-               || ([s isEqualToStringCaseInsensitive:@"int"])
-               || ([s isEqualToStringCaseInsensitive:@"0"]))
-            {
-                networkIndicator = 0;
-            }
-            else if(([s isEqualToStringCaseInsensitive:@"national"])
+        else if(([s isEqualToStringCaseInsensitive:@"national"])
                 || ([s isEqualToStringCaseInsensitive:@"nat"])
                 || ([s isEqualToStringCaseInsensitive:@"2"]))
-            {
-                networkIndicator = 2;
-            }
-            else if(([s isEqualToStringCaseInsensitive:@"spare"])
+        {
+            networkIndicator = 2;
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"spare"])
                 || ([s isEqualToStringCaseInsensitive:@"international-spare"])
                 || ([s isEqualToStringCaseInsensitive:@"int-spare"])
                 || ([s isEqualToStringCaseInsensitive:@"1"]))
-            {
-                networkIndicator = 1;
-            }
-            else if(([s isEqualToStringCaseInsensitive:@"reserved"])
+        {
+            networkIndicator = 1;
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"reserved"])
                 || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
                 || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
                 || ([s isEqualToStringCaseInsensitive:@"3"]))
-            {
-                networkIndicator = 3;
-            }
-            else
-            {
-                [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
-                networkIndicator = 0;
-            }
-        }
-        else if([key isEqualToStringCaseInsensitive:@"routing-key"])
         {
-            routingKey = [value integerValue];
+            networkIndicator = 3;
         }
-        else if([key isEqualToStringCaseInsensitive:@"network-appearance"])
+        else
         {
-            networkAppearance = [value integerValue];
-        }
-        else if([key isEqualToStringCaseInsensitive:@"traffic-mode"])
-        {
-
-            NSString *s = [value stringValue];
-            if([s isEqualToStringCaseInsensitive:@"loadshare"])
-            {
-                trafficMode = UMM3UATrafficMode_loadshare;
-            }
-            else if([s isEqualToStringCaseInsensitive:@"override"])
-            {
-                trafficMode = UMM3UATrafficMode_override;
-            }
-            else if([s isEqualToStringCaseInsensitive:@"broadcast"])
-            {
-                trafficMode = UMM3UATrafficMode_broadcast;
-            }
-            else
-            {
-                [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA traffic-mode '%@'. Defaulting to loadshare",s]];
-                trafficMode = UMM3UATrafficMode_loadshare;
-            }
+            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
+            networkIndicator = 0;
         }
     }
+    if(cfg[@"routing-key"])
+    {
+        NSString *s = cfg[@"routing-key"];
+        routingKey = [s integerValue];
+    }
+    if(cfg[@"network-appearance"])
+    {
+        NSString *s = cfg[@"network-appearance"];
+        networkAppearance = [s integerValue];
+    }
+    if(cfg[@"traffic-mode"])
+    {
+
+        NSString *s = [cfg[@"traffic-mode"] stringValue];
+        if([s isEqualToStringCaseInsensitive:@"loadshare"])
+        {
+            trafficMode = UMM3UATrafficMode_loadshare;
+        }
+        else if([s isEqualToStringCaseInsensitive:@"override"])
+        {
+            trafficMode = UMM3UATrafficMode_override;
+        }
+        else if([s isEqualToStringCaseInsensitive:@"broadcast"])
+        {
+            trafficMode = UMM3UATrafficMode_broadcast;
+        }
+        else
+        {
+            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA traffic-mode '%@'. Defaulting to loadshare",s]];
+            trafficMode = UMM3UATrafficMode_loadshare;
+        }
+    }
+    
     if((mtp3) && (variant==UMMTP3Variant_Undefined))
     {
         variant = mtp3.variant;
