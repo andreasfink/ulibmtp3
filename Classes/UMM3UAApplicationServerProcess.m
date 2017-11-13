@@ -235,7 +235,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (BOOL)sctp_connecting
 {
     if(status == M3UA_STATUS_OOS)
+    {
         return YES;
+    }
     return NO;
 }
 
@@ -299,6 +301,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         submission_speed = [[UMThroughputCounter alloc]init];
         speed_within_limit = YES;
         self.logLevel = UMLOG_MAJOR;
+        _aspLock = [[UMMutex alloc]init];
     }
     return self;
 }
@@ -1220,7 +1223,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)powerOn
 {
-    @synchronized(self)
+    [_aspLock lock];
+    @try
     {
         if(self.logLevel <= UMLOG_DEBUG)
         {
@@ -1266,11 +1270,16 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [linktest_timer start];
         }
     }
+    @finally
+    {
+        [_aspLock unlock];
+    }
 }
 
 - (void)powerOff
 {
-    @synchronized (self)
+    [_aspLock lock];
+    @try
     {
         if(self.logLevel <= UMLOG_DEBUG)
         {
@@ -1290,6 +1299,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [reopen_timer1 start];
             [sctpLink closeFor:self];
         }
+    }
+    @finally
+    {
+        [_aspLock unlock];
     }
 }
 
@@ -1633,7 +1646,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)reopen_timer1_fires:(id)param
 {
-    @synchronized(self)
+    [_aspLock lock];
+    @try
     {
         if(self.logLevel <= UMLOG_DEBUG)
         {
@@ -1690,12 +1704,17 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
         }
     }
+    @finally
+    {
+        [_aspLock unlock];
+    }
 }
 
 
 - (void)reopen_timer2_fires:(id)param
 {
-    @synchronized(self)
+    [_aspLock lock];
+    @try
     {
         if(self.logLevel <= UMLOG_DEBUG)
         {
@@ -1746,12 +1765,17 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
         }
     }
+    @finally
+    {
+        [_aspLock unlock];
+    }
 }
 
 
 - (void)linktest_timer_fires:(id)param
 {
-    @synchronized(self)
+    [_aspLock lock];
+    @try
     {
 
         if(self.logLevel <= UMLOG_DEBUG)
@@ -1782,6 +1806,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [linktest_timer start];
         }
     }
+    @finally
+    {
+        [_aspLock unlock];
+    }
 }
 
 - (void)sctpReportsUp
@@ -1791,7 +1819,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
      ** called upon SCTP reporting a association to be up
      */
 
-    @synchronized(self)
+    [_aspLock lock];
+    @try
     {
         [self logInfo:@"sctpReportsUp"];
         [self powerOn];
@@ -1799,6 +1828,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [speedometer clear];
         [submission_speed clear];
         speed_within_limit = YES;
+    }
+    @finally
+    {
+        [_aspLock unlock];
     }
 }
 

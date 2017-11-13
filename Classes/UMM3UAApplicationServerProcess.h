@@ -58,6 +58,7 @@
     time_t  link_congestion_cleared_time;
     time_t  link_speed_excess_cleared_time;
     BOOL     speed_within_limit;
+    UMMutex *_aspLock;
 }
 
 @property (readwrite,weak)    UMM3UAApplicationServer  *as;
