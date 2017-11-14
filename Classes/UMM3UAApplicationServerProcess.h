@@ -23,7 +23,7 @@
     SCTP_Status                 sctp_status;
     UMM3UAApplicationServer __weak  *as;
     BOOL                        congested;
-
+    UMMTP3Variant               _variant;
     UMM3UA_Status               status;
 
     BOOL                        speedLimitReached;

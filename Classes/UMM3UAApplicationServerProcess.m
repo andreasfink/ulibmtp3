@@ -227,10 +227,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 
 @implementation UMM3UAApplicationServerProcess
-@synthesize as;
 @synthesize name;
 @synthesize status;
-
 
 - (BOOL)sctp_connecting
 {
@@ -306,6 +304,16 @@ static const char *get_sctp_status_string(SCTP_Status status)
     return self;
 }
 
+- (UMM3UAApplicationServer *)as
+{
+    return as;
+}
+
+- (void)setAs:(UMM3UAApplicationServer *)xas
+{
+    as = xas;
+    _variant = as.variant;
+}
 
 - (void)setParam:(UMSynchronizedSortedDictionary *)p identifier:(uint16_t)param_id value:(NSData *)data
 {
@@ -370,7 +378,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
     *mask = bytes[0];
     int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:as.variant];
+    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:_variant];
     return pc;
 }
 
@@ -405,7 +413,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     const uint8_t *bytes = affpc_data.bytes;
 
     int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:as.variant];
+    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:_variant];
     return pc;
 }
 
