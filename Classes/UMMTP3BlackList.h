@@ -15,7 +15,7 @@
 
 @interface UMMTP3BlackList : UMObject
 {
-    NSMutableDictionary *_deniedTransits;
+    UMSynchronizedDictionary *_deniedTransits;
 }
 
 - (UMMTP3TransitPermission_result)isTransferDenied:(UMMTP3Label *)label;

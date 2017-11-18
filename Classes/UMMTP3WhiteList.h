@@ -16,7 +16,7 @@
 
 @interface UMMTP3WhiteList : UMObject
 {
-    NSMutableDictionary *_permittedTransits;
+    UMSynchronizedDictionary *_permittedTransits;
 }
 
 - (UMMTP3TransitPermission_result)isTransferAllowed:(UMMTP3Label *)label;

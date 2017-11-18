@@ -74,6 +74,7 @@
     linksets        = [[UMSynchronizedSortedDictionary alloc]init];
     userPart        = [[UMSynchronizedSortedDictionary  alloc]init];
     routingTable    = [[UMMTP3InstanceRoutingTable alloc]init];
+    _linksetLock = [[UMMutex alloc]init];
 }
 
 
@@ -82,73 +83,65 @@
 
 - (void)refreshRoutingTable
 {
-    @synchronized(linksets)
-    {
-        routingTable = [[UMMTP3InstanceRoutingTable alloc] initWithLinkSetSortedDict:linksets];
-    }
+    [_linksetLock lock];
+    routingTable = [[UMMTP3InstanceRoutingTable alloc] initWithLinkSetSortedDict:linksets];
+    [_linksetLock unlock];
 }
 
 - (void)addLinkset:(UMMTP3LinkSet *)ls
 {
-    @synchronized(linksets)
+    ls.mtp3 = self;
+    ls.variant = self.variant;
+    ls.logFeed = [self.logFeed copy];
+    ls.logFeed.subsection = @"mtp3_linkset";
+    ls.logFeed.name = ls.name;
+    ls.logLevel = self.logLevel;
+    if(ls.localPointCode == NULL)
     {
-        ls.mtp3 = self;
-        ls.variant = self.variant;
-        ls.logFeed = [self.logFeed copy];
-        ls.logFeed.subsection = @"mtp3_linkset";
-        ls.logFeed.name = ls.name;
-        ls.logLevel = self.logLevel;
-        if(ls.localPointCode == NULL)
-        {
-            ls.localPointCode = self.opc;
-        }
-        if(ls.networkIndicator < 0)
-        {
-            ls.networkIndicator = self.networkIndicator;
-        }
-        linksets[ls.name]=ls;
+        ls.localPointCode = self.opc;
     }
+    if(ls.networkIndicator < 0)
+    {
+        ls.networkIndicator = self.networkIndicator;
+    }
+    [_linksetLock lock];
+    linksets[ls.name]=ls;
+    [_linksetLock unlock];
     [self refreshRoutingTable];
 }
 
 - (void)removeAllLinksets
 {
-    @synchronized(linksets)
-    {
-        linksets = NULL;
-        linksets = [[UMSynchronizedSortedDictionary alloc]init];
-    }
+    [_linksetLock lock];
+    linksets = NULL;
+    linksets = [[UMSynchronizedSortedDictionary alloc]init];
+    [_linksetLock lock];
     [self refreshRoutingTable];
 }
 
 
 - (void)removeLinkset:(UMMTP3LinkSet *)ls
 {
-    @synchronized(linksets)
-    {
-        ls.mtp3 = NULL;
-        [linksets removeObjectForKey:ls.name];
-    }
+    [_linksetLock lock];
+    ls.mtp3 = NULL;
+    [linksets removeObjectForKey:ls.name];
+    [_linksetLock unlock];
     [self refreshRoutingTable];
 }
 
 - (void)removeLinksetByName:(NSString *)n
 {
-    @synchronized(linksets)
-    {
-        UMMTP3LinkSet *ls = linksets[n];
-        ls.mtp3 = NULL;
-        [linksets removeObjectForKey:n];
-    }
+    [_linksetLock lock];
+    UMMTP3LinkSet *ls = linksets[n];
+    ls.mtp3 = NULL;
+    [linksets removeObjectForKey:n];
+    [_linksetLock unlock];
     [self refreshRoutingTable];
 }
 
 - (UMMTP3LinkSet *)getLinksetByName:(NSString *)n
 {
-    @synchronized(linksets)
-    {
-        return linksets[n];
-    }
+    return linksets[n];
 }
 
 - (UMMTP3Link *)getLinkByName:(id)userId
@@ -210,10 +203,7 @@
                      userId:(id)uid
 {
     UMMTP3LinkSet *linkSet;
-    @synchronized(linksets)
-    {
-        linkSet = linksets[uid];
-    }
+    linkSet = linksets[uid];
     [linkSet attachmentConfirmed:slc];
 }
 
@@ -224,10 +214,9 @@
                   reason:(NSString *)r
 {
     UMMTP3LinkSet *linkSet;
-    @synchronized(linksets)
-    {
-        linkSet = linksets[uid];
-    }
+    [_linksetLock lock];
+    linkSet = linksets[uid];
+    [_linksetLock unlock];
     [linkSet attachmentFailed:slc reason:r];
 }
 
@@ -645,15 +634,15 @@
     config[@"opc"] = [opc stringValue];
     config[@"ni"] = @(networkIndicator);
     NSMutableDictionary *linksetsConfig = [[NSMutableDictionary alloc]init];
-    @synchronized(linksets)
+    [_linksetLock lock];
+    NSArray *linksetNames = [linksets allKeys];
+    for(NSString *linksetName in linksetNames)
     {
-        NSArray *linksetNames = [linksets allKeys];
-        for(NSString *linksetName in linksetNames)
-        {
-            UMMTP3LinkSet *linkset = linksets[linksetName];
-            linksetsConfig[linksetName] = [linkset config];
-        }
+        UMMTP3LinkSet *linkset = linksets[linksetName];
+        linksetsConfig[linksetName] = [linkset config];
     }
+    [_linksetLock unlock];
+
     config[@"linksets"] = linksetsConfig;
     return config;
 }
@@ -831,28 +820,27 @@
 
 - (void)_start
 {
-    @synchronized(linksets)
+    [_linksetLock lock];
+    NSArray *linksetNamesArray = [linksets allKeys];
+    for(NSString *linksetName in linksetNamesArray)
     {
-        NSArray *linksetNamesArray = [linksets allKeys];
-        for(NSString *linksetName in linksetNamesArray)
-        {
-            UMMTP3LinkSet *ls = linksets[linksetName];
-            [ls powerOn];
-        }
+        UMMTP3LinkSet *ls = linksets[linksetName];
+        [ls powerOn];
     }
+    [_linksetLock unlock];
+
 }
 
 - (void)_stop
 {
-    @synchronized(linksets)
+    [_linksetLock lock];
+    NSArray *linksetNames = [linksets allKeys];
+    for(NSString *linksetName in linksetNames)
     {
-        NSArray *linksetNames = [linksets allKeys];
-        for(NSString *linksetName in linksetNames)
-        {
-            UMMTP3LinkSet *ls = linksets[linksetName];
-            [ls powerOff];
-        }
+        UMMTP3LinkSet *ls = linksets[linksetName];
+        [ls powerOff];
     }
+    [_linksetLock unlock];
 }
 
 
@@ -1103,54 +1091,51 @@
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
-    @synchronized(linksets)
+    [_linksetLock lock];
+    NSArray *linksetNames = [linksets allKeys];
+    for(NSString *linksetName in linksetNames)
     {
-        NSArray *linksetNames = [linksets allKeys];
-        for(NSString *linksetName in linksetNames)
+        if([linksetName isEqualToString:name])
         {
-            if([linksetName isEqualToString:name])
-            {
-                continue; /* we dont advertize to the same link  what we learned from it */
-            }
-            UMMTP3LinkSet *linkset = linksets[linksetName];
-            [linkset advertizePointcodeAvailable:pc mask:mask];
+            continue; /* we dont advertize to the same link  what we learned from it */
         }
+        UMMTP3LinkSet *linkset = linksets[linksetName];
+        [linkset advertizePointcodeAvailable:pc mask:mask];
     }
+    [_linksetLock unlock];
+
 }
 
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
-
 {
-    @synchronized(linksets)
+    [_linksetLock lock];
+    NSArray *linksetNames = [linksets allKeys];
+    for(NSString *linksetName in linksetNames)
     {
-        NSArray *linksetNames = [linksets allKeys];
-        for(NSString *linksetName in linksetNames)
+        if([linksetName isEqualToString:name])
         {
-            if([linksetName isEqualToString:name])
-            {
-                continue; /* we dont advertize to the same link  what we learned from it */
-            }
-            UMMTP3LinkSet *linkset = linksets[linksetName];
-            [linkset advertizePointcodeRestricted:pc mask:mask];
+            continue; /* we dont advertize to the same link  what we learned from it */
         }
+        UMMTP3LinkSet *linkset = linksets[linksetName];
+        [linkset advertizePointcodeRestricted:pc mask:mask];
     }
+    [_linksetLock unlock];
 }
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
-    @synchronized(linksets)
+    [_linksetLock lock];
+    NSArray *linksetNames = [linksets allKeys];
+    for(NSString *linksetName in linksetNames)
     {
-        NSArray *linksetNames = [linksets allKeys];
-        for(NSString *linksetName in linksetNames)
+        if([linksetName isEqualToString:name])
         {
-            if([linksetName isEqualToString:name])
-            {
-                continue; /* we dont advertize to the same link  what we learned from it */
-            }
-            UMMTP3LinkSet *linkset = linksets[linksetName];
-            [linkset advertizePointcodeUnavailable:pc mask:mask];
+            continue; /* we dont advertize to the same link  what we learned from it */
         }
+        UMMTP3LinkSet *linkset = linksets[linksetName];
+        [linkset advertizePointcodeUnavailable:pc mask:mask];
     }
+    [_linksetLock unlock];
 }
 
 - (UMMTP3RoutingTable *)routingTable

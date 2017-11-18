@@ -29,6 +29,8 @@
     UMLayerMTP3 __weak          *mtp3;
     NSString                    *name;
     UMSynchronizedSortedDictionary *links;
+    UMMutex                     *_linksLock;
+    UMMutex                     *_slsLock;
     UMLogLevel                  _logLevel;
     UMMTP3Variant               variant;
     UMMTP3PointCode             *localPointCode;

@@ -16,14 +16,29 @@
 
 @implementation UMMTP3BlackList
 
+- (UMMTP3BlackList *)init
+{
+    self = [super init];
+    if(self)
+    {
+        _deniedTransits = [[UMSynchronizedDictionary alloc]init];
+    }
+    return self;
+}
+
+- (void)addDenial:(UMMTP3TransitPermission *)perm
+{
+    _deniedTransits[perm.opc_dpc] =perm;
+}
+
+- (void)removeDenial:(UMMTP3TransitPermission *)perm
+{
+    [_deniedTransits removeObjectForKey:perm.opc_dpc];
+}
 
 - (UMMTP3TransitPermission_result)isTransferDenied:(UMMTP3Label *)label
 {
-    UMMTP3TransitPermission *t;
-    @synchronized(_deniedTransits)
-    {
-        t = _deniedTransits[label.opc_dpc];
-    }
+    UMMTP3TransitPermission *t = _deniedTransits[label.opc_dpc];
     if(t)
     {
         return UMMTP3TransitPermission_explicitlyDenied;

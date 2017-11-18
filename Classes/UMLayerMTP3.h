@@ -49,6 +49,7 @@ typedef enum UMMTP3_Error
 @interface UMLayerMTP3 : UMLayer<UMLayerM2PAUserProtocol>
 {
     UMSynchronizedSortedDictionary  *linksets;
+    UMMutex                         *_linksetLock;
     UMMTP3Variant                   variant;
     int                             networkIndicator;
     UMMTP3PointCode                 *opc;

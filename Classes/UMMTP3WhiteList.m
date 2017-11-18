@@ -21,7 +21,7 @@
     self = [super init];
     if(self)
     {
-        _permittedTransits = [[NSMutableDictionary alloc]init];
+        _permittedTransits = [[UMSynchronizedDictionary alloc]init];
     }
     return self;
 }
@@ -39,11 +39,7 @@
 - (UMMTP3TransitPermission_result)isTransferAllowed:(UMMTP3Label *)label
 {
     NSString *opc_dpc = [NSString stringWithFormat:@"%d>%d",label.opc.pc,label.dpc.pc];
-    UMMTP3TransitPermission *t;
-    @synchronized(_permittedTransits)
-    {
-        t = _permittedTransits[opc_dpc];
-    }
+    UMMTP3TransitPermission *t = _permittedTransits[opc_dpc];
     if(t)
     {
         return UMMTP3TransitPermission_explicitlyPermitted;
