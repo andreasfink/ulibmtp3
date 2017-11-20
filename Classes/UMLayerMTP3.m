@@ -115,7 +115,7 @@
     [_linksetLock lock];
     linksets = NULL;
     linksets = [[UMSynchronizedSortedDictionary alloc]init];
-    [_linksetLock lock];
+    [_linksetLock unlock];
     [self refreshRoutingTable];
 }
 
