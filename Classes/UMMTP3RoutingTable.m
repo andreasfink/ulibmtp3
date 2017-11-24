@@ -16,7 +16,6 @@
 @implementation UMMTP3RoutingTable
 
 
-
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
                                     mask:(int)mask
                              linksetName:(NSString *)linksetName
@@ -78,7 +77,6 @@
 {
     return NULL;
 }
-
 
 - (UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
 {

@@ -14,8 +14,10 @@
 @class UMMTP3PointCode;
 @class UMMTP3LinkSet;
 
-@interface UMMTP3RoutingTable : UMLayer
+@interface UMMTP3RoutingTable : UMObject 
 {
+    NSString                            *logFileName;
+    UMLogLevel                          logLevel;
 }
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
@@ -54,5 +56,6 @@
 
 - (UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName;
 
+//- (void)logDebug:(NSString *)s;
 @end
 
