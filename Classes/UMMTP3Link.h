@@ -16,6 +16,7 @@
 
 @class UMMTP3LinkSet;
 @class UMMTP3LinkState;
+
 typedef enum UMMTP3Link_attachmentStatus
 {
     UMMTP3Link_attachmentStatus_detached            =   0,
@@ -59,8 +60,6 @@ typedef enum UMMTP3Link_attachmentStatus
 @property (readwrite,assign)    BOOL processorOutage;
 @property (readwrite,assign)    BOOL speedLimitReached;
 @property (readwrite,assign)    NSTimeInterval linkTestTime;
-
-
 
 - (void)attachmentConfirmed;
 - (void)attachmentFailed:(NSString *)reason;

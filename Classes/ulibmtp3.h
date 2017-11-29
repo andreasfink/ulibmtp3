@@ -52,6 +52,6 @@
 #import "UMMTP3Filter_Result.h"
 #import "UMMTP3PduFilter.h"
 #import "UMMTP3PointcodeFilter.h"
-
+#import "UMMTP3SyslogClient.h"
 
 

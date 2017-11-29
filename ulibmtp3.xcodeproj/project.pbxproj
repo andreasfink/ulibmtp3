@@ -100,6 +100,8 @@
 		A6C78D881A29437B006C66A2 /* ulibsctp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D851A29437B006C66A2 /* ulibsctp.framework */; };
 		A6C78D8C1A294393006C66A2 /* ulib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D8B1A294392006C66A2 /* ulib.framework */; };
 		A6C78D8D1A294393006C66A2 /* ulib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D8B1A294392006C66A2 /* ulib.framework */; };
+		A6D75F071FCF258A005C198E /* UMMTP3SyslogClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A6D75F051FCF258A005C198E /* UMMTP3SyslogClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D75F081FCF258A005C198E /* UMMTP3SyslogClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D75F061FCF258A005C198E /* UMMTP3SyslogClient.m */; };
 		A6E7BF301FBECDF600C53765 /* Q.708B-2011-ISPC.pdf in Resources */ = {isa = PBXBuildFile; fileRef = A6E7BF2F1FBECDF600C53765 /* Q.708B-2011-ISPC.pdf */; };
 		A6E7BF551FBED6CC00C53765 /* rfc-4666-m3ua.txt in Resources */ = {isa = PBXBuildFile; fileRef = A6E7BF541FBED6CC00C53765 /* rfc-4666-m3ua.txt */; };
 		A6EB47991A35B2540090FC94 /* ulibmtp3.h in Headers */ = {isa = PBXBuildFile; fileRef = A604D10919B999AA0090FC94 /* ulibmtp3.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -213,6 +215,8 @@
 		A6C78D821A29436E006C66A2 /* ulibm2pa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulibm2pa.framework; path = /Library/Frameworks/ulibm2pa.framework; sourceTree = "<absolute>"; };
 		A6C78D851A29437B006C66A2 /* ulibsctp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulibsctp.framework; path = /Library/Frameworks/ulibsctp.framework; sourceTree = "<absolute>"; };
 		A6C78D8B1A294392006C66A2 /* ulib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulib.framework; path = /Library/Frameworks/ulib.framework; sourceTree = "<absolute>"; };
+		A6D75F051FCF258A005C198E /* UMMTP3SyslogClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3SyslogClient.h; sourceTree = "<group>"; };
+		A6D75F061FCF258A005C198E /* UMMTP3SyslogClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3SyslogClient.m; sourceTree = "<group>"; };
 		A6E7BF2F1FBECDF600C53765 /* Q.708B-2011-ISPC.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Q.708B-2011-ISPC.pdf"; sourceTree = "<group>"; };
 		A6E7BF541FBED6CC00C53765 /* rfc-4666-m3ua.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "rfc-4666-m3ua.txt"; sourceTree = "<group>"; };
 		A6EB479A1A35BB8E0090FC94 /* UMMTP3Task_adminAttachOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3Task_adminAttachOrder.h; sourceTree = "<group>"; };
@@ -388,6 +392,8 @@
 				A603428C1EA8327F00706C21 /* UMMTP3PduFilter.m */,
 				A60342931EA9B22600706C21 /* UMMTP3PointcodeFilter.h */,
 				A60342941EA9B22600706C21 /* UMMTP3PointcodeFilter.m */,
+				A6D75F051FCF258A005C198E /* UMMTP3SyslogClient.h */,
+				A6D75F061FCF258A005C198E /* UMMTP3SyslogClient.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -444,6 +450,7 @@
 				A6F442B61CB26E8000C2B472 /* UMMTP3Task_start.h in Headers */,
 				A6BE2D271E3A576F005B2B91 /* UMMTP3LinkRoutingTable.h in Headers */,
 				A6F442BA1CB2706A00C2B472 /* UMMTP3Task_stop.h in Headers */,
+				A6D75F071FCF258A005C198E /* UMMTP3SyslogClient.h in Headers */,
 				A6B717BA1A3187720090FC94 /* UMMTP3Task_m2paDataIndication.h in Headers */,
 				A6B717EE1A31DAD80090FC94 /* UMMTP3LinkState.h in Headers */,
 				A6B717BE1A3187850090FC94 /* UMMTP3Task_m2paCongestion.h in Headers */,
@@ -594,6 +601,7 @@
 				A6BE2D2C1E3A577B005B2B91 /* UMMTP3InstanceRoutingTable.m in Sources */,
 				A6B717BB1A3187720090FC94 /* UMMTP3Task_m2paDataIndication.m in Sources */,
 				A60342961EA9B22600706C21 /* UMMTP3PointcodeFilter.m in Sources */,
+				A6D75F081FCF258A005C198E /* UMMTP3SyslogClient.m in Sources */,
 				A6B717E91A31B3B00090FC94 /* UMMTP3Label.m in Sources */,
 				A6B717B31A3187450090FC94 /* UMMTP3Task_m2paStatusIndication.m in Sources */,
 				A6B717FF1A31DBB60090FC94 /* UMMTP3LinkSetState.m in Sources */,

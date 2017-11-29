@@ -36,6 +36,7 @@
 #import "UMLayerMTP3UserProtocol.h"
 #import "UMMTP3InstanceRoutingTable.h"
 #import "UMM3UAApplicationServerProcess.h"
+#import "UMMTP3SyslogClient.h"
 
 @implementation UMLayerMTP3
 
@@ -1070,15 +1071,27 @@
             linksetName:(NSString *)linksetName
 {
     id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
+    if(inst)
+    {
 
-    [inst mtpTransfer:data
-         callingLayer:self
-                  opc:label.opc
-                  dpc:label.dpc
-                   si:si
-                   ni:ni
-          linksetName:linksetName
-              options:@{}];
+        [inst mtpTransfer:data
+             callingLayer:self
+                      opc:label.opc
+                      dpc:label.dpc
+                       si:si
+                       ni:ni
+              linksetName:linksetName
+                  options:@{}];
+    }
+    else if(_problematicPacketDumper)
+    {
+        [_problematicPacketDumper logPacket:data
+                                        opc:label.opc
+                                        dpc:label.dpc
+                                        sls:0
+                                         ni:ni
+                                         si:si];
+    }
     /* FIXME: reply something if not reachable? */
 }
 

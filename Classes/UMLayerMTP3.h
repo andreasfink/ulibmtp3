@@ -36,6 +36,7 @@
 @class UMMTP3RoutingTable;
 @class UMM3UAApplicationServer;
 @class UMMTP3InstanceRoutingTable;
+@class UMMTP3SyslogClient;
 
 #import "UMLayerMTP3UserProtocol.h"
 typedef enum UMMTP3_Error
@@ -57,12 +58,14 @@ typedef enum UMMTP3_Error
     UMSynchronizedSortedDictionary  *userPart;
     UMMTP3Route *defaultRoute;
     BOOL ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
+    UMMTP3SyslogClient              *_problematicPacketDumper;
 }
 @property (readwrite,assign)    int                 networkIndicator;
 @property (readwrite,assign)    UMMTP3Variant       variant;
 @property (readwrite,strong)    UMMTP3PointCode     *opc;
 @property (readwrite,strong)    UMMTP3Route         *defaultRoute;
 @property (readwrite,assign)    BOOL                ready;
+@property (readwrite,strong)    UMMTP3SyslogClient  *problematicPacketDumper;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
 
