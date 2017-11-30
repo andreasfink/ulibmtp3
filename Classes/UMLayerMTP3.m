@@ -1070,6 +1070,9 @@
                      mp:(int)mp
             linksetName:(NSString *)linksetName
 {
+    NSMutableDictionary *options;
+    NSDate *ts = [NSDate date];
+    options[@"mtp3-timestamp"] = ts;
     id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
     if(inst)
     {
@@ -1081,7 +1084,7 @@
                        si:si
                        ni:ni
               linksetName:linksetName
-                  options:@{}];
+                  options:options];
     }
     else if(_problematicPacketDumper)
     {

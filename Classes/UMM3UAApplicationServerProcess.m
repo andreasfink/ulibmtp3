@@ -440,7 +440,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     NSData *routing_context;
     NSData *correlation_id;
     NSData *protocolData;
-
     int i;
     int mp;
     int si;
