@@ -126,7 +126,7 @@
         tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
         last_test = 0;
         t15 = [[UMTimer alloc]init];
-        speedometer = [[UMThroughputCounter alloc]init];
+        speedometer = [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
     }
     return self;
 }
