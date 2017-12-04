@@ -184,7 +184,11 @@
 {
     if(linkTestTime > 0)
     {
-        linkTestTimer = [[UMTimer alloc]initWithTarget:self selector:@selector(linkTestTimerEvent:) object:NULL duration:(linkTestTime * 1000000) name:@"linktestTimer" repeats:YES];
+        linkTestTimer = [[UMTimer alloc]initWithTarget:self
+                                              selector:@selector(linkTestTimerEvent:)
+                                                object:NULL
+                                               seconds:linkTestTime
+                                                  name:@"linktestTimer" repeats:YES];
         [linkTestTimer start];
     }
         /*
