@@ -32,7 +32,7 @@ typedef enum UMMTP3Link_attachmentStatus
     UMMTP3LinkState             *linkState;
     M2PA_Status                 _m2pa_status;
     SCTP_Status                 _sctp_status;
-    UMLayerM2PA __weak          *m2pa;
+    UMLayerM2PA                 *m2pa;
     UMMTP3LinkSet __weak        *linkset;
     UMMTP3Link_attachmentStatus attachmentStatus;
     NSString                    *attachmentFailureStatus;
@@ -52,8 +52,8 @@ typedef enum UMMTP3Link_attachmentStatus
 @property (readwrite,assign,atomic)    M2PA_Status         m2pa_status;
 @property (readwrite,assign,atomic)    SCTP_Status         sctp_status;
 @property (readwrite,assign)    UMMTP3Link_attachmentStatus attachmentStatus;
-@property (readwrite,weak)      UMLayerM2PA     *m2pa;
-@property (readwrite,weak)      UMMTP3LinkSet   *linkset;
+@property (readwrite,strong)    UMLayerM2PA     *m2pa;
+@property (readwrite,strong)    UMMTP3LinkSet   *linkset;
 @property (readwrite,strong)    NSString *attachmentFailureStatus;
 
 @property (readwrite,assign)    BOOL congested;

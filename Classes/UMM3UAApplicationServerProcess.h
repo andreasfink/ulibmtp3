@@ -21,7 +21,7 @@
     NSString                    *name;
     UMLayerSctp                 *sctpLink;
     SCTP_Status                 sctp_status;
-    UMM3UAApplicationServer __weak  *as;
+    UMM3UAApplicationServer     *as;
     BOOL                        congested;
     UMMTP3Variant               _variant;
     UMM3UA_Status               status;
@@ -61,7 +61,7 @@
     UMMutex *_aspLock;
 }
 
-@property (readwrite,weak)    UMM3UAApplicationServer  *as;
+@property (readwrite,strong)  UMM3UAApplicationServer  *as;
 @property (readwrite,strong)  NSString *name;
 
 @property (readwrite,assign,atomic) UMM3UA_Status status;

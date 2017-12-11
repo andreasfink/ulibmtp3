@@ -26,7 +26,7 @@
 
 @interface UMMTP3LinkSet : UMObject
 {
-    UMLayerMTP3 __weak          *mtp3;
+    UMLayerMTP3                 *mtp3;
     NSString                    *name;
     UMSynchronizedSortedDictionary *links;
     UMMutex                     *_linksLock;
