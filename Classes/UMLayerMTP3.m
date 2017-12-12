@@ -1071,7 +1071,7 @@
             linksetName:(NSString *)linksetName
 {
     NSMutableDictionary *options;
-    NSDate *ts = [NSDate date];
+    NSDate *ts = [NSDate new];
     options[@"mtp3-timestamp"] = ts;
     id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
     if(inst)
