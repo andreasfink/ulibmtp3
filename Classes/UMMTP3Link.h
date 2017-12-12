@@ -33,7 +33,7 @@ typedef enum UMMTP3Link_attachmentStatus
     M2PA_Status                 _m2pa_status;
     SCTP_Status                 _sctp_status;
     UMLayerM2PA                 *m2pa;
-    UMMTP3LinkSet __weak        *linkset;
+    UMMTP3LinkSet               *linkset;
     UMMTP3Link_attachmentStatus attachmentStatus;
     NSString                    *attachmentFailureStatus;
     BOOL                        congested;

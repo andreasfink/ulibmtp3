@@ -58,7 +58,7 @@
 @property(readwrite,assign) UMLogLevel logLevel;
 @property(readwrite,strong) NSString *name;
 @property(readwrite,strong) UMSynchronizedSortedDictionary *links;
-@property(readwrite,weak)   UMLayerMTP3 *mtp3;
+@property(readwrite,strong) UMLayerMTP3 *mtp3;
 @property(readwrite,assign) UMMTP3Variant variant;
 @property(readwrite,strong) UMMTP3PointCode *localPointCode;
 @property(readwrite,strong) UMMTP3PointCode *adjacentPointCode;
