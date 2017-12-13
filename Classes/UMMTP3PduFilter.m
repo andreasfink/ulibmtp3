@@ -49,3 +49,8 @@ int plugin_exit(void)
     return 0;
 }
 
+NSString *  plugin_name(void)
+{
+    return @"dummy";
+}
+
