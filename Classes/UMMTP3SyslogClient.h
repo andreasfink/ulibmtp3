@@ -51,8 +51,15 @@
          facility:(int)facility;
 
 - (void)logRawPacket:(NSData *)data;
+- (void)logRawPacket:(NSData *)data withComment:(NSString *)comment;
 
 - (void)logRawPacket:(NSData *)data
             severity:(int)severity
             facility:(int)facility;
+
+- (void)logRawPacket:(NSData *)data
+            severity:(int)severity
+            facility:(int)facility
+         withComment:(NSString *)comment;
+
 @end

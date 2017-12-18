@@ -85,7 +85,55 @@
               facility:-1];
 }
 
+- (void)logRawPacket:(NSData *)data withComment:(NSString *)comment
+{
+    [self logRawPacket:data
+              severity:-1
+              facility:-1
+           withComment:comment];
+}
+
 - (void)logRawPacket:(NSData *)data
+            severity:(int)severity
+            facility:(int)facility
+{
+    [self logRawPacket:data
+              severity:severity
+              facility:facility
+           withComment:NULL];
+}
+
+
+- (void)logRawPacket:(NSData *)data
+            severity:(int)severity
+            facility:(int)facility
+         withComment:(NSString *)comment
+{
+    [_lock lock];
+    _seq++;
+    _seq = _seq % 100000000;
+
+    if(comment)
+    {
+        [_syslogClient logMessageId:[NSString stringWithFormat:@"%08ld",_seq]
+                            message:comment
+                           facility:facility
+                           severity:severity];
+        _seq++;
+        _seq = _seq % 100000000;
+    }
+
+    NSString *msgId = [NSString stringWithFormat:@"%08ld",_seq];
+    NSString *msgString =  [NSString stringWithFormat:@"msu=%@",[data hexString]];
+    [_syslogClient logMessageId:msgId
+                        message:msgString
+                       facility:facility
+                       severity:severity];
+    [_lock unlock];
+}
+
+
+- (void)logComment:(NSString *)msgString
             severity:(int)severity
             facility:(int)facility
 {
@@ -94,7 +142,6 @@
     _seq = _seq % 100000000;
 
     NSString *msgId = [NSString stringWithFormat:@"%08ld",_seq];
-    NSString *msgString =  [NSString stringWithFormat:@"msu=%@",[data hexString]];
     [_syslogClient logMessageId:msgId
                         message:msgString
                        facility:facility
