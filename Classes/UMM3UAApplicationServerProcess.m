@@ -1794,6 +1794,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [_aspLock lock];
     @try
     {
+        /* if status is out of service, we restart the link */
 
         if(self.logLevel <= UMLOG_DEBUG)
         {
@@ -1843,11 +1844,18 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (void)sctpReportsDown
 {
     [self logInfo:@"sctpReportsDown"];
-    self.status = M3UA_STATUS_OFF;
+    if(self.status != M3UA_STATUS_OFF)
+    {
+        self.status = M3UA_STATUS_OFF;
+        if([reopen_timer1 isRunning]==NO)
+        {
+            [sctpLink closeFor:self];
+            [reopen_timer1 stop];
+            [reopen_timer2 stop];
+            [reopen_timer1 start];
+        }
+    }
 }
-
-
-
 
 - (NSData *)affectedPointcode:(UMMTP3PointCode *)pc mask:(int)mask
 {
@@ -1880,7 +1888,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:mask]];
     [self sendDUNA:pl];
 }
-
 
 - (void)goInactive
 {
