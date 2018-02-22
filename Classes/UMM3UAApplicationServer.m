@@ -697,6 +697,8 @@ static const char *m3ua_param_name(uint16_t param_type)
             routingKey = [s integerValue];
         }
     }
+
+    _useNetworkAppearance = NO;
     if(cfg[@"network-appearance"])
     {
         NSString *s = cfg[@"network-appearance"];
