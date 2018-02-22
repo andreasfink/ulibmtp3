@@ -926,8 +926,14 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [pdu appendData:data];
 
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    pl[@(M3UA_PARAM_NETWORK_APPEARANCE)] = @(as.networkAppearance);
-    pl[@(M3UA_PARAM_ROUTING_CONTEXT)] = @(as.routingKey);
+    if(as.useNetworkAppearance)
+    {
+        pl[@(M3UA_PARAM_NETWORK_APPEARANCE)] = @(as.networkAppearance);
+    }
+    if(as.useRoutingKey)
+    {
+        pl[@(M3UA_PARAM_ROUTING_CONTEXT)] = @(as.routingKey);
+    }
     pl[@(M3UA_PARAM_PROTOCOL_DATA)] = pdu;
     pl[@(M3UA_PARAM_CORRELATION_ID)] = @(correlation_id);
     

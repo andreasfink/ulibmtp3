@@ -38,6 +38,8 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
     UMSynchronizedSortedDictionary *applicationServerProcesses;
     int upCount;
     int activeCount;
+    BOOL                _useNetworkAppearance;
+    BOOL                _useRoutingKey;
 }
 
 @property(readwrite,assign,atomic)  UMM3UA_Status       m3ua_status;
@@ -45,6 +47,8 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 @property(readwrite,assign,atomic)  NSInteger			routingKey;
 @property(readwrite,assign,atomic)  NSInteger           networkAppearance;
 
+@property(readwrite,assign,atomic)  BOOL useNetworkAppearance;
+@property(readwrite,assign,atomic)  BOOL useRoutingKey;
 
 /* UMSCTP callbacks */
 - (NSString *)layerName;

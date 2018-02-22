@@ -687,12 +687,28 @@ static const char *m3ua_param_name(uint16_t param_type)
     if(cfg[@"routing-key"])
     {
         NSString *s = cfg[@"routing-key"];
-        routingKey = [s integerValue];
+        if([s isEqualToStringCaseInsensitive:@"none"])
+        {
+            _useRoutingKey = NO;
+        }
+        else
+        {
+            _useRoutingKey = YES;
+            routingKey = [s integerValue];
+        }
     }
     if(cfg[@"network-appearance"])
     {
         NSString *s = cfg[@"network-appearance"];
-        networkAppearance = [s integerValue];
+        if([s isEqualToStringCaseInsensitive:@"none"])
+        {
+            _useNetworkAppearance = NO;
+        }
+        else
+        {
+            _useNetworkAppearance = YES;
+            networkAppearance = [s integerValue];
+        }
     }
     if(cfg[@"traffic-mode"])
     {
