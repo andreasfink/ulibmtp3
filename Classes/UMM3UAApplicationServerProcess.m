@@ -299,7 +299,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         submission_speed = [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
         speed_within_limit = YES;
         self.logLevel = UMLOG_MAJOR;
-        _aspLock = [[UMMutex alloc]init];
+        _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
     }
     return self;
 }

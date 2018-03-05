@@ -75,7 +75,7 @@
     linksets        = [[UMSynchronizedSortedDictionary alloc]init];
     userPart        = [[UMSynchronizedSortedDictionary  alloc]init];
     routingTable    = [[UMMTP3InstanceRoutingTable alloc]init];
-    _linksetLock = [[UMMutex alloc]init];
+    _linksetLock = [[UMMutex alloc]initWithName:@"mtp3-linkset-mutex"];
 }
 
 

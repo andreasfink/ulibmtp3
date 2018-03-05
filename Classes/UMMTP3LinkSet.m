@@ -48,8 +48,8 @@
     if(self)
     {
         links = [[UMSynchronizedSortedDictionary alloc]init];
-        _linksLock = [[UMMutex alloc]init];
-        _slsLock = [[UMMutex alloc]init];
+        _linksLock = [[UMMutex alloc]initWithName:@"mtp3linkset-links-mutex"];
+        _slsLock = [[UMMutex alloc]initWithName:@"mtp3-sls-lock"];
         name = @"untitled";
 
         activeLinks = -1;
