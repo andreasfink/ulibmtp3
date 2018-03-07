@@ -59,9 +59,15 @@
     return self;
 }
 
+
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq
 {
-    self = [super initWithTaskQueueMulti:tq];
+    return [self initWithTaskQueueMulti:tq name:@""];
+}
+
+- (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq name:(NSString *)name
+{
+    self = [super initWithTaskQueueMulti:tq name:name];
     if(self)
     {
         [self genericInitialisation];
