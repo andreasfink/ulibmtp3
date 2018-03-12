@@ -14,6 +14,8 @@
 #import "UMMTP3PointCode.h"
 #import "UMMTP3LinkSet.h"
 #import "UMMTP3RouteMetrics.h"
+#import "UMLayerMTP3.h"
+#import "UMMTP3RoutingTable.h"
 
 @implementation UMMTP3Route
 
@@ -205,6 +207,38 @@
 - (NSString *)routingTableKey
 {
     return [pointcode maskedPointcodeString:mask];
+}
+
+
+- (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
+{
+
+    NSString *instance = [cfg configEntry:@"mtp3"];
+    NSString *route = [cfg configEntry:@"route"];
+    NSString *linkset = [cfg configEntry:@"linkset"];
+    UMLayerMTP3 *mtp3_instance = [appContext getMTP3:instance];
+    if(mtp3_instance)
+    {
+        UMMTP3LinkSet *mtp3_linkset = [mtp3_instance getLinksetByName:linkset];
+        if(mtp3_linkset)
+        {
+            if([route isEqualToString:@"default"])
+            {
+                route = @"0/0";
+            }
+            NSArray *a = [route componentsSeparatedByString:@"/"];
+            if([a count] == 1)
+            {
+                UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:a[0] variant:mtp3_instance.variant];
+                [mtp3_linkset.routingTable updateRouteAvailable:pc mask:0 linksetName:linkset];
+            }
+            else if([a count]==2)
+            {
+                UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:a[0] variant:mtp3_instance.variant];
+                [mtp3_linkset.routingTable updateRouteAvailable:pc mask:(pc.maxmask - [a[1] intValue]) linksetName:linkset];
+            }
+        }
+    }
 }
 
 @end

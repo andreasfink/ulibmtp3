@@ -11,6 +11,8 @@
 
 #import <ulib/ulib.h>
 #import "UMMTP3RoutePriority.h"
+#import "UMLayerMTP3ApplicationContextProtocol.h"
+
 @class UMMTP3PointCode;
 @class UMMTP3LinkSet;
 @class UMMTP3RouteMetrics;
@@ -143,5 +145,5 @@ typedef enum UMMTP3RouteTestStatus
 
 - (UMSynchronizedSortedDictionary *)objectValue;
 - (NSString *)routingTableKey;
-
+- (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext;
 @end
