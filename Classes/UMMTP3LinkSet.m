@@ -25,41 +25,25 @@
 #import "UMMTP3InstanceRoutingTable.h"
 
 @implementation UMMTP3LinkSet
-@synthesize congestionLevel;
-@synthesize links;
-@synthesize mtp3;
-@synthesize log;
-@synthesize variant;
-@synthesize localPointCode;
-@synthesize adjacentPointCode;
-@synthesize networkIndicator;
-@synthesize incomingWhiteList;
-@synthesize incomingBlackList;
-@synthesize routingTable;
-
-@synthesize activeLinks;
-@synthesize inactiveLinks;
-@synthesize readyLinks;
-@synthesize totalLinks;
 
 - (UMMTP3LinkSet *)init
 {
     self = [super init];
     if(self)
     {
-        links = [[UMSynchronizedSortedDictionary alloc]init];
+        _links = [[UMSynchronizedSortedDictionary alloc]init];
         _linksLock = [[UMMutex alloc]initWithName:@"mtp3linkset-links-mutex"];
         _slsLock = [[UMMutex alloc]initWithName:@"mtp3-sls-lock"];
-        name = @"untitled";
+        _name = @"untitled";
 
-        activeLinks = -1;
-        inactiveLinks = -1;
-        readyLinks = -1;
-        totalLinks = -1;
-        congestionLevel = 0;
-        networkIndicator = -1;
+        _activeLinks = -1;
+        _inactiveLinks = -1;
+        _readyLinks = -1;
+        _totalLinks = -1;
+        _congestionLevel = 0;
+        _networkIndicator = -1;
         _logLevel = UMLOG_MAJOR;
-        routingTable = [[UMMTP3LinkRoutingTable alloc]init];
+        _routingTable = [[UMMTP3LinkRoutingTable alloc]init];
     }
     return self;
 }
@@ -67,10 +51,10 @@
 - (void)addLink:(UMMTP3Link *)lnk
 {
     [_linksLock lock];
-    lnk.name = [NSString stringWithFormat:@"%@:%d",name,lnk.slc];
-    links[lnk.name]=lnk;
+    lnk.name = [NSString stringWithFormat:@"%@:%d",_name,lnk.slc];
+    _links[lnk.name]=lnk;
     lnk.linkset = self;
-    totalLinks++;
+    _totalLinks++;
     [_linksLock unlock];
 }
 
@@ -78,41 +62,41 @@
 {
     [_linksLock lock];
     lnk.linkset = NULL;
-    [links removeObjectForKey:lnk.name];
-    totalLinks--;
+    [_links removeObjectForKey:lnk.name];
+    _totalLinks--;
     [_linksLock unlock];
 
 }
 - (void)removeAllLinks
 {
     [_linksLock lock];
-    links = NULL;
-    links = [[UMSynchronizedSortedDictionary alloc]init];
-    totalLinks=0;
+    _links = NULL;
+    _links = [[UMSynchronizedSortedDictionary alloc]init];
+    _totalLinks=0;
     [_linksLock unlock];
 }
 
 - (void)removeLinkByName:(NSString *)n
 {
-    UMMTP3Link *lnk = links[n];
+    UMMTP3Link *lnk = _links[n];
     lnk.linkset = NULL;
-    [links removeObjectForKey:n];
+    [_links removeObjectForKey:n];
 
 }
 
 - (UMMTP3Link *)getLinkByName:(NSString *)n
 {
-    UMMTP3Link *lnk = links[n];
+    UMMTP3Link *lnk = _links[n];
     return lnk;
 }
 
 - (UMMTP3Link *)getAnyLink
 {
-    NSArray *linkKeys = [links allKeys];
+    NSArray *linkKeys = [_links allKeys];
     NSMutableArray *activeLinkKeys = [[NSMutableArray alloc]init];
     for(NSString *key in linkKeys)
     {
-        UMMTP3Link *link = links[key];
+        UMMTP3Link *link = _links[key];
         if(link.m2pa_status == M2PA_STATUS_IS)
         {
             [activeLinkKeys addObject:key];
@@ -123,22 +107,22 @@
     {
         return NULL;
     }
-    linkSelector = linkSelector + 1;
-    linkSelector = linkSelector % n;
-    NSString *key = activeLinkKeys[linkSelector];
-    UMMTP3Link *link = links[key];
+    _linkSelector = _linkSelector + 1;
+    _linkSelector = _linkSelector % n;
+    NSString *key = activeLinkKeys[_linkSelector];
+    UMMTP3Link *link = _links[key];
     return link;
 }
 
 /* as we use link names in the form <linkset>:<slc> we can not allow colons in linkset names so we remove them */
 - (NSString *)name
 {
-    return name;
+    return _name;
 }
 
 - (void)setName:(NSString *)n
 {
-    name = [n stringByReplacingOccurrencesOfString:@":" withString:@""];
+    _name = [n stringByReplacingOccurrencesOfString:@":" withString:@""];
 }
 
 
@@ -240,7 +224,7 @@
         /* kind of a FISU */
         if(_logLevel <= UMLOG_DEBUG)
         {
-            [log debugText:@" empty MSU"];
+            [logFeed debugText:@" empty MSU"];
         }
         return;
     }
@@ -256,7 +240,7 @@
             break;
         case 2:
             /* LSSU length=2 */
-            [log minorErrorText:@" LSSU (m3link Status Signal Unit 2 bytes) not permitted for M2PA"];
+            [logFeed minorErrorText:@" LSSU (m3link Status Signal Unit 2 bytes) not permitted for M2PA"];
             break;
         default:
             [self msuIndication:data maxlen:maxlen slc:slc];
@@ -286,13 +270,13 @@
     
     UMMTP3TransitPermission_result perm = UMMTP3TransitPermission_undefined;
     
-    if((incomingWhiteList==NULL) && (incomingBlackList==NULL))
+    if((_incomingWhiteList==NULL) && (_incomingBlackList==NULL))
     {
         return UMMTP3TransitPermission_implicitlyPermitted;
     }
-    else if((incomingWhiteList!=NULL) && (incomingBlackList==NULL))
+    else if((_incomingWhiteList!=NULL) && (_incomingBlackList==NULL))
     {
-        perm = [incomingWhiteList isTransferAllowed:label];
+        perm = [_incomingWhiteList isTransferAllowed:label];
         if(perm == UMMTP3TransitPermission_explicitlyPermitted)
         {
             return perm;
@@ -300,9 +284,9 @@
         return UMMTP3TransitPermission_implicitlyDenied;
     }
 
-    else if((incomingWhiteList==NULL) && (incomingBlackList!=NULL))
+    else if((_incomingWhiteList==NULL) && (_incomingBlackList!=NULL))
     {
-        perm = [incomingBlackList isTransferDenied:label];
+        perm = [_incomingBlackList isTransferDenied:label];
         if(perm == UMMTP3TransitPermission_explicitlyDenied)
         {
             return perm;
@@ -311,12 +295,12 @@
     }
 
     /* white & blacklist defined */
-    UMMTP3TransitPermission_result perm_w= [incomingWhiteList isTransferAllowed:label];
+    UMMTP3TransitPermission_result perm_w= [_incomingWhiteList isTransferAllowed:label];
     if(perm_w == UMMTP3TransitPermission_explicitlyPermitted)
     {
         return perm_w;
     }
-    perm = [incomingBlackList isTransferDenied:label];
+    perm = [_incomingBlackList isTransferDenied:label];
     if(perm == UMMTP3TransitPermission_explicitlyDenied)
     {
         return perm;
@@ -330,7 +314,7 @@
     @try
     {
         int labelsize;
-        switch(variant)
+        switch(_variant)
         {
             case UMMTP3Variant_Japan:
             case UMMTP3Variant_China:
@@ -389,7 +373,7 @@
         {
             [logFeed debugText:@" MSU (Message Signal Unit)"];
         }
-        switch (variant)
+        switch (_variant)
         {
             case UMMTP3Variant_Japan:
                 mp = (li >> 6) & 0x03;
@@ -402,7 +386,7 @@
                 ni  = (sio >> 6) & 0x03;
                 break;
             default:
-                if (nationalOptions & UMMTP3_NATIONAL_OPTION_MESSAGE_PRIORITY)
+                if (_nationalOptions & UMMTP3_NATIONAL_OPTION_MESSAGE_PRIORITY)
                 {
                     mp = (sio >> 4 ) & 0x03;
                     si  = (sio & 0x0F);
@@ -416,7 +400,7 @@
                 }
                 break;
         }
-        UMMTP3Label *label = [[UMMTP3Label alloc]initWithBytes:data pos:&idx variant:variant];
+        UMMTP3Label *label = [[UMMTP3Label alloc]initWithBytes:data pos:&idx variant:_variant];
         NSData *pdu = [NSData dataWithBytes:&data[idx] length:(maxlen - idx)];
         [self msuIndication2:pdu
                        label:label
@@ -467,9 +451,9 @@
             [logFeed debugText:[NSString stringWithFormat:@"    opc: %@",label.opc.description]];
             [logFeed debugText:[NSString stringWithFormat:@"    dpc: %@",label.dpc.description]];
         }
-        if(ni != networkIndicator)
+        if(ni != _networkIndicator)
         {
-            [logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,networkIndicator]];
+            [logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,_networkIndicator]];
             [self protocolViolation];
             @throw([NSException exceptionWithName:@"MTP_PACKET_INVALID"
                                            reason:NULL
@@ -485,7 +469,7 @@
         if(link && (link.m2pa_status != M2PA_STATUS_IS))
         {
             /* All messages to another destination received at a signalling point whose MTP is restarting are discarded.*/
-            if(![label.dpc isEqualToPointCode:localPointCode])
+            if(![label.dpc isEqualToPointCode:_localPointCode])
             {
                 [self logMinorError:@"MTP_DECODE: no-relay-during-startup"];
                 @throw([NSException exceptionWithName:@"MTP_DECODE"
@@ -571,7 +555,7 @@
                         int slc2;
                         int len;
                         GRAB_BYTE(byte,data,idx,maxlen);
-                        if(variant == UMMTP3Variant_ANSI)
+                        if(_variant == UMMTP3Variant_ANSI)
                         {
                             len = (byte & 0xF0) >> 4;
                             slc2 = (byte & 0x0F);
@@ -616,7 +600,7 @@
                         int slc2;
                         int len;
                         GRAB_BYTE(byte,data,idx,maxlen);
-                        if(variant == UMMTP3Variant_ANSI)
+                        if(_variant == UMMTP3Variant_ANSI)
                         {
                             len = (byte & 0xF0) >> 4;
                             slc2 = (byte & 0x0F);
@@ -685,7 +669,7 @@
                         int slc2;
                         int len;
                         GRAB_BYTE(byte,data,idx,maxlen);
-                        if(variant == UMMTP3Variant_ANSI)
+                        if(_variant == UMMTP3Variant_ANSI)
                         {
                             len = (byte & 0xF0) >> 4;
                             slc2 = (byte & 0x0F);
@@ -730,7 +714,7 @@
                         int slc2;
                         int len;
                         GRAB_BYTE(byte,data,idx,maxlen);
-                        if(variant == UMMTP3Variant_ANSI)
+                        if(_variant == UMMTP3Variant_ANSI)
                         {
                             len = (byte & 0xF0) >> 4;
                             slc2 = (byte & 0x0F);
@@ -800,7 +784,7 @@
                     case MTP3_MGMT_COO:
                     {
                         int fsn;
-                        if(variant == UMMTP3Variant_ANSI)
+                        if(_variant == UMMTP3Variant_ANSI)
                         {
                             int byte0;
                             int byte1;
@@ -822,7 +806,7 @@
                     case MTP3_MGMT_COA:
                     {
                         int fsn;
-                        if(variant == UMMTP3Variant_ANSI)
+                        if(_variant == UMMTP3Variant_ANSI)
                         {
                             int byte0;
                             int byte1;
@@ -844,7 +828,7 @@
                     case MTP3_MGMT_CBD:
                     {
                         int cbc;
-                        if(variant == UMMTP3Variant_ANSI)
+                        if(_variant == UMMTP3Variant_ANSI)
                         {
                             int byte0;
                             int byte1;
@@ -864,7 +848,7 @@
                     case MTP3_MGMT_CBA:
                     {
                         int cbc;
-                        if(variant == UMMTP3Variant_ANSI)
+                        if(_variant == UMMTP3Variant_ANSI)
                         {
                             int byte0;
                             int byte1;
@@ -894,31 +878,31 @@
                     case MTP3_MGMT_TFC: /* Transfer controlled */
                     {
                         int status;
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant status:&status maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant status:&status maxlen:maxlen];
                         [self processTFC:label destination:pc status:status ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TFP: /* Transfer Prohibited */
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTFP:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TFR: /* Transfer Restricted */
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTFR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TFA: /* Transfer Allowed */
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTFA:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_RST:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant];
                         if(_logLevel < UMLOG_DEBUG)
                         {
                             [logFeed debugText:[NSString stringWithFormat:@"  H0/H1: [0x%02X] RST Signalling-route-set-test signal for prohibited destination",heading]];
@@ -928,7 +912,7 @@
                         break;
                     case MTP3_MGMT_RSR:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant];
                         [self processRSR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
@@ -963,7 +947,7 @@
                     {
                         int cic;
                         int slc2 = slc;
-                        if(variant == UMMTP3Variant_ANSI)
+                        if(_variant == UMMTP3Variant_ANSI)
                         {
                             int byte0;
                             int byte1;
@@ -998,7 +982,7 @@
                         break;
                     case MTP3_MGMT_UPU:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant];
                         int field = data[idx++];
                         int upid = field & 0x0F;
                         int cause = (field >>4) & 0x0F;
@@ -1021,33 +1005,33 @@
 
                     case MTP3_MGMT_TCP:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTCP:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TCR:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTCR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TCA:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTCA:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
 
                     case MTP3_MGMT_RCP:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processRCP:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
 
                     case MTP3_MGMT_RCR:
                     {
-                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:variant maxlen:maxlen];
+                        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processRCR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
@@ -1066,7 +1050,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu2]];
                     [logFeed debugText:[NSString stringWithFormat:@"  idx=: %d ",idx]];
                 }
-                [mtp3 processIncomingPdu:label data:pdu2 userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu2 userpartId:si ni:ni mp:mp linksetName:_name];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_TUP:
@@ -1076,7 +1060,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1087,7 +1071,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1098,7 +1082,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1109,7 +1093,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1120,7 +1104,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1131,7 +1115,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1142,7 +1126,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1153,7 +1137,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1164,7 +1148,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1175,7 +1159,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1186,7 +1170,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1197,7 +1181,7 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:name];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
 
             }
                 break;
@@ -1234,7 +1218,7 @@
 {
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,adjacentPointCode.logDescription,localPointCode.logDescription]];
+        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
@@ -1253,16 +1237,16 @@
 {
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,adjacentPointCode.logDescription,localPointCode.logDescription]];
+        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
-    if(sendTRA)
+    if(_sendTRA)
     {
         UMMTP3Label *reverse_label = [label reverseLabel];
 
         [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
-        sendTRA = NO;
+        _sendTRA = NO;
     }
     [self updateLinksetStatus];
 }
@@ -1277,7 +1261,7 @@
 
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected SSTLM transiting Label = %@. Should be %@->%@", label.logDescription,adjacentPointCode.logDescription,localPointCode.logDescription]];
+        [self logMajorError:[NSString stringWithFormat:@"unexpected SSTLM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
@@ -1295,7 +1279,7 @@
 {
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,adjacentPointCode.logDescription,localPointCode.logDescription]];
+        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
@@ -1420,7 +1404,7 @@
 - (int) defaultMask
 {
     int mask;
-    switch(variant)
+    switch(_variant)
     {
         case UMMTP3Variant_ANSI:
         case UMMTP3Variant_China:
@@ -1649,8 +1633,8 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteAvailable:adjacentPointCode mask:0];
-    mtp3.ready=YES;
+    [self updateRouteAvailable:_adjacentPointCode mask:0];
+    _mtp3.ready=YES;
 }
 
 
@@ -1702,7 +1686,7 @@
 
 - (void)processTRW:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(variant != UMMTP3Variant_ANSI)
+    if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected TRW packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1725,7 +1709,7 @@
     
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,adjacentPointCode.logDescription,localPointCode.logDescription]];
+        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
@@ -1763,7 +1747,7 @@
 
 - (void)processTCA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(variant != UMMTP3Variant_ANSI)
+    if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected TCA packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1789,7 +1773,7 @@
 
 - (void)processTCP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(variant != UMMTP3Variant_ANSI)
+    if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected TCP packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1814,7 +1798,7 @@
 
 - (void)processTCR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(variant != UMMTP3Variant_ANSI)
+    if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected TCR packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1839,7 +1823,7 @@
 
 - (void)processRCP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(variant != UMMTP3Variant_ANSI)
+    if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected RCP packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1864,7 +1848,7 @@
 
 - (void)processRCR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    if(variant != UMMTP3Variant_ANSI)
+    if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected RCR packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
@@ -1977,7 +1961,7 @@
                link:(UMMTP3Link *)link
 {
     NSMutableData *pdu = [[NSMutableData alloc]init];
-    if(variant==UMMTP3Variant_ANSI)
+    if(_variant==UMMTP3Variant_ANSI)
     {
         [pdu appendByte:([pattern length]<<4) | (slc & 0x0F)];
         
@@ -2006,7 +1990,7 @@
             link:(UMMTP3Link *)link
 {
     NSMutableData *pdu = [[NSMutableData alloc]init];
-    if(variant==UMMTP3Variant_ANSI)
+    if(_variant==UMMTP3Variant_ANSI)
     {
         [pdu appendByte:([pattern length]<<4) | (slc & 0x0F)];
     
@@ -2036,7 +2020,7 @@
             link:(UMMTP3Link *)link
 {
     NSMutableData *pdu = [[NSMutableData alloc]init];
-    if(variant==UMMTP3Variant_ANSI)
+    if(_variant==UMMTP3Variant_ANSI)
     {
         [pdu appendByte:([pattern length]<<4) | (slc & 0x0F)];
         
@@ -2066,7 +2050,7 @@
             link:(UMMTP3Link *)link
 {
     NSMutableData *pdu = [[NSMutableData alloc]init];
-    if(variant==UMMTP3Variant_ANSI)
+    if(_variant==UMMTP3Variant_ANSI)
     {
         [pdu appendByte:([pattern length]<<4) | (slc & 0x0F)];
         
@@ -2117,7 +2101,7 @@
         len = data.length;
     }
     
-    switch(variant)
+    switch(_variant)
     {
         case UMMTP3Variant_Japan:
             len = len | ((mp & 0x03) << 6);
@@ -2133,7 +2117,7 @@
         default:
             [pdu appendByte:len];
             
-            if(nationalOptions & UMMTP3_NATIONAL_OPTION_MESSAGE_PRIORITY)
+            if(_nationalOptions & UMMTP3_NATIONAL_OPTION_MESSAGE_PRIORITY)
             {
                 [pdu appendByte:((ni & 0x3) << 6) | (si & 0xF) | ((mp & 0x03) << 4)];
             }
@@ -2146,8 +2130,8 @@
     if(slc < 0)
     {
         [_slsLock lock];
-        label.sls = last_sls;
-        last_sls = (last_sls+1) % 16;
+        label.sls = _last_sls;
+        _last_sls = (_last_sls+1) % 16;
         [_slsLock unlock];
     }
     else
@@ -2164,7 +2148,7 @@
     {
         [pdu appendData:data];
     }
-    [link.m2pa dataFor:mtp3 data:pdu ackRequest:ackRequest];
+    [link.m2pa dataFor:_mtp3 data:pdu ackRequest:ackRequest];
 }
 
 
@@ -2213,41 +2197,41 @@
 - (NSDictionary *)config
 {
     NSMutableDictionary *config = [[NSMutableDictionary alloc]init];
-    NSArray *allkeys = [links allKeys];
+    NSArray *allkeys = [_links allKeys];
 
     for(id key in allkeys)
     {
-        UMMTP3Link *link = links[key];
+        UMMTP3Link *link = _links[key];
         config[[NSString stringWithFormat:@"attach-slc%d",link.slc]] = link.name;
     }
-    config[@"dpc"] = [adjacentPointCode stringValue];
+    config[@"dpc"] = [_adjacentPointCode stringValue];
     return config;
 }
 
 - (void)setDefaultValues
 {
-    variant = UMMTP3Variant_Undefined;
-    networkIndicator = -1;
-    speed = -1.0;
+    _variant = UMMTP3Variant_Undefined;
+    _networkIndicator = -1;
+    _speed = -1.0;
 }
 
 - (void)setDefaultValuesFromMTP3
 {
-    if(localPointCode == NULL)
+    if(_localPointCode == NULL)
     {
-        localPointCode = mtp3.opc;
+        _localPointCode = _mtp3.opc;
     }
-    if(variant==UMMTP3Variant_Undefined)
+    if(_variant==UMMTP3Variant_Undefined)
     {
-        variant = mtp3.variant;
+        _variant = _mtp3.variant;
     }
-    if(networkIndicator == -1)
+    if(_networkIndicator == -1)
     {
-        networkIndicator = mtp3.networkIndicator;
+        _networkIndicator = _mtp3.networkIndicator;
     }
-    if(speed < 0)
+    if(_speed < 0)
     {
-        speed = 1000.0;
+        _speed = 1000.0;
     }
 }
 
@@ -2268,7 +2252,7 @@
     }
     if(cfg[@"speed"])
     {
-        speed =  [cfg[@"speed"] doubleValue];
+        _speed =  [cfg[@"speed"] doubleValue];
     }
     if(cfg[@"opc"])
     {
@@ -2278,24 +2262,24 @@
     for(int slc=0;slc<16;slc++)
     {
         NSString *key = [NSString stringWithFormat:@"attach-slc%d",slc];
-        if(cfg[name])
+        if(cfg[_name])
         {
             NSString *m2pa_name = cfg[key];
             UMMTP3Link *link = [[UMMTP3Link alloc]init];
             link.slc = slc;
             link.name = m2pa_name;
             link.linkset = self;
-            links[link.name] = link;
+            _links[link.name] = link;
         }
     }
 
     if(cfg[@"attach-to"])
     {
         NSString *attachTo = [cfg[@"attach-to"] stringValue];
-        mtp3 = [appContext getMTP3:attachTo];
-        if(mtp3 == NULL)
+        _mtp3 = [appContext getMTP3:attachTo];
+        if(_mtp3 == NULL)
         {
-            NSString *s = [NSString stringWithFormat:@"Can not find mtp3 layer '%@' referred from mtp3 linkset '%@'",attachTo,name];
+            NSString *s = [NSString stringWithFormat:@"Can not find mtp3 layer '%@' referred from mtp3 linkset '%@'",attachTo,_name];
             [self logMajorError:s];
             @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
                                            reason:s
@@ -2311,32 +2295,32 @@
            || ([s isEqualToStringCaseInsensitive:@"int"])
            || ([s isEqualToStringCaseInsensitive:@"0"]))
         {
-            networkIndicator = 0;
+            _networkIndicator = 0;
         }
         else if(([s isEqualToStringCaseInsensitive:@"national"])
                 || ([s isEqualToStringCaseInsensitive:@"nat"])
                 || ([s isEqualToStringCaseInsensitive:@"2"]))
         {
-            networkIndicator = 2;
+            _networkIndicator = 2;
         }
         else if(([s isEqualToStringCaseInsensitive:@"spare"])
                 || ([s isEqualToStringCaseInsensitive:@"international-spare"])
                 || ([s isEqualToStringCaseInsensitive:@"int-spare"])
                 || ([s isEqualToStringCaseInsensitive:@"1"]))
         {
-            networkIndicator = 1;
+            _networkIndicator = 1;
         }
         else if(([s isEqualToStringCaseInsensitive:@"reserved"])
                 || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
                 || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
                 || ([s isEqualToStringCaseInsensitive:@"3"]))
         {
-            networkIndicator = 3;
+            _networkIndicator = 3;
         }
         else
         {
             [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
-            networkIndicator = 0;
+            _networkIndicator = 0;
         }
     }
     if(cfg[@"log-level"])
@@ -2344,28 +2328,28 @@
         _logLevel = [cfg[@"log-level"] intValue];
     }
 
-    self.variant = mtp3.variant;
-    self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:mtp3.variant];
-    self.name = name;
-    if((mtp3) && (variant==UMMTP3Variant_Undefined))
+    self.variant = _mtp3.variant;
+    self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:_mtp3.variant];
+    self.name = _name;
+    if((_mtp3) && (_variant==UMMTP3Variant_Undefined))
     {
-        variant = mtp3.variant;
+        _variant = _mtp3.variant;
     }
-    if(variant == UMMTP3Variant_Undefined)
+    if(_variant == UMMTP3Variant_Undefined)
     {
-        variant = UMMTP3Variant_ITU;
+        _variant = UMMTP3Variant_ITU;
     }
     if(opc)
     {
-        self.localPointCode = [[UMMTP3PointCode alloc]initWithString:opc variant:variant];
+        self.localPointCode = [[UMMTP3PointCode alloc]initWithString:opc variant:_variant];
     }
     else
     {
-        localPointCode = mtp3.opc;
+        _localPointCode = _mtp3.opc;
     }
-    if(networkIndicator == -1)
+    if(_networkIndicator == -1)
     {
-        networkIndicator = mtp3.networkIndicator;
+        _networkIndicator = _mtp3.networkIndicator;
     }
 }
 
@@ -2383,11 +2367,11 @@
         
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     NSMutableData *pdu = [[NSMutableData alloc]init];
     
-    if(variant == UMMTP3Variant_ANSI)
+    if(_variant == UMMTP3Variant_ANSI)
     {
         unsigned char byte[2];
         byte[0] = (slc & 0x0f) | (fsn << 4);
@@ -2420,10 +2404,10 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     NSMutableData *pdu = [[NSMutableData alloc]init];
-    if(variant == UMMTP3Variant_ANSI)
+    if(_variant == UMMTP3Variant_ANSI)
     {
         unsigned char byte[2];
         byte[0] = (slc & 0x0f) | (fsn << 4);
@@ -2456,10 +2440,10 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     NSMutableData *pdu = [[NSMutableData alloc]init];
-    if(variant == UMMTP3Variant_ANSI)
+    if(_variant == UMMTP3Variant_ANSI)
     {
         unsigned char byte[2];
         byte[0] = (slc & 0x0f) | (cbc << 4);
@@ -2492,10 +2476,10 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     NSMutableData *pdu = [[NSMutableData alloc]init];
-    if(variant == UMMTP3Variant_ANSI)
+    if(_variant == UMMTP3Variant_ANSI)
     {
         unsigned char byte[2];
         byte[0] = (slc & 0x0f) | (cbc << 4);
@@ -2528,7 +2512,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2551,7 +2535,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2575,7 +2559,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2605,7 +2589,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     
     [self sendPdu:[pc asDataWithStatus:status]
@@ -2631,7 +2615,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:[pc asData]
             label:label
@@ -2655,7 +2639,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:[pc asData]
             label:label
@@ -2679,7 +2663,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:[pc asData]
             label:label
@@ -2704,7 +2688,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:[pc asData]
             label:label
@@ -2727,7 +2711,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:[pc asData]
             label:label
@@ -2751,7 +2735,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2774,7 +2758,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2797,7 +2781,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2820,7 +2804,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2843,7 +2827,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2866,7 +2850,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2889,7 +2873,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2912,7 +2896,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2927,7 +2911,7 @@
 
 - (void)sendTRA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    tra_sent++;
+    _tra_sent++;
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTRA (Traffic-restart-allowed signal)"];
@@ -2936,7 +2920,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -2962,12 +2946,12 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     
 
     NSData *data;
-   if(variant==UMMTP3Variant_ANSI)
+   if(_variant==UMMTP3Variant_ANSI)
    {
        uint8_t buf[2];
        buf[0] = cic & 0xFF;
@@ -3005,7 +2989,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -3028,7 +3012,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -3051,7 +3035,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     [self sendPdu:NULL
             label:label
@@ -3077,7 +3061,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     NSMutableData *pdu = [[NSMutableData alloc]initWithData:[pc asData]];
     [pdu appendByte: ((upid & 0x0F) | (cause & 0x0F << 8))];
@@ -3112,7 +3096,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     NSMutableData *pdu = [[NSMutableData alloc]initWithData:[pc asData]];
     [pdu appendByte: ((upid & 0x0F) | (cause & 0x0F << 8))];
@@ -3147,7 +3131,7 @@
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     NSMutableData *pdu = [[NSMutableData alloc]initWithData:[pc asData]];
     [pdu appendByte: ((upid & 0x0F) | (cause & 0x0F << 8))];
@@ -3164,28 +3148,28 @@
 
 - (void)powerOn
 {
-    NSArray *linkKeys = [links allKeys];
+    NSArray *linkKeys = [_links allKeys];
     for(NSString *key in linkKeys)
     {
-        UMMTP3Link *link = links[key];
+        UMMTP3Link *link = _links[key];
         [link powerOn];
     }
 }
 
 - (void)powerOff
 {
-    NSArray *linkKeys = [links allKeys];
+    NSArray *linkKeys = [_links allKeys];
     for(NSString *key in linkKeys)
     {
-        UMMTP3Link *link = links[key];
+        UMMTP3Link *link = _links[key];
         [link powerOff];
     }
 }
 
 - (UMMTP3Link *)linkForSlc:(int)slc
 {
-    NSString *linkName = [NSString stringWithFormat:@"%@:%d",name,slc];
-    UMMTP3Link *link = links[linkName];
+    NSString *linkName = [NSString stringWithFormat:@"%@:%d",_name,slc];
+    UMMTP3Link *link = _links[linkName];
     return link;
 }
 
@@ -3236,12 +3220,12 @@
     int inactive = 0;
     int ready = 0;
 
-    oldActiveLinks = activeLinks;
+    oldActiveLinks = _activeLinks;
 
-    NSArray *keys = [links allKeys];
+    NSArray *keys = [_links allKeys];
     for (NSString *key in keys)
     {
-        UMMTP3Link *link = links[key];
+        UMMTP3Link *link = _links[key];
         switch(link.m2pa_status)
         {
             case M2PA_STATUS_UNUSED:
@@ -3266,17 +3250,17 @@
         label.opc = self.localPointCode;
         label.dpc = self.adjacentPointCode;
         [self sendTRA:label
-                   ni:networkIndicator
+                   ni:_networkIndicator
                    mp:0
                   slc:0
                  link:NULL];
     }
-    activeLinks = active;
-    inactiveLinks = inactive;
-    readyLinks = ready;
-    if(activeLinks > 0)
+    _activeLinks = active;
+    _inactiveLinks = inactive;
+    _readyLinks = ready;
+    if(_activeLinks > 0)
     {
-        mtp3.ready = YES;
+        _mtp3.ready = YES;
     }
 }
 
@@ -3292,7 +3276,7 @@
     label.sls = link.slc;
     [self sendSLTM:label
            pattern:pattern
-                ni:networkIndicator
+                ni:_networkIndicator
                 mp:0
                slc:link.slc
               link:link];
@@ -3300,14 +3284,14 @@
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    [routingTable updateRouteAvailable:pc mask:mask linksetName:name];
-    [mtp3 updateRouteAvailable:pc mask:mask linksetName:name];
+    [_routingTable updateRouteAvailable:pc mask:mask linksetName:_name];
+    [_mtp3 updateRouteAvailable:pc mask:mask linksetName:_name];
 }
 
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    [routingTable updateRouteRestricted:pc mask:mask linksetName:name];
-    [mtp3 updateRouteRestricted:pc mask:mask linksetName:name];
+    [_routingTable updateRouteRestricted:pc mask:mask linksetName:_name];
+    [_mtp3 updateRouteRestricted:pc mask:mask linksetName:_name];
 }
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
@@ -3318,8 +3302,8 @@
         [self logDebug:s];
     }
 
-    [routingTable updateRouteUnavailable:pc mask:mask linksetName:name];
-    [mtp3 updateRouteUnavailable:pc mask:mask linksetName:name];
+    [_routingTable updateRouteUnavailable:pc mask:mask linksetName:_name];
+    [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
 }
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
@@ -3331,7 +3315,7 @@
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
-    [self sendTFA:label destination:pc ni:networkIndicator mp:0 slc:0 link:NULL];
+    [self sendTFA:label destination:pc ni:_networkIndicator mp:0 slc:0 link:NULL];
 }
 
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
@@ -3343,7 +3327,7 @@
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
-    [self sendTFR:label destination:pc ni:networkIndicator mp:0 slc:0 link:NULL];
+    [self sendTFR:label destination:pc ni:_networkIndicator mp:0 slc:0 link:NULL];
 }
 
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
@@ -3355,7 +3339,7 @@
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
-    [self sendTFP:label destination:pc ni:networkIndicator mp:0 slc:0 link:NULL];
+    [self sendTFP:label destination:pc ni:_networkIndicator mp:0 slc:0 link:NULL];
 }
 
 @end

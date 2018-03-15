@@ -229,6 +229,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 @implementation UMM3UAApplicationServerProcess
 @synthesize name;
 @synthesize status;
+@synthesize sctp_status;
 
 - (BOOL)sctp_connecting
 {

@@ -69,6 +69,7 @@
 @property (readonly) BOOL sctp_up;
 @property (readonly) BOOL up;
 @property (readonly) BOOL active;
+@property(readonly)    SCTP_Status                 sctp_status;
 
 - (void)start;
 - (void)stop;

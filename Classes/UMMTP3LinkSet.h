@@ -26,35 +26,41 @@
 
 @interface UMMTP3LinkSet : UMObject
 {
-    UMLayerMTP3                 *mtp3;
-    NSString                    *name;
-    UMSynchronizedSortedDictionary *links;
+    UMLayerMTP3                 *_mtp3;
+    NSString                    *_name;
+    UMSynchronizedSortedDictionary *_links;
     UMMutex                     *_linksLock;
     UMMutex                     *_slsLock;
     UMLogLevel                  _logLevel;
-    UMMTP3Variant               variant;
-    UMMTP3PointCode             *localPointCode;
-    UMMTP3PointCode             *adjacentPointCode;
-    int                         networkIndicator;
-    int                         linkSelector;
-    unsigned long               nationalOptions;
-    UMMTP3WhiteList             *incomingWhiteList;
-    UMMTP3BlackList             *incomingBlackList;
-    UMMTP3LinkRoutingTable      *routingTable;
-    int                         tra_sent;
-    int                         trw_received;
-    BOOL                        sendTRA;
-    int                         activeLinks;
-    int                         inactiveLinks;
-    int                         readyLinks;
-    int                         totalLinks;
-    int                         congestionLevel;
-    double                      speed;
-    int                         last_sls;
+    UMMTP3Variant               _variant;
+    UMMTP3PointCode             *_localPointCode;
+    UMMTP3PointCode             *_adjacentPointCode;
+    int                         _networkIndicator;
+    int                         _linkSelector;
+    unsigned long               _nationalOptions;
+    UMMTP3WhiteList             *_incomingWhiteList;
+    UMMTP3BlackList             *_incomingBlackList;
+    UMMTP3LinkRoutingTable      *_routingTable;
+    int                         _tra_sent;
+    int                         _trw_received;
+    BOOL                        _sendTRA;
+    int                         _activeLinks;
+    int                         _inactiveLinks;
+    int                         _readyLinks;
+    int                         _totalLinks;
+    int                         _congestionLevel;
+    double                      _speed;
+    int                         _last_sls;
 }
 
+/*
+@property(readwrite,assign,atomic)      int     tra_sent;
+@property(readwrite,assign,atomic)      int     trw_received;
+@property(readwrite,assign,atomic)      double  speed;
+*/
+
 @property(readwrite,assign) int congestionLevel;
-@property(readwrite,strong) UMLogFeed   *log;
+//@property(readwrite,strong) UMLogFeed   *log;
 @property(readwrite,assign) UMLogLevel logLevel;
 @property(readwrite,strong) NSString *name;
 @property(readwrite,strong) UMSynchronizedSortedDictionary *links;
@@ -71,6 +77,10 @@
 @property(readonly,assign) int inactiveLinks;
 @property(readonly,assign) int readyLinks;
 @property(readonly,assign) int totalLinks;
+
+@property(readonly,assign) int tra_sent;
+@property(readonly,assign) int trw_received;
+@property(readwrite,assign) double speed;
 
 
 - (void)addLink:(UMMTP3Link *)lnk;

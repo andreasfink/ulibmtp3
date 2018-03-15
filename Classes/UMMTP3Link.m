@@ -28,7 +28,7 @@
 @synthesize congested;
 @synthesize processorOutage;
 @synthesize speedLimitReached;
-@synthesize linkState;
+//@synthesize linkState;
 @synthesize linkTestTime;
 
 - (UMMTP3Link *) init
@@ -36,7 +36,7 @@
     self = [super init];
     if(self)
     {
-        linkState = [[UMMTP3LinkState alloc]init];
+       // linkState = [[UMMTP3LinkState alloc]init];
         logLevel = UMLOG_MAJOR;
     }
     return self;
