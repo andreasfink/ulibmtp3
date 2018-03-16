@@ -250,4 +250,6 @@ typedef enum UMMTP3_Error
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name;
 - (UMMTP3RoutingTable *)routingTable;
 - (NSDictionary *)apiStatus;
+
+- (void)stopDetachAndDestroy;
 @end

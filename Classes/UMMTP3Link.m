@@ -204,4 +204,8 @@
     [linkTestTimer stop];
 }
 
+- (void)stopDetachAndDestroy
+{
+    /* FIXME: do something here */
+}
 @end

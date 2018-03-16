@@ -81,5 +81,5 @@ typedef enum UMMTP3Link_attachmentStatus
 - (void)start;
 - (void)stop;
 
-
+- (void)stopDetachAndDestroy;
 @end

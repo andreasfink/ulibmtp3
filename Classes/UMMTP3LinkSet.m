@@ -3342,4 +3342,8 @@
     [self sendTFP:label destination:pc ni:_networkIndicator mp:0 slc:0 link:NULL];
 }
 
+- (void)stopDetachAndDestroy
+{
+    /* FIXME: do something here */
+}
 @end
