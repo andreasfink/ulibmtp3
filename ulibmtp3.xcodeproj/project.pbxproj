@@ -12,7 +12,6 @@
 		A60342911EA9B1DD00706C21 /* UMMTP3Filter_Result.h in Headers */ = {isa = PBXBuildFile; fileRef = A603428F1EA9B1DD00706C21 /* UMMTP3Filter_Result.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A60342951EA9B22600706C21 /* UMMTP3PointcodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A60342931EA9B22600706C21 /* UMMTP3PointcodeFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A60342961EA9B22600706C21 /* UMMTP3PointcodeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A60342941EA9B22600706C21 /* UMMTP3PointcodeFilter.m */; };
-		A604D10719B999AA0090FC94 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A604D10519B999AA0090FC94 /* InfoPlist.strings */; };
 		A604D11219B999AA0090FC94 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A604D11119B999AA0090FC94 /* XCTest.framework */; };
 		A604D11619B999AA0090FC94 /* ulibmtp3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A604D0F919B999AA0090FC94 /* ulibmtp3.framework */; };
 		A604D11C19B999AA0090FC94 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A604D11A19B999AA0090FC94 /* InfoPlist.strings */; };
@@ -88,7 +87,6 @@
 		A6BA5CE11A3669C200854472 /* UMMTP3Task_adminCreateLinkset.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BA5CDF1A3669C200854472 /* UMMTP3Task_adminCreateLinkset.m */; };
 		A6BA5CE41A3669D400854472 /* UMMTP3Task_adminCreateLink.h in Headers */ = {isa = PBXBuildFile; fileRef = A6BA5CE21A3669D400854472 /* UMMTP3Task_adminCreateLink.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6BA5CE51A3669D400854472 /* UMMTP3Task_adminCreateLink.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BA5CE31A3669D400854472 /* UMMTP3Task_adminCreateLink.m */; };
-		A6BD07671DC2B63C0048E807 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = A6BD07661DC2B63C0048E807 /* LICENSE */; };
 		A6BE2D271E3A576F005B2B91 /* UMMTP3LinkRoutingTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A6BE2D251E3A576F005B2B91 /* UMMTP3LinkRoutingTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6BE2D281E3A576F005B2B91 /* UMMTP3LinkRoutingTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BE2D261E3A576F005B2B91 /* UMMTP3LinkRoutingTable.m */; };
 		A6BE2D2B1E3A577B005B2B91 /* UMMTP3InstanceRoutingTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A6BE2D291E3A577B005B2B91 /* UMMTP3InstanceRoutingTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -102,8 +100,6 @@
 		A6C78D8D1A294393006C66A2 /* ulib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D8B1A294392006C66A2 /* ulib.framework */; };
 		A6D75F071FCF258A005C198E /* UMMTP3SyslogClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A6D75F051FCF258A005C198E /* UMMTP3SyslogClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6D75F081FCF258A005C198E /* UMMTP3SyslogClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D75F061FCF258A005C198E /* UMMTP3SyslogClient.m */; };
-		A6E7BF301FBECDF600C53765 /* Q.708B-2011-ISPC.pdf in Resources */ = {isa = PBXBuildFile; fileRef = A6E7BF2F1FBECDF600C53765 /* Q.708B-2011-ISPC.pdf */; };
-		A6E7BF551FBED6CC00C53765 /* rfc-4666-m3ua.txt in Resources */ = {isa = PBXBuildFile; fileRef = A6E7BF541FBED6CC00C53765 /* rfc-4666-m3ua.txt */; };
 		A6EB47991A35B2540090FC94 /* ulibmtp3.h in Headers */ = {isa = PBXBuildFile; fileRef = A604D10919B999AA0090FC94 /* ulibmtp3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6EB479C1A35BB8E0090FC94 /* UMMTP3Task_adminAttachOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = A6EB479A1A35BB8E0090FC94 /* UMMTP3Task_adminAttachOrder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6EB479D1A35BB8E0090FC94 /* UMMTP3Task_adminAttachOrder.m in Sources */ = {isa = PBXBuildFile; fileRef = A6EB479B1A35BB8E0090FC94 /* UMMTP3Task_adminAttachOrder.m */; };
@@ -573,10 +569,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6E7BF551FBED6CC00C53765 /* rfc-4666-m3ua.txt in Resources */,
-				A6BD07671DC2B63C0048E807 /* LICENSE in Resources */,
-				A6E7BF301FBECDF600C53765 /* Q.708B-2011-ISPC.pdf in Resources */,
-				A604D10719B999AA0090FC94 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -727,7 +719,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Library/Frameworks;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -777,7 +769,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Library/Frameworks;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
@@ -799,7 +791,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = me.fink.ulibmtp3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -822,7 +814,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = me.fink.ulibmtp3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
