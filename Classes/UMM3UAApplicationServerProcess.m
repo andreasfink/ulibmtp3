@@ -1636,7 +1636,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
-
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:[NSString stringWithFormat:@"M3UA-ASP: setConfig: %@",cfg]];
+    }
     _reopen_timer1_value  = M3UA_DEFAULT_REOPEN1_TIMER;
     _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
     _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
@@ -1657,11 +1660,19 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         NSString *attachTo =  [cfg[@"attach-to"] stringValue];
         _sctpLink = [appContext getSCTP:attachTo];
+        if(_sctpLink==NULL)
+        {
+            [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to SCTP '%@' failed. layer not found",attachTo]];
+        }
     }
     if(cfg[@"m3ua-as"])
     {
         NSString *as_name =  [cfg[@"m3ua-as"] stringValue];
         _as = [appContext getM3UA_AS:as_name];
+        if(_as==NULL)
+        {
+            [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to M3UA-AS '%@' failed. layer not found",as_name]];
+        }
     }
     if (cfg[@"speed"])
     {
