@@ -669,15 +669,18 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 UMMTP3RouteStatus rstatus = [as isRouteAvailable:pc mask:mask forAsp:self];
                 if(rstatus == UMMTP3_ROUTE_ALLOWED)
                 {
+                    [self logDebug:@" rstatus=UMMTP3_ROUTE_ALLOWED"];
                     [self advertizePointcodeAvailable:pc mask:mask];
 
                 }
                 else if(rstatus == UMMTP3_ROUTE_PROHIBITED)
                 {
+                    [self logDebug:@" rstatus=UMMTP3_ROUTE_PROHIBITED"];
                     [self advertizePointcodeUnavailable:pc mask:mask];
                 }
                 else if(rstatus == UMMTP3_ROUTE_RESTRICTED)
                 {
+                    [self logDebug:@" rstatus=UMMTP3_ROUTE_RESTRICTED"];
                     [self advertizePointcodeRestricted:pc mask:mask];
                 }
                 else if(rstatus == UMMTP3_ROUTE_UNKNOWN)
