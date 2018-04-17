@@ -488,9 +488,27 @@ static const char *m3ua_param_name(uint16_t param_type)
                                 mask:(int)mask
                               forAsp:(UMM3UAApplicationServerProcess *)asp
 {
-    return [_routingTable isRouteAvailable:pc
+    if(self.localPointCode)
+    {
+        if(pc.integerValue == self.localPointCode.integerValue)
+        {
+            return UMMTP3_ROUTE_ALLOWED;
+        }
+    }
+    else
+    {
+        if(pc.integerValue == self.mtp3.opc.integerValue)
+        {
+            return UMMTP3_ROUTE_ALLOWED;
+        }
+    }
+    if(_routingTable)
+    {
+        return [_routingTable isRouteAvailable:pc
                                      mask:mask
                               linksetName:_name];
+    }
+    return UMMTP3_ROUTE_UNKNOWN;
 }
 
 - (void)routeUpdateAll:(UMMTP3RouteStatus)status

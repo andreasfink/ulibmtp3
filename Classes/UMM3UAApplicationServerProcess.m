@@ -648,10 +648,16 @@ static const char *get_sctp_status_string(SCTP_Status status)
     //  NSData *routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
     //  NSData *infoString          = [self getParam:params identifier:M3UA_PARAM_INFO_STRING];
     NSArray *affpcs = [self getAffectedPointcodes:params];
+    if(affpcs.count==0)
+    {
+        [self logDebug:@"processDAUD with no affected pointcodes specified"];
+    }
     for (NSData *d in affpcs)
     {
+
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
+        [self logDebug:[NSString stringWithFormat:@" affected pointcode %@",pc]];
         if(mask != 0)
         {
             [logFeed minorErrorText:@"affected pointcode with a mask > 0 are not supported and ignored"];
@@ -673,6 +679,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 else if(rstatus == UMMTP3_ROUTE_RESTRICTED)
                 {
                     [self advertizePointcodeRestricted:pc mask:mask];
+                }
+                else if(rstatus == UMMTP3_ROUTE_UNKNOWN)
+                {
+                    [self logDebug:[NSString stringWithFormat:@"    status of pointcode %@ is unknown",pc]];
                 }
             }
         }
@@ -1886,7 +1896,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:mask]];
-    [self sendDAUD:pl];
+    [self sendDUNA:pl];
 }
 
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
