@@ -294,26 +294,15 @@ static const char *get_sctp_status_string(SCTP_Status status)
     self = [super init];
     if(self)
     {
-        incomingStream0 = [[NSMutableData alloc]init];
-        incomingStream1 = [[NSMutableData alloc]init];
-        speedometer = [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
-        submission_speed = [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
-        speed_within_limit = YES;
+        _incomingStream0 = [[NSMutableData alloc]init];
+        _incomingStream1 = [[NSMutableData alloc]init];
+        _speedometer = [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
+        _submission_speed = [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
+        _speed_within_limit = YES;
         self.logLevel = UMLOG_MAJOR;
         _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
     }
     return self;
-}
-
-- (UMM3UAApplicationServer *)as
-{
-    return as;
-}
-
-- (void)setAs:(UMM3UAApplicationServer *)xas
-{
-    as = xas;
-    _variant = as.variant;
 }
 
 - (void)setParam:(UMSynchronizedSortedDictionary *)p identifier:(uint16_t)param_id value:(NSData *)data
@@ -379,7 +368,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
     *mask = bytes[0];
     int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:_variant];
+    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:_as.variant];
     return pc;
 }
 
@@ -414,7 +403,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     const uint8_t *bytes = affpc_data.bytes;
 
     int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:_variant];
+    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:_as.variant];
     return pc;
 }
 
@@ -485,12 +474,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
     i = 0;
     /* here M3UA starts */
     uint32_t opc_int = ntohl(*(uint32_t *)&data3[i]);
-    opc =     [[UMMTP3PointCode alloc]initWithPc:opc_int variant:as.variant];
+    opc =     [[UMMTP3PointCode alloc]initWithPc:opc_int variant:_as.variant];
     i += 4;
 
     uint32_t dpc_int  = ntohl(*(uint32_t *)&data3[i]);
     i += 4;
-    dpc =     [[UMMTP3PointCode alloc]initWithPc:dpc_int variant:as.variant];
+    dpc =     [[UMMTP3PointCode alloc]initWithPc:dpc_int variant:_as.variant];
 
     si	= data3[i++];
     ni	= data3[i++];
@@ -579,7 +568,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             /* Signalling network testing and maintenance messages */
             break;
         default:
-            [as msuIndication2:protocolData2
+            [_as msuIndication2:protocolData2
                          label:label
                             si:si
                             ni:ni
@@ -612,7 +601,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [as updateRouteUnavailable:pc mask:mask forAsp:self];
+        [_as updateRouteUnavailable:pc mask:mask forAsp:self];
     }
 }
 
@@ -631,7 +620,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [as updateRouteAvailable:pc mask:mask forAsp:self];
+        [_as updateRouteAvailable:pc mask:mask forAsp:self];
     }
 }
 
@@ -670,26 +659,26 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 [self logDebug:@"processDAUD step3"];
                 BOOL answered = NO;
 
-                [self logDebug:[NSString stringWithFormat:@" as.localPointCode: %@",as.localPointCode]];
-                [self logDebug:[NSString stringWithFormat:@" as.mtp3.opc: %@",as.mtp3.opc]];
+                [self logDebug:[NSString stringWithFormat:@" as.localPointCode: %@",_as.localPointCode]];
+                [self logDebug:[NSString stringWithFormat:@" as.mtp3.opc: %@",_as.mtp3.opc]];
 
-                if(as.localPointCode)
+                if(_as.localPointCode)
                 {
                     [self logDebug:@"processDAUD step3a"];
-                    if(as.localPointCode.integerValue == pc.integerValue)
+                    if(_as.localPointCode.integerValue == pc.integerValue)
                     {
                         [self logDebug:@"processDAUD step3aa"];
                         [self advertizePointcodeAvailable:pc mask:0];
                         answered=YES;
                     }
                 }
-                else if((as.mtp3.opc) && (!answered))
+                else if((_as.mtp3.opc) && (!answered))
                 {
                     [self logDebug:@"processDAUD step3b"];
-                    if(as.mtp3.opc.integerValue == pc.integerValue)
+                    if(_as.mtp3.opc.integerValue == pc.integerValue)
                     {
                         [self logDebug:@"processDAUD step3bb"];
-                        [self advertizePointcodeAvailable:as.mtp3.opc mask:0];
+                        [self advertizePointcodeAvailable:_as.mtp3.opc mask:0];
                         answered=YES;
                     }
                 }
@@ -698,7 +687,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 {
                     [self logDebug:@"processDAUD step4"];
 
-                    UMMTP3RouteStatus rstatus = [as isRouteAvailable:pc mask:mask forAsp:self];
+                    UMMTP3RouteStatus rstatus = [_as isRouteAvailable:pc mask:mask forAsp:self];
                     if(rstatus == UMMTP3_ROUTE_ALLOWED)
                     {
                         [self logDebug:@" rstatus=UMMTP3_ROUTE_ALLOWED"];
@@ -744,8 +733,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
     NSArray *affpcs = [self getAffectedPointcodes:params];
 
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
-    label.opc = adjacentPointCode;
-    label.dpc = localPointCode;
+    label.opc = _adjacentPointCode;
+    label.dpc = _localPointCode;
     label.sls = sls;
 
     for (NSData *d in affpcs)
@@ -754,7 +743,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         UMMTP3PointCode *aff_pc = [self extractAffectedPointCode:d mask:&mask];
         if(aff_pc)
         {
-            [as m3uaCongestion:self
+            [_as m3uaCongestion:self
              affectedPointCode:aff_pc
                           mask:mask
              networkAppearance:network_appearance
@@ -784,8 +773,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
     NSArray *affpcs = [self getAffectedPointcodes:params];
 
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
-    label.opc = adjacentPointCode;
-    label.dpc = localPointCode;
+    label.opc = _adjacentPointCode;
+    label.dpc = _localPointCode;
     label.sls = sls;
 
     for (NSData *d in affpcs)
@@ -806,7 +795,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     /* ASP Up */
     [self sendASPUP_ACK:NULL];
     self.status = M3UA_STATUS_INACTIVE;
-    [as aspUp:self];
+    [_as aspUp:self];
 }
 
 - (void)processASPDN:(UMSynchronizedSortedDictionary *)params
@@ -814,7 +803,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     /* ASP Down */
     [self sendASPDN_ACK:NULL];
     self.status = M3UA_STATUS_BUSY;
-    [as aspDown:self];
+    [_as aspDown:self];
 }
 
 - (void)processBEAT:(NSData *)data
@@ -832,8 +821,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:@"processASPUP_ACK"];
     }
     self.status = M3UA_STATUS_INACTIVE;
-    aspup_received = YES;
-    if(standby_mode)
+    _aspup_received = YES;
+    if(_standby_mode)
     {
         [self sendASPIA:NULL];
     }
@@ -845,7 +834,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [self logDebug:@" status is now BUSY"];
         }
         UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-        pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(as.trafficMode);
+        pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
         [self sendASPAC:pl];
     }
 }
@@ -868,7 +857,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:@"processASPAC"];
     }
 
-    [as aspActive:self];
+    [_as aspActive:self];
     self.status =  M3UA_STATUS_IS;
     [self sendASPAC_ACK:params];
 }
@@ -881,7 +870,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:@"processASPIA"];
     }
 
-    [as aspInactive:self];
+    [_as aspInactive:self];
     self.status =  M3UA_STATUS_INACTIVE;
     [self sendASPIA_ACK:params];
 }
@@ -896,22 +885,22 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:@" stop reopen timer2"];
         [self logDebug:@" start linktest timer"];
     }
-    [reopen_timer1 stop];
-    [reopen_timer2 stop];
-    [linktest_timer stop];
-    if(linktest_timer_value > 0)
+    [_reopen_timer1 stop];
+    [_reopen_timer2 stop];
+    [_linktest_timer stop];
+    if(_linktest_timer_value > 0)
     {
-        [linktest_timer start];
+        [_linktest_timer start];
     }
     self.status =  M3UA_STATUS_IS;
-    [as aspActive:self];
+    [_as aspActive:self];
 }
 
 - (void)processASPIA_ACK:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Inactive acknowledgment */
     self.status =  M3UA_STATUS_INACTIVE;
-    [as aspInactive:self];
+    [_as aspInactive:self];
 
 }
 
@@ -973,13 +962,13 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [pdu appendData:data];
 
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    if(as.useNetworkAppearance)
+    if(_as.useNetworkAppearance)
     {
-        pl[@(M3UA_PARAM_NETWORK_APPEARANCE)] = @(as.networkAppearance);
+        pl[@(M3UA_PARAM_NETWORK_APPEARANCE)] = @(_as.networkAppearance);
     }
-    if(as.useRoutingKey)
+    if(_as.useRoutingKey)
     {
-        pl[@(M3UA_PARAM_ROUTING_CONTEXT)] = @(as.routingKey);
+        pl[@(M3UA_PARAM_ROUTING_CONTEXT)] = @(_as.routingKey);
     }
     pl[@(M3UA_PARAM_PROTOCOL_DATA)] = pdu;
     pl[@(M3UA_PARAM_CORRELATION_ID)] = @(correlation_id);
@@ -1068,7 +1057,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [data appendByte:((packlen & 0x000000FF) >> 0)];
     [data appendData:pdu];
 
-    [sctpLink dataFor:self
+    [_sctpLink dataFor:self
                  data:data
              streamId:streamId
            protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
@@ -1271,12 +1260,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)start
 {
-    [sctpLink openFor:self];
+    [_sctpLink openFor:self];
 }
 
 - (void)stop
 {
-    [sctpLink closeFor:self];
+    [_sctpLink closeFor:self];
 }
 
 
@@ -1293,17 +1282,17 @@ static const char *get_sctp_status_string(SCTP_Status status)
         if(self.active)
         {
             [self logMinorError:@" already active"];
-            if(![reopen_timer2 isRunning])
+            if(![_reopen_timer2 isRunning])
             {
                 [self logDebug:@" starting reopen timer 2 which was not running"];
-                [reopen_timer2 start];
+                [_reopen_timer2 start];
             }
-            if(![linktest_timer isRunning])
+            if(![_linktest_timer isRunning])
             {
-                if((linktest_timer_value > 0) && (linktest_timer))
+                if((_linktest_timer_value > 0) && (_linktest_timer))
                 {
                     [self logDebug:@" starting linktest_timer which was not running"];
-                    [linktest_timer start];
+                    [_linktest_timer start];
                 }
             }
             return;
@@ -1319,21 +1308,21 @@ static const char *get_sctp_status_string(SCTP_Status status)
         pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
 
 
-        aspup_received=0;
+        _aspup_received=0;
         [self sendASPUP:pl];
         self.status = M3UA_STATUS_BUSY;
-        [speedometer clear];
-        [submission_speed clear];
-        speed_within_limit = YES;
+        [_speedometer clear];
+        [_submission_speed clear];
+        _speed_within_limit = YES;
 
         sltm_serial = 0;
         [self logDebug:@" starting reopen timer 2"];
-        [reopen_timer2 start];
-        if((linktest_timer_value > 0) && (linktest_timer))
+        [_reopen_timer2 start];
+        if((_linktest_timer_value > 0) && (_linktest_timer))
         {
             [self logDebug:@" starting linktest_timer"];
-            [linktest_timer stop];
-            [linktest_timer start];
+            [_linktest_timer stop];
+            [_linktest_timer start];
         }
     }
     @finally
@@ -1361,13 +1350,13 @@ static const char *get_sctp_status_string(SCTP_Status status)
         {
             [self sendASPDN:NULL];
             self.status = M3UA_STATUS_BUSY;
-            [speedometer clear];
-            [submission_speed clear];
-            speed_within_limit = YES;
+            [_speedometer clear];
+            [_submission_speed clear];
+            _speed_within_limit = YES;
 
-            [reopen_timer1 stop];
-            [reopen_timer1 start];
-            [sctpLink closeFor:self];
+            [_reopen_timer1 stop];
+            [_reopen_timer1 start];
+            [_sctpLink closeFor:self];
         }
     }
     @finally
@@ -1389,11 +1378,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
     NSMutableData *incomingStream;
     if(streamId == 0)
     {
-        incomingStream = incomingStream0;
+        incomingStream = _incomingStream0;
     }
     else
     {
-        incomingStream = incomingStream1;
+        incomingStream = _incomingStream1;
 
     }
 
@@ -1562,19 +1551,19 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
     if(streamID == 0)
     {
-        if(incomingStream0 == NULL)
+        if(_incomingStream0 == NULL)
         {
-            incomingStream0 = [[NSMutableData alloc]init];
+            _incomingStream0 = [[NSMutableData alloc]init];
         }
-        [incomingStream0 appendData:data];
+        [_incomingStream0 appendData:data];
     }
     else
     {
-        if(incomingStream1 == NULL)
+        if(_incomingStream1 == NULL)
         {
-            incomingStream1 = [[NSMutableData alloc]init];
+            _incomingStream1 = [[NSMutableData alloc]init];
         }
-        [incomingStream1 appendData:data];
+        [_incomingStream1 appendData:data];
     }
     [self lookForIncomingPdu:streamID];
 }
@@ -1640,7 +1629,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (NSDictionary *)config
 {
     NSMutableDictionary *config = [[NSMutableDictionary alloc]init];
-    config[@"dpc"] = [adjacentPointCode stringValue];
+    config[@"dpc"] = [_adjacentPointCode stringValue];
     return config;
 }
 
@@ -1648,10 +1637,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
 
-    reopen_timer1_value  = M3UA_DEFAULT_REOPEN1_TIMER;
-    reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
-    linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
-    speed = M3UA_DEFAULT_SPEED;
+    _reopen_timer1_value  = M3UA_DEFAULT_REOPEN1_TIMER;
+    _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
+    _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
+    _speed = M3UA_DEFAULT_SPEED;
     name = NULL;
 
     logLevel = UMLOG_MAJOR;
@@ -1667,49 +1656,49 @@ static const char *get_sctp_status_string(SCTP_Status status)
     if(cfg[@"attach-to"])
     {
         NSString *attachTo =  [cfg[@"attach-to"] stringValue];
-        sctpLink = [appContext getSCTP:attachTo];
+        _sctpLink = [appContext getSCTP:attachTo];
     }
     if(cfg[@"m3ua-as"])
     {
         NSString *as_name =  [cfg[@"m3ua-as"] stringValue];
-        as = [appContext getM3UA_AS:as_name];
+        _as = [appContext getM3UA_AS:as_name];
     }
     if (cfg[@"speed"])
     {
-        speed = [cfg[@"speed"] doubleValue];
+        _speed = [cfg[@"speed"] doubleValue];
     }
     if (cfg[@"reopen-timer1"])
     {
-        reopen_timer1_value = [cfg[@"reopen-timer1"] doubleValue];
+        _reopen_timer1_value = [cfg[@"reopen-timer1"] doubleValue];
     }
     if (cfg[@"reopen-timer2"])
     {
-        reopen_timer2_value = [cfg[@"reopen-timer2"] doubleValue];
+        _reopen_timer2_value = [cfg[@"reopen-timer2"] doubleValue];
     }
     if (cfg[@"linktest-timer"])
     {
-        linktest_timer_value = [cfg[@"linktest-timer"] doubleValue];
+        _linktest_timer_value = [cfg[@"linktest-timer"] doubleValue];
     }
 
-    reopen_timer1 = [[UMTimer alloc]initWithTarget:self
+    _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
                                           selector:@selector(reopen_timer1_fires:)];
-    reopen_timer1.duration = reopen_timer1_value * 1000000;
+    _reopen_timer1.duration = _reopen_timer1_value * 1000000;
 
-    reopen_timer2 = [[UMTimer alloc]initWithTarget:self
+    _reopen_timer2 = [[UMTimer alloc]initWithTarget:self
                                           selector:@selector(reopen_timer2_fires:)];
-    reopen_timer2.duration = reopen_timer2_value * 1000000;
+    _reopen_timer2.duration = _reopen_timer2_value * 1000000;
 
-    if(linktest_timer_value>0.00)
+    if(_linktest_timer_value>0.00)
     {
-        linktest_timer = [[UMTimer alloc]initWithTarget:self
+        _linktest_timer = [[UMTimer alloc]initWithTarget:self
                                                selector:@selector(linktest_timer_fires:)];
-        linktest_timer.duration = linktest_timer_value * 1000000;
+        _linktest_timer.duration = _linktest_timer_value * 1000000;
     }
 
 
     UMLayerSctpUserProfile *profile = [[UMLayerSctpUserProfile alloc]init];
     profile.statusUpdates = YES;
-    [sctpLink adminAttachFor:self
+    [_sctpLink adminAttachFor:self
                      profile:profile
                       userId:name];
 }
@@ -1730,23 +1719,23 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 {
                     [self logDebug:@"OOS state. Ignoring Timer Event"];
                 }
-                [reopen_timer1 stop];
+                [_reopen_timer1 stop];
                 break;
             case M3UA_STATUS_BUSY:
                 if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"BUSY state. Ignoring Timer Event"];
                 }
-                [reopen_timer1 stop];
+                [_reopen_timer1 stop];
                 break;
             case M3UA_STATUS_INACTIVE:
                 if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"INACTIVE state. Ignoring Timer Event"];
                 }
-                [reopen_timer1 stop];
-                [reopen_timer2 stop];
-                [linktest_timer stop];
+                [_reopen_timer1 stop];
+                [_reopen_timer2 stop];
+                [_linktest_timer stop];
                 break;
 
             case M3UA_STATUS_IS:
@@ -1754,9 +1743,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 {
                     [self logDebug:@"IS state. Ignoring Timer Event"];
                 }
-                [reopen_timer1 stop];
-                [reopen_timer2 stop];
-                [linktest_timer stop];
+                [_reopen_timer1 stop];
+                [_reopen_timer2 stop];
+                [_linktest_timer stop];
                 break;
             case M3UA_STATUS_OFF:
             case M3UA_STATUS_UNUSED:
@@ -1765,11 +1754,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 {
                     [self logDebug:@"OFF state. Asking SCTP to power on the link"];
                 }
-                [reopen_timer1 stop];
-                [reopen_timer2 stop];
-                [linktest_timer stop];
-                [sctpLink openFor:self];
-                [reopen_timer2 start];
+                [_reopen_timer1 stop];
+                [_reopen_timer2 stop];
+                [_linktest_timer stop];
+                [_sctpLink openFor:self];
+                [_reopen_timer2 start];
                 break;
 
         }
@@ -1797,9 +1786,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 {
                     [self logDebug:@"M3UA_STATUS_UNUSED state. Ignoring timer event"];
                 }
-                [reopen_timer1 stop];
-                [reopen_timer2 stop];
-                [linktest_timer stop];
+                [_reopen_timer1 stop];
+                [_reopen_timer2 stop];
+                [_linktest_timer stop];
                 break;
             case M3UA_STATUS_OFF:
             case M3UA_STATUS_OOS:
@@ -1811,26 +1800,26 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 {
                     [self logDebug:@"Status is OFF/OOS or BUSY but still not in service state. Asking SCTP to power off/on the link"];
                 }
-                [sctpLink closeFor:self];
-                [reopen_timer1 stop];
-                [reopen_timer2 stop];
-                [reopen_timer1 start];
+                [_sctpLink closeFor:self];
+                [_reopen_timer1 stop];
+                [_reopen_timer2 stop];
+                [_reopen_timer1 start];
                 break;
             case M3UA_STATUS_INACTIVE:
                 if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"Status M3UA_STATUS_INACTIVE. Stopping timers"];
                 }
-                [reopen_timer1 stop];
-                [reopen_timer2 stop];
+                [_reopen_timer1 stop];
+                [_reopen_timer2 stop];
                 break;
             case M3UA_STATUS_IS:
                 if(self.logLevel <= UMLOG_DEBUG)
                 {
                     [self logDebug:@"Status M3UA_STATUS_IS. Stopping timers"];
                 }
-                [reopen_timer1 stop];
-                [reopen_timer2 stop];
+                [_reopen_timer1 stop];
+                [_reopen_timer2 stop];
                 break;
 
         }
@@ -1854,27 +1843,27 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [self logDebug:@"linktest_timer_fires"];
         }
 
-        if(aspup_received==1)
+        if(_aspup_received==1)
         {
             /* Lets send ASPAC or ASPIA */
-            if(standby_mode==1)
+            if(_standby_mode==1)
             {
                 [self sendASPIA:NULL];
             }
             else
             {
                 UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-                pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(as.trafficMode);
+                pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
                 [self sendASPAC:pl];
             }
         }
-        if(linktest_timer_value > 0)
+        if(_linktest_timer_value > 0)
         {
             if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self logDebug:@"restarting linktest timers"];
             }
-            [linktest_timer start];
+            [_linktest_timer start];
         }
     }
     @finally
@@ -1900,12 +1889,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
     if(self.status != M3UA_STATUS_OFF)
     {
         self.status = M3UA_STATUS_OFF;
-        if([reopen_timer1 isRunning]==NO)
+        if([_reopen_timer1 isRunning]==NO)
         {
-            [sctpLink closeFor:self];
-            [reopen_timer1 stop];
-            [reopen_timer2 stop];
-            [reopen_timer1 start];
+            [_sctpLink closeFor:self];
+            [_reopen_timer1 stop];
+            [_reopen_timer2 stop];
+            [_reopen_timer1 start];
         }
     }
 }

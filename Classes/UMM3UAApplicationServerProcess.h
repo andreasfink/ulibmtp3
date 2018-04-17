@@ -18,52 +18,48 @@
 
 @interface UMM3UAApplicationServerProcess : UMLayer<UMLayerSctpUserProtocol>
 {
-    NSString                    *name;
-    UMLayerSctp                 *sctpLink;
-    SCTP_Status                 sctp_status;
-    UMM3UAApplicationServer     *as;
-    BOOL                        congested;
-    UMMTP3Variant               _variant;
+    UMLayerSctp                 *_sctpLink;
+    SCTP_Status                 _sctp_status;
+    UMM3UAApplicationServer     *_as;
+    BOOL                        _congested;
     UMM3UA_Status               status;
 
-    BOOL                        speedLimitReached;
-    double                      speedLimit;
-    UMThroughputCounter         *speedCounter;
+    BOOL                        _speedLimitReached;
+    double                      _speedLimit;
+    UMThroughputCounter         *_speedCounter;
 
-    UMMTP3PointCode             *adjacentPointCode;
-    UMMTP3PointCode             *localPointCode;
-    //UMM3UA_Status               m3ua_status;
-    BOOL                        aspup_received;
-    BOOL                        standby_mode;
-    NSMutableData       *incomingStream0;
-    NSMutableData       *incomingStream1;
-//    UMMTP3Variant       variant;
+    UMMTP3PointCode             *_adjacentPointCode;
+    UMMTP3PointCode             *_localPointCode;
+    BOOL                        _aspup_received;
+    BOOL                        _standby_mode;
+    NSMutableData       *_incomingStream0;
+    NSMutableData       *_incomingStream1;
 
-    UMTimer             *linktest_timer;
-    UMTimer             *reopen_timer1;
-    UMTimer             *reopen_timer2;
+    UMTimer             *_linktest_timer;
+    UMTimer             *_reopen_timer1;
+    UMTimer             *_reopen_timer2;
     int                 sltm_serial;
 
-    NSTimeInterval      linktest_timer_value;
-    NSTimeInterval      reopen_timer1_value;
-    NSTimeInterval      reopen_timer2_value;
-    double              speed;
+    NSTimeInterval      _linktest_timer_value;
+    NSTimeInterval      _reopen_timer1_value;
+    NSTimeInterval      _reopen_timer2_value;
+    double              _speed;
 
-    UMThroughputCounter	*speedometer;
-    UMThroughputCounter	*submission_speed;
-    time_t  link_up_time;
-    time_t  link_down_time;
-    time_t  link_congestion_time;
-    time_t  link_speed_excess_time;
-    time_t  link_congestion_cleared_time;
-    time_t  link_speed_excess_cleared_time;
-    BOOL     speed_within_limit;
+    UMThroughputCounter	*_speedometer;
+    UMThroughputCounter	*_submission_speed;
+    time_t  _link_up_time;
+    time_t  _link_down_time;
+    time_t  _link_congestion_time;
+    time_t  _link_speed_excess_time;
+    time_t  _link_congestion_cleared_time;
+    time_t  _link_speed_excess_cleared_time;
+    BOOL     _speed_within_limit;
     UMMutex *_aspLock;
 }
 
-@property (readwrite,strong)  UMM3UAApplicationServer  *as;
-@property (readwrite,strong)  NSString *name;
 
+@property(readwrite,strong,atomic)  UMM3UAApplicationServer *as;
+@property (readwrite,strong)  NSString *name;
 @property (readwrite,assign,atomic) UMM3UA_Status status;
 @property (readonly) BOOL sctp_connecting;
 @property (readonly) BOOL sctp_up;

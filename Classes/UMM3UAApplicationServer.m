@@ -610,9 +610,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     trafficMode = UMM3UATrafficMode_loadshare;
     NSString *apc;
     NSString *opc;
-
     self.logLevel = UMLOG_MAJOR;
-
 
     if(cfg[@"name"])
     {
