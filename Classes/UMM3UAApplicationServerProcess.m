@@ -664,28 +664,53 @@ static const char *get_sctp_status_string(SCTP_Status status)
         }
         else
         {
+            [self logDebug:@"processDAUD step2"];
             if(pc)
             {
-                UMMTP3RouteStatus rstatus = [as isRouteAvailable:pc mask:mask forAsp:self];
-                if(rstatus == UMMTP3_ROUTE_ALLOWED)
+                [self logDebug:@"processDAUD step3"];
+                BOOL answered = NO;
+                if(as.localPointCode)
                 {
-                    [self logDebug:@" rstatus=UMMTP3_ROUTE_ALLOWED"];
-                    [self advertizePointcodeAvailable:pc mask:mask];
+                    if(as.localPointCode.integerValue == pc.integerValue)
+                    {
+                        [self logDebug:@"processDAUD step3a"];
+                        [self advertizePointcodeAvailable:pc mask:0];
+                        answered=YES;
+                    }
+                }
+                else if((as.mtp3.opc) && (!answered))
+                {
+                    if(as.mtp3.opc.integerValue == pc.integerValue)
+                    {
+                        [self logDebug:@"processDAUD step3b"];
+                        [self advertizePointcodeAvailable:as.mtp3.opc mask:0];
+                        answered=YES;
+                    }
+                }
 
-                }
-                else if(rstatus == UMMTP3_ROUTE_PROHIBITED)
+                if(answered==NO)
                 {
-                    [self logDebug:@" rstatus=UMMTP3_ROUTE_PROHIBITED"];
-                    [self advertizePointcodeUnavailable:pc mask:mask];
-                }
-                else if(rstatus == UMMTP3_ROUTE_RESTRICTED)
-                {
-                    [self logDebug:@" rstatus=UMMTP3_ROUTE_RESTRICTED"];
-                    [self advertizePointcodeRestricted:pc mask:mask];
-                }
-                else if(rstatus == UMMTP3_ROUTE_UNKNOWN)
-                {
-                    [self logDebug:[NSString stringWithFormat:@"    status of pointcode %@ is unknown",pc]];
+                    UMMTP3RouteStatus rstatus = [as isRouteAvailable:pc mask:mask forAsp:self];
+                    if(rstatus == UMMTP3_ROUTE_ALLOWED)
+                    {
+                        [self logDebug:@" rstatus=UMMTP3_ROUTE_ALLOWED"];
+                        [self advertizePointcodeAvailable:pc mask:mask];
+
+                    }
+                    else if(rstatus == UMMTP3_ROUTE_PROHIBITED)
+                    {
+                        [self logDebug:@" rstatus=UMMTP3_ROUTE_PROHIBITED"];
+                        [self advertizePointcodeUnavailable:pc mask:mask];
+                    }
+                    else if(rstatus == UMMTP3_ROUTE_RESTRICTED)
+                    {
+                        [self logDebug:@" rstatus=UMMTP3_ROUTE_RESTRICTED"];
+                        [self advertizePointcodeRestricted:pc mask:mask];
+                    }
+                    else if(rstatus == UMMTP3_ROUTE_UNKNOWN)
+                    {
+                        [self logDebug:[NSString stringWithFormat:@"    status of pointcode %@ is unknown",pc]];
+                    }
                 }
             }
         }
