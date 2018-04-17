@@ -1636,10 +1636,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
-    if(self.logLevel <= UMLOG_DEBUG)
-    {
-        [self logDebug:[NSString stringWithFormat:@"M3UA-ASP: setConfig: %@",cfg]];
-    }
     _reopen_timer1_value  = M3UA_DEFAULT_REOPEN1_TIMER;
     _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
     _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
@@ -1656,6 +1652,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         logLevel = [cfg[@"log-level"] intValue];
     }
+
+    if(logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:[NSString stringWithFormat:@"M3UA-ASP: setConfig: \n%@",cfg]];
+    }
+
     if(cfg[@"attach-to"])
     {
         NSString *attachTo =  [cfg[@"attach-to"] stringValue];

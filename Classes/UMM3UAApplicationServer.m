@@ -612,6 +612,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     NSString *opc;
     self.logLevel = UMLOG_MAJOR;
 
+
     if(cfg[@"name"])
     {
         self.name =  [cfg[@"name"] stringValue];
@@ -620,10 +621,18 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         self.logLevel = [cfg[@"log-level"] intValue];
     }
-
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:[NSString stringWithFormat:@"M3UA-AS: setConfig: \n%@",cfg]];
+    }
     if(cfg[@"mtp3"])
     {
-        _mtp3 = [appContext getMTP3:[cfg[@"mtp3"] stringValue]];
+        NSString *mtp3Name = [cfg[@"mtp3"] stringValue];
+        _mtp3 = [appContext getMTP3:mtp3Name];
+        if(_mtp3 == NULL)
+        {
+            [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to MTP3 '%@' failed. layer not found",mtp3Name]];
+        }
     }
 
     if(cfg[@"apc"])
