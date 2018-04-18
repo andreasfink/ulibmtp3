@@ -653,10 +653,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
         }
         else
         {
-            [self logDebug:@"processDAUD step2"];
             if(pc)
             {
-                [self logDebug:@"processDAUD step3"];
                 BOOL answered = NO;
 
                 [self logDebug:[NSString stringWithFormat:@" as.localPointCode: %@",_as.localPointCode]];
@@ -664,20 +662,16 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
                 if(_as.localPointCode)
                 {
-                    [self logDebug:@"processDAUD step3a"];
                     if(_as.localPointCode.integerValue == pc.integerValue)
                     {
-                        [self logDebug:@"processDAUD step3aa"];
                         [self advertizePointcodeAvailable:pc mask:0];
                         answered=YES;
                     }
                 }
                 else if((_as.mtp3.opc) && (!answered))
                 {
-                    [self logDebug:@"processDAUD step3b"];
                     if(_as.mtp3.opc.integerValue == pc.integerValue)
                     {
-                        [self logDebug:@"processDAUD step3bb"];
                         [self advertizePointcodeAvailable:_as.mtp3.opc mask:0];
                         answered=YES;
                     }
@@ -685,8 +679,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
                 if(answered==NO)
                 {
-                    [self logDebug:@"processDAUD step4"];
-
                     UMMTP3RouteStatus rstatus = [_as isRouteAvailable:pc mask:mask forAsp:self];
                     if(rstatus == UMMTP3_ROUTE_ALLOWED)
                     {
