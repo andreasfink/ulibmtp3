@@ -114,5 +114,6 @@
             si:(int)si
     ackRequest:(NSDictionary *)ackRequest
  correlationId:(uint32_t)correlation_id;
+- (NSString *)statusString;
 
 @end

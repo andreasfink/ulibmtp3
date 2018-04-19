@@ -104,4 +104,6 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 -(UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc
                                 mask:(int)mask
                               forAsp:(UMM3UAApplicationServerProcess *)asp;
+- (NSString *)statusString;
+
 @end

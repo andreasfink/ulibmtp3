@@ -1667,6 +1667,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         {
             [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to M3UA-AS '%@' failed. layer not found",as_name]];
         }
+        [_as addAsp:self];
     }
     if (cfg[@"speed"])
     {
@@ -1951,6 +1952,30 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self sendASPAC:NULL];
     }
 
+}
+
+- (NSString *)statusString
+{
+    switch(status)
+    {
+        case    M3UA_STATUS_OFF:
+            return @"OFF";
+
+        case    M3UA_STATUS_OOS:
+            return @"OOS";
+
+        case    M3UA_STATUS_BUSY:
+            return @"BUSY";
+
+        case    M3UA_STATUS_INACTIVE:
+            return @"INACTIVE";
+
+        case    M3UA_STATUS_IS:
+            return @"IS";
+
+        default:
+            return @"UNDEFINED";
+    }
 }
 
 @end

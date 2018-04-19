@@ -57,7 +57,7 @@ typedef enum UMMTP3_Error
     UMMTP3InstanceRoutingTable      *routingTable;
     UMSynchronizedSortedDictionary  *userPart;
     UMMTP3Route *defaultRoute;
-    BOOL ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
+    BOOL _ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
     UMMTP3SyslogClient              *_problematicPacketDumper;
 }
 @property (readwrite,assign)    int                 networkIndicator;

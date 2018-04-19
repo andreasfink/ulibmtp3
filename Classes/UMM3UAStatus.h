@@ -1,5 +1,5 @@
 //
-//  UMM3UAStatus.h
+//  UMM3UA_Status.h
 //  ulibmtp3
 //
 //  Created by Andreas Fink on 24.01.17.

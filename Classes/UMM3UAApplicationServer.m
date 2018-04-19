@@ -533,6 +533,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)powerOn
 {
+    m3ua_status = M3UA_STATUS_OOS;
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"start"];
@@ -633,6 +634,10 @@ static const char *m3ua_param_name(uint16_t param_type)
         {
             [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to MTP3 '%@' failed. layer not found",mtp3Name]];
         }
+        else
+        {
+            [_mtp3 addLinkset:self];
+        }
     }
 
     if(cfg[@"apc"])
@@ -711,7 +716,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     }
     if(cfg[@"routing-key"])
     {
-        NSString *s = cfg[@"routing-key"];
+        NSString *s = [cfg[@"routing-key"] stringValue];
         if([s isEqualToStringCaseInsensitive:@"none"])
         {
             _useRoutingKey = NO;
@@ -896,10 +901,12 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)updateLinksetStatus
 {
-    int active = 0 ;
+    int active = 0;
     int inactive = 0;
     int ready = 0;
-
+    BOOL activeSeen = NO;;
+    BOOL inactiveSeen = NO;
+    BOOL busySeen = NO;
     NSArray *keys = [applicationServerProcesses allKeys];
     for (NSString *key in keys)
     {
@@ -909,14 +916,18 @@ static const char *m3ua_param_name(uint16_t param_type)
             case M3UA_STATUS_UNUSED:
             case M3UA_STATUS_OFF:
             case M3UA_STATUS_OOS:
+                inactive++;
                 break;
             case M3UA_STATUS_BUSY:
+                busySeen=YES;
                 ready++;
                 break;
             case M3UA_STATUS_INACTIVE:
+                inactiveSeen=YES;
                 inactive++;
                 break;
             case M3UA_STATUS_IS:
+                activeSeen=YES;
                 active++;
                 break;
         }
@@ -924,10 +935,55 @@ static const char *m3ua_param_name(uint16_t param_type)
     _activeLinks = active;
     _inactiveLinks = inactive;
     _readyLinks = ready;
+    _totalLinks = keys.count;
     if(_activeLinks > 0)
     {
         _mtp3.ready = YES;
     }
+
+    if(activeSeen)
+    {
+        m3ua_status = M3UA_STATUS_IS;
+    }
+    else if(inactiveSeen)
+    {
+        m3ua_status = M3UA_STATUS_INACTIVE;
+    }
+    else if(busySeen)
+    {
+        m3ua_status = M3UA_STATUS_BUSY;
+    }
+    else if(_totalLinks > 0)
+    {
+        m3ua_status = M3UA_STATUS_OOS;
+    }
+    else
+    {
+        m3ua_status = M3UA_STATUS_OFF;
+    }
 }
 
+
+- (NSString *)statusString
+{
+    switch(m3ua_status)
+    {
+        case    M3UA_STATUS_OFF:
+            return @"OFF";
+
+        case    M3UA_STATUS_OOS:
+            return @"OOS";
+
+        case    M3UA_STATUS_BUSY:
+            return @"BUSY";
+
+        case    M3UA_STATUS_INACTIVE:
+            return @"INACTIVE";
+
+        case    M3UA_STATUS_IS:
+            return @"IS";
+        default:
+            return @"UNDEFINED";
+    }
+}
 @end

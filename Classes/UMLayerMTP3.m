@@ -44,7 +44,6 @@
 @synthesize variant;
 @synthesize opc;
 @synthesize defaultRoute;
-@synthesize ready;
 
 #pragma mark -
 #pragma mark Initializer
