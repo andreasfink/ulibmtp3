@@ -32,6 +32,10 @@
 
 - (UMMTP3PointCode *)initWithString:(NSString *)str variant:(UMMTP3Variant)var
 {
+    if(str==NULL)
+    {
+        return NULL;
+    }
     UMAssert(var != UMMTP3Variant_Undefined,@"Pointcode Variant is undefined");
     self = [super init];
     if(self)
