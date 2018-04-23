@@ -227,13 +227,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 
 @implementation UMM3UAApplicationServerProcess
-@synthesize name;
-@synthesize status;
-@synthesize sctp_status;
 
 - (BOOL)sctp_connecting
 {
-    if(status == M3UA_STATUS_OOS)
+    if(_status == M3UA_STATUS_OOS)
     {
         return YES;
     }
@@ -242,7 +239,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (BOOL)sctp_up
 {
-    switch(status)
+    switch(_status)
     {
         case M3UA_STATUS_UNUSED:
         case  M3UA_STATUS_OFF:
@@ -258,7 +255,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (BOOL)up
 {
-    switch(status)
+    switch(_status)
     {
         case M3UA_STATUS_UNUSED:
         case  M3UA_STATUS_OFF:
@@ -274,7 +271,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (BOOL)active
 {
-    switch(status)
+    switch(_status)
     {
         case M3UA_STATUS_UNUSED:
         case  M3UA_STATUS_OFF:
@@ -302,6 +299,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
         self.logLevel = UMLOG_MAJOR;
         _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
         _sctp_status = SCTP_STATUS_OFF;
+        _status = M3UA_STATUS_OFF;
+
     }
     return self;
 }
@@ -1215,9 +1214,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
 #pragma mark SCTP callbacks
 
 
-- (NSString *)layerName
+- (NSString *)name
 {
-    return name;
+    return self.layerName;
 }
 
 - (void) sctpStatusIndication:(UMLayer *)caller
@@ -1225,7 +1224,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                        status:(SCTP_Status)new_status
 {
     SCTP_Status	old_status;
-    old_status = sctp_status;
+    old_status = _sctp_status;
     if(self.logLevel <= UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"sctpStatusIndication: %s->%s",
@@ -1237,8 +1236,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         return;
     }
-    sctp_status = new_status;
-    switch(sctp_status)
+    _sctp_status = new_status;
+    switch(_sctp_status)
     {
         case SCTP_STATUS_M_FOOS:
         case SCTP_STATUS_OFF:
@@ -1633,13 +1632,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
     _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
     _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
     _speed = M3UA_DEFAULT_SPEED;
-    name = NULL;
 
     logLevel = UMLOG_MAJOR;
 
     if(cfg[@"name"])
     {
-        name =  [cfg[@"name"] stringValue];
+        self.layerName =  [cfg[@"name"] stringValue];
     }
     if(cfg[@"log-level"])
     {
@@ -1707,7 +1705,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     profile.statusUpdates = YES;
     [_sctpLink adminAttachFor:self
                      profile:profile
-                      userId:name];
+                      userId:self.layerName];
 }
 
 - (void)reopen_timer1_fires:(id)param
@@ -1957,7 +1955,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (NSString *)statusString
 {
-    switch(status)
+    switch(_status)
     {
         case    M3UA_STATUS_OFF:
             return @"OFF";

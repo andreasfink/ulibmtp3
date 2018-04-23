@@ -564,7 +564,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void) addAsp:(UMM3UAApplicationServerProcess *)asp
 {
     asp.as = self;
-    applicationServerProcesses[asp.name] = asp;
+    applicationServerProcesses[asp.layerName] = asp;
 }
 
 - (void) adminAttachConfirm:(UMLayer *)attachedLayer

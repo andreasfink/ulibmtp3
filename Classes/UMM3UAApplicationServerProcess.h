@@ -18,10 +18,11 @@
 
 @interface UMM3UAApplicationServerProcess : UMLayer<UMLayerSctpUserProtocol>
 {
+    //NSString                    *_name;
     UMLayerSctp                 *_sctpLink;
     UMM3UAApplicationServer     *_as;
     BOOL                        _congested;
-    UMM3UA_Status               status;
+    UMM3UA_Status               _status;
 
     BOOL                        _speedLimitReached;
     double                      _speedLimit;
@@ -58,13 +59,14 @@
 
 
 @property(readwrite,strong,atomic)  UMM3UAApplicationServer *as;
-@property (readwrite,strong)  NSString *name;
-@property (readwrite,assign,atomic) UMM3UA_Status status;
+@property(readonly,strong,atomic)  NSString *name;
 @property (readonly) BOOL sctp_connecting;
 @property (readonly) BOOL sctp_up;
 @property (readonly) BOOL up;
 @property (readonly) BOOL active;
 @property(readonly)    SCTP_Status                 sctp_status;
+@property(readwrite,assign,atomic)   UMM3UA_Status status;
+
 
 - (void)start;
 - (void)stop;
