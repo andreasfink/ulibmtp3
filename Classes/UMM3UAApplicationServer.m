@@ -935,7 +935,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     _activeLinks = active;
     _inactiveLinks = inactive;
     _readyLinks = ready;
-    _totalLinks = keys.count;
+    _totalLinks = (int)keys.count;
     if(_activeLinks > 0)
     {
         _mtp3.ready = YES;
