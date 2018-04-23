@@ -213,10 +213,15 @@
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
 
-    NSString *instance = [cfg configEntry:@"mtp3"];
-    NSString *route = [cfg configEntry:@"dpc"];
-    NSString *linkset = [cfg configEntry:@"ls"];
-    NSString *as = [cfg configEntry:@"as"];
+    NSString *instance = [[cfg configEntry:@"mtp3"] stringValue];
+    NSString *route = [[cfg configEntry:@"dpc"] stringValue];
+    NSString *linkset = [[cfg configEntry:@"ls"] stringValue];
+    NSString *as = [[cfg configEntry:@"as"] stringValue];
+    if(linkset==NULL)
+    {
+        linkset = as;
+    }
+
     UMLayerMTP3 *mtp3_instance = [appContext getMTP3:instance];
     if(mtp3_instance)
     {
