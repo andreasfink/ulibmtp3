@@ -155,6 +155,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         applicationServerProcesses = [[UMSynchronizedSortedDictionary alloc]init];
         self.logLevel = UMLOG_MAJOR;
+        m3ua_status = M3UA_STATUS_OFF;
     }
     return self;
 }
