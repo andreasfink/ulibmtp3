@@ -214,8 +214,9 @@
 {
 
     NSString *instance = [cfg configEntry:@"mtp3"];
-    NSString *route = [cfg configEntry:@"route"];
-    NSString *linkset = [cfg configEntry:@"linkset"];
+    NSString *route = [cfg configEntry:@"dpc"];
+    NSString *linkset = [cfg configEntry:@"ls"];
+    NSString *as = [cfg configEntry:@"as"];
     UMLayerMTP3 *mtp3_instance = [appContext getMTP3:instance];
     if(mtp3_instance)
     {

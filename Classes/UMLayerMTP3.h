@@ -56,7 +56,7 @@ typedef enum UMMTP3_Error
     UMMTP3PointCode                 *opc;
     UMMTP3InstanceRoutingTable      *routingTable;
     UMSynchronizedSortedDictionary  *userPart;
-    UMMTP3Route *defaultRoute;
+    UMMTP3Route                     *defaultRoute;
     BOOL _ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
     UMMTP3SyslogClient              *_problematicPacketDumper;
 }

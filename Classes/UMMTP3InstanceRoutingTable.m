@@ -177,7 +177,6 @@
     }
     else
     {
-        
         NSArray *keys = [routingTablesByLinkset allKeys];
         NSMutableArray *result = [[NSMutableArray alloc]init];
         for(id key in keys)
@@ -208,5 +207,12 @@
         d[key] = [table objectValue];
     }
     return d;
+}
+
+
+- (void)addRoute:(UMMTP3Route *)route forLinkset:(NSString *)linksetName
+{
+    UMMTP3LinkRoutingTable *table = routingTablesByLinkset[linksetName];
+
 }
 @end
