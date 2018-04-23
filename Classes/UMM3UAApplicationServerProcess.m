@@ -301,6 +301,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         _speed_within_limit = YES;
         self.logLevel = UMLOG_MAJOR;
         _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
+        _sctp_status = SCTP_STATUS_OFF;
     }
     return self;
 }
