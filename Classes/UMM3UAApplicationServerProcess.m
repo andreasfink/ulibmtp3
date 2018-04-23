@@ -274,7 +274,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     switch(_status)
     {
         case M3UA_STATUS_UNUSED:
-        case  M3UA_STATUS_OFF:
+        case M3UA_STATUS_OFF:
         case M3UA_STATUS_OOS:
         case M3UA_STATUS_BUSY:
         case M3UA_STATUS_INACTIVE:
