@@ -210,9 +210,4 @@
 }
 
 
-- (void)addRoute:(UMMTP3Route *)route forLinkset:(NSString *)linksetName
-{
-    UMMTP3LinkRoutingTable *table = routingTablesByLinkset[linksetName];
-
-}
 @end
