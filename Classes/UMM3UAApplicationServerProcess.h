@@ -18,7 +18,6 @@
 
 @interface UMM3UAApplicationServerProcess : UMLayer<UMLayerSctpUserProtocol>
 {
-    //NSString                    *_name;
     UMLayerSctp                 *_sctpLink;
     UMM3UAApplicationServer     *_as;
     BOOL                        _congested;
@@ -59,7 +58,7 @@
 
 
 @property(readwrite,strong,atomic)  UMM3UAApplicationServer *as;
-@property(readonly,strong,atomic)  NSString *name;
+@property(readwrite,strong,atomic)  NSString *name;
 @property (readonly) BOOL sctp_connecting;
 @property (readonly) BOOL sctp_up;
 @property (readonly) BOOL up;

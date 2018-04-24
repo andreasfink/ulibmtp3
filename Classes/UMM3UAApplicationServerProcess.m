@@ -1219,6 +1219,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
     return self.layerName;
 }
 
+- (void)setName:(NSString *)name
+{
+    self.layerName = name;
+}
+
 - (void) sctpStatusIndication:(UMLayer *)caller
                        userId:(id)uid
                        status:(SCTP_Status)new_status
