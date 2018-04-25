@@ -437,5 +437,4 @@
     return [[UMMTP3PointCode allocWithZone:zone]initWithPc:pc variant:variant];
 }
 
-
 @end

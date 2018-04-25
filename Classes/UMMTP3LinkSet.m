@@ -1050,7 +1050,10 @@
                     [logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu2]];
                     [logFeed debugText:[NSString stringWithFormat:@"  idx=: %d ",idx]];
                 }
-                [_mtp3 processIncomingPdu:label data:pdu2 userpartId:si ni:ni mp:mp linksetName:_name];
+                if([label.dpc isEqualToPointCode:opc])
+                {
+                    [_mtp3 processIncomingPdu:label data:pdu2 userpartId:si ni:ni mp:mp linksetName:_name];
+                }
             }
                 break;
             case MTP3_SERVICE_INDICATOR_TUP:
