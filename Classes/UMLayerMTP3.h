@@ -59,6 +59,7 @@ typedef enum UMMTP3_Error
     UMMTP3Route                     *defaultRoute;
     BOOL _ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
     UMMTP3SyslogClient              *_problematicPacketDumper;
+    BOOL                            _stpMode;
 }
 @property (readwrite,assign)    int                 networkIndicator;
 @property (readwrite,assign)    UMMTP3Variant       variant;

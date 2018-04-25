@@ -657,6 +657,20 @@
 {
     [self readLayerConfig:cfg];
 
+    _stpMode = YES;
+    if(cfg[@"mode"])
+    {
+        NSString *v = [cfg[@"mode"] stringValue];
+        if([v isEqualToString:@"stp"])
+        {
+            _stpMode = YES;
+        }
+        else if([v isEqualToString:@"ssp"])
+        {
+            _stpMode = NO;
+        }
+    }
+
     NSString *var = cfg[@"variant"];
     if([var isEqualToString:@"itu"])
     {
@@ -674,6 +688,8 @@
     {
         variant = UMMTP3Variant_ITU;
     }
+    
+
     NSString *pcStr = cfg[@"opc"];
     self.opc = [[UMMTP3PointCode alloc]initWithString:pcStr variant:variant];
     NSDictionary *linksetsConfig = cfg[@"linksets"];
@@ -880,12 +896,20 @@
     }
     else
     {
-        [self processIncomingPduForward:label
-                                   data:data
-                             userpartId:si
-                                     ni:ni
-                                     mp:mp
-                            linksetName:linksetName];
+        if(_stpMode ==YES)
+        {
+            [self processIncomingPduForward:label
+                                       data:data
+                                 userpartId:si
+                                         ni:ni
+                                         mp:mp
+                                linksetName:linksetName];
+        }
+        else
+        {
+            NSString *s =[NSString stringWithFormat:@"DPC is not local and we are not in STP mode. %@->%@ %@",label.opc, label.dpc, [data hexString]];
+            [self logMinorError:s];
+        }
     }
 }
 
