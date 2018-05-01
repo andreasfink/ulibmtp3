@@ -870,6 +870,8 @@ static const char *m3ua_param_name(uint16_t param_type)
     }
 }
 
+
+
 -(void)sendPdu:(NSData *)data
          label:(UMMTP3Label *)label
        heading:(int)heading
@@ -878,7 +880,27 @@ static const char *m3ua_param_name(uint16_t param_type)
             si:(int)si
     ackRequest:(NSDictionary *)ackRequest
  correlationId:(uint32_t)correlation_id
+       options:(NSDictionary *)options
 {
+    NSMutableDictionary *options2=NULL;
+    if((self.supportsExtendedAttributes) && (options!=NULL))
+    {
+        options2 = [[NSMutableDictionary alloc]init];
+        NSMutableDictionary *d = [[NSMutableDictionary alloc]init];
+        if(options[@"mtp3-incoming-linkset"])
+        {
+            d[@"incoming-linkset"] = options[@"mtp3-incoming-linkset"];
+        }
+        if(options[@"mtp3-incoming-opc"])
+        {
+            d[@"incoming-opc"] = options[@"mtp3-incoming-opc"];
+        }
+        if(d.count > 0)
+        {
+            options2[@"info-string"] = [d jsonString];
+        }
+    }
+
     NSArray *asps = [self activeApplicationServerProcessesToUse];
     if(asps.count < 1)
     {
@@ -895,7 +917,8 @@ static const char *m3ua_param_name(uint16_t param_type)
                       mp:mp
                       si:si
               ackRequest:ackRequest
-           correlationId:correlation_id];
+           correlationId:correlation_id
+                 options:options2];
         }
     }
 }

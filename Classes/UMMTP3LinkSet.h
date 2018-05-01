@@ -51,6 +51,7 @@
     int                         _congestionLevel;
     double                      _speed;
     int                         _last_sls;
+    BOOL                        _sendExtendedAttributes;
 }
 
 /*
@@ -81,6 +82,7 @@
 @property(readonly,assign) int tra_sent;
 @property(readonly,assign) int trw_received;
 @property(readwrite,assign) double speed;
+@property(readwrite,assign) BOOL  sendExtendedAttributes;
 
 
 - (void)addLink:(UMMTP3Link *)lnk;
@@ -184,7 +186,8 @@
             ni:(int)ni
             mp:(int)mp
             si:(int)si
-    ackRequest:(NSDictionary *)ackRequest;
+    ackRequest:(NSDictionary *)ackRequest
+       options:(NSDictionary *)options;
 
 
 -(void)sendPdu:(NSData *)data
@@ -194,9 +197,36 @@
             mp:(int)mp
             si:(int)si
     ackRequest:(NSDictionary *)ackRequest
- correlationId:(uint32_t)correlation_id;
+ correlationId:(uint32_t)correlation_id
+       options:(NSDictionary *)options;
+
+ /*
+-(void)sendPdu:(NSData *)data
+         label:(UMMTP3Label *)label
+       heading:(int)heading
+          link:(UMMTP3Link *)link
+           slc:(int)slc
+            ni:(int)ni
+            mp:(int)mp
+            si:(int)si
+    ackRequest:(NSDictionary *)ackRequest;
+
+*/
+/*
+-(void)sendPdu:(NSData *)data
+         label:(UMMTP3Label *)label
+       heading:(int)heading
+            ni:(int)ni
+            mp:(int)mp
+            si:(int)si
+    ackRequest:(NSDictionary *)ackRequest
+ correlationId:(uint32_t)correlation_id
+options:(NSDictionary *)options;
+*/
+
 
 /* this version automatically selects any link in the linkset and gets the SLC from the link */
+/*
 -(void)sendPdu:(NSData *)data
          label:(UMMTP3Label *)label
        heading:(int)heading
@@ -204,7 +234,7 @@
             mp:(int)mp
             si:(int)si
     ackRequest:(NSDictionary *)ackRequest;
-
+*/
 
 //****
 - (void)sendSLTM:(UMMTP3Label *)label

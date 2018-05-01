@@ -755,6 +755,7 @@
                     dpc:(UMMTP3PointCode *)fdpc
                      si:(int)si
                      mp:(int)mp
+                options:(NSDictionary *)options
 {
     if(fopc==NULL)
     {
@@ -766,7 +767,8 @@
                         dpc:fdpc
                          si:si
                          mp:mp
-                      route:route];
+                      route:route
+                    options:options];
 }
 
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
@@ -775,6 +777,7 @@
                         si:(int)si
                         mp:(int)mp
                      route:(UMMTP3Route *)route
+                   options:(NSDictionary *)options
 {
     
     if(logLevel <= UMLOG_DEBUG)
@@ -807,7 +810,8 @@
                       mp:(int)mp
                       si:si
               ackRequest:NULL
-           correlationId:0];
+           correlationId:0
+                 options:options];
     }
     else
     {
@@ -822,7 +826,8 @@
                       mp:(int)mp
                       si:si
               ackRequest:NULL
-           correlationId:0];
+           correlationId:0
+                 options:options];
 
     }
     return UMMTP3_no_error;
@@ -921,6 +926,8 @@
                          linksetName:(NSString *)linksetName
 {
     UMMTP3Route *route = [routingTable findRouteForDestination:label.dpc mask:0 excludeLinksetName:linksetName exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
+    NSMutableDictionary *options = [[NSMutableDictionary alloc]init];
+    options[@"mtp3-incoming-linkset"] = linksetName;
     if(route)
     {
         [self forwardPDU:data
@@ -928,7 +935,8 @@
                      dpc:label.dpc
                       si:si
                       mp:mp
-                   route:route];
+                   route:route
+                 options:options];
     }
     if((linksetName == NULL) || (![defaultRoute.linksetName isEqualToString:linksetName]))
     {
@@ -937,7 +945,8 @@
                      dpc:label.dpc
                       si:si
                       mp:mp
-                   route:defaultRoute];
+                   route:defaultRoute
+                 options:options];
 
     }
     NSString *s = [NSString stringWithFormat:@"DroppingPDU from Linkset: %@ OPC:%@ DPC:%@ to avoid loop",linksetName,label.opc.stringValue, label.dpc.stringValue];
@@ -1102,6 +1111,7 @@
     NSMutableDictionary *options;
     NSDate *ts = [NSDate new];
     options[@"mtp3-timestamp"] = ts;
+
     id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
     if(inst)
     {

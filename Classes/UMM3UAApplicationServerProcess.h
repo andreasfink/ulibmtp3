@@ -114,6 +114,17 @@
             si:(int)si
     ackRequest:(NSDictionary *)ackRequest
  correlationId:(uint32_t)correlation_id;
+
+-(void)sendPdu:(NSData *)data
+         label:(UMMTP3Label *)label
+       heading:(int)heading
+            ni:(int)ni
+            mp:(int)mp
+            si:(int)si
+    ackRequest:(NSDictionary *)ackRequest
+ correlationId:(uint32_t)correlation_id
+       options:(NSDictionary *)options;
+
 - (NSString *)statusString;
 
 @end

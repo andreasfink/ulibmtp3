@@ -1979,8 +1979,11 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_TEST
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
+
+
 
 - (void)sendSLTM:(UMMTP3Label *)label
          pattern:(NSData *)pattern
@@ -2009,7 +2012,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_TEST
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendSSLTA:(UMMTP3Label *)label
@@ -2039,7 +2043,8 @@
                ni:ni
                mp:mp
                si:MTP3_ANSI_SERVICE_INDICATOR_TEST
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendSSLTM:(UMMTP3Label *)label
@@ -2068,7 +2073,8 @@
                ni:ni
                mp:mp
                si:MTP3_ANSI_SERVICE_INDICATOR_TEST
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 
@@ -2081,6 +2087,7 @@
             mp:(int)mp
             si:(int)si
     ackRequest:(NSDictionary *)ackRequest
+       options:(NSDictionary *)options
 {
     if(link == NULL)
     {
@@ -2151,7 +2158,6 @@
     [link.m2pa dataFor:_mtp3 data:pdu ackRequest:ackRequest];
 }
 
-
 -(void)sendPdu:(NSData *)data
          label:(UMMTP3Label *)label
        heading:(int)heading
@@ -2160,7 +2166,27 @@
             si:(int)si
     ackRequest:(NSDictionary *)ackRequest
  correlationId:(uint32_t)correlation_id
+       options:(NSDictionary *)options
 {
+    NSMutableDictionary *options2=NULL;
+    if((self.supportsExtendedAttributes) && (options!=NULL))
+    {
+        options2 = [[NSMutableDictionary alloc]init];
+        NSMutableDictionary *d = [[NSMutableDictionary alloc]init];
+        if(options[@"mtp3-incoming-linkset"])
+        {
+            d[@"incoming-linkset"] = options[@"mtp3-incoming-linkset"];
+        }
+        if(options[@"mtp3-incoming-opc"])
+        {
+            d[@"incoming-opc"] = options[@"mtp3-incoming-opc"];
+        }
+        if(d.count > 0)
+        {
+            options2[@"info-string"] = [d jsonString];
+        }
+    }
+
     [self sendPdu:data
             label:label
           heading:heading
@@ -2169,27 +2195,10 @@
                ni:ni
                mp:mp
                si:si
-       ackRequest:ackRequest];
+       ackRequest:ackRequest
+          options:options2];
 }
 
--(void)sendPdu:(NSData *)data
-         label:(UMMTP3Label *)label
-       heading:(int)heading
-            ni:(int)ni
-            mp:(int)mp
-            si:(int)si
-    ackRequest:(NSDictionary *)ackRequest
-{
-    [self sendPdu:data
-            label:label
-          heading:heading
-             link:NULL
-              slc:-1
-               ni:ni
-               mp:mp
-               si:si
-       ackRequest:ackRequest];
-}
 
 #pragma mark -
 #pragma mark Config stuff
@@ -2390,7 +2399,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendCOA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2426,7 +2436,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendCBD:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2462,7 +2473,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendCBA:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2498,7 +2510,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 /* Group ECM */
@@ -2522,7 +2535,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendECA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2545,7 +2559,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 /* Group FCM */
@@ -2569,7 +2584,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendTFC:(UMMTP3Label *)label
@@ -2600,7 +2616,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 /* Group TFM */
@@ -2625,7 +2642,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2649,7 +2667,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2673,7 +2692,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 /* Group RSM */
@@ -2698,7 +2718,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 - (void)sendRSR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
@@ -2721,7 +2742,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 /* Group MIM */
@@ -2745,7 +2767,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendLUN:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2768,7 +2791,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendLIA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2791,7 +2815,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendLUA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2814,7 +2839,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendLID:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2837,7 +2863,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendLFU:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2860,7 +2887,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendLLT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2883,7 +2911,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendLRT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2906,7 +2935,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendTRA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2930,8 +2960,9 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
-    
+       ackRequest:NULL
+          options:NULL];
+
 }
 
 /* group DLM */
@@ -2976,7 +3007,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendCSS:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2999,7 +3031,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendCNS:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -3022,7 +3055,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendCNP:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -3045,7 +3079,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 /* group UFC */
 - (void)sendUPU:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc userpartId:(int)upid cause:(int)cause ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -3073,7 +3108,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendUPA:(UMMTP3Label *)label
@@ -3108,7 +3144,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)sendUPT:(UMMTP3Label *)label
@@ -3143,7 +3180,8 @@
                ni:ni
                mp:mp
                si:MTP3_SERVICE_INDICATOR_MGMT
-       ackRequest:NULL];
+       ackRequest:NULL
+          options:NULL];
 }
 
 - (void)powerOn

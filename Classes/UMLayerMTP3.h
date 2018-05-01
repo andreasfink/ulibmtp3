@@ -84,13 +84,17 @@ typedef enum UMMTP3_Error
                     opc:(UMMTP3PointCode *)fopc
                     dpc:(UMMTP3PointCode *)fdpc
                      si:(int)si
-                     mp:(int)mp;
+                     mp:(int)mp
+                options:(NSDictionary *)options;
+
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
                        opc:(UMMTP3PointCode *)fopc
                        dpc:(UMMTP3PointCode *)fdpc
                         si:(int)si
                         mp:(int)mp
-                     route:(UMMTP3Route *)route;
+                     route:(UMMTP3Route *)route
+                   options:(NSDictionary *)options;
+
 
 #pragma mark -
 #pragma mark Linkset Handling

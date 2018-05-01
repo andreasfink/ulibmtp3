@@ -933,7 +933,27 @@ static const char *get_sctp_status_string(SCTP_Status status)
     ackRequest:(NSDictionary *)ackRequest
  correlationId:(uint32_t)correlation_id
 {
+    [self sendPdu:data
+              label:label
+          heading:heading
+                 ni:ni
+                 mp:mp
+                 si:si
+       ackRequest:ackRequest
+      correlationId:correlation_id
+            options:NULL];
+}
 
+-(void)sendPdu:(NSData *)data
+         label:(UMMTP3Label *)label
+       heading:(int)heading
+            ni:(int)ni
+            mp:(int)mp
+            si:(int)si
+    ackRequest:(NSDictionary *)ackRequest
+ correlationId:(uint32_t)correlation_id
+       options:(NSDictionary *)options
+{
     uint8_t header[12];
     uint32_t opc = label.opc.integerValue;
     uint32_t dpc = label.dpc.integerValue;
@@ -968,6 +988,14 @@ static const char *get_sctp_status_string(SCTP_Status status)
     if(logLevel <= UMLOG_DEBUG)
     {
         [logFeed debugText:[NSString stringWithFormat:@"sending PDU %@",pdu]];
+    }
+
+    if(options)
+    {
+        if(options[@"info-string"])
+        {
+            pl[@(M3UA_PARAM_INFO_STRING)] = options[@"info-string"];
+        }
     }
     [self sendDATA:pl];
 }

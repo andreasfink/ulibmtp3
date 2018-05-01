@@ -92,6 +92,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp;
 - (void)aspInactive:(UMM3UAApplicationServerProcess *)asp;
 
+
 -(void)sendPdu:(NSData *)data
          label:(UMMTP3Label *)label
        heading:(int)heading
@@ -99,7 +100,8 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
             mp:(int)mp
             si:(int)si
     ackRequest:(NSDictionary *)ackRequest
- correlationId:(uint32_t)correlation_id;
+ correlationId:(uint32_t)correlation_id
+       options:(NSDictionary *)options;
 
 -(UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc
                                 mask:(int)mask
