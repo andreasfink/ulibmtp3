@@ -2169,7 +2169,7 @@
        options:(NSDictionary *)options
 {
     NSMutableDictionary *options2=NULL;
-    if((self.supportsExtendedAttributes) && (options!=NULL))
+    if((self.sendExtendedAttributes) && (options!=NULL))
     {
         options2 = [[NSMutableDictionary alloc]init];
         NSMutableDictionary *d = [[NSMutableDictionary alloc]init];
