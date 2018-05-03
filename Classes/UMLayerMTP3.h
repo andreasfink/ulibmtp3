@@ -67,6 +67,7 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong)    UMMTP3Route         *defaultRoute;
 @property (readwrite,assign)    BOOL                ready;
 @property (readwrite,strong)    UMMTP3SyslogClient  *problematicPacketDumper;
+@property (readwrite,assign)    BOOL                stpMode;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
 
