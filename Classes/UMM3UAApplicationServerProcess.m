@@ -1719,18 +1719,27 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
 
     _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
-                                          selector:@selector(reopen_timer1_fires:)];
-    _reopen_timer1.duration = _reopen_timer1_value * 1000000;
+                                          selector:@selector(reopen_timer1_fires:)
+                                             object:NULL
+                                            seconds:_reopen_timer1_value
+                                               name:@"umm3ua_asp_reopen_timer1"
+                                            repeats:NO];
 
     _reopen_timer2 = [[UMTimer alloc]initWithTarget:self
-                                          selector:@selector(reopen_timer2_fires:)];
-    _reopen_timer2.duration = _reopen_timer2_value * 1000000;
+                                           selector:@selector(reopen_timer2_fires:)
+                                             object:NULL
+                                            seconds:_reopen_timer2_value
+                                               name:@"umm3ua_asp_reopen_timer2"
+                                            repeats:NO];
 
     if(_linktest_timer_value>0.00)
     {
         _linktest_timer = [[UMTimer alloc]initWithTarget:self
-                                               selector:@selector(linktest_timer_fires:)];
-        _linktest_timer.duration = _linktest_timer_value * 1000000;
+                                               selector:@selector(linktest_timer_fires:)
+                                                 object:NULL
+                                                seconds:_linktest_timer_value
+                                                   name:@"umm3ua_asp_linktest_timer"
+                                                repeats:NO];
     }
 
 
