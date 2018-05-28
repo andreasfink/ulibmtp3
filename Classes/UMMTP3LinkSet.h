@@ -319,7 +319,6 @@ options:(NSDictionary *)options;
 - (NSDictionary *)config;
 - (void)setConfig:(NSDictionary *)config applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext;
 - (void)setDefaultValues;
-- (void)setDefaultValuesFromMTP3;
 
 
 

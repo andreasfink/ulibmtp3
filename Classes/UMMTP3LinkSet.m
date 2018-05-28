@@ -2221,28 +2221,9 @@
 {
     _variant = UMMTP3Variant_Undefined;
     _networkIndicator = -1;
-    _speed = -1.0;
+    _speed = 0; /* means unlimited */
 }
 
-- (void)setDefaultValuesFromMTP3
-{
-    if(_localPointCode == NULL)
-    {
-        _localPointCode = _mtp3.opc;
-    }
-    if(_variant==UMMTP3Variant_Undefined)
-    {
-        _variant = _mtp3.variant;
-    }
-    if(_networkIndicator == -1)
-    {
-        _networkIndicator = _mtp3.networkIndicator;
-    }
-    if(_speed < 0)
-    {
-        _speed = 1000.0;
-    }
-}
 
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id)appContext
 {
