@@ -2248,8 +2248,18 @@
 {
     [self removeAllLinks];
     NSString *apcString = @"";
-    NSString *opc;
+    NSString *opcString = NULL;
 
+    if(cfg[@"log-level"])
+    {
+        _logLevel = [cfg[@"log-level"] intValue];
+    }
+
+    if(cfg[@"mtp3"])
+    {
+        NSString *mtp3_name = [cfg[@"mtp3"] stringValue];
+        _mtp3 = [appContext getMTP3:mtp3_name];
+    }
 
     if(cfg[@"apc"])
     {
@@ -2263,28 +2273,16 @@
     {
         _speed =  [cfg[@"speed"] doubleValue];
     }
-    if(cfg[@"opc"])
+
+    if(cfg[@"opc"]) /* optional */
     {
-        opc = [cfg[@"speed"] stringValue];
+        opcString = [cfg[@"opc"] stringValue];
     }
 
-    for(int slc=0;slc<16;slc++)
-    {
-        NSString *key = [NSString stringWithFormat:@"attach-slc%d",slc];
-        if(cfg[_name])
-        {
-            NSString *m2pa_name = cfg[key];
-            UMMTP3Link *link = [[UMMTP3Link alloc]init];
-            link.slc = slc;
-            link.name = m2pa_name;
-            link.linkset = self;
-            _links[link.name] = link;
-        }
-    }
 
-    if(cfg[@"attach-to"])
+    if(cfg[@"mtp3"])
     {
-        NSString *attachTo = [cfg[@"attach-to"] stringValue];
+        NSString *attachTo = [cfg[@"mtp3"] stringValue];
         _mtp3 = [appContext getMTP3:attachTo];
         if(_mtp3 == NULL)
         {
@@ -2296,69 +2294,22 @@
         }
     }
 
-
-    if(cfg[@"network-indicator"])
-    {
-        NSString *s = [cfg[@"network-indicator"] stringValue];
-        if((  [s isEqualToStringCaseInsensitive:@"international"])
-           || ([s isEqualToStringCaseInsensitive:@"int"])
-           || ([s isEqualToStringCaseInsensitive:@"0"]))
-        {
-            _networkIndicator = 0;
-        }
-        else if(([s isEqualToStringCaseInsensitive:@"national"])
-                || ([s isEqualToStringCaseInsensitive:@"nat"])
-                || ([s isEqualToStringCaseInsensitive:@"2"]))
-        {
-            _networkIndicator = 2;
-        }
-        else if(([s isEqualToStringCaseInsensitive:@"spare"])
-                || ([s isEqualToStringCaseInsensitive:@"international-spare"])
-                || ([s isEqualToStringCaseInsensitive:@"int-spare"])
-                || ([s isEqualToStringCaseInsensitive:@"1"]))
-        {
-            _networkIndicator = 1;
-        }
-        else if(([s isEqualToStringCaseInsensitive:@"reserved"])
-                || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
-                || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
-                || ([s isEqualToStringCaseInsensitive:@"3"]))
-        {
-            _networkIndicator = 3;
-        }
-        else
-        {
-            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
-            _networkIndicator = 0;
-        }
-    }
-    if(cfg[@"log-level"])
-    {
-        _logLevel = [cfg[@"log-level"] intValue];
-    }
-
-    self.variant = _mtp3.variant;
-    self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:_mtp3.variant];
-    self.name = _name;
-    if((_mtp3) && (_variant==UMMTP3Variant_Undefined))
-    {
-        _variant = _mtp3.variant;
-    }
+    _networkIndicator = _mtp3.networkIndicator;
+    _variant = _mtp3.variant;
     if(_variant == UMMTP3Variant_Undefined)
     {
-        _variant = UMMTP3Variant_ITU;
+        @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
+                                       reason:@"Can not figure out mtp3 variant"
+                                     userInfo:NULL]);
     }
-    if(opc)
+    _adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:_mtp3.variant];
+    if(opcString)
     {
-        self.localPointCode = [[UMMTP3PointCode alloc]initWithString:opc variant:_variant];
+        _localPointCode = [[UMMTP3PointCode alloc]initWithString:opcString variant:_variant];
     }
     else
     {
         _localPointCode = _mtp3.opc;
-    }
-    if(_networkIndicator == -1)
-    {
-        _networkIndicator = _mtp3.networkIndicator;
     }
 }
 
