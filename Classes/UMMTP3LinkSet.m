@@ -50,9 +50,10 @@
 
 - (void)addLink:(UMMTP3Link *)lnk
 {
+    NSString *linkName = [NSString stringWithFormat:@"%@:%d",_name,lnk.slc];
     [_linksLock lock];
-    lnk.name = [NSString stringWithFormat:@"%@:%d",_name,lnk.slc];
-    _links[lnk.name]=lnk;
+    lnk.name = linkName;
+    _links[linkName]=lnk;
     lnk.linkset = self;
     _totalLinks++;
     [_linksLock unlock];
@@ -2272,6 +2273,10 @@
             @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
                                            reason:s
                                          userInfo:NULL]);
+        }
+        else
+        {
+            [_mtp3 addLinkset:self];
         }
     }
 

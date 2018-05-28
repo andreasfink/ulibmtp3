@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class UMLayerMTP3;
+@class UMLayerM2PA;
 @class UMMTP3Link;
 @class UMMTP3LinkSet;
 @class UMM3UAApplicationServerProcess;
@@ -19,6 +20,7 @@
 
 - (UMLayerSctp *)getSCTP:(NSString *)name;
 - (UMLayerMTP3 *)getMTP3:(NSString *)name;
+- (UMLayerM2PA *)getM2PA:(NSString *)name;
 - (UMMTP3Link *)getMTP3_Link:(NSString *)name;
 - (UMMTP3LinkSet *)getMTP3_LinkSet:(NSString *)name;
 - (UMM3UAApplicationServerProcess *)getM3UA_ASP:(NSString *)name;

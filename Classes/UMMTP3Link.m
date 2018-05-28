@@ -139,6 +139,34 @@
     {
         logLevel = [cfg[@"log-level"] intValue];
     }
+
+    if (cfg[@"mtp3-linkset"])
+    {
+        NSString *linkset_name = [cfg[@"mtp3-linkset"] stringValue];
+        linkset = [appContext getMTP3_LinkSet:linkset_name];
+        if(linkset==NULL)
+        {
+            NSString *s = [NSString stringWithFormat:@"Can not find mtp3 linkset '%@' referred from mtp3 link '%@'",linkset_name,name];
+            @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
+                                           reason:s
+                                         userInfo:NULL]);
+        }
+    }
+
+    if (cfg[@"m2pa"])
+    {
+        NSString *m2pa_name = [cfg[@"m2pa"] stringValue];
+        m2pa = [appContext getM2PA:m2pa_name];
+        if(m2pa==NULL)
+        {
+            NSString *s = [NSString stringWithFormat:@"Can not find m2pa layer '%@' referred from mtp3 link '%@'",m2pa_name,name];
+            @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
+                                           reason:s
+                                         userInfo:NULL]);
+
+        }
+    }
+    [linkset addLink:self];
 }
 
 - (NSDictionary *)config
