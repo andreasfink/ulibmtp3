@@ -28,7 +28,6 @@
 @synthesize congested;
 @synthesize processorOutage;
 @synthesize speedLimitReached;
-//@synthesize linkState;
 @synthesize linkTestTime;
 
 - (UMMTP3Link *) init
@@ -37,7 +36,7 @@
     if(self)
     {
        // linkState = [[UMMTP3LinkState alloc]init];
-        logLevel = UMLOG_MAJOR;
+        _logLevel = UMLOG_MAJOR;
     }
     return self;
 }
@@ -134,10 +133,10 @@
             linkTestTime = 30.0;
         }
     }
-    logLevel = UMLOG_MAJOR;
+    _logLevel = UMLOG_MAJOR;
     if(cfg[@"log-level"])
     {
-        logLevel = [cfg[@"log-level"] intValue];
+        _logLevel = [cfg[@"log-level"] intValue];
     }
 
     if (cfg[@"mtp3-linkset"])
@@ -167,6 +166,13 @@
         }
     }
     [linkset addLink:self];
+
+    UMLayerM2PAUserProfile *up = [[UMLayerM2PAUserProfile alloc]initWithDefaultProfile];
+    [m2pa adminAttachFor:self
+                 profile:up
+                  userId:self
+                      ni:linkset.mtp3.networkIndicator
+                     slc:slc];
 }
 
 - (NSDictionary *)config
