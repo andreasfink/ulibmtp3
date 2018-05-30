@@ -1984,6 +1984,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         [self sendASPIA:NULL];
     }
+    self.status =  M3UA_STATUS_INACTIVE;
 }
 
 - (void)goActive

@@ -531,6 +531,81 @@ static const char *m3ua_param_name(uint16_t param_type)
     return _name;
 }
 
+- (void)activate
+{
+	if (trafficMode == UMM3UATrafficMode_loadshare || trafficMode == UMM3UATrafficMode_broadcast)
+	{
+		if(self.logLevel <= UMLOG_DEBUG)
+		{
+            [self logDebug:@"activate: all"];
+		}
+		id keys = [applicationServerProcesses allKeys];
+		for(id key in keys)
+		{
+			UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+			[asp goActive];
+		}
+	}
+	else if (trafficMode == UMM3UATrafficMode_override)
+	{
+		if(self.m3ua_status == M3UA_STATUS_INACTIVE)
+		{
+			if(self.logLevel <= UMLOG_DEBUG)
+			{
+                [self logDebug:@"activate: one"];
+			}
+            NSUInteger randomIndex = [UMUtil random:applicationServerProcesses.count];
+
+			id key = [applicationServerProcesses keyAtIndex:randomIndex];
+			
+			UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+			[asp goActive];
+		}
+		else if(self.m3ua_status == M3UA_STATUS_IS)
+		{
+			if(self.logLevel <= UMLOG_DEBUG)
+			{
+                [self logDebug:@"activate: already active"];
+			}
+		}
+		else if(self.m3ua_status == M3UA_STATUS_BUSY)
+		{
+			if(self.logLevel <= UMLOG_DEBUG)
+			{
+				[self logDebug:@"activate: already active and busy"];
+			}
+		}
+		else // M3UA_STATUS_UNUSED, M3UA_STATUS_OFF, M3UA_STATUS_OOS
+		{
+			if(self.logLevel <= UMLOG_DEBUG)
+			{
+				[self logDebug:@"activate: can not activate. Maybe poweron first?"];
+			}
+		}
+	}
+	else
+	{
+		if(self.logLevel <= UMLOG_DEBUG)
+		{
+            [self logDebug:@"activate: traffic mode is undefined!"];
+		}
+	}
+}
+
+- (void)deactivate
+{
+	if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"deactivate"];
+    }
+    id keys = [applicationServerProcesses allKeys];
+    for(id key in keys)
+    {
+        UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+        [asp goInactive];
+    }
+    self.m3ua_status = M3UA_STATUS_INACTIVE;
+}
 
 - (void)powerOn
 {
