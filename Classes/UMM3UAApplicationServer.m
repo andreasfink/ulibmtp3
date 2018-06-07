@@ -554,7 +554,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 			{
                 [self logDebug:@"activate: one"];
 			}
-            NSUInteger randomIndex = [UMUtil random:applicationServerProcesses.count];
+            NSUInteger randomIndex = [UMUtil random:(uint32_t)applicationServerProcesses.count];
 
 			id key = [applicationServerProcesses keyAtIndex:randomIndex];
 			
