@@ -1286,6 +1286,13 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (void)start
 {
     [_sctpLink openFor:self];
+    /* as we are in point to multipoint mode, we can just send (we dont call connectx anymore) so if we initiate the connection we need to send data to establish it */
+    
+    NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
+    UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+    pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
+    _aspup_received=0;
+    [self sendASPUP:pl];
 }
 
 - (void)stop
@@ -1328,13 +1335,13 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [self logDebug:@" sending ASPUP"];
         }
 
-        NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
-        UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-        pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
-
-
-        _aspup_received=0;
-        [self sendASPUP:pl];
+        if(_aspup_received==0)
+        {
+            NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
+            UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+            pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
+            [self sendASPUP:pl];
+        }
         self.status = M3UA_STATUS_BUSY;
         [_speedometer clear];
         [_submission_speed clear];
