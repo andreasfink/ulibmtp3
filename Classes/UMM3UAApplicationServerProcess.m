@@ -1774,6 +1774,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                     [self logDebug:@"OOS state. Ignoring Timer Event"];
                 }
                 [_reopen_timer1 stop];
+                [_linktest_timer stop];
                 break;
             case M3UA_STATUS_BUSY:
                 if(self.logLevel <= UMLOG_DEBUG)
@@ -1781,6 +1782,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                     [self logDebug:@"BUSY state. Ignoring Timer Event"];
                 }
                 [_reopen_timer1 stop];
+                [_linktest_timer stop];
                 break;
             case M3UA_STATUS_INACTIVE:
                 if(self.logLevel <= UMLOG_DEBUG)
@@ -1814,7 +1816,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 [_sctpLink openFor:self];
                 [_reopen_timer2 start];
                 break;
-
         }
     }
     @finally
@@ -1855,6 +1856,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                     [self logDebug:@"Status is OFF/OOS or BUSY but still not in service state. Asking SCTP to power off/on the link"];
                 }
                 [_sctpLink closeFor:self];
+                self.status = M3UA_STATUS_OFF;
                 [_reopen_timer1 stop];
                 [_reopen_timer2 stop];
                 [_reopen_timer1 start];
@@ -1875,7 +1877,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 [_reopen_timer1 stop];
                 [_reopen_timer2 stop];
                 break;
-
         }
     }
     @finally
