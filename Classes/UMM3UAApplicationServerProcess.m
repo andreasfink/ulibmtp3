@@ -1078,10 +1078,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [data appendData:pdu];
 
     [_sctpLink dataFor:self
-                 data:data
-             streamId:streamId
-           protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
-           ackRequest:NULL];
+                  data:data
+              streamId:streamId
+            protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
+            ackRequest:NULL];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"SEND_PDU:"];
