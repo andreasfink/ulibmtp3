@@ -300,7 +300,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
         _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
         _sctp_status = SCTP_STATUS_OFF;
         _status = M3UA_STATUS_OFF;
-
+        _houseKeepingTimer = [[UMTimer alloc]initWithTarget:self
+                                                   selector:@selector(housekeeping)
+                                                     object:NULL
+                                                    seconds:1.1
+                                                       name:@"housekeeping"
+                                                    repeats:YES];
     }
     return self;
 }
@@ -800,8 +805,15 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processBEAT:(NSData *)data
 {
+    self.lastBeatReceived = [NSDate date];
+
     /* Heartbeat */
     [self sendBEAT_ACK:data];
+}
+
+- (void)processBEAT_ACK:(NSData *)data
+{
+    self.lastBeatAckReceived = [NSDate date];
 }
 
 - (void)processASPUP_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1217,6 +1229,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendBEAT:(NSData *)data
 {
+    self.lastBeatSent = [NSDate date];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendBEAT"];
@@ -1226,6 +1239,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendBEAT_ACK:(NSData *)data
 {
+    self.lastBeatAckSent = [NSDate date];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendBEAT_ACK"];
@@ -1292,6 +1306,26 @@ static const char *get_sctp_status_string(SCTP_Status status)
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
     _aspup_received=0;
+
+
+    if(_beatTime >= 1.0)
+    {
+        if(_beatTimer==NULL)
+        {
+            _beatTimer = [[UMTimer alloc]initWithTarget:self
+                                               selector:@selector(housekeeping)
+                                                 object:NULL
+                                                seconds:_beatTime
+                                                   name:@"beat-timer"
+                                                repeats:YES];
+        }
+        else
+        {
+            _beatTimer.seconds = _beatTime;
+        }
+        [_beatTimer stop];
+        [_beatTimer start];
+    }
     [self sendASPUP:pl];
 }
 
@@ -1368,6 +1402,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [_aspLock lock];
     @try
     {
+        [_beatTimer stop];
         if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"powerOff"];
@@ -1385,7 +1420,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [_speedometer clear];
             [_submission_speed clear];
             _speed_within_limit = YES;
-
             [_reopen_timer1 stop];
             [_reopen_timer1 start];
             [_sctpLink closeFor:self];
@@ -1415,7 +1449,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     else
     {
         incomingStream = _incomingStream1;
-
     }
 
     len = (uint32_t)incomingStream.length;
@@ -1463,6 +1496,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
     if(classtype == M3UA_CLASS_TYPE_BEAT)
     {
         [self processBEAT:pdu];
+        return;
+    }
+    else if(classtype == M3UA_CLASS_TYPE_BEAT_ACK)
+    {
+        [self processBEAT_ACK:pdu];
         return;
     }
 
@@ -1675,6 +1713,23 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
     logLevel = UMLOG_MAJOR;
 
+    if(cfg[@"beat-time"])
+    {
+        self.beatTime = [cfg[@"beat-time"] doubleValue];
+    }
+    else
+    {
+        self.beatTime = M3UA_DEFAULT_BEAT_TIMER;
+    }
+    if(cfg[@"beat-max-outstanding"])
+    {
+        self.beatMaxOutstanding = [cfg[@"beat-max-outstanding"] intValue];
+    }
+    else
+    {
+        self.beatMaxOutstanding = M3UA_DEFAULT_MAX_BEAT_OUTSTANDING;
+    }
+
     if(cfg[@"name"])
     {
         self.layerName =  [cfg[@"name"] stringValue];
@@ -1741,15 +1796,38 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
     if(_linktest_timer_value>0.00)
     {
-        _linktest_timer = [[UMTimer alloc]initWithTarget:self
-                                               selector:@selector(linktest_timer_fires:)
-                                                 object:NULL
-                                                seconds:_linktest_timer_value
-                                                   name:@"umm3ua_asp_linktest_timer"
-                                                repeats:NO];
+        if(_linktest_timer==NULL)
+        {
+            _linktest_timer = [[UMTimer alloc]initWithTarget:self
+                                                    selector:@selector(linktest_timer_fires:)
+                                                      object:NULL
+                                                     seconds:_linktest_timer_value
+                                                        name:@"umm3ua_asp_linktest_timer"
+                                                     repeats:NO];
+        }
+        else
+        {
+            _linktest_timer.seconds = _linktest_timer_value;
+        }
     }
 
 
+    if(_beatTime >= 1.0)
+    {
+        if(_beatTimer==NULL)
+        {
+            _beatTimer = [[UMTimer alloc]initWithTarget:self
+                                               selector:@selector(housekeeping)
+                                                 object:NULL
+                                                seconds:_beatTime
+                                                   name:@"beat-timer"
+                                                repeats:YES];
+        }
+        else
+        {
+            _beatTimer.seconds = _beatTime;
+        }
+    }
     UMLayerSctpUserProfile *profile = [[UMLayerSctpUserProfile alloc]init];
     profile.statusUpdates = YES;
     [_sctpLink adminAttachFor:self
@@ -2028,4 +2106,25 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
 }
 
+- (void)beatTimerEvent
+{
+    NSString *str = [[NSDate date]stringValue];
+    NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+    [self sendBEAT:data];
+}
+
+- (void)housekeeping
+{
+    if([_beatTimer isRunning])
+    {
+        if(_lastBeatSent)
+        {
+            NSTimeInterval diff = [[NSDate date]timeIntervalSinceDate:_lastBeatReceived];
+            if(diff > (_beatMaxOutstanding * _beatTime))
+            {
+                [self powerOff];
+            }
+        }
+    }
+}
 @end

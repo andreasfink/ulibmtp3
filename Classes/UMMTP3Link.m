@@ -218,19 +218,16 @@
 {
     if(linkTestTime > 0)
     {
-        linkTestTimer = [[UMTimer alloc]initWithTarget:self
-                                              selector:@selector(linkTestTimerEvent:)
-                                                object:NULL
-                                               seconds:linkTestTime
-                                                  name:@"linktestTimer" repeats:YES];
+        if(linkTestTimer==NULL)
+        {
+            linkTestTimer = [[UMTimer alloc]initWithTarget:self
+                                                  selector:@selector(linkTestTimerEvent:)
+                                                    object:NULL
+                                                   seconds:linkTestTime
+                                                      name:@"linktestTimer" repeats:YES];
+        }
         [linkTestTimer start];
     }
-        /*
-    if(linkTestTime > 0)
-    {
-        [self performSelectorOnMainThread:@selector(startLinkTestTimer2) withObject:NULL waitUntilDone:NO];
-    }
- */
 }
 
 - (void)stopLinkTestTimer

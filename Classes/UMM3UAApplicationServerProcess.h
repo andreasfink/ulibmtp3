@@ -14,7 +14,11 @@
 #import "UMM3UAStatus.h"
 #import "UMMTP3Label.h"
 
+#define M3UA_DEFAULT_BEAT_TIMER                 5.00
+#define M3UA_DEFAULT_MAX_BEAT_OUTSTANDING      3
+
 @class UMM3UAApplicationServer;
+
 
 @interface UMM3UAApplicationServerProcess : UMLayer<UMLayerSctpUserProtocol>
 {
@@ -39,6 +43,7 @@
     UMTimer             *_reopen_timer2;
     int                 sltm_serial;
 
+
     NSTimeInterval      _linktest_timer_value;
     NSTimeInterval      _reopen_timer1_value;
     NSTimeInterval      _reopen_timer2_value;
@@ -54,6 +59,16 @@
     time_t  _link_speed_excess_cleared_time;
     BOOL     _speed_within_limit;
     UMMutex *_aspLock;
+
+    NSDate *_lastBeatReceived;
+    NSDate *_lastBeatAckReceived;
+    NSDate *_lastBeatSent;
+    NSDate *_lastBeatAckSent;
+
+    UMTimer                     *_beatTimer;
+    NSTimeInterval              _beatTime;
+    int                         _beatMaxOutstanding;
+    UMTimer                     *_houseKeepingTimer;
 }
 
 
@@ -66,6 +81,12 @@
 @property(readonly)    SCTP_Status                 sctp_status;
 @property(readwrite,assign,atomic)   UMM3UA_Status status;
 
+@property(readwrite,strong,atomic)  NSDate *lastBeatReceived;
+@property(readwrite,strong,atomic)  NSDate *lastBeatAckReceived;
+@property(readwrite,strong,atomic)  NSDate *lastBeatSent;
+@property(readwrite,strong,atomic)  NSDate *lastBeatAckSent;
+@property(readwrite,assign,atomic)  NSTimeInterval beatTime;
+@property(readwrite,assign,atomic)  int beatMaxOutstanding;
 
 - (void)start;
 - (void)stop;
