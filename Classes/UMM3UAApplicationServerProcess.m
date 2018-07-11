@@ -1431,7 +1431,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
 }
 
-
 - (void)lookForIncomingPdu:(int)streamId
 {
     const unsigned char *data;
@@ -2122,9 +2121,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
             NSTimeInterval diff = [[NSDate date]timeIntervalSinceDate:_lastBeatReceived];
             if(diff > (_beatMaxOutstanding * _beatTime))
             {
+                [self logMinorError:@"powering off due to missing beat-ack messages"];
                 [self powerOff];
             }
         }
     }
 }
+
 @end
