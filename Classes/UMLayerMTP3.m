@@ -797,6 +797,15 @@
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = fopc;
     label.dpc = fdpc;
+    NSString *s = options[@"mtp3-sls"];
+    if(s.length > 0)
+    {
+        label.sls = [s intValue] % 16;
+    }
+    else
+    {
+        label.sls = [UMUtil random:16];
+    }
     if([linkset isKindOfClass:[UMM3UAApplicationServer class]])
     {
         if(logLevel <= UMLOG_DEBUG)
