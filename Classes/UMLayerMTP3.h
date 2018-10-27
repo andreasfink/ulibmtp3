@@ -49,25 +49,26 @@ typedef enum UMMTP3_Error
 
 @interface UMLayerMTP3 : UMLayer<UMLayerM2PAUserProtocol>
 {
-    UMSynchronizedSortedDictionary  *linksets;
+    UMSynchronizedSortedDictionary  *_linksets;
     UMMutex                         *_linksetLock;
-    UMMTP3Variant                   variant;
-    int                             networkIndicator;
-    UMMTP3PointCode                 *opc;
-    UMMTP3InstanceRoutingTable      *routingTable;
-    UMSynchronizedSortedDictionary  *userPart;
-    UMMTP3Route                     *defaultRoute;
+    UMMTP3Variant                   _variant;
+    int                             _networkIndicator;
+    UMMTP3PointCode                 *_opc;
+    UMMTP3InstanceRoutingTable      *_routingTable;
+    UMSynchronizedSortedDictionary  *_userPart;
+    UMMTP3Route                     *_defaultRoute;
     BOOL _ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
     UMMTP3SyslogClient              *_problematicPacketDumper;
     BOOL                            _stpMode;
 }
-@property (readwrite,assign)    int                 networkIndicator;
-@property (readwrite,assign)    UMMTP3Variant       variant;
-@property (readwrite,strong)    UMMTP3PointCode     *opc;
-@property (readwrite,strong)    UMMTP3Route         *defaultRoute;
-@property (readwrite,assign)    BOOL                ready;
-@property (readwrite,strong)    UMMTP3SyslogClient  *problematicPacketDumper;
-@property (readwrite,assign)    BOOL                stpMode;
+@property (readwrite,assig,atomicn)    int                 networkIndicator;
+@property (readwrite,assign,atomic)    UMMTP3Variant       variant;
+@property (readwrite,strong,atomic)    UMMTP3PointCode     *opc;
+@property (readwrite,strong,atomic)    UMMTP3Route         *defaultRoute;
+@property (readwrite,assign,atomic)    BOOL                ready;
+@property (readwrite,strong,atomic)    UMMTP3SyslogClient  *problematicPacketDumper;
+@property (readwrite,assign,atomic)    BOOL                stpMode;
+@property (readwrite,strong,atomic) UMMTP3RoutingTable *routingTable;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
 
