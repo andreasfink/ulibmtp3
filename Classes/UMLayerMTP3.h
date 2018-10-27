@@ -57,18 +57,18 @@ typedef enum UMMTP3_Error
     UMMTP3InstanceRoutingTable      *_routingTable;
     UMSynchronizedSortedDictionary  *_userPart;
     UMMTP3Route                     *_defaultRoute;
-    BOOL _ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
+    BOOL                            _ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
     UMMTP3SyslogClient              *_problematicPacketDumper;
     BOOL                            _stpMode;
 }
-@property (readwrite,assig,atomicn)    int                 networkIndicator;
-@property (readwrite,assign,atomic)    UMMTP3Variant       variant;
-@property (readwrite,strong,atomic)    UMMTP3PointCode     *opc;
-@property (readwrite,strong,atomic)    UMMTP3Route         *defaultRoute;
-@property (readwrite,assign,atomic)    BOOL                ready;
-@property (readwrite,strong,atomic)    UMMTP3SyslogClient  *problematicPacketDumper;
-@property (readwrite,assign,atomic)    BOOL                stpMode;
-@property (readwrite,strong,atomic) UMMTP3RoutingTable *routingTable;
+@property (readwrite,assign,atomic) int                 networkIndicator;
+@property (readwrite,assign,atomic) UMMTP3Variant       variant;
+@property (readwrite,strong,atomic) UMMTP3PointCode     *opc;
+@property (readwrite,strong,atomic) UMMTP3Route         *defaultRoute;
+@property (readwrite,assign,atomic) BOOL                ready;
+@property (readwrite,strong,atomic) UMMTP3SyslogClient  *problematicPacketDumper;
+@property (readwrite,assign,atomic) BOOL                stpMode;
+@property (readwrite,strong,atomic) UMMTP3RoutingTable  *routingTable;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
 
