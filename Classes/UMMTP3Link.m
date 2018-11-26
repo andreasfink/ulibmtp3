@@ -126,7 +126,7 @@
         slc = [cfg[@"slc"] intValue];
         if(cfg[@"link-test-time"])
         {
-            linkTestTime  = [cfg[@"linktest-timer"] intValue];
+            linkTestTime  = (NSTimeInterval)[cfg[@"link-test-time"] doubleValue];
         }
         else
         {
