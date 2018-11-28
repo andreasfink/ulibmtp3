@@ -163,21 +163,21 @@
 {
     if(_logLevel <= UMLOG_DEBUG)
     {
-        [logFeed debugText:@" FISU (Fill-in Signal Unit). (We should not get this on M2PA data link)"];
+        [self.logFeed debugText:@" FISU (Fill-in Signal Unit). (We should not get this on M2PA data link)"];
     }
 }
 
 
 -(void) protocolViolation
 {
-    [logFeed majorErrorText:@"protocolViolation"];
+    [self.logFeed majorErrorText:@"protocolViolation"];
 }
 
 - (void)lssuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc
 {
     if(maxlen < 2)
     {
-        [logFeed majorErrorText:@"LSSU received with less than 2 byte"];
+        [self.logFeed majorErrorText:@"LSSU received with less than 2 byte"];
         [self protocolViolation];
         return;
     }
@@ -185,30 +185,30 @@
     int sf = data[1];
     if(_logLevel <=UMLOG_DEBUG)
     {
-        [logFeed debugText:@" LSSU (m3link Status Signal Unit) (We should not get this on M2PA data link)"];
-        [logFeed debugText:[NSString stringWithFormat:@" Status Field (SF): [%d]",sf]];
+        [self.logFeed debugText:@" LSSU (m3link Status Signal Unit) (We should not get this on M2PA data link)"];
+        [self.logFeed debugText:[NSString stringWithFormat:@" Status Field (SF): [%d]",sf]];
         switch(sf & 0x07)
         {
             case 0:
-                [logFeed debugText:@"  {SIO} OUT OF ALIGNMENT"];
+                [self.logFeed debugText:@"  {SIO} OUT OF ALIGNMENT"];
                 break;
             case 1:
-                [logFeed debugText:@"  {SIN} NORMAL ALIGNMENT"];
+                [self.logFeed debugText:@"  {SIN} NORMAL ALIGNMENT"];
                 break;
             case 2:
-                [logFeed debugText:@"  {SIE} EMERGENCY ALIGNMENT"];
+                [self.logFeed debugText:@"  {SIE} EMERGENCY ALIGNMENT"];
                 break;
             case 3:
-                [logFeed debugText:@"  {SIOS} OUT OF SERVICE"];
+                [self.logFeed debugText:@"  {SIOS} OUT OF SERVICE"];
                 break;
             case 4:
-                [logFeed debugText:@"  {SIPO} PROCESSOR OUTAGE"];
+                [self.logFeed debugText:@"  {SIPO} PROCESSOR OUTAGE"];
                 break;
             case 5:
-                [logFeed debugText:@"  {SIB} BUSY"];
+                [self.logFeed debugText:@"  {SIB} BUSY"];
                 break;
             default:
-                [logFeed debugText:@"  {unknown}"];
+                [self.logFeed debugText:@"  {unknown}"];
                 break;
         }
     }
@@ -225,7 +225,7 @@
         /* kind of a FISU */
         if(_logLevel <= UMLOG_DEBUG)
         {
-            [logFeed debugText:@" empty MSU"];
+            [self.logFeed debugText:@" empty MSU"];
         }
         return;
     }
@@ -241,7 +241,7 @@
             break;
         case 2:
             /* LSSU length=2 */
-            [logFeed minorErrorText:@" LSSU (m3link Status Signal Unit 2 bytes) not permitted for M2PA"];
+            [self.logFeed minorErrorText:@" LSSU (m3link Status Signal Unit 2 bytes) not permitted for M2PA"];
             break;
         default:
             [self msuIndication:data maxlen:maxlen slc:slc];
@@ -372,7 +372,7 @@
 
         if(_logLevel <= UMLOG_DEBUG)
         {
-            [logFeed debugText:@" MSU (Message Signal Unit)"];
+            [self.logFeed debugText:@" MSU (Message Signal Unit)"];
         }
         switch (_variant)
         {
@@ -418,7 +418,7 @@
     {
         NSDictionary *d = e.userInfo;
         NSString *desc = d[@"sysmsg"];
-        [logFeed majorErrorText:desc];
+        [self.logFeed majorErrorText:desc];
         [self protocolViolation];
         return;
     }
@@ -444,17 +444,17 @@
     {
         if(_logLevel <= UMLOG_DEBUG)
         {
-            [logFeed debugText:[NSString stringWithFormat:@"  data2: [%@]",pdu]];
-            [logFeed debugText:[NSString stringWithFormat:@" maxlen: [%d]",(int)maxlen]];
-            [logFeed debugText:[NSString stringWithFormat:@"     si: [%d]",si]];
-            [logFeed debugText:[NSString stringWithFormat:@"     ni: [%d]",ni]];
-            [logFeed debugText:[NSString stringWithFormat:@"     mp: [%d]",mp]];
-            [logFeed debugText:[NSString stringWithFormat:@"    opc: %@",label.opc.description]];
-            [logFeed debugText:[NSString stringWithFormat:@"    dpc: %@",label.dpc.description]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"  data2: [%@]",pdu]];
+            [self.logFeed debugText:[NSString stringWithFormat:@" maxlen: [%d]",(int)maxlen]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"     si: [%d]",si]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"     ni: [%d]",ni]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"     mp: [%d]",mp]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"    opc: %@",label.opc.description]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"    dpc: %@",label.dpc.description]];
         }
         if(ni != _networkIndicator)
         {
-            [logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,_networkIndicator]];
+            [self.logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,_networkIndicator]];
             [self protocolViolation];
             @throw([NSException exceptionWithName:@"MTP_PACKET_INVALID"
                                            reason:NULL
@@ -505,7 +505,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly denied"]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly denied"]];
                 }
                 break;
             }
@@ -513,7 +513,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly denied"]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly denied"]];
                     break;
                 }
             }
@@ -521,7 +521,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly permitted"]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  screening: explicitly permitted"]];
                 }
                 break;
             }
@@ -529,7 +529,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly permitted"]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly permitted"]];
                 }
                 break;
             }
@@ -544,7 +544,7 @@
                 /* Signalling network testing and maintenance messages */
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network testing and maintenance messages",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network testing and maintenance messages",si]];
                 }
                 int heading;
                 GRAB_BYTE(heading,data,idx,maxlen);
@@ -568,7 +568,7 @@
                         }
                         if(slc != slc2)
                         {
-                            [logFeed majorErrorText:@"SLTM: SLC received is not matching the links configured SLC"];
+                            [self.logFeed majorErrorText:@"SLTM: SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
                         if ((idx + len)>maxlen)
@@ -776,7 +776,7 @@
 
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network management messages",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] Signalling network management messages",si]];
                 }
                 int heading;
                 GRAB_BYTE(heading,data,idx,maxlen);
@@ -906,7 +906,7 @@
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant];
                         if(_logLevel < UMLOG_DEBUG)
                         {
-                            [logFeed debugText:[NSString stringWithFormat:@"  H0/H1: [0x%02X] RST Signalling-route-set-test signal for prohibited destination",heading]];
+                            [self.logFeed debugText:[NSString stringWithFormat:@"  H0/H1: [0x%02X] RST Signalling-route-set-test signal for prohibited destination",heading]];
                         }
                         [self processRST:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
@@ -1047,9 +1047,9 @@
                 NSData *pdu2 = [NSData dataWithBytes:&data[idx] length:(maxlen-idx)];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
-                    [logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu2]];
-                    [logFeed debugText:[NSString stringWithFormat:@"  idx=: %d ",idx]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu2]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  idx=: %d ",idx]];
                 }
                 [_mtp3 processIncomingPdu:label data:pdu2 userpartId:si ni:ni mp:mp linksetName:_name];
             }
@@ -1058,7 +1058,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1069,7 +1069,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1080,7 +1080,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1091,7 +1091,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1102,7 +1102,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1113,7 +1113,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1124,7 +1124,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1135,7 +1135,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1146,7 +1146,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1157,7 +1157,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1168,7 +1168,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1179,7 +1179,7 @@
             {
                 if(_logLevel <= UMLOG_DEBUG)
                 {
-                    [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name];
@@ -1192,7 +1192,7 @@
     {
         //NSDictionary *d = e.userInfo;
         //NSString *desc = d[@"sysmsg"];
-        [logFeed majorErrorText:[NSString stringWithFormat:@"Exception %@",e]];
+        [self.logFeed majorErrorText:[NSString stringWithFormat:@"Exception %@",e]];
         return;
     }
 }

@@ -185,7 +185,7 @@
     if(logLevel <=UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
-        [logFeed debugText:s];
+        [self.logFeed debugText:s];
     }
 
     UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];

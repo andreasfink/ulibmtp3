@@ -979,7 +979,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     NSArray *asps = [self activeApplicationServerProcessesToUse];
     if(asps.count < 1)
     {
-        [logFeed majorErrorText:[NSString stringWithFormat:@"Dropping PDU due to no active ASPs present"]];
+        [self.logFeed majorErrorText:[NSString stringWithFormat:@"Dropping PDU due to no active ASPs present"]];
     }
     else
     {

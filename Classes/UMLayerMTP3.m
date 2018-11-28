@@ -788,9 +788,9 @@
     
     if(logLevel <= UMLOG_DEBUG)
     {
-        [logFeed debugText:[NSString stringWithFormat:@"routed to route '%@'",route.name]];
-        [logFeed debugText:[NSString stringWithFormat:@" linkset '%@'",route.linksetName]];
-        [logFeed debugText:[NSString stringWithFormat:@" pointcode '%@'",route.pointcode]];
+        [self.logFeed debugText:[NSString stringWithFormat:@"routed to route '%@'",route.name]];
+        [self.logFeed debugText:[NSString stringWithFormat:@" linkset '%@'",route.linksetName]];
+        [self.logFeed debugText:[NSString stringWithFormat:@" pointcode '%@'",route.pointcode]];
     }
 
     NSString *linksetName = route.linksetName;
@@ -799,7 +799,7 @@
     [_linksetLock unlock];
     if(linkset==NULL)
     {
-        [logFeed majorErrorText:[NSString stringWithFormat:@"linkset named '%@' not found",linksetName]];
+        [self.logFeed majorErrorText:[NSString stringWithFormat:@"linkset named '%@' not found",linksetName]];
         return UMMTP3_error_no_route_to_destination;
     }
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
@@ -818,7 +818,7 @@
     {
         if(logLevel <= UMLOG_DEBUG)
         {
-            [logFeed debugText:[NSString stringWithFormat:@"sending PDU to application server %@",linkset.name]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to application server %@",linkset.name]];
         }
         [linkset sendPdu:pdu
                    label:label
@@ -834,7 +834,7 @@
     {
         if(logLevel <= UMLOG_DEBUG)
         {
-            [logFeed debugText:[NSString stringWithFormat:@"sending PDU to m2pa linkset %@",linkset.name]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to m2pa linkset %@",linkset.name]];
         }
         [linkset sendPdu:pdu
                    label:label
@@ -990,7 +990,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
         }
@@ -999,7 +999,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1009,7 +1009,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1019,7 +1019,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1029,7 +1029,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1039,7 +1039,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1049,7 +1049,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1059,7 +1059,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1069,7 +1069,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1079,7 +1079,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1089,7 +1089,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1099,7 +1099,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 
@@ -1109,7 +1109,7 @@
         {
             if(logLevel <= UMLOG_DEBUG)
             {
-                [logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
+                [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
             }
             [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName];
 

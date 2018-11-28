@@ -654,7 +654,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:[NSString stringWithFormat:@" affected pointcode %@",pc]];
         if(mask != 0)
         {
-            [logFeed minorErrorText:@"affected pointcode with a mask > 0 are not supported and ignored"];
+            [self.logFeed minorErrorText:@"affected pointcode with a mask > 0 are not supported and ignored"];
         }
         else
         {
@@ -999,7 +999,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     
     if(logLevel <= UMLOG_DEBUG)
     {
-        [logFeed debugText:[NSString stringWithFormat:@"sending PDU %@",pdu]];
+        [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU %@",pdu]];
     }
 
     if(options)
