@@ -225,7 +225,7 @@
     UMLayerMTP3 *mtp3_instance = [appContext getMTP3:instance];
     if(mtp3_instance)
     {
-        UMMTP3LinkSet *mtp3_linkset = [mtp3_instance getLinksetByName:linkset];
+        UMMTP3LinkSet *mtp3_linkset = [mtp3_instance getLinkSetByName:linkset];
         if(mtp3_linkset)
         {
             if([route isEqualToString:@"default"])

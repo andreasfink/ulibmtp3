@@ -21,7 +21,7 @@
 
 @interface UMMTP3InstanceRoutingTable : UMMTP3RoutingTable
 {
-    UMSynchronizedSortedDictionary *routingTablesByLinkset;
+    UMSynchronizedSortedDictionary *routingTablesByLinkSet;
 }
 
 - (UMMTP3InstanceRoutingTable *)initWithLinkSetSortedDict:(UMSynchronizedSortedDictionary *)arr;

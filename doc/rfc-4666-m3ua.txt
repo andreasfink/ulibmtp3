@@ -365,7 +365,7 @@ RFC 4666             SS7 MTP3-User Adaptation Layer       September 2006
    the inputs and outputs between the M3UA layer and a local management
    entity.
 
-   Linkset - A number of signalling links that directly interconnect two
+   LinkSet - A number of signalling links that directly interconnect two
    signalling points, which are used as a module.
 
    MTP - The Message Transfer Part of the SS7 protocol.

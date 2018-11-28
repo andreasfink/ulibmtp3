@@ -27,7 +27,7 @@
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
                                     mask:(int)mask
-                      excludeLinksetName:(NSString *)linksetName
+                      excludeLinkSetName:(NSString *)linksetName
                                    exact:(BOOL)exact;
 
 - (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc
@@ -37,7 +37,7 @@
 
 - (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc
                                  mask:(int)mask
-                   excludeLinksetName:(NSString *)linksetName
+                   excludeLinkSetName:(NSString *)linksetName
                                 exact:(BOOL)exact;
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc

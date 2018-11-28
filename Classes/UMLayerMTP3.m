@@ -24,7 +24,7 @@
 #import "UMMTP3Task_m2paSpeedLimitReached.h"
 #import "UMMTP3Task_m2paSpeedLimitReachedCleared.h"
 #import "UMMTP3Task_adminAttachOrder.h"
-#import "UMMTP3Task_adminCreateLinkset.h"
+#import "UMMTP3Task_adminCreateLinkSet.h"
 #import "UMMTP3Task_adminCreateLink.h"
 #import "UMMTP3Label.h"
 #import "UMMTP3HeadingCode.h"
@@ -80,7 +80,7 @@
 
 
 #pragma mark -
-#pragma mark Linkset Handling
+#pragma mark LinkSet Handling
 
 - (void)refreshRoutingTable
 {
@@ -89,7 +89,7 @@
     [_linksetLock unlock];
 }
 
-- (void)addLinkset:(UMMTP3LinkSet *)ls
+- (void)addLinkSet:(UMMTP3LinkSet *)ls
 {
     ls.mtp3 = self;
     ls.variant = self.variant;
@@ -111,7 +111,7 @@
     [self refreshRoutingTable];
 }
 
-- (void)removeAllLinksets
+- (void)removeAllLinkSets
 {
     [_linksetLock lock];
     _linksets = NULL;
@@ -121,7 +121,7 @@
 }
 
 
-- (void)removeLinkset:(UMMTP3LinkSet *)ls
+- (void)removeLinkSet:(UMMTP3LinkSet *)ls
 {
     [_linksetLock lock];
     ls.mtp3 = NULL;
@@ -130,7 +130,7 @@
     [self refreshRoutingTable];
 }
 
-- (void)removeLinksetByName:(NSString *)n
+- (void)removeLinkSetByName:(NSString *)n
 {
     [_linksetLock lock];
     UMMTP3LinkSet *ls = _linksets[n];
@@ -140,7 +140,7 @@
     [self refreshRoutingTable];
 }
 
-- (UMMTP3LinkSet *)getLinksetByName:(NSString *)n
+- (UMMTP3LinkSet *)getLinkSetByName:(NSString *)n
 {
     [_linksetLock lock];
     UMMTP3LinkSet *ls = _linksets[n];
@@ -162,7 +162,7 @@
     }
     NSString *linkSetName = a[0];
     NSString *linkName = a[1];
-    UMMTP3LinkSet *linkset = [self getLinksetByName:linkSetName];
+    UMMTP3LinkSet *linkset = [self getLinkSetByName:linkSetName];
     UMMTP3Link *link = [linkset getLinkByName:linkName];
     return link;
 }
@@ -171,9 +171,9 @@
 #pragma mark -
 #pragma mark M2PA callbacks
 
-- (void) adminCreateLinkset:(NSString *)linkset
+- (void) adminCreateLinkSet:(NSString *)linkset
 {
-    UMMTP3Task_adminCreateLinkset *task = [[UMMTP3Task_adminCreateLinkset alloc ]initWithReceiver:self
+    UMMTP3Task_adminCreateLinkSet *task = [[UMMTP3Task_adminCreateLinkSet alloc ]initWithReceiver:self
                                                                                        sender:(id)NULL
                                                                                       linkset:linkset];
     [self queueFromAdmin:task];
@@ -360,11 +360,11 @@
 #pragma mark -
 #pragma mark Tasks
 
-- (void) _adminCreateLinksetTask:(UMMTP3Task_adminCreateLinkset *)linkset
+- (void) _adminCreateLinkSetTask:(UMMTP3Task_adminCreateLinkSet *)linkset
 {
     if(logLevel <= UMLOG_DEBUG)
     {
-        [self logDebug:@"_adminCreateLinksetTask"];
+        [self logDebug:@"_adminCreateLinkSetTask"];
     }
     
     UMMTP3LinkSet *set = [[UMMTP3LinkSet alloc] init];
@@ -449,7 +449,7 @@
     }
 
     
-    UMMTP3LinkSet *linkset = [self getLinksetByName: task.userId];
+    UMMTP3LinkSet *linkset = [self getLinkSetByName: task.userId];
     [linkset m2paStatusUpdate:task.status slc:task.slc];
 }
 
@@ -482,7 +482,7 @@
         }
     }
     
-    UMMTP3LinkSet *linkset = [self getLinksetByName:task.userId];
+    UMMTP3LinkSet *linkset = [self getLinkSetByName:task.userId];
     [linkset sctpStatusUpdate:task.status slc:task.slc];
 }
 
@@ -497,7 +497,7 @@
         [self logDebug:[NSString stringWithFormat:@" data: %@",task.data.description]];
     }
 
-    UMMTP3LinkSet *linkset = [self getLinksetByName:task.userId];
+    UMMTP3LinkSet *linkset = [self getLinkSetByName:task.userId];
     [linkset dataIndication:task.data slc:task.slc];
 }
 
@@ -733,7 +733,7 @@
         _networkIndicator = 0;
     }
 
-    [self removeAllLinksets];
+    [self removeAllLinkSets];
     for(NSString *linksetName in linksetsConfig)
     {
         NSDictionary *linksetConfig = linksetsConfig[linksetName];
@@ -742,7 +742,7 @@
         linkset.name = linksetName;
         linkset.variant = self.variant;
         [linkset setConfig:linksetConfig applicationContext:appContext];
-        [self addLinkset:linkset];
+        [self addLinkSet:linkset];
     }
 }
 
@@ -942,7 +942,7 @@
                                   mp:(int)mp
                          linksetName:(NSString *)linksetName
 {
-    UMMTP3Route *route = [_routingTable findRouteForDestination:label.dpc mask:0 excludeLinksetName:linksetName exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
+    UMMTP3Route *route = [_routingTable findRouteForDestination:label.dpc mask:0 excludeLinkSetName:linksetName exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
     NSMutableDictionary *options = [[NSMutableDictionary alloc]init];
     options[@"mtp3-incoming-linkset"] = linksetName;
     if(route)
@@ -966,7 +966,7 @@
                  options:options];
 
     }
-    NSString *s = [NSString stringWithFormat:@"DroppingPDU from Linkset: %@ OPC:%@ DPC:%@ to avoid loop",linksetName,label.opc.stringValue, label.dpc.stringValue];
+    NSString *s = [NSString stringWithFormat:@"DroppingPDU from LinkSet: %@ OPC:%@ DPC:%@ to avoid loop",linksetName,label.opc.stringValue, label.dpc.stringValue];
     [self logMinorError:s];
 }
 

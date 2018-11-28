@@ -1755,7 +1755,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     if(cfg[@"m3ua-as"])
     {
         NSString *as_name =  [cfg[@"m3ua-as"] stringValue];
-        _as = [appContext getM3UA_AS:as_name];
+        _as = [appContext getM3UAAS:as_name];
         if(_as==NULL)
         {
             [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to M3UA-AS '%@' failed. layer not found",as_name]];

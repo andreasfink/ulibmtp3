@@ -1226,7 +1226,7 @@
 
     UMMTP3Label *reverse_label = [label reverseLabel];
     [self sendSLTA:reverse_label pattern:pattern ni:ni mp:mp slc:slc link:link];
-    [self updateLinksetStatus];
+    [self updateLinkSetStatus];
 }
 
 - (void)processSLTA:(UMMTP3Label *)label
@@ -1249,7 +1249,7 @@
         [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
         _sendTRA = NO;
     }
-    [self updateLinksetStatus];
+    [self updateLinkSetStatus];
 }
 
 - (void)processSSLTM:(UMMTP3Label *)label
@@ -1624,7 +1624,7 @@
 /* Group TRM */
 - (void)processTRA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [self updateLinksetStatus];
+    [self updateLinkSetStatus];
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTRA (Traffic-restart-allowed signal)"];
@@ -2276,7 +2276,7 @@
         }
         else
         {
-            [_mtp3 addLinkset:self];
+            [_mtp3 addLinkSet:self];
         }
     }
 
@@ -3165,7 +3165,7 @@
 {
     UMMTP3Link *link = [self linkForSlc:slc];
     [link sctpStatusUpdate:status];
-    [self updateLinksetStatus];
+    [self updateLinkSetStatus];
 }
 
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc
@@ -3173,7 +3173,7 @@
     
     UMMTP3Link *link = [self linkForSlc:slc];
     [link m2paStatusUpdate:status];
-    [self updateLinksetStatus];
+    [self updateLinkSetStatus];
 }
 
 - (void)start:(int)slc
@@ -3188,7 +3188,7 @@
 }
 
 
-- (void)updateLinksetStatus
+- (void)updateLinkSetStatus
 {
     int oldActiveLinks;
     int active = 0 ;

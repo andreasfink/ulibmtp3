@@ -30,7 +30,7 @@
 @class UMMTP3Task_m2paSpeedLimitReached;
 @class UMMTP3Task_m2paSpeedLimitReachedCleared;
 @class UMMTP3Task_adminAttachOrder;
-@class UMMTP3Task_adminCreateLinkset;
+@class UMMTP3Task_adminCreateLinkSet;
 @class UMMTP3Task_adminCreateLink;
 @class UMMTP3Label;
 @class UMMTP3RoutingTable;
@@ -99,13 +99,13 @@ typedef enum UMMTP3_Error
 
 
 #pragma mark -
-#pragma mark Linkset Handling
+#pragma mark LinkSet Handling
 
-- (void)addLinkset:(UMMTP3LinkSet *)ls;
-- (void)removeLinkset:(UMMTP3LinkSet *)ls;
-- (void)removeLinksetByName:(NSString *)n;
-- (void)removeAllLinksets;
-- (UMMTP3LinkSet *)getLinksetByName:(NSString *)name;
+- (void)addLinkSet:(UMMTP3LinkSet *)ls;
+- (void)removeLinkSet:(UMMTP3LinkSet *)ls;
+- (void)removeLinkSetByName:(NSString *)n;
+- (void)removeAllLinkSets;
+- (UMMTP3LinkSet *)getLinkSetByName:(NSString *)name;
 - (UMMTP3Link *)getLinkByName:(id)userId;
 
 #pragma mark -
@@ -125,7 +125,7 @@ typedef enum UMMTP3_Error
                  linkset:(NSString *)linkset;
 
 
-- (void) adminCreateLinkset:(NSString *)linkset;
+- (void) adminCreateLinkSet:(NSString *)linkset;
 - (void) adminCreateLink:(NSString *)name
                      slc:(int)slc
                     link:(NSString *)link;
@@ -193,7 +193,7 @@ typedef enum UMMTP3_Error
 #pragma mark -
 
 
-- (void) _adminCreateLinksetTask:(UMMTP3Task_adminCreateLinkset *)linkset;
+- (void) _adminCreateLinkSetTask:(UMMTP3Task_adminCreateLinkSet *)linkset;
 - (void) _adminCreateLinkTask:(UMMTP3Task_adminCreateLink *)task;
 
 - (void) _adminAttachOrderTask:(UMMTP3Task_adminAttachOrder *)task;

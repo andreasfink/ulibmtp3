@@ -411,14 +411,14 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)aspUp:(UMM3UAApplicationServerProcess *)asp
 {
     upCount++;
-    [self updateLinksetStatus];
+    [self updateLinkSetStatus];
 
 }
 
 - (void)aspDown:(UMM3UAApplicationServerProcess *)asp
 {
     upCount--;
-    [self updateLinksetStatus];
+    [self updateLinkSetStatus];
 }
 
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp
@@ -442,7 +442,7 @@ static const char *m3ua_param_name(uint16_t param_type)
             }
         }
     }
-    [self updateLinksetStatus];
+    [self updateLinkSetStatus];
 }
 
 - (void)aspInactive:(UMM3UAApplicationServerProcess *)asp
@@ -467,7 +467,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         [_routingTable updateRouteUnavailable:_adjacentPointCode mask:0 linksetName:_name];
     }
-    [self updateLinksetStatus];
+    [self updateLinkSetStatus];
 }
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
@@ -712,7 +712,7 @@ static const char *m3ua_param_name(uint16_t param_type)
         }
         else
         {
-            [_mtp3 addLinkset:self];
+            [_mtp3 addLinkSet:self];
         }
     }
 
@@ -998,7 +998,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     }
 }
 
-- (void)updateLinksetStatus
+- (void)updateLinkSetStatus
 {
     int active = 0;
     int inactive = 0;

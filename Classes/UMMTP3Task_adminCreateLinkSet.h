@@ -1,5 +1,5 @@
 //
-//  UMMTP3Task_adminCreateLinkset.h
+//  UMMTP3Task_adminCreateLinkSet.h
 //  ulibmtp3
 //
 //  Created by Andreas Fink on 09.12.14.
@@ -15,14 +15,14 @@
 
 @class UMLayerMTP3;
 
-@interface UMMTP3Task_adminCreateLinkset : UMLayerTask
+@interface UMMTP3Task_adminCreateLinkSet : UMLayerTask
 {
     NSString *linkset;
 }
 
 @property (readwrite,strong) NSString *linkset;
 
-- (UMMTP3Task_adminCreateLinkset *)initWithReceiver:(UMLayerMTP3 *)rx
+- (UMMTP3Task_adminCreateLinkSet *)initWithReceiver:(UMLayerMTP3 *)rx
                                              sender:(id)tx
                                             linkset:(NSString *)xlinkset;
 @end

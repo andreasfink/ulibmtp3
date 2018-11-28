@@ -348,7 +348,7 @@ options:(NSDictionary *)options;
 - (void)sctpStatusUpdate:(SCTP_Status)status slc:(int)slc;
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc;
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link;
-- (void)updateLinksetStatus;
+- (void)updateLinkSetStatus;
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;

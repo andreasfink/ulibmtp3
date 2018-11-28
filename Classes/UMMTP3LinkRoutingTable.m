@@ -71,7 +71,7 @@
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
                                     mask:(int)mask
-                      excludeLinksetName:(NSString *)linksetName
+                      excludeLinkSetName:(NSString *)linksetName
                                    exact:(BOOL)exact
 {
     int startmask = mask;
@@ -120,12 +120,12 @@
 
 - (NSArray *)findRoutesForDestination:(UMMTP3PointCode *)pc
                                  mask:(int)mask
-                   excludeLinksetName:(NSString *)linksetName
+                   excludeLinkSetName:(NSString *)linksetName
                                 exact:(BOOL)exact
 {
     UMMTP3Route *r = [self findRouteForDestination:pc
                                               mask:mask
-                                excludeLinksetName:linksetName
+                                excludeLinkSetName:linksetName
                                              exact:exact];
     return @[r];
 }

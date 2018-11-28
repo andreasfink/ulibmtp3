@@ -21,9 +21,9 @@
 - (UMLayerSctp *)getSCTP:(NSString *)name;
 - (UMLayerMTP3 *)getMTP3:(NSString *)name;
 - (UMLayerM2PA *)getM2PA:(NSString *)name;
-- (UMMTP3Link *)getMTP3_Link:(NSString *)name;
-- (UMMTP3LinkSet *)getMTP3_LinkSet:(NSString *)name;
-- (UMM3UAApplicationServerProcess *)getM3UA_ASP:(NSString *)name;
-- (UMM3UAApplicationServer *)getM3UA_AS:(NSString *)name;
+- (UMMTP3Link *)getMTP3Link:(NSString *)name;
+- (UMMTP3LinkSet *)getMTP3LinkSet:(NSString *)name;
+- (UMM3UAApplicationServerProcess *)getM3UAASP:(NSString *)name;
+- (UMM3UAApplicationServer *)getM3UAAS:(NSString *)name;
 
 @end

@@ -142,7 +142,7 @@
     if (cfg[@"mtp3-linkset"])
     {
         NSString *linkset_name = [cfg[@"mtp3-linkset"] stringValue];
-        linkset = [appContext getMTP3_LinkSet:linkset_name];
+        linkset = [appContext getMTP3LinkSet:linkset_name];
         if(linkset==NULL)
         {
             NSString *s = [NSString stringWithFormat:@"Can not find mtp3 linkset '%@' referred from mtp3 link '%@'",linkset_name,name];
