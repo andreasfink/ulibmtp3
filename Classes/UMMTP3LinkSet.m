@@ -1217,9 +1217,13 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"processSLTM"];
+    }
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
+        [self logMajorError:[NSString stringWithFormat:@"unexpected SLTM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
@@ -1236,9 +1240,14 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"processSLTA"];
+    }
+
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
+        [self logMajorError:[NSString stringWithFormat:@"unexpected SLTM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
@@ -1961,6 +1970,11 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
+
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"sendSLTA"];
+    }
     NSMutableData *pdu = [[NSMutableData alloc]init];
     if(_variant==UMMTP3Variant_ANSI)
     {
@@ -1993,6 +2007,10 @@
              slc:(int)slc
             link:(UMMTP3Link *)link
 {
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"sendSLTM"];
+    }
     NSMutableData *pdu = [[NSMutableData alloc]init];
     if(_variant==UMMTP3Variant_ANSI)
     {
