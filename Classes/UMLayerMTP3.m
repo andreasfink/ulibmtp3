@@ -499,13 +499,13 @@
         [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
         [self logDebug:[NSString stringWithFormat:@" data: %@",task.data.description]];
     }
-	/* userid contains linkset + ':' m2pa name */
+	/* userid contains UMMTP3Link */
 
 	UMMTP3Link *link = task.userId;
 	UMMTP3LinkSet *linkset = link.linkset;
     if(linkset==NULL)
     {
-        [self logMajorError:[NSString stringWithFormat:@"linkset '%@' not found for slc %d",task.userId.name,task.slc]];
+        [self logMajorError:[NSString stringWithFormat:@"linkset '%@' not found for slc %d",link.name,task.slc]];
     }
     else
     {
