@@ -410,7 +410,8 @@
 
     [m2pa adminAttachFor:self
 				 profile:profile
-				linkName:[NSString stringWithFormat:@"%@:%@",task.linkset,task.m2pa.layerName] ni:_networkIndicator
+				linkName:task.m2pa.layerName
+					  ni:_networkIndicator
 					 slc:task.slc];
 }
 
