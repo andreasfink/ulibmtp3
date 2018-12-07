@@ -501,16 +501,11 @@
     }
 	/* userid contains linkset + ':' m2pa name */
 
-	NSString *linksetName = task.userId;
-	NSArray  *a = [task.userId componentsSeparatedByString:@":"];
-	if(a.count >=2)
-	{
-		linksetName = a[0];
-	}
-    UMMTP3LinkSet *linkset = [self getLinkSetByName:linksetName];
+	UMMTP3Link *link = task.userId;
+	UMMTP3LinkSet *linkset = link.linkset;
     if(linkset==NULL)
     {
-        [self logMajorError:[NSString stringWithFormat:@"linkset '%@' not found for slc %d",task.userId,task.slc]];
+        [self logMajorError:[NSString stringWithFormat:@"linkset '%@' not found for slc %d",task.userId.name,task.slc]];
     }
     else
     {
