@@ -496,9 +496,15 @@
         [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
         [self logDebug:[NSString stringWithFormat:@" data: %@",task.data.description]];
     }
-
     UMMTP3LinkSet *linkset = [self getLinkSetByName:task.userId];
-    [linkset dataIndication:task.data slc:task.slc];
+    if(linkset==NULL)
+    {
+        [self logMajorError:[NSString stringWithFormat:@"linkset '%@' not found for slc %d",task.userId,task.slc]];
+    }
+    else
+    {
+        [linkset dataIndication:task.data slc:task.slc];
+    }
 }
 
 
