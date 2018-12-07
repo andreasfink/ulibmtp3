@@ -501,7 +501,7 @@
     }
 	/* userid contains UMMTP3Link */
 
-	UMMTP3Link *link = task.m3link;
+	UMMTP3Link *link = [self getLinkByName:task.m3linkName];
 	UMMTP3LinkSet *linkset = link.linkset;
     if(linkset==NULL)
     {
@@ -512,7 +512,6 @@
         [linkset dataIndication:task.data slc:task.slc];
     }
 }
-
 
 - (void) _m2paCongestionTask:(UMMTP3Task_m2paCongestion*)task
 {
