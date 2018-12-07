@@ -18,20 +18,17 @@
     int		_slc;
     NSString *_m3linkName;
     NSData	*_data;
-	int 	_prio;
 }
 
 @property(readwrite,assign) int slc;
 @property(readwrite,strong) NSString *m3linkName;
 @property(readwrite,strong) NSData *data;
-@property(readwrite,assign) int prio;
 
 - (UMMTP3Task_m2paDataIndication *)initWithReceiver:(UMLayerMTP3 *)rx
 											 sender:(id)tx
 												slc:(int)slc
 									   mtp3linkName:(NSString *)m3linkName
-											   data:(NSData *)d
-									   priorityByte:(int)prio;
+											   data:(NSData *)d;
 
 - (void)main;
 

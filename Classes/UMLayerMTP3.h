@@ -158,8 +158,7 @@ typedef enum UMMTP3_Error
 - (void) m2paDataIndication:(UMLayer *)caller
 						slc:(int)xslc
 			   mtp3linkName:(NSString *)linkName
-					   data:(NSData *)d
-			   priorityByte:(int)prio;
+					   data:(NSData *)d;
 
 
 - (void) m2paCongestion:(UMLayer *)caller

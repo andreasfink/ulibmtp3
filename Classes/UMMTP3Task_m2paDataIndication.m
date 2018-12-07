@@ -22,7 +22,6 @@
 												slc:(int)slc
 									   mtp3linkName:(NSString *)m3linkName
 											   data:(NSData *)d
-									   priorityByte:(int)prio
 {
     self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:NO];
     if(self)
@@ -31,7 +30,6 @@
         _slc = slc;
         _data = d;
 		_m3linkName = m3linkName;
-		_prio = prio;
     }
     return self;
 }

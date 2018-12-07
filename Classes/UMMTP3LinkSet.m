@@ -375,7 +375,7 @@
         int sio;
         GRAB_BYTE(li,data,idx,maxlen);
         GRAB_BYTE(sio,data,idx,maxlen);
-        
+
         int si; /* service indicator */
         int ni; /* network indicator */
         int mp; /* message priority */

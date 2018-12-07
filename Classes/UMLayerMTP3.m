@@ -273,13 +273,11 @@
                         slc:(int)xslc
 			   mtp3linkName:(NSString *)linkName
                        data:(NSData *)d
-			   priorityByte:(int)prio
 {
 	UMMTP3Task_m2paDataIndication *task = [[UMMTP3Task_m2paDataIndication alloc]initWithReceiver:self																						 									  sender:caller
 																							 slc:xslc
 																					mtp3linkName:linkName
-																							data:d
-																					priorityByte:prio];
+																							data:d];
     [self queueFromLower:task];
 }
 
