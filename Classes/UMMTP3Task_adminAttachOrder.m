@@ -14,22 +14,21 @@
 
 @implementation UMMTP3Task_adminAttachOrder
 
-@synthesize slc;
-@synthesize m2pa;
-@synthesize linkset;
 
 - (UMMTP3Task_adminAttachOrder *)initWithReceiver:(UMLayerMTP3 *)rx
                                            sender:(id)tx
                                               slc:(int)xslc
                                              m2pa:(UMLayerM2PA *)xm2pa
-                                          linkset:(NSString *)xlinkset
+									  linkSetName:(NSString *)linkSetName
+										 linkName:(NSString *)linkName
 {
     self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:NO];
     if(self)
     {
         self.slc = xslc;
         self.m2pa = xm2pa;
-        self.linkset = xlinkset;
+        self.linkSetName = linkSetName;
+		self.linkName = linkName;
     }
     return self;
 }

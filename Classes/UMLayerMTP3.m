@@ -191,15 +191,17 @@
 }
 
 - (void)adminAttachOrder:(UMLayerM2PA *)m2pa_layer
-                     slc:(int)slc
-                 linkset:(NSString *)linkset;
+					 slc:(int)slc
+			 linkSetName:(NSString *)linkSetName
+				linkName:(NSString *)linkName
 {
-    UMMTP3Task_adminAttachOrder *task = [[UMMTP3Task_adminAttachOrder alloc ]initWithReceiver:self
-                                                                                       sender:(id)NULL
-                                                                                          slc:(int)slc
-                                                                                         m2pa:m2pa_layer
-                                                                                      linkset:linkset];
-    [self queueFromAdmin:task];
+	UMMTP3Task_adminAttachOrder *task = [[UMMTP3Task_adminAttachOrder alloc ]initWithReceiver:self
+																					   sender:(id)NULL
+																						  slc:(int)slc
+																						 m2pa:m2pa_layer
+																				  linkSetName:linkSetName
+																					 linkName:linkName];
+	[self queueFromAdmin:task];
 }
 
 - (void) adminAttachConfirm:(UMLayer *)attachedLayer
@@ -410,7 +412,7 @@
 
     [m2pa adminAttachFor:self
 				 profile:profile
-				linkName:task.m2pa.layerName
+				linkName:task.linkName
 					  ni:_networkIndicator
 					 slc:task.slc];
 }

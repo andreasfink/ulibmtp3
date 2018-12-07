@@ -16,20 +16,23 @@
 
 @interface UMMTP3Task_adminAttachOrder : UMLayerTask
 {
-    int slc;
-    UMLayerM2PA *m2pa;
-    NSString    *linkset;
+    int 		_slc;
+    UMLayerM2PA *_m2pa;
+    NSString    *_linkSetName;
+	NSString 	*_linkName;
 }
 
-@property(readwrite,assign)   int slc;
-@property(readwrite,strong)   UMLayerM2PA *m2pa;
-@property(readwrite,strong)   NSString *linkset;
+@property(readwrite,assign)   int 			slc;
+@property(readwrite,strong)   UMLayerM2PA 	*m2pa;
+@property(readwrite,strong)   NSString 		*linkSetName;
+@property(readwrite,strong)   NSString 		*linkName;
 
 - (UMMTP3Task_adminAttachOrder *)initWithReceiver:(UMLayerMTP3 *)rx
                                            sender:(id)tx
                                               slc:(int)xslc
                                              m2pa:(UMLayerM2PA *)xm2pa
-                                          linkset:(NSString *)linksetName;
+									  linkSetName:(NSString *)linkSetName
+										 linkName:(NSString *)linkName;
 
 
 @end

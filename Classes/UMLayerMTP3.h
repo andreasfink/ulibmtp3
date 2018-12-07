@@ -120,9 +120,11 @@ typedef enum UMMTP3_Error
                   userId:(id)uid
                   reason:(NSString *)r;
 
+
 - (void)adminAttachOrder:(UMLayerM2PA *)m2pa_layer
-                     slc:(int)slc
-                 linkset:(NSString *)linkset;
+					 slc:(int)slc
+			 linkSetName:(NSString *)linkSetName
+				linkName:(NSString *)linkName;
 
 
 - (void) adminCreateLinkSet:(NSString *)linkset;
