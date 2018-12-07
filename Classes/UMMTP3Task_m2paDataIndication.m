@@ -20,7 +20,7 @@
 - (UMMTP3Task_m2paDataIndication *)initWithReceiver:(UMLayerMTP3 *)rx
 											 sender:(id)tx
 												slc:(int)slc
-										   mtp3link:(UMMTP3Link *)m3link
+									   mtp3linkName:(NSString *)m3linkName
 											   data:(NSData *)d
 									   priorityByte:(int)prio
 {
@@ -30,7 +30,7 @@
         self.name = @"UMMTP3Task_m2paDataIndication";
         _slc = slc;
         _data = d;
-		_m3link = m3link;
+		_m3linkName = m3linkName;
 		_prio = prio;
     }
     return self;

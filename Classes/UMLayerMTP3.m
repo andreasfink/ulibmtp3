@@ -279,10 +279,9 @@
                        data:(NSData *)d
 			   priorityByte:(int)prio
 {
-	UMMTP3Link *link = [self getLinkByName:linkName];
-	UMMTP3Task_m2paDataIndication *task = [[UMMTP3Task_m2paDataIndication alloc]initWithReceiver:self																						  sender:caller
+	UMMTP3Task_m2paDataIndication *task = [[UMMTP3Task_m2paDataIndication alloc]initWithReceiver:self																						 									  sender:caller
 																							 slc:xslc
-																						mtp3link:link
+																					mtp3linkName:linkName
 																							data:d
 																					priorityByte:prio];
     [self queueFromLower:task];
@@ -498,7 +497,6 @@
     {
         [self logDebug:@"_m2paDataIndicationTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
-        //[self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
         [self logDebug:[NSString stringWithFormat:@" data: %@",task.data.description]];
     }
 	/* userid contains UMMTP3Link */
