@@ -505,7 +505,7 @@
 	UMMTP3LinkSet *linkset = link.linkset;
     if(linkset==NULL)
     {
-        [self logMajorError:[NSString stringWithFormat:@"linkset '%@' not found for slc %d",link.name,task.slc]];
+        [self logMajorError:[NSString stringWithFormat:@"linkset '%@' not found for slc %d",task.m3linkName,task.slc]];
     }
     else
     {
