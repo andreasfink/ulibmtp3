@@ -239,8 +239,8 @@
         }
         return;
     }
-    size_t li = data[0] & 0x3F; /* length indicator */
-    switch(li)
+    // size_t li = data[0] & 0x3F; /* length indicator */
+    switch(maxlen)
     {
         case 0:
             /* FISU */
