@@ -219,6 +219,11 @@
     const unsigned char *data = dataIn.bytes;
     size_t maxlen = dataIn.length;
 
+	if(_logLevel <= UMLOG_DEBUG)
+	{
+		[self.logFeed debugText:@"dataIndication[slc=%d]: %@",slc,dataIn];
+	}
+
     if(maxlen <1)
     {
         /* an empty packet to ack the outstanding FSN/BSN */
