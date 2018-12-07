@@ -11,27 +11,27 @@
 
 #import "UMMTP3Task_m2paDataIndication.h"
 #import "UMLayerMTP3.h"
+#import "UMMTP3Link.h"
 
 @implementation UMMTP3Task_m2paDataIndication
 
-@synthesize slc;
-@synthesize userId;
-@synthesize data;
 
 
 - (UMMTP3Task_m2paDataIndication *)initWithReceiver:(UMLayerMTP3 *)rx
-                                               sender:(id)tx
-                                                  slc:(int)xslc
-                                               userId:(id)uid
-                                               data:(NSData *)d;
+											 sender:(id)tx
+												slc:(int)slc
+										   mtp3link:(UMMTP3Link *)m3link
+											   data:(NSData *)d
+									   priorityByte:(int)prio
 {
     self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:NO];
     if(self)
     {
         self.name = @"UMMTP3Task_m2paDataIndication";
-        self.slc = xslc;
-        self.userId = uid;
-        self.data = d;
+        _slc = slc;
+        _data = d;
+		_m3link = m3link;
+		_prio = prio;
     }
     return self;
 }

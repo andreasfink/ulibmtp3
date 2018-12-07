@@ -275,14 +275,16 @@
 
 - (void) m2paDataIndication:(UMLayer *)caller
                         slc:(int)xslc
-                     userId:(id)uid
+			   mtp3linkName:(NSString *)linkName
                        data:(NSData *)d
+			   priorityByte:(int)prio
 {
-    UMMTP3Task_m2paDataIndication *task = [[UMMTP3Task_m2paDataIndication alloc]initWithReceiver:self
-                                                                                          sender:caller
-                                                                                             slc:xslc
-                                                                                          userId:uid
-                                                                                            data:d];
+	UMMTP3Link *link = [self getLinkByName:linkName];
+	UMMTP3Task_m2paDataIndication *task = [[UMMTP3Task_m2paDataIndication alloc]initWithReceiver:self																						  sender:caller
+																							 slc:xslc
+																						mtp3link:link
+																							data:d
+																					priorityByte:prio];
     [self queueFromLower:task];
 }
 
@@ -368,7 +370,7 @@
     }
     
     UMMTP3LinkSet *set = [[UMMTP3LinkSet alloc] init];
-    set.name = [linkset linkset];
+	set.name = [linkset linkset];
     [_linksetLock lock];
     _linksets[set.name] = set;
     [_linksetLock unlock];
@@ -409,7 +411,7 @@
 
     [m2pa adminAttachFor:self
 				 profile:profile
-				  userId:[NSString stringWithFormat:@"%@:%@",task.linkset,task.m2pa.layerName] ni:_networkIndicator
+				linkName:[NSString stringWithFormat:@"%@:%@",task.linkset,task.m2pa.layerName] ni:_networkIndicator
 					 slc:task.slc];
 }
 
@@ -496,12 +498,12 @@
     {
         [self logDebug:@"_m2paDataIndicationTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
-        [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
+        //[self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
         [self logDebug:[NSString stringWithFormat:@" data: %@",task.data.description]];
     }
 	/* userid contains UMMTP3Link */
 
-	UMMTP3Link *link = task.userId;
+	UMMTP3Link *link = task.m3link;
 	UMMTP3LinkSet *linkset = link.linkset;
     if(linkset==NULL)
     {

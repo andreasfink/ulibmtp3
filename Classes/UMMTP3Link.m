@@ -46,7 +46,11 @@
     UMLayerM2PAUserProfile *profile = [[UMLayerM2PAUserProfile alloc]init];
     profile.allMessages =YES;
     
-    [m2pa adminAttachFor:linkset.mtp3 profile:profile userId:linkset.name ni:linkset.mtp3.networkIndicator slc:slc];
+	[m2pa adminAttachFor:linkset.mtp3
+				 profile:profile
+				linkName:linkset.name
+					  ni:linkset.mtp3.networkIndicator
+					 slc:slc];
 }
 
 
@@ -168,11 +172,11 @@
     [linkset addLink:self];
 
     UMLayerM2PAUserProfile *up = [[UMLayerM2PAUserProfile alloc]initWithDefaultProfile];
-    [m2pa adminAttachFor:self.linkset.mtp3
-                 profile:up
-                  userId:self
-                      ni:linkset.mtp3.networkIndicator
-                     slc:slc];
+	[m2pa adminAttachFor:self.linkset.mtp3
+				 profile:up
+				linkName:self.name
+					  ni:linkset.mtp3.networkIndicator
+					 slc:slc];
 }
 
 - (NSDictionary *)config
