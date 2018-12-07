@@ -50,13 +50,17 @@
 
 - (void)addLink:(UMMTP3Link *)lnk
 {
+	NSLog(@"lnk.name=%@",lnk.name);
     NSString *linkName = [NSString stringWithFormat:@"%@:%d",_name,lnk.slc];
+	NSLog(@"linkName=%@",linkName);
+
     [_linksLock lock];
     lnk.name = linkName;
     _links[linkName]=lnk;
     lnk.linkset = self;
     _totalLinks++;
     [_linksLock unlock];
+	[_mtp3 addLink:lnk];
 }
 
 - (void)removeLink:(UMMTP3Link *)lnk
@@ -66,8 +70,9 @@
     [_links removeObjectForKey:lnk.name];
     _totalLinks--;
     [_linksLock unlock];
-
+	[_mtp3 removeLink:lnk];
 }
+
 - (void)removeAllLinks
 {
     [_linksLock lock];

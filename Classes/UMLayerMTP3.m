@@ -72,7 +72,8 @@
 
 - (void)genericInitialisation
 {
-    _linksets        = [[UMSynchronizedSortedDictionary alloc]init];
+	_linksets        = [[UMSynchronizedSortedDictionary alloc]init];
+	_links	         = [[UMSynchronizedSortedDictionary alloc]init];
     _userPart        = [[UMSynchronizedSortedDictionary  alloc]init];
     _routingTable    = [[UMMTP3InstanceRoutingTable alloc]init];
     _linksetLock = [[UMMutex alloc]initWithName:@"mtp3-linkset-mutex"];
@@ -105,10 +106,18 @@
     {
         ls.networkIndicator = self.networkIndicator;
     }
-    [_linksetLock lock];
     _linksets[ls.name]=ls;
-    [_linksetLock unlock];
     [self refreshRoutingTable];
+}
+
+- (void)addLink:(UMMTP3Link *)lnk
+{
+	_links[lnk.name]=lnk;
+}
+
+- (void)removeLink:(UMMTP3Link *)lnk
+{
+	[_links removeObjectForKey:lnk.name];
 }
 
 - (void)removeAllLinkSets
@@ -148,25 +157,10 @@
     return ls;
 }
 
-- (UMMTP3Link *)getLinkByName:(id)userId
+- (UMMTP3LinkSet *)getLinkByName:(NSString *)n
 {
-    NSString *ourName = (NSString *)userId;
-    NSArray *a = [ourName componentsSeparatedByString:@":"];
-    if(a==NULL)
-    {
-        return NULL;
-    }
-    if([a count]!=2)
-    {
-        return NULL;
-    }
-    NSString *linkSetName = a[0];
-    NSString *linkName = a[1];
-    UMMTP3LinkSet *linkset = [self getLinkSetByName:linkSetName];
-    UMMTP3Link *link = [linkset getLinkByName:linkName];
-    return link;
+	return _links[n];
 }
-
 
 #pragma mark -
 #pragma mark M2PA callbacks

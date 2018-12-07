@@ -170,7 +170,6 @@
         }
     }
     [linkset addLink:self];
-
     UMLayerM2PAUserProfile *up = [[UMLayerM2PAUserProfile alloc]initWithDefaultProfile];
 	[m2pa adminAttachFor:self.linkset.mtp3
 				 profile:up

@@ -49,7 +49,8 @@ typedef enum UMMTP3_Error
 
 @interface UMLayerMTP3 : UMLayer<UMLayerM2PAUserProtocol>
 {
-    UMSynchronizedSortedDictionary  *_linksets;
+	UMSynchronizedSortedDictionary  *_linksets;
+	UMSynchronizedSortedDictionary  *_links;
     UMMutex                         *_linksetLock;
     UMMTP3Variant                   _variant;
     int                             _networkIndicator;
@@ -106,7 +107,11 @@ typedef enum UMMTP3_Error
 - (void)removeLinkSetByName:(NSString *)n;
 - (void)removeAllLinkSets;
 - (UMMTP3LinkSet *)getLinkSetByName:(NSString *)name;
-- (UMMTP3Link *)getLinkByName:(id)userId;
+
+- (void)addLink:(UMMTP3Link *)lnk;
+- (void)removeLink:(UMMTP3Link *)lnk;
+
+- (UMMTP3Link *)getLinkByName:(NSString *)linkName;
 
 #pragma mark -
 #pragma mark M2PA callbacks
