@@ -221,7 +221,7 @@
 
 	if(_logLevel <= UMLOG_DEBUG)
 	{
-		[self.logFeed debugText:@"dataIndication[slc=%d]: %@",slc,dataIn];
+		[self.logFeed debugText:[NSString stringWithFormat:@"dataIndication[slc=%d]: %@",slc,dataIn]];
 	}
 
     if(maxlen <1)
