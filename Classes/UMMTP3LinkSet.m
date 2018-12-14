@@ -3222,6 +3222,7 @@
     int active = 0 ;
     int inactive = 0;
     int ready = 0;
+    int processorOutage = 0;
 
     oldActiveLinks = _activeLinks;
 
@@ -3241,6 +3242,8 @@
             case M2PA_STATUS_ALIGNED_READY:
                 ready++;
                 break;
+            case M2PA_STATUS_PROCESSOR_OUTAGE:
+                processorOutage++;
             case M2PA_STATUS_IS:
                 active++;
                 break;
