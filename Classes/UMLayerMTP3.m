@@ -405,7 +405,6 @@
     [m2pa adminAttachFor:self
 				 profile:profile
 				linkName:task.linkName
-					  ni:_networkIndicator
 					 slc:task.slc];
 }
 

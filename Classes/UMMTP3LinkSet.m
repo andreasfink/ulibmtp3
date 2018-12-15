@@ -2308,7 +2308,8 @@
         }
     }
 
-    _networkIndicator = _mtp3.networkIndicator;
+    // addLinkSet overrides the network indicator if its set to -1
+    //_networkIndicator = _mtp3.networkIndicator;
     _variant = _mtp3.variant;
     if(_variant == UMMTP3Variant_Undefined)
     {
