@@ -34,11 +34,11 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
     UMM3UATrafficMode   trafficMode;
     NSInteger			routingKey;
     NSInteger           networkAppearance;
+    BOOL                _useNetworkAppearance;  /* do we send Network Appearance */
     UMM3UA_Status       m3ua_status;
     UMSynchronizedSortedDictionary *applicationServerProcesses;
     int upCount;
     int activeCount;
-    BOOL                _useNetworkAppearance;
     BOOL                _useRoutingKey;
 }
 
