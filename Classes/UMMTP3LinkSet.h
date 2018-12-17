@@ -35,7 +35,7 @@
     UMMTP3Variant               _variant;
     UMMTP3PointCode             *_localPointCode;
     UMMTP3PointCode             *_adjacentPointCode;
-    int                         _networkIndicator;
+    NSNumber                    *_overrideNetworkIndicator;
     int                         _linkSelector;
     unsigned long               _nationalOptions;
     UMMTP3WhiteList             *_incomingWhiteList;
@@ -69,7 +69,8 @@
 @property(readwrite,assign) UMMTP3Variant variant;
 @property(readwrite,strong) UMMTP3PointCode *localPointCode;
 @property(readwrite,strong) UMMTP3PointCode *adjacentPointCode;
-@property(readwrite,assign) int networkIndicator;
+@property(readwrite,strong) NSNumber *overrideNetworkIndicator;
+
 @property(readwrite,strong) UMMTP3WhiteList *incomingWhiteList;
 @property(readwrite,strong) UMMTP3BlackList *incomingBlackList;
 @property(readwrite,strong) UMMTP3RoutingTable *routingTable;

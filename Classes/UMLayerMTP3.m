@@ -102,10 +102,6 @@
     {
         ls.localPointCode = self.opc;
     }
-    if(ls.networkIndicator < 0)
-    {
-        ls.networkIndicator = self.networkIndicator;
-    }
     _linksets[ls.name]=ls;
     [self refreshRoutingTable];
 }
@@ -405,7 +401,6 @@
     [m2pa adminAttachFor:self
 				 profile:profile
 				linkName:task.linkName
-					  ni:_networkIndicator
 					 slc:task.slc];
 }
 
@@ -820,6 +815,15 @@
     {
         label.sls = [UMUtil random:16];
     }
+    int ni;
+    if(linkset.overrideNetworkIndicator)
+    {
+        ni = [linkset.overrideNetworkIndicator intValue];
+    }
+    else
+    {
+        ni = _networkIndicator;
+    }
     if([linkset isKindOfClass:[UMM3UAApplicationServer class]])
     {
         if(logLevel <= UMLOG_DEBUG)
@@ -829,8 +833,8 @@
         [linkset sendPdu:pdu
                    label:label
                  heading:-1
-                      ni:linkset.mtp3.networkIndicator
-                      mp:(int)mp
+                      ni:ni
+                      mp:mp
                       si:si
               ackRequest:NULL
            correlationId:0
@@ -845,8 +849,8 @@
         [linkset sendPdu:pdu
                    label:label
                  heading:-1
-                      ni:linkset.mtp3.networkIndicator
-                      mp:(int)mp
+                      ni:ni
+                      mp:mp
                       si:si
               ackRequest:NULL
            correlationId:0
@@ -1183,6 +1187,7 @@
     [_linksetLock unlock];
 
     NSArray *userKeys = [_userPart allKeys];
+    
     for(NSNumber *userKey in userKeys)
     {
         id<UMLayerMTP3UserProtocol> u = _userPart[userKey];

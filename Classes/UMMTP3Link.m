@@ -49,7 +49,6 @@
 	[m2pa adminAttachFor:linkset.mtp3
 				 profile:profile
 				linkName:linkset.name
-					  ni:linkset.mtp3.networkIndicator
 					 slc:slc];
 }
 
@@ -174,7 +173,6 @@
 	[m2pa adminAttachFor:self.linkset.mtp3
 				 profile:up
 				linkName:self.name
-					  ni:linkset.mtp3.networkIndicator
 					 slc:slc];
 }
 
