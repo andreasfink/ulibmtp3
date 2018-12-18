@@ -26,6 +26,17 @@
 
 @implementation UMMTP3LinkSet
 
+
+- (int)networkIndicator
+{
+    if(_overrideNetworkIndicator)
+    {
+        return [_overrideNetworkIndicator intValue];
+    }
+    return _mtp3.networkIndicator;
+}
+
+
 - (UMMTP3LinkSet *)init
 {
     self = [super init];
@@ -41,7 +52,6 @@
         _readyLinks = -1;
         _totalLinks = -1;
         _congestionLevel = 0;
-        _networkIndicator = -1;
         _logLevel = UMLOG_MAJOR;
         _routingTable = [[UMMTP3LinkRoutingTable alloc]init];
     }
@@ -462,9 +472,9 @@
             [self.logFeed debugText:[NSString stringWithFormat:@"    opc: %@",label.opc.description]];
             [self.logFeed debugText:[NSString stringWithFormat:@"    dpc: %@",label.dpc.description]];
         }
-        if(ni != _networkIndicator)
+        if(ni != self.networkIndicator)
         {
-            [self.logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,_networkIndicator]];
+            [self.logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,self.networkIndicator]];
             [self protocolViolation];
             @throw([NSException exceptionWithName:@"MTP_PACKET_INVALID"
                                            reason:NULL
@@ -2249,7 +2259,7 @@
 - (void)setDefaultValues
 {
     _variant = UMMTP3Variant_Undefined;
-    _networkIndicator = -1;
+    _overrideNetworkIndicator = NULL;
     _speed = 0; /* means unlimited */
 }
 
@@ -2289,6 +2299,42 @@
         opcString = [cfg[@"opc"] stringValue];
     }
 
+    _overrideNetworkIndicator = NULL;
+    if (cfg[@"network-indicator"])
+    {
+        NSString *s = [cfg[@"override-network-indicator"] stringValue];
+        if((  [s isEqualToStringCaseInsensitive:@"international"])
+           || ([s isEqualToStringCaseInsensitive:@"int"])
+           || ([s isEqualToStringCaseInsensitive:@"0"]))
+        {
+            _overrideNetworkIndicator = @(0);
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"national"])
+                || ([s isEqualToStringCaseInsensitive:@"nat"])
+                || ([s isEqualToStringCaseInsensitive:@"2"]))
+        {
+            _overrideNetworkIndicator = @(2);
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"spare"])
+                || ([s isEqualToStringCaseInsensitive:@"international-spare"])
+                || ([s isEqualToStringCaseInsensitive:@"int-spare"])
+                || ([s isEqualToStringCaseInsensitive:@"1"]))
+        {
+            _overrideNetworkIndicator = @(1);
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"3"]))
+        {
+            _overrideNetworkIndicator = @(3);
+        }
+        else
+        {
+            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
+            _overrideNetworkIndicator = 0;
+        }
+    }
 
     if(cfg[@"mtp3"])
     {
@@ -2308,16 +2354,41 @@
         }
     }
 
-    // addLinkSet overrides the network indicator if its set to -1
-    //_networkIndicator = _mtp3.networkIndicator;
     _variant = _mtp3.variant;
+
+    if (cfg[@"variant"])
+    {
+        NSString *s = [cfg[@"variant"] stringValue];
+        if([s isEqualToStringCaseInsensitive:@"itu"])
+        {
+            _variant = UMMTP3Variant_ITU;
+        }
+        else if([s isEqualToStringCaseInsensitive:@"ansi"])
+        {
+            _variant = UMMTP3Variant_ANSI;
+        }
+        else if([s isEqualToStringCaseInsensitive:@"china"])
+        {
+            _variant = UMMTP3Variant_China;
+        }
+        else if([s isEqualToStringCaseInsensitive:@"japan"])
+        {
+            _variant = UMMTP3Variant_Japan;
+        }
+        else
+        {
+            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA variant '%@'",s]];
+        }
+    }
+
     if(_variant == UMMTP3Variant_Undefined)
     {
         @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
                                        reason:@"Can not figure out mtp3 variant"
                                      userInfo:NULL]);
     }
-    _adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:_mtp3.variant];
+
+    _adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:_variant];
     if(opcString)
     {
         _localPointCode = [[UMMTP3PointCode alloc]initWithString:opcString variant:_variant];
@@ -3251,13 +3322,14 @@
         }
     }
     /* if we now have our first active link, we should send a first TRA */
+
     if((oldActiveLinks == 0) && (active > 0))
     {
         UMMTP3Label *label = [[UMMTP3Label alloc]init];
         label.opc = self.localPointCode;
         label.dpc = self.adjacentPointCode;
         [self sendTRA:label
-                   ni:_networkIndicator
+                   ni:self.networkIndicator
                    mp:0
                   slc:0
                  link:NULL];
@@ -3281,9 +3353,18 @@
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
     label.sls = link.slc;
+    int networkIndicator;
+    if(_overrideNetworkIndicator)
+    {
+        networkIndicator = [_overrideNetworkIndicator intValue];
+    }
+    else
+    {
+        networkIndicator = _mtp3.networkIndicator;
+    }
     [self sendSLTM:label
            pattern:pattern
-                ni:_networkIndicator
+                ni:networkIndicator
                 mp:0
                slc:link.slc
               link:link];
@@ -3322,7 +3403,8 @@
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
-    [self sendTFA:label destination:pc ni:_networkIndicator mp:0 slc:0 link:NULL];
+
+    [self sendTFA:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
 }
 
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
@@ -3334,7 +3416,7 @@
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
-    [self sendTFR:label destination:pc ni:_networkIndicator mp:0 slc:0 link:NULL];
+    [self sendTFR:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
 }
 
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
@@ -3346,7 +3428,7 @@
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
-    [self sendTFP:label destination:pc ni:_networkIndicator mp:0 slc:0 link:NULL];
+    [self sendTFP:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
 }
 
 - (void)stopDetachAndDestroy

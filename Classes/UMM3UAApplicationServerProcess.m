@@ -986,18 +986,18 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [pdu appendData:data];
 
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    if(_as.useNetworkAppearance)
+    if(_as.networkAppearance)
     {
-        pl[@(M3UA_PARAM_NETWORK_APPEARANCE)] = @(_as.networkAppearance);
+        pl[@(M3UA_PARAM_NETWORK_APPEARANCE)] = _as.networkAppearance;
     }
-    if(_as.useRoutingKey)
+    if(_as.routingKey)
     {
-        pl[@(M3UA_PARAM_ROUTING_CONTEXT)] = @(_as.routingKey);
+        pl[@(M3UA_PARAM_ROUTING_CONTEXT)] = _as.routingKey;
     }
     pl[@(M3UA_PARAM_PROTOCOL_DATA)] = pdu;
     pl[@(M3UA_PARAM_CORRELATION_ID)] = @(correlation_id);
     
-    if(logLevel <= UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU %@",pdu]];
     }
@@ -1089,11 +1089,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [data appendByte:((packlen & 0x000000FF) >> 0)];
     [data appendData:pdu];
 
-    [_sctpLink dataFor:self
-                  data:data
-              streamId:streamId
-            protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
-            ackRequest:NULL];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"SEND_PDU:"];
@@ -1101,8 +1096,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:[[NSString alloc]initWithFormat:@" type: %d",(int)ptype]];
         [self logDebug:[[NSString alloc]initWithFormat:@" pdu: %@",[pdu hexString]]];
         [self logDebug:[[NSString alloc]initWithFormat:@" stream: %d",streamId ]];
-
     }
+    [_sctpLink dataFor:self
+                  data:data
+              streamId:streamId
+            protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
+            ackRequest:NULL];
 }
 
 -(void)sendASPUP:(UMSynchronizedSortedDictionary *)params
@@ -1209,7 +1208,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendDUNA:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel <= UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendDUNA"];
     }
@@ -1219,7 +1218,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 -(void)sendDATA:(UMSynchronizedSortedDictionary *)params
 {
-    if(logLevel <= UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendDATA"];
     }
@@ -1528,7 +1527,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4)];
         pos += param_len2;
 
-        if(logLevel <= UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"M3UA Packet:"];
             [self logDebug:[NSString stringWithFormat:@"  Parameter: 0x%04x (%s)",param_type,m3ua_param_name(param_type)]];
@@ -1710,7 +1709,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
     _speed = M3UA_DEFAULT_SPEED;
 
-    logLevel = UMLOG_MAJOR;
+    self.logLevel = UMLOG_MAJOR;
 
     if(cfg[@"beat-time"])
     {
@@ -1735,10 +1734,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
     if(cfg[@"log-level"])
     {
-        logLevel = [cfg[@"log-level"] intValue];
+        self.logLevel = [cfg[@"log-level"] intValue];
     }
 
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:[NSString stringWithFormat:@"M3UA-ASP: setConfig: \n%@",cfg]];
     }

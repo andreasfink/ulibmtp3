@@ -182,7 +182,7 @@
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
         [self.logFeed debugText:s];

@@ -143,10 +143,6 @@ static const char *m3ua_param_name(uint16_t param_type)
 }
 
 @implementation UMM3UAApplicationServer
-@synthesize m3ua_status;
-@synthesize trafficMode;
-@synthesize networkAppearance;
-@synthesize routingKey;
 
 - (UMM3UAApplicationServer *)init
 {
@@ -155,7 +151,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         applicationServerProcesses = [[UMSynchronizedSortedDictionary alloc]init];
         self.logLevel = UMLOG_MAJOR;
-        m3ua_status = M3UA_STATUS_OFF;
+        _m3ua_status = M3UA_STATUS_OFF;
     }
     return self;
 }
@@ -425,7 +421,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     activeCount++;
     [_routingTable updateRouteAvailable:_adjacentPointCode mask:0 linksetName:_name];
-    if(trafficMode == UMM3UATrafficMode_override)
+    if(_trafficMode == UMM3UATrafficMode_override)
     {
         NSArray *keys = [applicationServerProcesses allKeys];
         for(id key in keys)
@@ -533,7 +529,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)activate
 {
-	if (trafficMode == UMM3UATrafficMode_loadshare || trafficMode == UMM3UATrafficMode_broadcast)
+	if (_trafficMode == UMM3UATrafficMode_loadshare || _trafficMode == UMM3UATrafficMode_broadcast)
 	{
 		if(self.logLevel <= UMLOG_DEBUG)
 		{
@@ -546,7 +542,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 			[asp goActive];
 		}
 	}
-	else if (trafficMode == UMM3UATrafficMode_override)
+	else if (_trafficMode == UMM3UATrafficMode_override)
 	{
 		if(self.m3ua_status == M3UA_STATUS_INACTIVE)
 		{
@@ -609,7 +605,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)powerOn
 {
-    m3ua_status = M3UA_STATUS_OOS;
+    _m3ua_status = M3UA_STATUS_OOS;
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"start"];
@@ -682,190 +678,61 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
     _variant = UMMTP3Variant_Undefined;
-    _networkIndicator = -1;
     _speed = -1;
-    trafficMode = UMM3UATrafficMode_loadshare;
-    NSString *apc;
-    NSString *opc;
+    _trafficMode = UMM3UATrafficMode_loadshare;
     self.logLevel = UMLOG_MAJOR;
 
+    [super setConfig:cfg applicationContext:appContext];
 
-    if(cfg[@"name"])
-    {
-        self.name =  [cfg[@"name"] stringValue];
-    }
-    if(cfg[@"log-level"])
-    {
-        self.logLevel = [cfg[@"log-level"] intValue];
-    }
-    if(_logLevel <=UMLOG_DEBUG)
-    {
-        [self logDebug:[NSString stringWithFormat:@"M3UA-AS: setConfig: \n%@",cfg]];
-    }
-    if(cfg[@"mtp3"])
-    {
-        NSString *mtp3Name = [cfg[@"mtp3"] stringValue];
-        _mtp3 = [appContext getMTP3:mtp3Name];
-        if(_mtp3 == NULL)
-        {
-            [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to MTP3 '%@' failed. layer not found",mtp3Name]];
-        }
-        else
-        {
-            [_mtp3 addLinkSet:self];
-        }
-    }
-
-    if(cfg[@"apc"])
-    {
-        apc = [cfg[@"apc"] stringValue];
-    }
-    if(cfg[@"opc"])
-    {
-        opc = [cfg[@"opc"] stringValue];
-    }
-
-    if (cfg[@"speed"])
-    {
-        _speed = [cfg[@"speed"] doubleValue];
-    }
-
-    if (cfg[@"variant"])
-    {
-        NSString *s = [cfg[@"variant"] stringValue];
-        if([s isEqualToStringCaseInsensitive:@"itu"])
-        {
-            _variant = UMMTP3Variant_ITU;
-        }
-        else if([s isEqualToStringCaseInsensitive:@"ansi"])
-        {
-            _variant = UMMTP3Variant_ANSI;
-        }
-        else if([s isEqualToStringCaseInsensitive:@"china"])
-        {
-            _variant = UMMTP3Variant_China;
-        }
-        else if([s isEqualToStringCaseInsensitive:@"japan"])
-        {
-            _variant = UMMTP3Variant_Japan;
-        }
-        else
-        {
-            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA variant '%@'",s]];
-        }
-    }
-
-    if (cfg[@"network-indicator"])
-    {
-        NSString *s = [cfg[@"network-indicator"] stringValue];
-        if((  [s isEqualToStringCaseInsensitive:@"international"])
-           || ([s isEqualToStringCaseInsensitive:@"int"])
-           || ([s isEqualToStringCaseInsensitive:@"0"]))
-        {
-            _networkIndicator = 0;
-        }
-        else if(([s isEqualToStringCaseInsensitive:@"national"])
-                || ([s isEqualToStringCaseInsensitive:@"nat"])
-                || ([s isEqualToStringCaseInsensitive:@"2"]))
-        {
-            _networkIndicator = 2;
-        }
-        else if(([s isEqualToStringCaseInsensitive:@"spare"])
-                || ([s isEqualToStringCaseInsensitive:@"international-spare"])
-                || ([s isEqualToStringCaseInsensitive:@"int-spare"])
-                || ([s isEqualToStringCaseInsensitive:@"1"]))
-        {
-            _networkIndicator = 1;
-        }
-        else if(([s isEqualToStringCaseInsensitive:@"reserved"])
-                || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
-                || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
-                || ([s isEqualToStringCaseInsensitive:@"3"]))
-        {
-            _networkIndicator = 3;
-        }
-        else
-        {
-            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
-            _networkIndicator = 0;
-        }
-    }
+    _routingKey = NULL;
     if(cfg[@"routing-key"])
     {
         NSString *s = [cfg[@"routing-key"] stringValue];
         if([s isEqualToStringCaseInsensitive:@"none"])
         {
-            _useRoutingKey = NO;
+            _routingKey =NULL;
         }
         else
         {
-            _useRoutingKey = YES;
-            routingKey = [s integerValue];
+            _routingKey = @([s integerValue]);
         }
     }
 
-    _useNetworkAppearance = NO;
+    _networkAppearance = NULL;
     if(cfg[@"network-appearance"])
     {
         NSString *s = cfg[@"network-appearance"];
         if([s isEqualToStringCaseInsensitive:@"none"])
         {
-            _useNetworkAppearance = NO;
         }
         else
         {
-            _useNetworkAppearance = YES;
-            networkAppearance = [s integerValue];
+            _networkAppearance = @([s integerValue]);
         }
     }
+
     if(cfg[@"traffic-mode"])
     {
 
         NSString *s = [cfg[@"traffic-mode"] stringValue];
         if([s isEqualToStringCaseInsensitive:@"loadshare"])
         {
-            trafficMode = UMM3UATrafficMode_loadshare;
+            _trafficMode = UMM3UATrafficMode_loadshare;
         }
         else if([s isEqualToStringCaseInsensitive:@"override"])
         {
-            trafficMode = UMM3UATrafficMode_override;
+            _trafficMode = UMM3UATrafficMode_override;
         }
         else if([s isEqualToStringCaseInsensitive:@"broadcast"])
         {
-            trafficMode = UMM3UATrafficMode_broadcast;
+            _trafficMode = UMM3UATrafficMode_broadcast;
         }
         else
         {
             [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA traffic-mode '%@'. Defaulting to loadshare",s]];
-            trafficMode = UMM3UATrafficMode_loadshare;
+            _trafficMode = UMM3UATrafficMode_loadshare;
         }
     }
-    
-    if((_mtp3) && (_variant==UMMTP3Variant_Undefined))
-    {
-        _variant = _mtp3.variant;
-    }
-    if(_variant == UMMTP3Variant_Undefined)
-    {
-        _variant = UMMTP3Variant_ITU;
-    }
-    if(opc)
-    {
-        self.localPointCode = [[UMMTP3PointCode alloc]initWithString:opc variant:_variant];
-    }
-    else
-    {
-        _localPointCode = _mtp3.opc;
-    }
-    if(_networkIndicator == -1)
-    {
-        _networkIndicator = _mtp3.networkIndicator;
-    }
-    if(_speed < 0.0)
-    {
-        _speed = 100.0;
-    }
-    self.adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apc variant:_variant];
 }
 
 - (void)m3uaCongestion:(UMM3UAApplicationServerProcess *)asp
@@ -903,7 +770,7 @@ static const char *m3ua_param_name(uint16_t param_type)
             [applicableProcesses addObject:asp];
         }
     }
-    if (trafficMode == UMM3UATrafficMode_broadcast)
+    if (_trafficMode == UMM3UATrafficMode_broadcast)
     {
         /* in broadcast mode, we send to all */
         return applicableProcesses;
@@ -1042,30 +909,30 @@ static const char *m3ua_param_name(uint16_t param_type)
 
     if(activeSeen)
     {
-        m3ua_status = M3UA_STATUS_IS;
+        _m3ua_status = M3UA_STATUS_IS;
     }
     else if(inactiveSeen)
     {
-        m3ua_status = M3UA_STATUS_INACTIVE;
+        _m3ua_status = M3UA_STATUS_INACTIVE;
     }
     else if(busySeen)
     {
-        m3ua_status = M3UA_STATUS_BUSY;
+        _m3ua_status = M3UA_STATUS_BUSY;
     }
     else if(_totalLinks > 0)
     {
-        m3ua_status = M3UA_STATUS_OOS;
+        _m3ua_status = M3UA_STATUS_OOS;
     }
     else
     {
-        m3ua_status = M3UA_STATUS_OFF;
+        _m3ua_status = M3UA_STATUS_OFF;
     }
 }
 
 
 - (NSString *)statusString
 {
-    switch(m3ua_status)
+    switch(_m3ua_status)
     {
         case    M3UA_STATUS_OFF:
             return @"OFF";

@@ -102,10 +102,6 @@
     {
         ls.localPointCode = self.opc;
     }
-    if(ls.networkIndicator < 0)
-    {
-        ls.networkIndicator = self.networkIndicator;
-    }
     _linksets[ls.name]=ls;
     [self refreshRoutingTable];
 }
@@ -357,7 +353,7 @@
 
 - (void) _adminCreateLinkSetTask:(UMMTP3Task_adminCreateLinkSet *)linkset
 {
-    if(logLevel <= UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"_adminCreateLinkSetTask"];
     }
@@ -372,7 +368,7 @@
 
 - (void) _adminCreateLinkTask:(UMMTP3Task_adminCreateLink *)task
 {
-    if(logLevel <= UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"_adminCreateLinkTask"];
     }
@@ -390,7 +386,7 @@
 
 - (void)_adminAttachOrderTask:(UMMTP3Task_adminAttachOrder *)task
 {
-    if(logLevel <= UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"adminAttachOrder"];
     }
@@ -410,7 +406,7 @@
 
 - (void) _m2paStatusIndicationTask:(UMMTP3Task_m2paStatusIndication *)task;
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"_m2paStatusIndicationTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
@@ -454,7 +450,7 @@
 
 - (void) _m2paSctpStatusIndicationTask:(UMMTP3Task_m2paSctpStatusIndication *)task;
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"_m2paSctpStatusIndicationTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
@@ -487,7 +483,7 @@
 
 - (void) _m2paDataIndicationTask:(UMMTP3Task_m2paDataIndication *)task
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"_m2paDataIndicationTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
@@ -509,7 +505,7 @@
 
 - (void) _m2paCongestionTask:(UMMTP3Task_m2paCongestion*)task
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"_m2paCongestionTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
@@ -525,7 +521,7 @@
 
 - (void) _m2paCongestionClearedTask:(UMMTP3Task_m2paCongestionCleared *)task
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"_m2paCongestionClearedTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
@@ -540,7 +536,7 @@
 
 - (void) _m2paProcessorOutageTask:(UMMTP3Task_m2paProcessorOutage *)task
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"_m2paProcessorOutageTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
@@ -555,7 +551,7 @@
 
 - (void) _m2paProcessorRestoredTask:(UMMTP3Task_m2paProcessorRestored *)task
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"_m2paProcessorRestoredTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
@@ -570,7 +566,7 @@
 
 - (void) _m2paSpeedLimitReachedTask:(UMMTP3Task_m2paSpeedLimitReached *)task
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"_m2paSpeedLimitReachedTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
@@ -585,7 +581,7 @@
 
 - (void) _m2paSpeedLimitReachedClearedTask:(UMMTP3Task_m2paSpeedLimitReachedCleared *)task
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"_m2paSpeedLimitReachedClearedTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
@@ -604,7 +600,7 @@
      concernedPointcode:(UMMTP3PointCode *)concernedPc
     congestionIndicator:(uint32_t)congestionIndicator
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"m3uaCongestion"];
     }
@@ -619,7 +615,7 @@
      concernedPointcode:(UMMTP3PointCode *)concernedPc
     congestionIndicator:(uint32_t)congestionIndicator
 {
-    if(logLevel <=UMLOG_DEBUG)
+    if(self.logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"m3uaCongestionCleared"];
     }
@@ -791,7 +787,7 @@
                    options:(NSDictionary *)options
 {
     
-    if(logLevel <= UMLOG_DEBUG)
+    if(self.logLevel <= UMLOG_DEBUG)
     {
         [self.logFeed debugText:[NSString stringWithFormat:@"routed to route '%@'",route.name]];
         [self.logFeed debugText:[NSString stringWithFormat:@" linkset '%@'",route.linksetName]];
@@ -819,17 +815,26 @@
     {
         label.sls = [UMUtil random:16];
     }
+    int ni;
+    if(linkset.overrideNetworkIndicator)
+    {
+        ni = [linkset.overrideNetworkIndicator intValue];
+    }
+    else
+    {
+        ni = _networkIndicator;
+    }
     if([linkset isKindOfClass:[UMM3UAApplicationServer class]])
     {
-        if(logLevel <= UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to application server %@",linkset.name]];
         }
         [linkset sendPdu:pdu
                    label:label
                  heading:-1
-                      ni:linkset.mtp3.networkIndicator
-                      mp:(int)mp
+                      ni:ni
+                      mp:mp
                       si:si
               ackRequest:NULL
            correlationId:0
@@ -837,15 +842,15 @@
     }
     else
     {
-        if(logLevel <= UMLOG_DEBUG)
+        if(self.logLevel <= UMLOG_DEBUG)
         {
             [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to m2pa linkset %@",linkset.name]];
         }
         [linkset sendPdu:pdu
                    label:label
                  heading:-1
-                      ni:linkset.mtp3.networkIndicator
-                      mp:(int)mp
+                      ni:ni
+                      mp:mp
                       si:si
               ackRequest:NULL
            correlationId:0
@@ -993,7 +998,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_SCCP:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
             }
@@ -1002,7 +1007,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_TUP:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
             }
@@ -1012,7 +1017,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_ISUP:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
             }
@@ -1022,7 +1027,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_DUP_C:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
             }
@@ -1032,7 +1037,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_DUP_F:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
             }
@@ -1042,7 +1047,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_RES_TESTING:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
             }
@@ -1052,7 +1057,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_BROADBAND_ISUP:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
             }
@@ -1062,7 +1067,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_SAT_ISUP:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
             }
@@ -1072,7 +1077,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_SPARE_B:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
             }
@@ -1082,7 +1087,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_SPARE_C:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
             }
@@ -1092,7 +1097,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_SPARE_D:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
             }
@@ -1102,7 +1107,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_SPARE_E:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
             }
@@ -1112,7 +1117,7 @@
             break;
         case MTP3_SERVICE_INDICATOR_SPARE_F:
         {
-            if(logLevel <= UMLOG_DEBUG)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
                 [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
             }
@@ -1182,6 +1187,7 @@
     [_linksetLock unlock];
 
     NSArray *userKeys = [_userPart allKeys];
+    
     for(NSNumber *userKey in userKeys)
     {
         id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
