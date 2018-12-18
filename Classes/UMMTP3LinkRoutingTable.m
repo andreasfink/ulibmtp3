@@ -180,7 +180,9 @@
     }
 }
 
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+                          mask:(int)mask
+                   linksetName:(NSString *)linksetName
 {
     if(self.logLevel <=UMLOG_DEBUG)
     {

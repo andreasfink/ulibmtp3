@@ -1325,7 +1325,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [_beatTimer stop];
         [_beatTimer start];
     }
-    [self sendASPUP:pl];
+    // we send ASPUP when COMM_UP notification appears [self sendASPUP:pl];
 }
 
 - (void)stop
