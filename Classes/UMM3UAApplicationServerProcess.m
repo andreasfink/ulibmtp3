@@ -1089,11 +1089,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [data appendByte:((packlen & 0x000000FF) >> 0)];
     [data appendData:pdu];
 
-    [_sctpLink dataFor:self
-                  data:data
-              streamId:streamId
-            protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
-            ackRequest:NULL];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"SEND_PDU:"];
@@ -1101,8 +1096,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:[[NSString alloc]initWithFormat:@" type: %d",(int)ptype]];
         [self logDebug:[[NSString alloc]initWithFormat:@" pdu: %@",[pdu hexString]]];
         [self logDebug:[[NSString alloc]initWithFormat:@" stream: %d",streamId ]];
-
     }
+    [_sctpLink dataFor:self
+                  data:data
+              streamId:streamId
+            protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
+            ackRequest:NULL];
 }
 
 -(void)sendASPUP:(UMSynchronizedSortedDictionary *)params
