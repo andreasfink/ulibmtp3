@@ -108,6 +108,12 @@
 
 - (UMMTP3Link *)getAnyLink
 {
+    if(_links.count==0)
+    {
+        [self.logFeed debugText:@"no links in the linkset"];
+        return NULL;
+    }
+    
     NSArray *linkKeys = [_links allKeys];
     NSMutableArray *activeLinkKeys = [[NSMutableArray alloc]init];
     for(NSString *key in linkKeys)
@@ -121,6 +127,7 @@
     NSUInteger n = [activeLinkKeys count];
     if(n==0)
     {
+        [self.logFeed debugText:@"no active links in the linkset"];
         return NULL;
     }
     _linkSelector = _linkSelector + 1;
