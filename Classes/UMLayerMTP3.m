@@ -829,6 +829,10 @@
         if(self.logLevel <= UMLOG_DEBUG)
         {
             [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to application server %@",linkset.name]];
+            [self.logFeed debugText:[NSString stringWithFormat:@" label: %@",label]];
+            [self.logFeed debugText:[NSString stringWithFormat:@" ni: %d",ni]];
+            [self.logFeed debugText:[NSString stringWithFormat:@" mp: %d",mp]];
+            [self.logFeed debugText:[NSString stringWithFormat:@" pdu: %@",pdu]];
         }
         [linkset sendPdu:pdu
                    label:label
@@ -845,6 +849,10 @@
         if(self.logLevel <= UMLOG_DEBUG)
         {
             [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to m2pa linkset %@",linkset.name]];
+            [self.logFeed debugText:[NSString stringWithFormat:@" label: %@",label]];
+            [self.logFeed debugText:[NSString stringWithFormat:@" ni: %d",ni]];
+            [self.logFeed debugText:[NSString stringWithFormat:@" mp: %d",mp]];
+            [self.logFeed debugText:[NSString stringWithFormat:@" pdu: %@",pdu]];
         }
         [linkset sendPdu:pdu
                    label:label

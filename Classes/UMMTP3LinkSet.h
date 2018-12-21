@@ -23,6 +23,7 @@
 @class UMMTP3BlackList;
 @class UMMTP3RoutingTable;
 @class UMMTP3LinkRoutingTable;
+@class UMMTP3TranslationTableMap;
 
 @interface UMMTP3LinkSet : UMObject
 {
@@ -52,6 +53,10 @@
     double                      _speed;
     int                         _last_sls;
     BOOL                        _sendExtendedAttributes;
+    NSString                    *_ttmap_in_name;
+    NSString                    *_ttmap_out_name;
+    UMMTP3TranslationTableMap   *_ttmap_in;
+    UMMTP3TranslationTableMap   *_ttmap_out;
 }
 
 /*

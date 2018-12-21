@@ -2132,7 +2132,10 @@
     {
         link = [self getAnyLink];
     }
-    
+    if(link==NULL)
+    {
+        NSLog(@"No link found in Linkset!");
+    }
     NSMutableData *pdu = [[NSMutableData alloc]init];
     uint8_t len;
     
@@ -2297,6 +2300,16 @@
     if(cfg[@"opc"]) /* optional */
     {
         opcString = [cfg[@"opc"] stringValue];
+    }
+
+
+    if(cfg[@"ttmap-in"]) /* optional */
+    {
+        _ttmap_in_name = [cfg[@"ttmap-in"] stringValue];
+    }
+    if(cfg[@"ttmap-out"]) /* optional */
+    {
+        _ttmap_out_name = [cfg[@"ttmap-out"] stringValue];
     }
 
     _overrideNetworkIndicator = NULL;
