@@ -46,7 +46,6 @@
         _linksLock = [[UMMutex alloc]initWithName:@"mtp3linkset-links-mutex"];
         _slsLock = [[UMMutex alloc]initWithName:@"mtp3-sls-lock"];
         _name = @"untitled";
-
         _activeLinks = -1;
         _inactiveLinks = -1;
         _readyLinks = -1;
@@ -60,13 +59,14 @@
 
 - (void)addLink:(UMMTP3Link *)lnk
 {
-	NSLog(@"lnk.name=%@",lnk.name);
-    NSString *linkName = [NSString stringWithFormat:@"%@:%d",_name,lnk.slc];
-	NSLog(@"linkName=%@",linkName);
-
+    UMAssert(lnk!=NULL,@"addLink:NULL");
+    
+    if(lnk.name.length==0)
+    {
+        lnk.name = [NSString stringWithFormat:@"%@:%d",self.name,lnk.slc];
+    }
     [_linksLock lock];
-    lnk.name = linkName;
-    _links[linkName]=lnk;
+    _links[lnk.name]=lnk;
     lnk.linkset = self;
     _totalLinks++;
     [_linksLock unlock];
