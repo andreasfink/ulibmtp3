@@ -60,11 +60,13 @@
 - (void)addLink:(UMMTP3Link *)lnk
 {
     UMAssert(lnk!=NULL,@"addLink:NULL");
-    
+    int slc = lnk.slc;
+    UMAssert(((slc>=0) && (slc < 16)),@"addLink SLC is not in range 0...15");
     if(lnk.name.length==0)
     {
         lnk.name = [NSString stringWithFormat:@"%@:%d",self.name,lnk.slc];
     }
+    _linkNamesBySlc[slc] = lnk.name;
     [_linksLock lock];
     _links[lnk.name]=lnk;
     lnk.linkset = self;
@@ -3263,7 +3265,7 @@
 
 - (UMMTP3Link *)linkForSlc:(int)slc
 {
-    NSString *linkName = [NSString stringWithFormat:@"%@:%d",_name,slc];
+    NSString *linkName = _linkNamesBySlc[slc];
     UMMTP3Link *link = _links[linkName];
     return link;
 }
