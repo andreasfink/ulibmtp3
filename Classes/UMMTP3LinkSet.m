@@ -46,7 +46,6 @@
         _linksLock = [[UMMutex alloc]initWithName:@"mtp3linkset-links-mutex"];
         _slsLock = [[UMMutex alloc]initWithName:@"mtp3-sls-lock"];
         _name = @"untitled";
-
         _activeLinks = -1;
         _inactiveLinks = -1;
         _readyLinks = -1;
@@ -60,18 +59,19 @@
 
 - (void)addLink:(UMMTP3Link *)lnk
 {
-    [_linksLock lock];
-
-    if(lnk.name.length <= 0)
+    UMAssert(lnk!=NULL,@"addLink:NULL");
+    int slc = lnk.slc;
+    UMAssert(((slc>=0) && (slc < 16)),@"addLink SLC is not in range 0...15");
+    if(lnk.name.length==0)
     {
-        lnk.name = [NSString stringWithFormat:@"%@:%d",_name,lnk.slc];
+        lnk.name = [NSString stringWithFormat:@"%@:%d",self.name,lnk.slc];
     }
-    lnk.linkset = self;
+    [_linksLock lock];
     _linksByName[lnk.name]=lnk;
     _linksBySlc[@(lnk.slc)]= lnk;
+    lnk.linkset = self;
     _totalLinks++;
 	[_mtp3 addLink:lnk];
-
     [_linksLock unlock];
 }
 
@@ -124,8 +124,13 @@
 
 - (UMMTP3Link *)getAnyLink
 {
-    [_linksLock lock];
+    if(_linksByName.count==0)
+    {
+        [self.logFeed debugText:@"no links in the linkset"];
+        return NULL;
+    }
 
+    [_linksLock lock];
     NSArray *linkKeys = [_linksByName allKeys];
     NSMutableArray *activeLinkKeys = [[NSMutableArray alloc]init];
     for(NSString *key in linkKeys)
@@ -144,6 +149,10 @@
         _linkSelector = _linkSelector % n;
         NSString *key = activeLinkKeys[_linkSelector];
         link = _linksByName[key];
+    }
+    else
+    {
+        [self.logFeed debugText:@"no active links in the linkset"];
     }
     [_linksLock unlock];
     return link;
@@ -3260,6 +3269,16 @@
     }
 }
 
+<<<<<<< HEAD
+=======
+- (UMMTP3Link *)linkForSlc:(int)slc
+{
+    NSString *linkName = _linkNamesBySlc[slc];
+    UMMTP3Link *link = _links[linkName];
+    return link;
+}
+
+>>>>>>> 237a44b0bd0e02733aa8154b25b69630be2e7ea0
 - (void)attachmentConfirmed:(int)slc
 {
     UMMTP3Link *link = [self getLinkBySlc:slc];

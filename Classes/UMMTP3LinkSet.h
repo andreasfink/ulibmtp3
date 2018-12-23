@@ -58,6 +58,7 @@
     NSString                    *_ttmap_out_name;
     UMMTP3TranslationTableMap   *_ttmap_in;
     UMMTP3TranslationTableMap   *_ttmap_out;
+    NSString                    *_linkNamesBySlc[16];
 }
 
 /*
