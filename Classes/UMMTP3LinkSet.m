@@ -66,6 +66,7 @@
     {
         lnk.name = [NSString stringWithFormat:@"%@:%d",self.name,lnk.slc];
     }
+    [self.logFeed infoText:[NSString stringWithFormat:@"adding Link:'%@' to linkSet:'%@' with SLC:%d",lnk.name, self.name,lnk.slc]];
     [_linksLock lock];
     _linksByName[lnk.name]=lnk;
     _linksBySlc[@(lnk.slc)]= lnk;
@@ -77,6 +78,9 @@
 
 - (void)removeLink:(UMMTP3Link *)lnk
 {
+
+    [self.logFeed infoText:[NSString stringWithFormat:@"removing Link:'%@' from linkSet:'%@' with SLC:%d",lnk.name, self.name,lnk.slc]];
+
     [_linksLock lock];
 
     lnk.linkset = NULL;
@@ -90,6 +94,8 @@
 
 - (void)removeAllLinks
 {
+    [self.logFeed infoText:[NSString stringWithFormat:@"removing All Links from linkSet:'%@'",self.name]];
+
     [_linksLock lock];
 
     NSArray *keys = [_linksByName allKeys];

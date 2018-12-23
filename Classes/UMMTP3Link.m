@@ -11,7 +11,6 @@
 
 #import "UMMTP3Link.h"
 #import "UMMTP3LinkSet.h"
-#import "UMMTP3LinkState.h"
 #import "UMLayerMTP3.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 
@@ -35,7 +34,6 @@
     self = [super init];
     if(self)
     {
-       // linkState = [[UMMTP3LinkState alloc]init];
         _logLevel = UMLOG_MAJOR;
     }
     return self;

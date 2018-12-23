@@ -22,7 +22,6 @@
 #import "UMMTP3Link.h"
 #import "UMMTP3LinkSet.h"
 #import "UMMTP3LinkSetState.h"
-#import "UMMTP3LinkState.h"
 #import "UMMTP3PointCode.h"
 #import "UMMTP3Route.h"
 #import "UMMTP3RouteMetrics.h"

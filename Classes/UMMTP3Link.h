@@ -15,7 +15,6 @@
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 
 @class UMMTP3LinkSet;
-@class UMMTP3LinkState;
 
 typedef enum UMMTP3Link_attachmentStatus
 {
@@ -48,7 +47,6 @@ typedef enum UMMTP3Link_attachmentStatus
 
 @property (readwrite,strong)    NSString *name;
 @property (readwrite,assign)    int slc;
-//@property (readwrite,strong)    UMMTP3LinkState     *linkState;
 @property (readwrite,assign,atomic)    M2PA_Status         m2pa_status;
 @property (readwrite,assign,atomic)    SCTP_Status         sctp_status;
 @property (readwrite,assign)    UMMTP3Link_attachmentStatus attachmentStatus;
