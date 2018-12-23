@@ -3495,6 +3495,8 @@
                 [s appendFormat:@" M2PA-Status: Undefined(%d)",link.m2pa_status];
                 break;
         }
+        [s appendString:@"\n"];
+
     }
     [_linksLock unlock];
     return s;
