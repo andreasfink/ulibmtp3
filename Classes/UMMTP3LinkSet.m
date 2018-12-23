@@ -159,6 +159,46 @@
     else
     {
         [self.logFeed debugText:@"no active links in the linkset"];
+        [self.logFeed debugText:[NSString stringWithFormat:@"_linksByName: %@",_linksByName.description]];
+        [self.logFeed debugText:[NSString stringWithFormat:@"_linksBySlc: %@",_linksBySlc.description]];
+        NSMutableString *s = [[NSMutableString alloc]init];
+        NSArray *linkKeys = [_linksByName allKeys];
+        for(NSString *key in linkKeys)
+        {
+            UMMTP3Link *link = _linksByName[key];
+            [s appendFormat:@"\t%@",link.name];
+            [s appendFormat:@" SLC %d",link.slc];
+            switch(link.m2pa_status)
+            {
+                case M2PA_STATUS_OFF:
+                    [s appendString:@" M2PA-Status: OFF"];
+                    break;
+                case M2PA_STATUS_OOS:
+                    [s appendString:@" M2PA-Status: OOS"];
+                    break;
+                case M2PA_STATUS_INITIAL_ALIGNMENT:
+                    [s appendString:@" M2PA-Status: INITIAL-ALIGNMENT"];
+                    break;
+                case M2PA_STATUS_ALIGNED_NOT_READY:
+                    [s appendString:@" M2PA-Status: ALIGNED-NOT-READY"];
+                    break;
+                case M2PA_STATUS_ALIGNED_READY:
+                    [s appendString:@" M2PA-Status: ALIGNED-READY"];
+                    break;
+                case M2PA_STATUS_IS:
+                    [s appendString:@" M2PA-Status: IS"];
+                    break;
+                case M2PA_STATUS_PROCESSOR_OUTAGE:
+                    [s appendString:@" M2PA-Status: PROCESSOR-OUTAGE"];
+                    break;
+                default:
+                    [s appendFormat:@" M2PA-Status: Undefined(%d)",link.m2pa_status];
+                    break;
+            }
+            [s appendString:@"\n"];
+
+        }
+        [self.logFeed debugText:s];
     }
     [_linksLock unlock];
     return link;
