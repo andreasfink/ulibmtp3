@@ -25,21 +25,21 @@ typedef enum UMMTP3Link_attachmentStatus
 
 @interface UMMTP3Link : UMObject
 {
-    NSString                    *name; /* will be set by linkset to linksetname:<slc> */
-    int                         slc;
-    NSMutableDictionary         *userId;
+    NSString                    *_name;
+    int                         _slc;
+    NSMutableDictionary         *_userId;
     //UMMTP3LinkState             *linkState;
     M2PA_Status                 _m2pa_status;
     SCTP_Status                 _sctp_status;
-    UMLayerM2PA                 *m2pa;
-    UMMTP3LinkSet               *linkset;
-    UMMTP3Link_attachmentStatus attachmentStatus;
-    NSString                    *attachmentFailureStatus;
-    BOOL                        congested;
-    BOOL                        processorOutage;
-    BOOL                        speedLimitReached;
-    UMTimer                     *linkTestTimer;
-    NSTimeInterval              linkTestTime;
+    UMLayerM2PA                 *_m2pa;
+    UMMTP3LinkSet               *_linkset;
+    UMMTP3Link_attachmentStatus _attachmentStatus;
+    NSString                    *_attachmentFailureStatus;
+    BOOL                        _congested;
+    BOOL                        _processorOutage;
+    BOOL                        _speedLimitReached;
+    UMTimer                     *_linkTestTimer;
+    NSTimeInterval              _linkTestTime;
     UMLogLevel                  _logLevel;
 }
 

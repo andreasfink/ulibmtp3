@@ -2290,7 +2290,6 @@
 
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id)appContext
 {
-    [self removeAllLinks];
     NSString *apcString = @"";
     NSString *opcString = NULL;
 
@@ -2431,6 +2430,8 @@
     {
         _localPointCode = _mtp3.opc;
     }
+
+    [self removeAllLinks];
 }
 
 #pragma mark -
