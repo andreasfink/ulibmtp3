@@ -363,5 +363,6 @@ options:(NSDictionary *)options;
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)stopDetachAndDestroy;
+- (NSString *)webStatus;
 
 @end

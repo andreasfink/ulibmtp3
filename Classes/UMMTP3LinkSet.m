@@ -3269,16 +3269,6 @@
     }
 }
 
-<<<<<<< HEAD
-=======
-- (UMMTP3Link *)linkForSlc:(int)slc
-{
-    NSString *linkName = _linkNamesBySlc[slc];
-    UMMTP3Link *link = _links[linkName];
-    return link;
-}
-
->>>>>>> 237a44b0bd0e02733aa8154b25b69630be2e7ea0
 - (void)attachmentConfirmed:(int)slc
 {
     UMMTP3Link *link = [self getLinkBySlc:slc];
@@ -3466,4 +3456,48 @@
 {
     /* FIXME: do something here */
 }
+
+- (NSString *)webStatus
+    {
+    NSMutableString *s = [[NSMutableString alloc]init];
+
+    [_linksLock lock];
+    NSArray *linkKeys = [_linksByName allKeys];
+    for(NSString *key in linkKeys)
+    {
+        UMMTP3Link *link = _linksByName[key];
+        [s appendFormat:@"\t%@",link.name];
+        [s appendFormat:@" SLC %d",link.slc];
+        switch(link.m2pa_status)
+        {
+            case M2PA_STATUS_OFF:
+                [s appendString:@" M2PA-Status: OFF"];
+                break;
+            case M2PA_STATUS_OOS:
+                [s appendString:@" M2PA-Status: OOS"];
+                break;
+            case M2PA_STATUS_INITIAL_ALIGNMENT:
+                [s appendString:@" M2PA-Status: INITIAL-ALIGNMENT"];
+                break;
+            case M2PA_STATUS_ALIGNED_NOT_READY:
+                [s appendString:@" M2PA-Status: ALIGNED-NOT-READY"];
+                break;
+            case M2PA_STATUS_ALIGNED_READY:
+                [s appendString:@" M2PA-Status: ALIGNED-READY"];
+                break;
+            case M2PA_STATUS_IS:
+                [s appendString:@" M2PA-Status: IS"];
+                break;
+            case M2PA_STATUS_PROCESSOR_OUTAGE:
+                [s appendString:@" M2PA-Status: PROCESSOR-OUTAGE"];
+                break;
+            default:
+                [s appendFormat:@" M2PA-Status: Undefined(%d)",link.m2pa_status];
+                break;
+        }
+    }
+    [_linksLock unlock];
+    return s;
+}
+
 @end
