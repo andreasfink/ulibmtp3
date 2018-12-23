@@ -26,7 +26,6 @@
 
 @implementation UMMTP3LinkSet
 
-
 - (int)networkIndicator
 {
     if(_overrideNetworkIndicator)
@@ -42,7 +41,8 @@
     self = [super init];
     if(self)
     {
-        _links = [[UMSynchronizedSortedDictionary alloc]init];
+        _linksByName = [[UMSynchronizedSortedDictionary alloc]init];
+        _linksBySlc = [[UMSynchronizedSortedDictionary alloc]init];
         _linksLock = [[UMMutex alloc]initWithName:@"mtp3linkset-links-mutex"];
         _slsLock = [[UMMutex alloc]initWithName:@"mtp3-sls-lock"];
         _name = @"untitled";
@@ -60,88 +60,94 @@
 
 - (void)addLink:(UMMTP3Link *)lnk
 {
-	NSLog(@"lnk.name=%@",lnk.name);
-    NSString *linkName = [NSString stringWithFormat:@"%@:%d",_name,lnk.slc];
-	NSLog(@"linkName=%@",linkName);
-
     [_linksLock lock];
-    lnk.name = linkName;
-    _links[linkName]=lnk;
+
+    if(lnk.name.length <= 0)
+    {
+        lnk.name = [NSString stringWithFormat:@"%@:%d",_name,lnk.slc];
+    }
     lnk.linkset = self;
+    _linksByName[lnk.name]=lnk;
+    _linksBySlc[@(lnk.slc)]= lnk;
     _totalLinks++;
-    [_linksLock unlock];
 	[_mtp3 addLink:lnk];
+
+    [_linksLock unlock];
 }
 
 - (void)removeLink:(UMMTP3Link *)lnk
 {
     [_linksLock lock];
+
     lnk.linkset = NULL;
-    [_links removeObjectForKey:lnk.name];
+    [_linksByName removeObjectForKey:lnk.name];
+    [_linksBySlc removeObjectForKey:@(lnk.slc)];
     _totalLinks--;
-    [_linksLock unlock];
 	[_mtp3 removeLink:lnk];
+
+    [_linksLock unlock];
 }
 
 - (void)removeAllLinks
 {
     [_linksLock lock];
-    _links = NULL;
-    _links = [[UMSynchronizedSortedDictionary alloc]init];
+
+    NSArray *keys = [_linksByName allKeys];
+    for(NSString *key in keys)
+    {
+        UMMTP3Link *link = _linksByName[key];
+        if(link)
+        {
+            [self removeLink:link];
+        }
+    }
+    _linksByName = [[UMSynchronizedSortedDictionary alloc]init];
+    _linksBySlc = [[UMSynchronizedSortedDictionary alloc]init];
     _totalLinks=0;
     [_linksLock unlock];
 }
 
-- (void)removeLinkByName:(NSString *)n
-{
-    UMMTP3Link *lnk = _links[n];
-    lnk.linkset = NULL;
-    [_links removeObjectForKey:n];
-
-}
 
 - (UMMTP3Link *)getLinkByName:(NSString *)n
 {
-    UMMTP3Link *lnk = _links[n];
+    [_linksLock lock];
+    UMMTP3Link *lnk = _linksByName[n];
+
+    return lnk;
+}
+
+- (UMMTP3Link *)getLinkBySlc:(int)slc
+{
+    UMMTP3Link *lnk = _linksBySlc[@(slc)];
     return lnk;
 }
 
 - (UMMTP3Link *)getAnyLink
 {
-    NSArray *linkKeys = [_links allKeys];
+    [_linksLock lock];
+
+    NSArray *linkKeys = [_linksByName allKeys];
     NSMutableArray *activeLinkKeys = [[NSMutableArray alloc]init];
     for(NSString *key in linkKeys)
     {
-        UMMTP3Link *link = _links[key];
+        UMMTP3Link *link = _linksByName[key];
         if(link.m2pa_status == M2PA_STATUS_IS)
         {
             [activeLinkKeys addObject:key];
         }
     }
     NSUInteger n = [activeLinkKeys count];
-    if(n==0)
+    UMMTP3Link *link = NULL;
+    if(n>0)
     {
-        return NULL;
+        _linkSelector = _linkSelector + 1;
+        _linkSelector = _linkSelector % n;
+        NSString *key = activeLinkKeys[_linkSelector];
+        link = _linksByName[key];
     }
-    _linkSelector = _linkSelector + 1;
-    _linkSelector = _linkSelector % n;
-    NSString *key = activeLinkKeys[_linkSelector];
-    UMMTP3Link *link = _links[key];
+    [_linksLock unlock];
     return link;
 }
-
-/* as we use link names in the form <linkset>:<slc> we can not allow colons in linkset names so we remove them */
-- (NSString *)name
-{
-    return _name;
-}
-
-- (void)setName:(NSString *)n
-{
-    _name = [n stringByReplacingOccurrencesOfString:@":" withString:@""];
-}
-
-
 
 - (void)logDebug:(NSString *)s
 {
@@ -331,7 +337,7 @@
 
 - (void)msuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc
 {
-    UMMTP3Link *link = [self linkForSlc:slc];
+    UMMTP3Link *link = [self getLinkBySlc:slc];
     @try
     {
         int labelsize;
@@ -2248,11 +2254,11 @@
 - (NSDictionary *)config
 {
     NSMutableDictionary *config = [[NSMutableDictionary alloc]init];
-    NSArray *allkeys = [_links allKeys];
+    NSArray *allkeys = [_linksByName allKeys];
 
     for(id key in allkeys)
     {
-        UMMTP3Link *link = _links[key];
+        UMMTP3Link *link = _linksByName[key];
         config[[NSString stringWithFormat:@"attach-slc%d",link.slc]] = link.name;
     }
     config[@"dpc"] = [_adjacentPointCode stringValue];
@@ -3236,47 +3242,40 @@
 
 - (void)powerOn
 {
-    NSArray *linkKeys = [_links allKeys];
+    NSArray *linkKeys = [_linksByName allKeys];
     for(NSString *key in linkKeys)
     {
-        UMMTP3Link *link = _links[key];
+        UMMTP3Link *link = _linksByName[key];
         [link powerOn];
     }
 }
 
 - (void)powerOff
 {
-    NSArray *linkKeys = [_links allKeys];
+    NSArray *linkKeys = [_linksByName allKeys];
     for(NSString *key in linkKeys)
     {
-        UMMTP3Link *link = _links[key];
+        UMMTP3Link *link = _linksByName[key];
         [link powerOff];
     }
 }
 
-- (UMMTP3Link *)linkForSlc:(int)slc
-{
-    NSString *linkName = [NSString stringWithFormat:@"%@:%d",_name,slc];
-    UMMTP3Link *link = _links[linkName];
-    return link;
-}
-
 - (void)attachmentConfirmed:(int)slc
 {
-    UMMTP3Link *link = [self linkForSlc:slc];
+    UMMTP3Link *link = [self getLinkBySlc:slc];
     [link attachmentConfirmed];
 }
 
 - (void)attachmentFailed:(int)slc reason:(NSString *)r
 {
-    UMMTP3Link *link = [self linkForSlc:slc];
+    UMMTP3Link *link = [self getLinkBySlc:slc];
     [link attachmentFailed:r];
 }
 
 
 - (void)sctpStatusUpdate:(SCTP_Status)status slc:(int)slc
 {
-    UMMTP3Link *link = [self linkForSlc:slc];
+    UMMTP3Link *link = [self getLinkBySlc:slc];
     [link sctpStatusUpdate:status];
     [self updateLinkSetStatus];
 }
@@ -3284,19 +3283,19 @@
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc
 {
     
-    UMMTP3Link *link = [self linkForSlc:slc];
+    UMMTP3Link *link = [self getLinkBySlc:slc];
     [link m2paStatusUpdate:status];
     [self updateLinkSetStatus];
 }
 
 - (void)start:(int)slc
 {
-    UMMTP3Link *link = [self linkForSlc:slc];
+    UMMTP3Link *link = [self getLinkBySlc:slc];
     [link start];
 }
 - (void)stop:(int)slc
 {
-    UMMTP3Link *link = [self linkForSlc:slc];
+    UMMTP3Link *link = [self getLinkBySlc:slc];
     [link stop];
 }
 
@@ -3311,10 +3310,10 @@
 
     oldActiveLinks = _activeLinks;
 
-    NSArray *keys = [_links allKeys];
+    NSArray *keys = [_linksByName allKeys];
     for (NSString *key in keys)
     {
-        UMMTP3Link *link = _links[key];
+        UMMTP3Link *link = _linksByName[key];
         switch(link.m2pa_status)
         {
             case M2PA_STATUS_UNUSED:
