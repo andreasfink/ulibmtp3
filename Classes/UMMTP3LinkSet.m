@@ -35,7 +35,6 @@
     return _mtp3.networkIndicator;
 }
 
-
 - (UMMTP3LinkSet *)init
 {
     self = [super init];
@@ -3327,7 +3326,6 @@
     UMMTP3Link *link = [self getLinkBySlc:slc];
     [link attachmentFailed:r];
 }
-
 
 - (void)sctpStatusUpdate:(SCTP_Status)status slc:(int)slc
 {

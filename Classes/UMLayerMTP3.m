@@ -442,8 +442,8 @@
         [self logDebug:[NSString stringWithFormat:@" status: %d",task.status]];
     }
 
-    
-    UMMTP3LinkSet *linkset = [self getLinkSetByName: task.userId];
+    UMMTP3Link *link = [self getLinkByName: task.userId];
+    UMMTP3LinkSet *linkset = link.linkset;
     [linkset m2paStatusUpdate:task.status slc:task.slc];
 }
 

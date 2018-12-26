@@ -63,6 +63,7 @@ typedef enum UMMTP3Link_attachmentStatus
 - (void)attachmentConfirmed;
 - (void)attachmentFailed:(NSString *)reason;
 - (void)sctpStatusUpdate:(SCTP_Status)s;
+
 - (void)m2paStatusUpdate:(M2PA_Status)s;
 - (void)congestionIndication;
 - (void)congestionClearedIndication;
