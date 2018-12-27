@@ -2408,7 +2408,7 @@
     }
 
     _overrideNetworkIndicator = NULL;
-    if (cfg[@"network-indicator"])
+    if (cfg[@"override-network-indicator"])
     {
         NSString *s = [cfg[@"override-network-indicator"] stringValue];
         if((  [s isEqualToStringCaseInsensitive:@"international"])
