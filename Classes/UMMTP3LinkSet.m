@@ -532,7 +532,7 @@
             [self.logFeed debugText:[NSString stringWithFormat:@"    opc: %@",label.opc.description]];
             [self.logFeed debugText:[NSString stringWithFormat:@"    dpc: %@",label.dpc.description]];
         }
-        if(ni != self.networkIndicator)
+        if((ni != self.networkIndicator) && (_overrideNetworkIndicator && _overrideNetworkIndicator.intValue != ni))
         {
             [self.logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,self.networkIndicator]];
             [self protocolViolation];
@@ -1309,7 +1309,14 @@
     }
 
     UMMTP3Label *reverse_label = [label reverseLabel];
-    [self sendSLTA:reverse_label pattern:pattern ni:ni mp:mp slc:slc link:link];
+    if(_overrideNetworkIndicator)
+    {
+        [self sendSLTA:reverse_label pattern:pattern ni:(_overrideNetworkIndicator.intValue) mp:mp slc:slc link:link];
+    }
+    else
+    {
+        [self sendSLTA:reverse_label pattern:pattern ni:ni mp:mp slc:slc link:link];
+    }
     [self updateLinkSetStatus];
 }
 
