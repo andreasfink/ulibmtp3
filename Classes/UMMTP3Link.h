@@ -29,7 +29,7 @@ typedef enum UMMTP3Link_attachmentStatus
     int                         _slc;
     NSMutableDictionary         *_userId;
     //UMMTP3LinkState             *linkState;
-    M2PA_Status                 _m2pa_status;
+    M2PA_Status                 _last_m2pa_status;
     SCTP_Status                 _sctp_status;
     UMLayerM2PA                 *_m2pa;
     UMMTP3LinkSet               *_linkset;
@@ -47,7 +47,7 @@ typedef enum UMMTP3Link_attachmentStatus
 
 @property (readwrite,strong)    NSString *name;
 @property (readwrite,assign)    int slc;
-@property (readwrite,assign,atomic)    M2PA_Status         m2pa_status;
+//@property (readwrite,assign,atomic)    M2PA_Status         m2pa_status;
 @property (readwrite,assign,atomic)    SCTP_Status         sctp_status;
 @property (readwrite,assign)    UMMTP3Link_attachmentStatus attachmentStatus;
 @property (readwrite,strong)    UMLayerM2PA     *m2pa;

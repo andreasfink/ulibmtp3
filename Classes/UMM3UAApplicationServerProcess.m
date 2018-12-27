@@ -212,14 +212,14 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     switch(status)
     {
+        case SCTP_STATUS_M_FOOS:
+            return "SCTP_STATUS_M_FOOS";
         case SCTP_STATUS_OFF:
             return "SCTP_STATUS_OFF";
         case SCTP_STATUS_OOS:
             return "SCTP_STATUS_OOS";
         case SCTP_STATUS_IS:
             return "SCTP_STATUS_IS";
-        case SCTP_STATUS_M_FOOS:
-            return "SCTP_STATUS_M_FOOS";
         default:
             return "SCTP_UNKNOWN";
     }
@@ -242,7 +242,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     switch(_status)
     {
         case M3UA_STATUS_UNUSED:
-        case  M3UA_STATUS_OFF:
+        case M3UA_STATUS_OFF:
         case M3UA_STATUS_OOS:
             return NO;
         case M3UA_STATUS_BUSY:

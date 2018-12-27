@@ -141,7 +141,7 @@
     for(NSString *key in linkKeys)
     {
         UMMTP3Link *link = _linksByName[key];
-        if(link.m2pa_status == M2PA_STATUS_IS)
+        if(link.m2pa.m2pa_status == M2PA_STATUS_IS)
         {
             [activeLinkKeys addObject:key];
         }
@@ -167,7 +167,7 @@
             UMMTP3Link *link = _linksByName[key];
             [s appendFormat:@"\t%@",link.name];
             [s appendFormat:@" SLC %d",link.slc];
-            switch(link.m2pa_status)
+            switch(link.m2pa.m2pa_status)
             {
                 case M2PA_STATUS_OFF:
                     [s appendString:@" M2PA-Status: OFF"];
@@ -191,7 +191,7 @@
                     [s appendString:@" M2PA-Status: PROCESSOR-OUTAGE"];
                     break;
                 default:
-                    [s appendFormat:@" M2PA-Status: Undefined(%d)",link.m2pa_status];
+                    [s appendFormat:@" M2PA-Status: Undefined(%d)",link.m2pa.m2pa_status];
                     break;
             }
             [s appendString:@"\n"];
@@ -547,7 +547,7 @@
                     ]);
 
         }
-        if(link && (link.m2pa_status != M2PA_STATUS_IS))
+        if(link && (link.m2pa.m2pa_status != M2PA_STATUS_IS))
         {
             /* All messages to another destination received at a signalling point whose MTP is restarting are discarded.*/
             if(![label.dpc isEqualToPointCode:_localPointCode])
@@ -3368,7 +3368,7 @@
     for (NSString *key in keys)
     {
         UMMTP3Link *link = _linksByName[key];
-        switch(link.m2pa_status)
+        switch(link.m2pa.m2pa_status)
         {
             case M2PA_STATUS_UNUSED:
             case M2PA_STATUS_OFF:
@@ -3513,7 +3513,7 @@
         UMMTP3Link *link = _linksByName[key];
         [s appendFormat:@"\t%@",link.name];
         [s appendFormat:@" SLC %d",link.slc];
-        switch(link.m2pa_status)
+        switch(link.m2pa.m2pa_status)
         {
             case M2PA_STATUS_OFF:
                 [s appendString:@" M2PA-Status: OFF"];
@@ -3537,7 +3537,7 @@
                 [s appendString:@" M2PA-Status: PROCESSOR-OUTAGE"];
                 break;
             default:
-                [s appendFormat:@" M2PA-Status: Undefined(%d)",link.m2pa_status];
+                [s appendFormat:@" M2PA-Status: Undefined(%d)",link.m2pa.m2pa_status];
                 break;
         }
         [s appendString:@"\n"];

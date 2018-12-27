@@ -22,6 +22,7 @@
     if(self)
     {
         _logLevel = UMLOG_MAJOR;
+        _last_m2pa_status = M2PA_STATUS_OFF;
     }
     return self;
 }
@@ -57,8 +58,8 @@
 
 - (void)m2paStatusUpdate:(M2PA_Status)newStatus
 {
-    M2PA_Status old_status = self.m2pa_status;
-    self.m2pa_status = newStatus;
+    M2PA_Status old_status = _last_m2pa_status;
+    _last_m2pa_status = newStatus;
 
     if((old_status == M2PA_STATUS_OFF) && (newStatus == M2PA_STATUS_OOS))
     {
