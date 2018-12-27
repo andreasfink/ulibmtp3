@@ -158,6 +158,12 @@
 	return _links[n];
 }
 
+- (UMMTP3PointCode *)adjacentPointCodeOfLinkSet:(NSString *)asname
+{
+    UMMTP3LinkSet *ls = [self getLinkSetByName:asname];
+    return ls.adjacentPointCode;
+}
+
 #pragma mark -
 #pragma mark M2PA callbacks
 

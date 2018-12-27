@@ -267,4 +267,7 @@ typedef enum UMMTP3_Error
 - (NSDictionary *)apiStatus;
 
 - (void)stopDetachAndDestroy;
+
+- (UMMTP3PointCode *)adjacentPointCodeOfLinkSet:(NSString *)asname;
+
 @end
