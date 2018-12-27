@@ -2058,6 +2058,11 @@
                link:(UMMTP3Link *)link
 {
 
+    if(_overrideNetworkIndicator)
+    {
+        ni = _overrideNetworkIndicator.intValue;
+    }
+
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendSLTA"];
@@ -2098,7 +2103,11 @@
     {
         [self logDebug:@"sendSLTM"];
     }
-    NSMutableData *pdu = [[NSMutableData alloc]init];
+    if(_overrideNetworkIndicator)
+    {
+        ni = _overrideNetworkIndicator.intValue;
+    }
+   NSMutableData *pdu = [[NSMutableData alloc]init];
     if(_variant==UMMTP3Variant_ANSI)
     {
         [pdu appendByte:([pattern length]<<4) | (slc & 0x0F)];
@@ -2129,6 +2138,11 @@
              slc:(int)slc
             link:(UMMTP3Link *)link
 {
+    if(_overrideNetworkIndicator)
+    {
+        ni = _overrideNetworkIndicator.intValue;
+    }
+
     NSMutableData *pdu = [[NSMutableData alloc]init];
     if(_variant==UMMTP3Variant_ANSI)
     {
@@ -2160,6 +2174,11 @@
              slc:(int)slc
             link:(UMMTP3Link *)link
 {
+    if(_overrideNetworkIndicator)
+    {
+        ni = _overrideNetworkIndicator.intValue;
+    }
+
     NSMutableData *pdu = [[NSMutableData alloc]init];
     if(_variant==UMMTP3Variant_ANSI)
     {
@@ -2195,6 +2214,11 @@
     ackRequest:(NSDictionary *)ackRequest
        options:(NSDictionary *)options
 {
+    if(_overrideNetworkIndicator)
+    {
+        ni = _overrideNetworkIndicator.intValue;
+    }
+
     if(link == NULL)
     {
         link = [self getAnyLink];
@@ -2277,6 +2301,11 @@
  correlationId:(uint32_t)correlation_id
        options:(NSDictionary *)options
 {
+    if(_overrideNetworkIndicator)
+    {
+        ni = _overrideNetworkIndicator.intValue;
+    }
+
     NSMutableDictionary *options2=NULL;
     if((self.sendExtendedAttributes) && (options!=NULL))
     {
