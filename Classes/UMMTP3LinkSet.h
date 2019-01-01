@@ -365,4 +365,8 @@ options:(NSDictionary *)options;
 - (void)stopDetachAndDestroy;
 - (NSString *)webStatus;
 
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
+
 @end
