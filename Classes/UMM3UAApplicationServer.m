@@ -503,6 +503,41 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 }
 
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
+{
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        [self logDebug:s];
+    }
+    [_routingTable updateRouteAvailable:pc mask:mask linksetName:_name];
+    [_mtp3 updateRouteAvailable:pc mask:mask linksetName:_name];
+
+}
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
+{
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        [self logDebug:s];
+    }
+
+    [_routingTable updateRouteUnavailable:pc mask:mask linksetName:_name];
+    [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
+
+}
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
+{
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        NSString *s = [NSString stringWithFormat:@"updateRouteRestricted:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        [self logDebug:s];
+    }
+
+    [_routingTable updateRouteRestricted:pc mask:mask linksetName:_name];
+    [_mtp3 updateRouteRestricted:pc mask:mask linksetName:_name];
+
+}
 
 #pragma mark -
 #pragma mark SCTP callbacks

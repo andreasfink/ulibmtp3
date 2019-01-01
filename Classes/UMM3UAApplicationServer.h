@@ -80,6 +80,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp;
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp;
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp;
+
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
