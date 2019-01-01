@@ -15,7 +15,6 @@
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 
 @class UMMTP3LinkSet;
-@class UMMTP3LinkState;
 
 typedef enum UMMTP3Link_attachmentStatus
 {
@@ -27,20 +26,20 @@ typedef enum UMMTP3Link_attachmentStatus
 @interface UMMTP3Link : UMObject
 {
     NSString                    *_name;
-    int                         slc;
-    NSMutableDictionary         *userId;
-    //UMMTP3LinkState             *linkState;
-    M2PA_Status                 _m2pa_status;
+
+    int                         _slc;
+    NSMutableDictionary         *_userId;
+    M2PA_Status                 _last_m2pa_status;
     SCTP_Status                 _sctp_status;
-    UMLayerM2PA                 *m2pa;
-    UMMTP3LinkSet               *linkset;
-    UMMTP3Link_attachmentStatus attachmentStatus;
-    NSString                    *attachmentFailureStatus;
-    BOOL                        congested;
-    BOOL                        processorOutage;
-    BOOL                        speedLimitReached;
-    UMTimer                     *linkTestTimer;
-    NSTimeInterval              linkTestTime;
+    UMLayerM2PA                 *_m2pa;
+    UMMTP3LinkSet               *_linkset;
+    UMMTP3Link_attachmentStatus _attachmentStatus;
+    NSString                    *_attachmentFailureStatus;
+    BOOL                        _congested;
+    BOOL                        _processorOutage;
+    BOOL                        _speedLimitReached;
+    UMTimer                     *_linkTestTimer;
+    NSTimeInterval              _linkTestTime;
     UMLogLevel                  _logLevel;
 }
 
@@ -48,8 +47,7 @@ typedef enum UMMTP3Link_attachmentStatus
 
 @property (readwrite,strong)    NSString *name;
 @property (readwrite,assign)    int slc;
-//@property (readwrite,strong)    UMMTP3LinkState     *linkState;
-@property (readwrite,assign,atomic)    M2PA_Status         m2pa_status;
+//@property (readwrite,assign,atomic)    M2PA_Status         m2pa_status;
 @property (readwrite,assign,atomic)    SCTP_Status         sctp_status;
 @property (readwrite,assign)    UMMTP3Link_attachmentStatus attachmentStatus;
 @property (readwrite,strong)    UMLayerM2PA     *m2pa;
@@ -65,6 +63,7 @@ typedef enum UMMTP3Link_attachmentStatus
 - (void)attachmentConfirmed;
 - (void)attachmentFailed:(NSString *)reason;
 - (void)sctpStatusUpdate:(SCTP_Status)s;
+
 - (void)m2paStatusUpdate:(M2PA_Status)s;
 - (void)congestionIndication;
 - (void)congestionClearedIndication;

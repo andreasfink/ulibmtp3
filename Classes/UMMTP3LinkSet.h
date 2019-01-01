@@ -29,7 +29,8 @@
 {
     UMLayerMTP3                 *_mtp3;
     NSString                    *_name;
-    UMSynchronizedSortedDictionary *_links;
+    UMSynchronizedSortedDictionary *_linksByName;
+    UMSynchronizedSortedDictionary *_linksBySlc;
     UMMutex                     *_linksLock;
     UMMutex                     *_slsLock;
     UMLogLevel                  _logLevel;
@@ -70,7 +71,8 @@
 //@property(readwrite,strong) UMLogFeed   *log;
 @property(readwrite,assign) UMLogLevel logLevel;
 @property(readwrite,strong) NSString *name;
-@property(readwrite,strong) UMSynchronizedSortedDictionary *links;
+@property(readwrite,strong) UMSynchronizedSortedDictionary *linksByName;
+@property(readwrite,strong) UMSynchronizedSortedDictionary *linksBySlc;
 @property(readwrite,strong) UMLayerMTP3 *mtp3;
 @property(readwrite,assign) UMMTP3Variant variant;
 @property(readwrite,strong) UMMTP3PointCode *localPointCode;
@@ -94,9 +96,9 @@
 
 - (void)addLink:(UMMTP3Link *)lnk;
 - (void)removeLink:(UMMTP3Link *)lnk;
-- (void)removeLinkByName:(NSString *)n;
 - (void)removeAllLinks;
 - (UMMTP3Link *)getLinkByName:(NSString *)n;
+- (UMMTP3Link *)getLinkBySlc:(int)slc;
 - (UMMTP3Link *)getAnyLink;
 
 - (void)logDebug:(NSString *)s;
@@ -361,5 +363,10 @@ options:(NSDictionary *)options;
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)stopDetachAndDestroy;
+- (NSString *)webStatus;
+
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
 
 @end

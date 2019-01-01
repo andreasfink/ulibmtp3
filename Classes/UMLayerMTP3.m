@@ -106,7 +106,7 @@
     [self refreshRoutingTable];
 }
 
-- (void)addLink:(UMMTP3Link *)lnk toLinkset:(UMMTP3LinkSet *)ls
+- (void)addLink:(UMMTP3Link *)lnk
 {
 	_links[lnk.name]=lnk;
 }
@@ -156,6 +156,12 @@
 - (UMMTP3LinkSet *)getLinkByName:(NSString *)n
 {
 	return _links[n];
+}
+
+- (UMMTP3PointCode *)adjacentPointCodeOfLinkSet:(NSString *)asname
+{
+    UMMTP3LinkSet *ls = [self getLinkSetByName:asname];
+    return ls.adjacentPointCode;
 }
 
 #pragma mark -
@@ -442,8 +448,8 @@
         [self logDebug:[NSString stringWithFormat:@" status: %d",task.status]];
     }
 
-    
-    UMMTP3LinkSet *linkset = [self getLinkSetByName: task.userId];
+    UMMTP3Link *link = [self getLinkByName: task.userId];
+    UMMTP3LinkSet *linkset = link.linkset;
     [linkset m2paStatusUpdate:task.status slc:task.slc];
 }
 
@@ -793,7 +799,11 @@
         [self.logFeed debugText:[NSString stringWithFormat:@" linkset '%@'",route.linksetName]];
         [self.logFeed debugText:[NSString stringWithFormat:@" pointcode '%@'",route.pointcode]];
     }
-
+    if(route==NULL)
+    {
+        [self.logFeed majorErrorText:@"no route to destination (route==null)"];
+        return UMMTP3_error_no_route_to_destination;
+    }
     NSString *linksetName = route.linksetName;
     [_linksetLock lock];
     UMMTP3LinkSet *linkset = _linksets[linksetName];

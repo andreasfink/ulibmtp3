@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <ulibsctp/ulibsctp.h>
-#import "UMMTP3LinkState.h"
 #import "UMMTP3Variant.h"
 #import "UMMTP3PointCode.h"
 #import "UMM3UAStatus.h"
