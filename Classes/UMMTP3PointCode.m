@@ -11,8 +11,6 @@
 
 #import "UMMTP3PointCode.h"
 @implementation UMMTP3PointCode
-@synthesize variant;
-@synthesize pc;
 
 - (UMMTP3PointCode *)initWitPc:(int)pcode variant:(UMMTP3Variant)var; /* typo version for backwards compatibility */
 {
@@ -24,8 +22,8 @@
     self = [super init];
     if(self)
     {
-        pc = pcode;
-        variant = var;
+        _pc = pcode;
+        _variant = var;
     }
     return self;
 }
@@ -47,7 +45,7 @@
         long c = 0;
         long res = 0;
         char *pos = NULL;
-        variant = var;
+        _variant = var;
 
         pos = strstr(in,":");
         if(pos != NULL)
@@ -75,7 +73,7 @@
             }
         }
         
-        if((variant == UMMTP3Variant_China)  || (variant == UMMTP3Variant_ANSI))
+        if((_variant == UMMTP3Variant_China)  || (_variant == UMMTP3Variant_ANSI))
         {
             res += a << 16;
             res += b << 8;
@@ -87,7 +85,7 @@
             res += b << 3;
             res += c;
         }
-        pc = (int)res;
+        _pc = (int)res;
     }
     return self;
 }
@@ -97,28 +95,28 @@
     self = [super init];
     if(self)
     {
-        variant = var;
+        _variant = var;
         switch(var)
         {
             case UMMTP3Variant_ITU:
             {
-                pc = data[(*p)++];
-                pc +=  (data[(*p)++] << 8 );
-                pc = pc & 0x3F;
+                _pc  = data[(*p)++];
+                _pc +=  (data[(*p)++] << 8 );
+                _pc  = _pc & 0x3F;
             }
                 break;
             case UMMTP3Variant_ANSI:
             {
-                pc = data[(*p)++];
-                pc +=  (data[(*p)++] << 8 );
-                pc +=  (data[(*p)++] << 16 );
+                _pc = data[(*p)++];
+                _pc +=  (data[(*p)++] << 8 );
+                _pc +=  (data[(*p)++] << 16 );
             }
                 break;
             case UMMTP3Variant_China:
             {
-                pc = data[(*p)++];
-                pc +=  (data[(*p)++] << 8 );
-                pc +=  (data[(*p)++] << 16 );
+                _pc = data[(*p)++];
+                _pc +=  (data[(*p)++] << 8 );
+                _pc +=  (data[(*p)++] << 16 );
             }
                 break;
             default:
@@ -135,7 +133,7 @@
     self = [super init];
     if(self)
     {
-        variant = var;
+        _variant = var;
         switch(var)
         {
             case UMMTP3Variant_ITU:
@@ -152,8 +150,8 @@
                             ]);
                 }
                 *s = data[*p] >> 6;
-                pc = data[(*p)++];
-                pc |=  (data[(*p)++] & 0x3F) << 8;
+                _pc = data[(*p)++];
+                _pc |=  (data[(*p)++] & 0x3F) << 8;
             }
                 break;
             case UMMTP3Variant_ANSI:
@@ -172,9 +170,9 @@
                             ]);
                 }
                 *s = data[(*p)++] & 0x03;
-                pc = data[(*p)++];
-                pc |=  (data[(*p)++] << 8 );
-                pc |=  (data[(*p)++] << 16 );
+                _pc = data[(*p)++];
+                _pc |=  (data[(*p)++] << 8 );
+                _pc |=  (data[(*p)++] << 16 );
             }
                 break;
             default:
@@ -190,7 +188,7 @@
     self = [super init];
     if(self)
     {
-        variant = var;
+        _variant = var;
         switch(var)
         {
             case UMMTP3Variant_ITU:
@@ -206,8 +204,8 @@
                                                             }
                             ]);
                 }
-                pc = data[(*p)++];
-                pc |=  (data[(*p)++] & 0x3F) << 8;
+                _pc = data[(*p)++];
+                _pc |=  (data[(*p)++] & 0x3F) << 8;
             }
                 break;
             case UMMTP3Variant_ANSI:
@@ -225,9 +223,9 @@
                                                             }
                             ]);
                 }
-                pc = data[(*p)++];
-                pc |=  (data[(*p)++] << 8 );
-                pc |=  (data[(*p)++] << 16 );
+                _pc = data[(*p)++];
+                _pc |=  (data[(*p)++] << 8 );
+                _pc |=  (data[(*p)++] << 16 );
             }
                 break;
             default:
@@ -243,30 +241,30 @@
     int a;
     int b;
     int c;
-    if(variant == UMMTP3Variant_ITU)
+    if(_variant == UMMTP3Variant_ITU)
     {
-        c = pc & 0x07;
-        b = (pc >> 3) & 0xFF;
-        a = (pc >> 11) & 0x07;
-        return [NSString stringWithFormat:@"%01d-%03d-%01d (%d)",a,b,c,pc];
+        c = _pc & 0x07;
+        b = (_pc >> 3) & 0xFF;
+        a = (_pc >> 11) & 0x07;
+        return [NSString stringWithFormat:@"%01d-%03d-%01d (%d)",a,b,c,_pc];
     }
-    c = pc & 0xFF;
-    b = (pc >> 8) & 0xFF;
-    a = (pc >> 16) & 0xFF;
+    c = _pc & 0xFF;
+    b = (_pc >> 8) & 0xFF;
+    a = (_pc >> 16) & 0xFF;
     
-    if(variant == UMMTP3Variant_China)
+    if(_variant == UMMTP3Variant_China)
     {
-        return [NSString stringWithFormat:@"%03d:%03d:%03d (%d)",a,b,c,pc];
+        return [NSString stringWithFormat:@"%03d:%03d:%03d (%d)",a,b,c,_pc];
     }
-    if(variant == UMMTP3Variant_ANSI)
+    if(_variant == UMMTP3Variant_ANSI)
     {
-        return [NSString stringWithFormat:@"%03d.%03d.%03d (%d)",a,b,c,pc];
+        return [NSString stringWithFormat:@"%03d.%03d.%03d (%d)",a,b,c,_pc];
     }
-    if(variant == UMMTP3Variant_Japan)
+    if(_variant == UMMTP3Variant_Japan)
     {
-        return [NSString stringWithFormat:@"%03d_%03d_%03d (%d)",a,b,c,pc];
+        return [NSString stringWithFormat:@"%03d_%03d_%03d (%d)",a,b,c,_pc];
     }
-    return [NSString stringWithFormat:@"%d", pc];
+    return [NSString stringWithFormat:@"%d", _pc];
 }
 
 - (NSString *)stringValue
@@ -274,35 +272,35 @@
     int a;
     int b;
     int c;
-    if(variant == UMMTP3Variant_ITU)
+    if(_variant == UMMTP3Variant_ITU)
     {
-        c = pc & 0x07;
-        b = (pc >> 3) & 0xFF;
-        a = (pc >> 11) & 0x07;
+        c = _pc & 0x07;
+        b = (_pc >> 3) & 0xFF;
+        a = (_pc >> 11) & 0x07;
         return [NSString stringWithFormat:@"%01d-%03d-%01d",a,b,c];
     }
-    c = pc & 0xFF;
-    b = (pc >> 8) & 0xFF;
-    a = (pc >> 16) & 0xFF;
+    c = _pc & 0xFF;
+    b = (_pc >> 8) & 0xFF;
+    a = (_pc >> 16) & 0xFF;
     
-    if(variant == UMMTP3Variant_China)
+    if(_variant == UMMTP3Variant_China)
     {
         return [NSString stringWithFormat:@"%03d:%03d:%03d",a,b,c];
     }
-    if(variant == UMMTP3Variant_ANSI)
+    if(_variant == UMMTP3Variant_ANSI)
     {
         return [NSString stringWithFormat:@"%03d.%03d.%03d",a,b,c];
     }
-    if(variant == UMMTP3Variant_Japan)
+    if(_variant == UMMTP3Variant_Japan)
     {
         return [NSString stringWithFormat:@"%03d_%03d_%03d",a,b,c];
     }
-    return [NSString stringWithFormat:@"%d", pc];
+    return [NSString stringWithFormat:@"%d", _pc];
 }
 
 - (int)integerValue
 {
-    return pc;
+    return _pc;
 }
 
 - (NSString *)logDescription
@@ -312,11 +310,11 @@
 
 -(BOOL)isEqualToPointCode:(UMMTP3PointCode *)otherPc
 {
-    if(variant != otherPc.variant)
+    if(_variant != otherPc.variant)
     {
         return NO;
     }
-    if(pc != otherPc.pc)
+    if(_pc != otherPc.pc)
     {
         return NO;
     }
@@ -326,15 +324,15 @@
 
 - (NSData *) asData
 {
-    switch(variant)
+    switch(_variant)
     {
         case UMMTP3Variant_ANSI:
         {
             char buf[3];
             
-            buf[0]= pc & 0xFF;
-            buf[1]= (pc >> 8) & 0xFF;
-            buf[2]= (pc >> 16) & 0xFF;
+            buf[0]= _pc & 0xFF;
+            buf[1]= (_pc >> 8) & 0xFF;
+            buf[2]= (_pc >> 16) & 0xFF;
             return [NSData dataWithBytes:buf length:3];
         }
             break;
@@ -342,9 +340,9 @@
         {
             char buf[3];
             
-            buf[0]= pc & 0xFF;
-            buf[1]= (pc >> 8) & 0xFF;
-            buf[2]= (pc >> 16) & 0xFF;
+            buf[0]= _pc & 0xFF;
+            buf[1]= (_pc >> 8) & 0xFF;
+            buf[2]= (_pc >> 16) & 0xFF;
             return [NSData dataWithBytes:buf length:3];
         }
             break;
@@ -352,8 +350,8 @@
         {
             char buf[2];
             
-            buf[0]= pc & 0xFF;
-            buf[1]= (pc >> 8) & 0x3F;
+            buf[0]= _pc & 0xFF;
+            buf[1]= (_pc >> 8) & 0x3F;
             return [NSData dataWithBytes:buf length:2];
         }
             break;
@@ -365,7 +363,7 @@
 
 - (NSData *) asDataWithStatus:(int)status
 {
-    switch(variant)
+    switch(_variant)
     {
         case UMMTP3Variant_ANSI:
         case UMMTP3Variant_China:
@@ -373,9 +371,9 @@
         {
             char buf[4];
             buf[0]= status & 0x03;
-            buf[1]= pc & 0xFF;
-            buf[2]= (pc >> 8) & 0xFF;
-            buf[3]= (pc >> 16) & 0xFF;
+            buf[1]= _pc & 0xFF;
+            buf[2]= (_pc >> 8) & 0xFF;
+            buf[3]= (_pc >> 16) & 0xFF;
             return [NSData dataWithBytes:buf length:4];
         }
             break;
@@ -383,8 +381,8 @@
         {
             char buf[2];
             
-            buf[0]= (pc & 0x3F) | ((status & 0x03) << 6);
-            buf[1]= (pc >> 8) & 0x3F;
+            buf[0]= (_pc & 0x3F) | ((status & 0x03) << 6);
+            buf[1]= (_pc >> 8) & 0x3F;
             return [NSData dataWithBytes:buf length:2];
         }
             break;
@@ -418,7 +416,7 @@
 
 - (int)maxmask
 {
-    if(variant==UMMTP3Variant_ITU)
+    if(_variant==UMMTP3Variant_ITU)
     {
         return 14;
     }
@@ -434,7 +432,34 @@
 
 - (UMMTP3PointCode *)copyWithZone:(NSZone *)zone
 {
-    return [[UMMTP3PointCode allocWithZone:zone]initWithPc:pc variant:variant];
+    return [[UMMTP3PointCode allocWithZone:zone]initWithPc:_pc variant:_variant];
 }
 
+
+- (id)proxyForJson
+{
+    UMSynchronizedSortedDictionary *d = [[UMSynchronizedSortedDictionary alloc]init];
+    d[@"pc-dec"] = @(_pc);
+    d[@"pc-string"] = [self stringValue];
+    switch(_variant)
+    {
+        case UMMTP3Variant_ITU:
+            d[@"variant"] = @"itu";
+            break;
+        case UMMTP3Variant_ANSI:
+            d[@"variant"] = @"ansi";
+            break;
+        case UMMTP3Variant_China:
+            d[@"variant"] = @"China";
+            break;
+        case UMMTP3Variant_Japan:
+            d[@"variant"] = @"Japan";
+            break;
+        default:
+            d[@"variant"] = @"unknown";
+            break;
+
+    }
+    return d;
+}
 @end
