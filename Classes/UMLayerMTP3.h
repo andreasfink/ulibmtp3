@@ -108,7 +108,7 @@ typedef enum UMMTP3_Error
 - (void)removeAllLinkSets;
 - (UMMTP3LinkSet *)getLinkSetByName:(NSString *)name;
 
-- (void)addLink:(UMMTP3Link *)lnk;
+- (void)addLink:(UMMTP3Link *)lnk toLinkset:(UMMTP3LinkSet *)linkset;
 - (void)removeLink:(UMMTP3Link *)lnk;
 
 - (UMMTP3Link *)getLinkByName:(NSString *)linkName;

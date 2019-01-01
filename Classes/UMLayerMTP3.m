@@ -106,7 +106,7 @@
     [self refreshRoutingTable];
 }
 
-- (void)addLink:(UMMTP3Link *)lnk
+- (void)addLink:(UMMTP3Link *)lnk toLinkset:(UMMTP3LinkSet *)ls
 {
 	_links[lnk.name]=lnk;
 }

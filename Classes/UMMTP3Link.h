@@ -26,7 +26,7 @@ typedef enum UMMTP3Link_attachmentStatus
 
 @interface UMMTP3Link : UMObject
 {
-    NSString                    *name; /* will be set by linkset to linksetname:<slc> */
+    NSString                    *_name;
     int                         slc;
     NSMutableDictionary         *userId;
     //UMMTP3LinkState             *linkState;

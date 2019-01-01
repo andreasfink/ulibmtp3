@@ -72,7 +72,7 @@
     lnk.linkset = self;
     _totalLinks++;
     [_linksLock unlock];
-	[_mtp3 addLink:lnk];
+    [_mtp3 addLink:lnk toLinkset:self];
 }
 
 - (void)removeLink:(UMMTP3Link *)lnk
