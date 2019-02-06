@@ -18,6 +18,7 @@
 {
     NSString                            *logFileName;
     UMLogLevel                          _logLevel;
+    UMSynchronizedSortedDictionary      *routesByPointCode;
 }
 
 @property(readwrite,assign) UMLogLevel logLevel;
@@ -42,15 +43,15 @@
                    excludeLinkSetName:(NSString *)linksetName
                                 exact:(BOOL)exact;
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
+- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
                         mask:(int)mask
                  linksetName:(NSString *)linkset;
 
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc
+- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
                   linksetName:(NSString *)linkset;
 
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
                    linksetName:(NSString *)linkset;
 

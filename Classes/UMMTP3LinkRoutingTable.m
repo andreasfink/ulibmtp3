@@ -131,43 +131,10 @@
 }
 
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
-{
-    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
-    if(r)
-    {
-        r.status = UMMTP3_ROUTE_ALLOWED;
-    }
-    else
-    {
-        r = [[UMMTP3Route alloc]initWithPc:pc
-                               linksetName:linksetName
-                                  priority:UMMTP3RoutePriority_undefined
-                                      mask:mask];
-        r.status = UMMTP3_ROUTE_ALLOWED;
-        routesByPointCode[r.routingTableKey] = r;
-    }
-}
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
-{
-    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
-    if(r)
-    {
-        r.status = UMMTP3_ROUTE_RESTRICTED;
-    }
-    else
-    {
 
-        r = [[UMMTP3Route alloc]initWithPc:pc
-                               linksetName:linksetName
-                                  priority:UMMTP3RoutePriority_undefined
-                                      mask:mask];
-        r.status = UMMTP3_ROUTE_RESTRICTED;
-        r.mask = mask;
-    }
-}
-
-- (UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
+- (UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc
+                                 mask:(int)mask
+                          linksetName:(NSString *)linksetName
 {
     UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
     if(r)
@@ -180,31 +147,6 @@
     }
 }
 
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
-                          mask:(int)mask
-                   linksetName:(NSString *)linksetName
-{
-    if(self.logLevel <=UMLOG_DEBUG)
-    {
-        NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
-        [self.logFeed debugText:s];
-    }
-
-    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
-    if(r)
-    {
-        r.status = UMMTP3_ROUTE_PROHIBITED;
-    }
-    else
-    {
-        r = [[UMMTP3Route alloc]initWithPc:pc
-                               linksetName:linksetName
-                                  priority:UMMTP3RoutePriority_undefined
-                                      mask:mask];
-        r.status = UMMTP3_ROUTE_PROHIBITED;
-        routesByPointCode[r.routingTableKey] = r;
-    }
-}
 
 
 - (UMSynchronizedDictionary *)objectValue

@@ -535,7 +535,7 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [_routingTable updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+    [self updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
     [link congestionClearedIndication];
 }
 
@@ -565,7 +565,7 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [_routingTable updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+    [self updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
     [link processorRestoredIndication];
 }
 
@@ -595,7 +595,7 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [_routingTable updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+    [self updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
     [link speedLimitReachedClearedIndication];
 }
 
@@ -625,7 +625,7 @@
     {
         [self logDebug:@"m3uaCongestionCleared"];
     }
-    [_routingTable updateRouteAvailable:as.adjacentPointCode mask:0 linksetName:as.name];
+    [self updateRouteAvailable:as.adjacentPointCode mask:0 linksetName:as.name];
     as.congestionLevel = 0;
 }
 
@@ -1189,91 +1189,106 @@
 }
 
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
+- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name /* returns true if status changed */
 {
-    [_linksetLock lock];
-    NSArray *linksetNames = [_linksets allKeys];
-    for(NSString *linksetName in linksetNames)
+    if([_routingTable updateRouteAvailable:pc mask:mask linksetName:name])
     {
-        if([linksetName isEqualToString:name])
+        [_linksetLock lock];
+        NSArray *linksetNames = [_linksets allKeys];
+        for(NSString *linksetName in linksetNames)
         {
-            continue; /* we dont advertize to the same link  what we learned from it */
+            if([linksetName isEqualToString:name])
+            {
+                continue; /* we dont advertize to the same link  what we learned from it */
+            }
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            [linkset advertizePointcodeAvailable:pc mask:mask];
         }
-        UMMTP3LinkSet *linkset = _linksets[linksetName];
-        [linkset advertizePointcodeAvailable:pc mask:mask];
-    }
-    [_linksetLock unlock];
+        [_linksetLock unlock];
 
-    NSArray *userKeys = [_userPart allKeys];
-    
-    for(NSNumber *userKey in userKeys)
-    {
-        id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
-        [u mtpResume:NULL
-        callingLayer:self
-          affectedPc:pc
-                  si:(int)[userKey integerValue]
-                  ni:_networkIndicator
-             options:@{}];
+        NSArray *userKeys = [_userPart allKeys];
+
+        for(NSNumber *userKey in userKeys)
+        {
+            id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
+            [u mtpResume:NULL
+            callingLayer:self
+              affectedPc:pc
+                      si:(int)[userKey integerValue]
+                      ni:_networkIndicator
+                 options:@{}];
+        }
+        return YES;
     }
+    return NO;
 }
 
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
+- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
-    [_linksetLock lock];
-    NSArray *linksetNames = [_linksets allKeys];
-    for(NSString *linksetName in linksetNames)
+    if([_routingTable updateRouteRestricted:pc mask:mask linksetName:name])
     {
-        if([linksetName isEqualToString:name])
+        [_linksetLock lock];
+        NSArray *linksetNames = [_linksets allKeys];
+        for(NSString *linksetName in linksetNames)
         {
-            continue; /* we dont advertize to the same link  what we learned from it */
+            if([linksetName isEqualToString:name])
+            {
+                continue; /* we dont advertize to the same link  what we learned from it */
+            }
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            [linkset advertizePointcodeRestricted:pc mask:mask];
         }
-        UMMTP3LinkSet *linkset = _linksets[linksetName];
-        [linkset advertizePointcodeRestricted:pc mask:mask];
-    }
-    [_linksetLock unlock];
+        [_linksetLock unlock];
 
-    NSArray *userKeys = [_userPart allKeys];
-    for(NSNumber *userKey in userKeys)
-    {
-        id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
-        [u mtpStatus:NULL
-        callingLayer:self
-          affectedPc:pc
-                  si:(int)[userKey integerValue]
-                  ni:_networkIndicator
-              status:1 /* FIXME: we could use congestion levels here but its national specific */
-             options:@{}];
+        NSArray *userKeys = [_userPart allKeys];
+        for(NSNumber *userKey in userKeys)
+        {
+            id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
+            [u mtpStatus:NULL
+            callingLayer:self
+              affectedPc:pc
+                      si:(int)[userKey integerValue]
+                      ni:_networkIndicator
+                  status:1 /* FIXME: we could use congestion levels here but its national specific */
+                 options:@{}];
+        }
+        return YES;
     }
-
+    return NO;
 }
 
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
-    [_linksetLock lock];
-    NSArray *linksetNames = [_linksets allKeys];
-    for(NSString *linksetName in linksetNames)
+    if([_routingTable updateRouteUnavailable:pc mask:mask linksetName:name])
     {
-        if([linksetName isEqualToString:name])
-        {
-            continue; /* we dont advertize to the same link  what we learned from it */
-        }
-        UMMTP3LinkSet *linkset = _linksets[linksetName];
-        [linkset advertizePointcodeUnavailable:pc mask:mask];
-    }
-    [_linksetLock unlock];
 
-    NSArray *userKeys = [_userPart allKeys];
-    for(NSNumber *userKey in userKeys)
-    {
-        id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
-        [u mtpPause:NULL
-        callingLayer:self
-          affectedPc:pc
-                  si:(int)[userKey integerValue]
-                  ni:_networkIndicator
-             options:@{}];
+        [_linksetLock lock];
+        NSArray *linksetNames = [_linksets allKeys];
+        for(NSString *linksetName in linksetNames)
+        {
+            if([linksetName isEqualToString:name])
+            {
+                continue; /* we dont advertize to the same link  what we learned from it */
+            }
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            [linkset advertizePointcodeUnavailable:pc mask:mask];
+        }
+        [_linksetLock unlock];
+
+        NSArray *userKeys = [_userPart allKeys];
+        for(NSNumber *userKey in userKeys)
+        {
+            id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
+            [u mtpPause:NULL
+           callingLayer:self
+             affectedPc:pc
+                     si:(int)[userKey integerValue]
+                     ni:_networkIndicator
+                options:@{}];
+        }
+        return YES;
     }
+    return NO;
 }
 
 - (NSDictionary *)apiStatus

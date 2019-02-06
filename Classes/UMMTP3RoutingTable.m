@@ -52,25 +52,76 @@
 }
 
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
+- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc  /* returns true if the route has changed */
                         mask:(int)mask
-                 linksetName:(NSString *)linkset
+                 linksetName:(NSString *)linksetName
 {
-
+    UMMTP3RouteStatus oldstatus = UMMTP3_ROUTE_UNUSED;
+    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
+    if(r)
+    {
+        oldstatus = r.status;
+        r.status = UMMTP3_ROUTE_ALLOWED;
+    }
+    else
+    {
+        oldstatus = UMMTP3_ROUTE_UNKNOWN;
+        r = [[UMMTP3Route alloc]initWithPc:pc
+                               linksetName:linksetName
+                                  priority:UMMTP3RoutePriority_undefined
+                                      mask:mask];
+        r.status = UMMTP3_ROUTE_ALLOWED;
+        routesByPointCode[r.routingTableKey] = r;
+    }
+    return(oldstatus != r.status);
 }
 
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc
+- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
-                  linksetName:(NSString *)linkset
+                  linksetName:(NSString *)linksetName
 {
-
+    UMMTP3RouteStatus oldstatus = UMMTP3_ROUTE_UNUSED;
+    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
+    if(r)
+    {
+        oldstatus = r.status;
+        r.status = UMMTP3_ROUTE_RESTRICTED;
+    }
+    else
+    {
+        oldstatus = UMMTP3_ROUTE_UNKNOWN;
+        r = [[UMMTP3Route alloc]initWithPc:pc
+                               linksetName:linksetName
+                                  priority:UMMTP3RoutePriority_undefined
+                                      mask:mask];
+        r.status = UMMTP3_ROUTE_RESTRICTED;
+        routesByPointCode[r.routingTableKey] = r;
+    }
+    return(oldstatus != r.status);
 }
 
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
-                   linksetName:(NSString *)linkset
+                   linksetName:(NSString *)linksetName
 {
-
+    UMMTP3RouteStatus oldstatus = UMMTP3_ROUTE_UNUSED;
+    UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
+    if(r)
+    {
+        oldstatus = r.status;
+        r.status = UMMTP3_ROUTE_PROHIBITED;
+    }
+    else
+    {
+        oldstatus = UMMTP3_ROUTE_UNKNOWN;
+        r = [[UMMTP3Route alloc]initWithPc:pc
+                               linksetName:linksetName
+                                  priority:UMMTP3RoutePriority_undefined
+                                      mask:mask];
+        r.status = UMMTP3_ROUTE_PROHIBITED;
+        routesByPointCode[r.routingTableKey] = r;
+    }
+    return(oldstatus != r.status);
 }
 
 - (UMSynchronizedSortedDictionary *)objectValue
@@ -78,7 +129,9 @@
     return NULL;
 }
 
-- (UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)linksetName
+- (UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc
+                                 mask:(int)mask
+                          linksetName:(NSString *)linksetName
 {
     UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
     if(r)
@@ -90,6 +143,5 @@
         return UMMTP3_ROUTE_UNKNOWN;
     }
 }
-
 
 @end

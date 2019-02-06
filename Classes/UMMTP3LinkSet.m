@@ -3491,7 +3491,6 @@
         NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
         [self logDebug:s];
     }
-
     [_routingTable updateRouteUnavailable:pc mask:mask linksetName:_name];
     [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
 }

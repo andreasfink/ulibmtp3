@@ -18,7 +18,6 @@
 
 @interface UMMTP3LinkRoutingTable : UMMTP3RoutingTable
 {
-    UMSynchronizedSortedDictionary *routesByPointCode;
 }
 
 - (NSString *)jsonString;
