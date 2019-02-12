@@ -17,7 +17,7 @@
 #import "UMMTP3HeadingCode.h"
 
 /* for arc4random */
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(FREEBSD)
 #include <stdlib.h>
 #else
 #include <bsd/stdlib.h>
