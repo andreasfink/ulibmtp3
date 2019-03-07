@@ -305,7 +305,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
                                                      object:NULL
                                                     seconds:1.1
                                                        name:@"housekeeping"
-                                                    repeats:YES];
+                                                    repeats:YES
+                                            runInForeground:YES];
     }
     return self;
 }
@@ -1316,7 +1317,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
                                                  object:NULL
                                                 seconds:_beatTime
                                                    name:@"beat-timer"
-                                                repeats:YES];
+                                                repeats:YES
+                                        runInForeground:YES];
         }
         else
         {
@@ -1779,18 +1781,20 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
 
     _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
-                                          selector:@selector(reopen_timer1_fires:)
+                                           selector:@selector(reopen_timer1_fires:)
                                              object:NULL
                                             seconds:_reopen_timer1_value
                                                name:@"umm3ua_asp_reopen_timer1"
-                                            repeats:NO];
+                                            repeats:NO
+                                    runInForeground:YES];
 
     _reopen_timer2 = [[UMTimer alloc]initWithTarget:self
                                            selector:@selector(reopen_timer2_fires:)
                                              object:NULL
                                             seconds:_reopen_timer2_value
                                                name:@"umm3ua_asp_reopen_timer2"
-                                            repeats:NO];
+                                            repeats:NO
+                                    runInForeground:YES];
 
     if(_linktest_timer_value>0.00)
     {
@@ -1801,7 +1805,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
                                                       object:NULL
                                                      seconds:_linktest_timer_value
                                                         name:@"umm3ua_asp_linktest_timer"
-                                                     repeats:NO];
+                                                     repeats:NO
+                                             runInForeground:YES];
         }
         else
         {
@@ -1815,11 +1820,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
         if(_beatTimer==NULL)
         {
             _beatTimer = [[UMTimer alloc]initWithTarget:self
-                                               selector:@selector(housekeeping)
+                                               selector:@selector(beatTimerEvent)
                                                  object:NULL
                                                 seconds:_beatTime
                                                    name:@"beat-timer"
-                                                repeats:YES];
+                                                repeats:YES
+                                        runInForeground:YES];
         }
         else
         {

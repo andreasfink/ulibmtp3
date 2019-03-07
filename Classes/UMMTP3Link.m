@@ -215,7 +215,9 @@
                                                    selector:@selector(linkTestTimerEvent:)
                                                      object:NULL
                                                     seconds:_linkTestTime
-                                                       name:@"linktestTimer" repeats:YES];
+                                                       name:@"linktestTimer"
+                                                    repeats:YES
+                                            runInForeground:YES];
         }
         [_linkTestTimer start];
     }
