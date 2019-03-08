@@ -1297,6 +1297,11 @@
     return d;
 }
 
+- (UMSynchronizedSortedDictionary *)routeStatus
+{
+    return [_routingTable routeStatus];
+}
+
 - (void)stopDetachAndDestroy
 {
     /* FIXME: do something here */

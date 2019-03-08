@@ -209,5 +209,18 @@
     return d;
 }
 
+- (UMSynchronizedSortedDictionary *)routeStatus
+{
+    UMSynchronizedSortedDictionary *d = [[UMSynchronizedSortedDictionary alloc]init];
+
+    NSArray *keys = [routingTablesByLinkSet allKeys];
+    for(id key in keys)
+    {
+        UMMTP3LinkRoutingTable *table = routingTablesByLinkSet[key];
+        d[key] = [table objectValue];
+    }
+    return d;
+
+}
 
 @end

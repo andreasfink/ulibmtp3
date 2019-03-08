@@ -25,5 +25,6 @@
 }
 
 - (UMMTP3InstanceRoutingTable *)initWithLinkSetSortedDict:(UMSynchronizedSortedDictionary *)arr;
+- (UMSynchronizedSortedDictionary *)routeStatus;
 
 @end
