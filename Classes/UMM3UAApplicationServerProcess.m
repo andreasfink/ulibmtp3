@@ -804,15 +804,13 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [_as aspDown:self];
 }
 
-- (void)processBEAT:(NSData *)data
+- (void)processBEAT:(UMSynchronizedSortedDictionary *)params
 {
     self.lastBeatReceived = [NSDate date];
-
-    /* Heartbeat */
-    [self sendBEAT_ACK:data];
+    [self sendBEAT_ACK:params];
 }
 
-- (void)processBEAT_ACK:(NSData *)data
+- (void)processBEAT_ACK:(UMSynchronizedSortedDictionary *)params
 {
     self.lastBeatAckReceived = [NSDate date];
 }
@@ -1227,24 +1225,26 @@ static const char *get_sctp_status_string(SCTP_Status status)
     [self sendPduCT:M3UA_CLASS_TYPE_DATA pdu:paramsPdu stream:1];
 }
 
--(void)sendBEAT:(NSData *)data
+-(void)sendBEAT:(UMSynchronizedSortedDictionary *)params
 {
     self.lastBeatSent = [NSDate date];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendBEAT"];
     }
-    [self sendPduCT:M3UA_CLASS_TYPE_BEAT pdu:data stream:0];
+    NSData *paramsPdu = [self paramsList:params];
+    [self sendPduCT:M3UA_CLASS_TYPE_BEAT pdu:paramsPdu stream:0];
 }
 
--(void)sendBEAT_ACK:(NSData *)data
+-(void)sendBEAT_ACK:(UMSynchronizedSortedDictionary *)params
 {
     self.lastBeatAckSent = [NSDate date];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendBEAT_ACK"];
     }
-    [self sendPduCT:M3UA_CLASS_TYPE_BEAT_ACK pdu:data stream:0];
+    NSData *paramsPdu = [self paramsList:params];
+    [self sendPduCT:M3UA_CLASS_TYPE_BEAT_ACK pdu:paramsPdu stream:0];
 }
 
 
@@ -1493,16 +1493,6 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
     classtype = (pclass << 8) | ptype;
 
-    if(classtype == M3UA_CLASS_TYPE_BEAT)
-    {
-        [self processBEAT:pdu];
-        return;
-    }
-    else if(classtype == M3UA_CLASS_TYPE_BEAT_ACK)
-    {
-        [self processBEAT_ACK:pdu];
-        return;
-    }
 
     pos=0;
     UMSynchronizedSortedDictionary	*params = [[UMSynchronizedSortedDictionary alloc]init];
@@ -1540,6 +1530,13 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
     switch(classtype)
     {
+        case M3UA_CLASS_TYPE_BEAT:
+            [self processBEAT:params];
+            return;
+        case M3UA_CLASS_TYPE_BEAT_ACK:
+            [self processBEAT_ACK:params];
+            return;
+
         case M3UA_CLASS_TYPE_ERR: /* management */
             [self processERR:params];
             break;
@@ -2114,7 +2111,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
 {
     NSString *str = [[NSDate date]stringValue];
     NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
-    [self sendBEAT:data];
+    UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+    [self setParam:pl identifier:M3UA_PARAM_HEARTBEAT_DATA value:data];
+    [self sendBEAT:pl];
 }
 
 - (void)housekeeping

@@ -99,7 +99,7 @@
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id)appContext;
 - (UMSynchronizedSortedDictionary *)config;
 
-- (void)processBEAT:(NSData *)params;
+- (void)processBEAT:(UMSynchronizedSortedDictionary *)params;
 - (void)processERR:(UMSynchronizedSortedDictionary *)params;
 - (void)processNTFY:(UMSynchronizedSortedDictionary *)params;
 - (void)processDATA:(UMSynchronizedSortedDictionary *)params;
