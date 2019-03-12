@@ -1503,6 +1503,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         uint16_t param_type= ntohs(*(uint16_t *)&bytes[pos]);
         param_len = (bytes[pos+2] << 8) | bytes[pos+3];
+        /* param_len2 is the length of the data including padding */
         if((param_len % 4)==0)
         {
             param_len2 = param_len;
@@ -1520,7 +1521,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             break;
         }
 
-        NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4-pos)];
+        NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4)];
         pos += param_len2;
         if(self.logLevel <= UMLOG_DEBUG)
         {
