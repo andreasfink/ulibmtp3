@@ -1516,16 +1516,24 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [self logDebug:@" Parameter length is negative or zero"];
             return;
         }
-        NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4)];
-        pos += param_len2;
-
-        if(self.logLevel <= UMLOG_DEBUG)
+        if(param_len <= len)
+        {
+            NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4-pos)];
+            pos += param_len2;
+            if(self.logLevel <= UMLOG_DEBUG)
+            {
+                [self logDebug:@"M3UA Packet:"];
+                [self logDebug:[NSString stringWithFormat:@"  Parameter: 0x%04x (%s)",param_type,m3ua_param_name(param_type)]];
+                [self logDebug:[NSString stringWithFormat:@"  Data: %@",[data hexString]]];
+            }
+            params[@(param_type)]=data;
+        }
+        else
         {
             [self logDebug:@"M3UA Packet:"];
             [self logDebug:[NSString stringWithFormat:@"  Parameter: 0x%04x (%s)",param_type,m3ua_param_name(param_type)]];
-            [self logDebug:[NSString stringWithFormat:@"  Data: %@",[data hexString]]];
+            [self logDebug:[NSString stringWithFormat:@"  Data with invalid length: %d",len]];
         }
-        params[@(param_type)]=data;
     }
 
     switch(classtype)
