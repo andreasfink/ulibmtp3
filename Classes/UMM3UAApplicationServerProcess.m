@@ -1533,6 +1533,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [self logDebug:@"M3UA Packet:"];
             [self logDebug:[NSString stringWithFormat:@"  Parameter: 0x%04x (%s)",param_type,m3ua_param_name(param_type)]];
             [self logDebug:[NSString stringWithFormat:@"  Data with invalid length: %d",len]];
+            break;
         }
     }
 
