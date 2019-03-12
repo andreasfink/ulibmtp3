@@ -13,7 +13,7 @@
 #import "UMM3UAStatus.h"
 #import "UMMTP3Label.h"
 
-#define M3UA_DEFAULT_BEAT_TIMER                 5.00
+#define M3UA_DEFAULT_BEAT_TIMER                0
 #define M3UA_DEFAULT_MAX_BEAT_OUTSTANDING      3
 
 @class UMM3UAApplicationServer;

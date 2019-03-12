@@ -1313,7 +1313,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         if(_beatTimer==NULL)
         {
             _beatTimer = [[UMTimer alloc]initWithTarget:self
-                                               selector:@selector(housekeeping)
+                                               selector:@selector(beatTimerEvent)
                                                  object:NULL
                                                 seconds:_beatTime
                                                    name:@"beat-timer"
