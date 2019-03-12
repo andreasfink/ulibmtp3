@@ -1344,6 +1344,7 @@
 
         [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
         _sendTRA = NO;
+        [self updateRouteAvailable:_adjacentPointCode mask:0];
     }
     [self updateLinkSetStatus];
 }
@@ -3372,7 +3373,6 @@
 
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc
 {
-    
     UMMTP3Link *link = [self getLinkBySlc:slc];
     [link m2paStatusUpdate:status];
     [self updateLinkSetStatus];
@@ -3419,6 +3419,8 @@
             case M2PA_STATUS_PROCESSOR_OUTAGE:
                 processorOutage++;
             case M2PA_STATUS_IS:
+                _sendTRA = YES;
+                [self updateRouteAvailable:_adjacentPointCode mask:0];
                 active++;
                 break;
         }
