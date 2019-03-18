@@ -3423,8 +3423,10 @@
             case M2PA_STATUS_PROCESSOR_OUTAGE:
                 processorOutage++;
             case M2PA_STATUS_IS:
-                _sendTRA = YES;
-                [self updateRouteAvailable:_adjacentPointCode mask:0];
+                if([self updateRouteAvailable:_adjacentPointCode mask:0])
+                {
+                    _sendTRA=YES;
+                }
                 active++;
                 break;
         }
@@ -3478,23 +3480,25 @@
               link:link];
 }
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask
+- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     if([_routingTable updateRouteAvailable:pc mask:mask linksetName:_name]==YES) /* route has changed */
     {
-        [_mtp3 updateRouteAvailable:pc mask:mask linksetName:_name];
+        return [_mtp3 updateRouteAvailable:pc mask:mask linksetName:_name];
     }
+    return NO;
 }
 
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask
+- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
     if([_routingTable updateRouteRestricted:pc mask:mask linksetName:_name]==YES) /* route has changed */
     {
-        [_mtp3 updateRouteRestricted:pc mask:mask linksetName:_name];
+        return [_mtp3 updateRouteRestricted:pc mask:mask linksetName:_name];
     }
+    return NO;
 }
 
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -3503,8 +3507,9 @@
     }
     if([_routingTable updateRouteUnavailable:pc mask:mask linksetName:_name]==YES) /* route has changed */
     {
-        [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
+        return [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
     }
+    return NO;
 }
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask

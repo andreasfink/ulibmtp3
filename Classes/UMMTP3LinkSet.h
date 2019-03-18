@@ -365,8 +365,8 @@ options:(NSDictionary *)options;
 - (void)stopDetachAndDestroy;
 - (NSString *)webStatus;
 
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask; /* returns YES if status has changed */
+- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask; /* returns YES if status has changed */
+- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask; /* returns YES if status has changed */
 
 @end
