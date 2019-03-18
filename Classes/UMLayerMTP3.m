@@ -1189,33 +1189,38 @@
 }
 
 
-- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name /* returns true if status changed */
+- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
+                        mask:(int)mask
+                 linksetName:(NSString *)name /* returns true if status changed */
 {
     BOOL r = [_routingTable updateRouteAvailable:pc mask:mask linksetName:name];
-    [_linksetLock lock];
-    NSArray *linksetNames = [_linksets allKeys];
-    for(NSString *linksetName in linksetNames)
+    if(r==YES) /* route status has changed */
     {
-        if([linksetName isEqualToString:name])
+        [_linksetLock lock];
+        NSArray *linksetNames = [_linksets allKeys];
+        for(NSString *linksetName in linksetNames)
         {
-            continue; /* we dont advertize to the same link  what we learned from it */
+            if([linksetName isEqualToString:name])
+            {
+                continue; /* we dont advertize to the same link  what we learned from it */
+            }
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            [linkset advertizePointcodeAvailable:pc mask:mask];
         }
-        UMMTP3LinkSet *linkset = _linksets[linksetName];
-        [linkset advertizePointcodeAvailable:pc mask:mask];
-    }
-    [_linksetLock unlock];
+        [_linksetLock unlock];
 
-    NSArray *userKeys = [_userPart allKeys];
+        NSArray *userKeys = [_userPart allKeys];
 
-    for(NSNumber *userKey in userKeys)
-    {
-        id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
-        [u mtpResume:NULL
-        callingLayer:self
-          affectedPc:pc
-                  si:(int)[userKey integerValue]
-                  ni:_networkIndicator
-             options:@{}];
+        for(NSNumber *userKey in userKeys)
+        {
+            id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
+            [u mtpResume:NULL
+            callingLayer:self
+              affectedPc:pc
+                      si:(int)[userKey integerValue]
+                      ni:_networkIndicator
+                 options:@{}];
+        }
     }
     return r;
 }
@@ -1223,30 +1228,33 @@
 - (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
     BOOL r = [_routingTable updateRouteRestricted:pc mask:mask linksetName:name];
-    [_linksetLock lock];
-    NSArray *linksetNames = [_linksets allKeys];
-    for(NSString *linksetName in linksetNames)
+    if(r==YES) /* route status has changed */
     {
-        if([linksetName isEqualToString:name])
+        [_linksetLock lock];
+        NSArray *linksetNames = [_linksets allKeys];
+        for(NSString *linksetName in linksetNames)
         {
-            continue; /* we dont advertize to the same link  what we learned from it */
+            if([linksetName isEqualToString:name])
+            {
+                continue; /* we dont advertize to the same link  what we learned from it */
+            }
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            [linkset advertizePointcodeRestricted:pc mask:mask];
         }
-        UMMTP3LinkSet *linkset = _linksets[linksetName];
-        [linkset advertizePointcodeRestricted:pc mask:mask];
-    }
-    [_linksetLock unlock];
+        [_linksetLock unlock];
 
-    NSArray *userKeys = [_userPart allKeys];
-    for(NSNumber *userKey in userKeys)
-    {
-        id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
-        [u mtpStatus:NULL
-        callingLayer:self
-          affectedPc:pc
-                  si:(int)[userKey integerValue]
-                  ni:_networkIndicator
-              status:1 /* FIXME: we could use congestion levels here but its national specific */
-             options:@{}];
+        NSArray *userKeys = [_userPart allKeys];
+        for(NSNumber *userKey in userKeys)
+        {
+            id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
+            [u mtpStatus:NULL
+            callingLayer:self
+              affectedPc:pc
+                      si:(int)[userKey integerValue]
+                      ni:_networkIndicator
+                  status:1 /* FIXME: we could use congestion levels here but its national specific */
+                 options:@{}];
+        }
     }
     return r;
 }
@@ -1254,29 +1262,32 @@
 - (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
 {
     BOOL r =[_routingTable updateRouteUnavailable:pc mask:mask linksetName:name];
-    [_linksetLock lock];
-    NSArray *linksetNames = [_linksets allKeys];
-    for(NSString *linksetName in linksetNames)
+    if(r==YES) /* route status has changed */
     {
-        if([linksetName isEqualToString:name])
+        [_linksetLock lock];
+        NSArray *linksetNames = [_linksets allKeys];
+        for(NSString *linksetName in linksetNames)
         {
-            continue; /* we dont advertize to the same link  what we learned from it */
+            if([linksetName isEqualToString:name])
+            {
+                continue; /* we dont advertize to the same link  what we learned from it */
+            }
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            [linkset advertizePointcodeUnavailable:pc mask:mask];
         }
-        UMMTP3LinkSet *linkset = _linksets[linksetName];
-        [linkset advertizePointcodeUnavailable:pc mask:mask];
-    }
-    [_linksetLock unlock];
+        [_linksetLock unlock];
 
-    NSArray *userKeys = [_userPart allKeys];
-    for(NSNumber *userKey in userKeys)
-    {
-        id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
-        [u mtpPause:NULL
-       callingLayer:self
-         affectedPc:pc
-                 si:(int)[userKey integerValue]
-                 ni:_networkIndicator
-            options:@{}];
+        NSArray *userKeys = [_userPart allKeys];
+        for(NSNumber *userKey in userKeys)
+        {
+            id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
+            [u mtpPause:NULL
+           callingLayer:self
+             affectedPc:pc
+                     si:(int)[userKey integerValue]
+                     ni:_networkIndicator
+                options:@{}];
+        }
     }
     return r;
 }

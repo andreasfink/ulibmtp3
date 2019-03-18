@@ -2819,7 +2819,11 @@
           options:NULL];
 }
 
-- (void)sendTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+- (void)sendTFA:(UMMTP3Label *)label
+    destination:(UMMTP3PointCode *)pc
+             ni:(int)ni mp:(int)mp
+            slc:(int)slc
+           link:(UMMTP3Link *)link
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -3476,14 +3480,18 @@
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    [_routingTable updateRouteAvailable:pc mask:mask linksetName:_name];
-    [_mtp3 updateRouteAvailable:pc mask:mask linksetName:_name];
+    if([_routingTable updateRouteAvailable:pc mask:mask linksetName:_name]==YES) /* route has changed */
+    {
+        [_mtp3 updateRouteAvailable:pc mask:mask linksetName:_name];
+    }
 }
 
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    [_routingTable updateRouteRestricted:pc mask:mask linksetName:_name];
-    [_mtp3 updateRouteRestricted:pc mask:mask linksetName:_name];
+    if([_routingTable updateRouteRestricted:pc mask:mask linksetName:_name]==YES) /* route has changed */
+    {
+        [_mtp3 updateRouteRestricted:pc mask:mask linksetName:_name];
+    }
 }
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
@@ -3493,8 +3501,10 @@
         NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
         [self logDebug:s];
     }
-    [_routingTable updateRouteUnavailable:pc mask:mask linksetName:_name];
-    [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
+    if([_routingTable updateRouteUnavailable:pc mask:mask linksetName:_name]==YES) /* route has changed */
+    {
+        [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
+    }
 }
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
