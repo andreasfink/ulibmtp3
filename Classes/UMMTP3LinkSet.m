@@ -93,7 +93,7 @@
 
 - (void)removeAllLinks
 {
-    [self.logFeed infoText:[NSString stringWithFormat:@"removing All Links from linkSet:'%@'",self.name]];
+   // [self.logFeed infoText:[NSString stringWithFormat:@"removing All Links from linkSet:'%@'",self.name]];
 
     [_linksLock lock];
 
