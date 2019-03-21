@@ -803,6 +803,10 @@
     {
         [self.logFeed majorErrorText:@"no route to destination (route==null)"];
         return UMMTP3_error_no_route_to_destination;
+
+
+
+        
     }
     NSString *linksetName = route.linksetName;
     [_linksetLock lock];
