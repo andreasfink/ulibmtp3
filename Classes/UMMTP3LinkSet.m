@@ -3415,12 +3415,15 @@
             case M2PA_STATUS_OOS:
             case M2PA_STATUS_INITIAL_ALIGNMENT:
             case M2PA_STATUS_ALIGNED_NOT_READY:
+                [self updateRouteUnavailable:_adjacentPointCode mask:0];
                 inactive++;
                 break;
             case M2PA_STATUS_ALIGNED_READY:
+                [self updateRouteUnavailable:_adjacentPointCode mask:0];
                 ready++;
                 break;
             case M2PA_STATUS_PROCESSOR_OUTAGE:
+                [self updateRouteUnavailable:_adjacentPointCode mask:0];
                 processorOutage++;
             case M2PA_STATUS_IS:
                 if([self updateRouteAvailable:_adjacentPointCode mask:0])

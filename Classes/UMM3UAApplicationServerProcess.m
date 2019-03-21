@@ -2024,6 +2024,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (void)sctpReportsDown
 {
     [self logInfo:@"sctpReportsDown"];
+
+    [ _as updateRouteUnavailable:_as.pc mask:0 forAsp:self];
+
     if(self.status != M3UA_STATUS_OFF)
     {
         self.status = M3UA_STATUS_OFF;
