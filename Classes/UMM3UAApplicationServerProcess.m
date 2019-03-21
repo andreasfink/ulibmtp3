@@ -2023,8 +2023,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)sctpReportsDown
 {
-    [self logInfo:@"sctpReportsDown"];
+    UMM3UA_Status oldStatus = self.status;
 
+    [self logInfo:@"sctpReportsDown"];
     [ _as updateRouteUnavailable:_as.pc mask:0 forAsp:self];
 
     if(self.status != M3UA_STATUS_OFF)
@@ -2032,7 +2033,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
         self.status = M3UA_STATUS_OFF;
         if([_reopen_timer1 isRunning]==NO)
         {
-            [_sctpLink closeFor:self];
+            if((oldStatus == M3UA_STATUS_IS) || (oldStatus == M3UA_STATUS_INACTIVE))
+            {
+                [_sctpLink closeFor:self];
+            }
             [_reopen_timer1 stop];
             [_reopen_timer2 stop];
             [_reopen_timer1 start];
