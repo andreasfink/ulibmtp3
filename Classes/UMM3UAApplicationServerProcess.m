@@ -1375,6 +1375,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
             UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
             pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
+            sleep(1);
             [self sendASPUP:pl];
         }
         self.status = M3UA_STATUS_BUSY;
