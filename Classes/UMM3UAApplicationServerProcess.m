@@ -288,7 +288,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (UMM3UAApplicationServerProcess *)init
 {
-    self = [super init];
+    return [self initWithTaskQueueMulti:NULL];
+}
+
+- (UMLayer *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq
+{
+    self = [super initWithTaskQueueMulti:tq];
     if(self)
     {
         _incomingStream0 = [[NSMutableData alloc]init];
@@ -300,6 +305,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
         _sctp_status = SCTP_STATUS_OFF;
         _status = M3UA_STATUS_OFF;
+        _incomingStreamLock = [[UMMutex alloc]init];
         _houseKeepingTimer = [[UMTimer alloc]initWithTarget:self
                                                    selector:@selector(housekeeping)
                                                      object:NULL
@@ -1435,8 +1441,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)lookForIncomingPdu:(int)streamId
 {
-    const unsigned char *data;
-    uint32_t	len;
+    const unsigned char *data = NULL;
+    uint32_t	len = 0;
     uint8_t		pversion;
     uint8_t		pclass;
     uint8_t		ptype;
@@ -1615,6 +1621,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                  protocolId:(uint32_t)pid
                        data:(NSData *)data
 {
+    [_incomingStreamLock lock];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sctpDataIndication"];
@@ -1638,6 +1645,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [_incomingStream1 appendData:data];
     }
     [self lookForIncomingPdu:streamID];
+    [_incomingStreamLock unlock];
+
 }
 
 - (void) sctpMonitorIndication:(UMLayer *)caller

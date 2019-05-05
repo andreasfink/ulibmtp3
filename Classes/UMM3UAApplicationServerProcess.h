@@ -36,6 +36,7 @@
     BOOL                        _standby_mode;
     NSMutableData       *_incomingStream0;
     NSMutableData       *_incomingStream1;
+    UMMutex             *_incomingStreamLock;
 
     UMTimer             *_linktest_timer;
     UMTimer             *_reopen_timer1;
