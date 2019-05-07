@@ -1464,9 +1464,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
         data = incomingStream.bytes;
 
         pversion = data[0];
-        pclass	= data[2];
-        ptype	= data[3];
-        packlen = ntohl(*(uint32_t *)&data[4]);
+        pclass	=  data[2];
+        ptype	=  data[3];
+        packlen =  ntohl(*(uint32_t *)&data[4]);
         if(packlen <= len)
         {
             if(self.logLevel <= UMLOG_DEBUG)
@@ -1485,6 +1485,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                                          length:0];
             len = len - packlen;
         }
+		len = (uint32_t)incomingStream.length;
     }
 }
 
