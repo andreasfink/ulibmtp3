@@ -305,7 +305,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
         _sctp_status = SCTP_STATUS_OFF;
         _status = M3UA_STATUS_OFF;
-        _incomingStreamLock = [[UMMutex alloc]init];
+        _incomingStreamLock =  [[UMMutex alloc]initWithName:@"m3ua-incomingStreamLock"];
         _houseKeepingTimer = [[UMTimer alloc]initWithTarget:self
                                                    selector:@selector(housekeeping)
                                                      object:NULL
