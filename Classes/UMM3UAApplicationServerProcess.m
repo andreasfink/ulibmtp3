@@ -1791,7 +1791,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         _linktest_timer_value = [cfg[@"linktest-timer"] doubleValue];
     }
-
+	else
+	{
+		_linktest_timer_value = 30.0;
+	}
     _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
                                            selector:@selector(reopen_timer1_fires:)
                                              object:NULL
@@ -1808,7 +1811,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                                             repeats:NO
                                     runInForeground:YES];
 
-    if(_linktest_timer_value>0.00)
+    if(_linktest_timer_value>10.00)
     {
         if(_linktest_timer==NULL)
         {
