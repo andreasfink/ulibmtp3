@@ -108,4 +108,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
                               forAsp:(UMM3UAApplicationServerProcess *)asp;
 - (NSString *)statusString;
 
+- (void)activate;
+- (void)deactivate;
+
 @end
