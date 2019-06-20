@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A604D11219B999AA0090FC94 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A604D11119B999AA0090FC94 /* XCTest.framework */; };
 		A604D11619B999AA0090FC94 /* ulibmtp3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A604D0F919B999AA0090FC94 /* ulibmtp3.framework */; };
 		A604D11C19B999AA0090FC94 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A604D11A19B999AA0090FC94 /* InfoPlist.strings */; };
 		A604D11E19B999AA0090FC94 /* ulibmtp3Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = A604D11D19B999AA0090FC94 /* ulibmtp3Tests.m */; };
@@ -18,15 +17,14 @@
 		A60A36F41A3063560090FC94 /* UMMTP3RoutingTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36F11A3063560090FC94 /* UMMTP3RoutingTable.m */; };
 		A60A36F91A3063E60090FC94 /* UMMTP3PointCode.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36F61A3063E60090FC94 /* UMMTP3PointCode.m */; };
 		A60A36FE1A306B710090FC94 /* UMMTP3RouteMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36FB1A306B710090FC94 /* UMMTP3RouteMetrics.m */; };
-		A615D90B1B4D5F2900854472 /* sctp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A615D90A1B4D5F2900854472 /* sctp.framework */; };
 		A6AD89F321CD73F300F40945 /* UMMTP3TranslationTableMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A6AD89F121CD73F300F40945 /* UMMTP3TranslationTableMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6AD89F421CD73F300F40945 /* UMMTP3TranslationTableMap.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AD89F221CD73F300F40945 /* UMMTP3TranslationTableMap.m */; };
 		A6C78D831A29436E006C66A2 /* ulibm2pa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D821A29436E006C66A2 /* ulibm2pa.framework */; };
 		A6C78D841A29436E006C66A2 /* ulibm2pa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D821A29436E006C66A2 /* ulibm2pa.framework */; };
-		A6C78D871A29437B006C66A2 /* ulibsctp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D851A29437B006C66A2 /* ulibsctp.framework */; };
 		A6C78D881A29437B006C66A2 /* ulibsctp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D851A29437B006C66A2 /* ulibsctp.framework */; };
 		A6C78D8C1A294393006C66A2 /* ulib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D8B1A294392006C66A2 /* ulib.framework */; };
 		A6C78D8D1A294393006C66A2 /* ulib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D8B1A294392006C66A2 /* ulib.framework */; };
+		A6E3D78E22BABDAE00D5B1B6 /* ulibsctp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D851A29437B006C66A2 /* ulibsctp.framework */; };
 		A6F178C521AF03B00084D972 /* ulibmtp3_version.h in Headers */ = {isa = PBXBuildFile; fileRef = A68B88B61E36A89D00CE0B05 /* ulibmtp3_version.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6F178C621AF03B00084D972 /* ulibmtp3.h in Headers */ = {isa = PBXBuildFile; fileRef = A604D10919B999AA0090FC94 /* ulibmtp3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6F178C721AF03B00084D972 /* UMLayerMTP3.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A36DC1A305C240090FC94 /* UMLayerMTP3.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -149,15 +147,11 @@
 		A60342931EA9B22600706C21 /* UMMTP3PointcodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3PointcodeFilter.h; sourceTree = "<group>"; };
 		A60342941EA9B22600706C21 /* UMMTP3PointcodeFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3PointcodeFilter.m; sourceTree = "<group>"; };
 		A604D0F919B999AA0090FC94 /* ulibmtp3.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ulibmtp3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A604D0FF19B999AA0090FC94 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		A604D10019B999AA0090FC94 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		A604D10119B999AA0090FC94 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		A604D10419B999AA0090FC94 /* ulibmtp3-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ulibmtp3-Info.plist"; sourceTree = "<group>"; };
 		A604D10619B999AA0090FC94 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A604D10819B999AA0090FC94 /* ulibmtp3-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ulibmtp3-Prefix.pch"; sourceTree = "<group>"; };
 		A604D10919B999AA0090FC94 /* ulibmtp3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ulibmtp3.h; sourceTree = "<group>"; };
 		A604D11019B999AA0090FC94 /* ulibmtp3Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ulibmtp3Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A604D11119B999AA0090FC94 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		A604D11919B999AA0090FC94 /* ulibmtp3Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ulibmtp3Tests-Info.plist"; sourceTree = "<group>"; };
 		A604D11B19B999AA0090FC94 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A604D11D19B999AA0090FC94 /* ulibmtp3Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ulibmtp3Tests.m; sourceTree = "<group>"; };
@@ -229,9 +223,9 @@
 		A6BE2D291E3A577B005B2B91 /* UMMTP3InstanceRoutingTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3InstanceRoutingTable.h; sourceTree = "<group>"; };
 		A6BE2D2A1E3A577B005B2B91 /* UMMTP3InstanceRoutingTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3InstanceRoutingTable.m; sourceTree = "<group>"; };
 		A6BE2D2D1E3A5E98005B2B91 /* UMMTP3RoutePriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3RoutePriority.h; sourceTree = "<group>"; };
-		A6C78D821A29436E006C66A2 /* ulibm2pa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulibm2pa.framework; path = /Library/Frameworks/ulibm2pa.framework; sourceTree = "<absolute>"; };
-		A6C78D851A29437B006C66A2 /* ulibsctp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulibsctp.framework; path = /Library/Frameworks/ulibsctp.framework; sourceTree = "<absolute>"; };
-		A6C78D8B1A294392006C66A2 /* ulib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulib.framework; path = /Library/Frameworks/ulib.framework; sourceTree = "<absolute>"; };
+		A6C78D821A29436E006C66A2 /* ulibm2pa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulibm2pa.framework; path = "/Library/Application Support/FinkTelecomServices/frameworks/ulibm2pa.framework"; sourceTree = "<absolute>"; };
+		A6C78D851A29437B006C66A2 /* ulibsctp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulibsctp.framework; path = "/Library/Application Support/FinkTelecomServices/frameworks/ulibsctp.framework"; sourceTree = "<absolute>"; };
+		A6C78D8B1A294392006C66A2 /* ulib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulib.framework; path = "/Library/Application Support/FinkTelecomServices/frameworks/ulib.framework"; sourceTree = "<absolute>"; };
 		A6D75F051FCF258A005C198E /* UMMTP3SyslogClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3SyslogClient.h; sourceTree = "<group>"; };
 		A6D75F061FCF258A005C198E /* UMMTP3SyslogClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3SyslogClient.m; sourceTree = "<group>"; };
 		A6E7BF2F1FBECDF600C53765 /* Q.708B-2011-ISPC.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Q.708B-2011-ISPC.pdf"; sourceTree = "<group>"; };
@@ -254,8 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A615D90B1B4D5F2900854472 /* sctp.framework in Frameworks */,
-				A6C78D871A29437B006C66A2 /* ulibsctp.framework in Frameworks */,
+				A6E3D78E22BABDAE00D5B1B6 /* ulibsctp.framework in Frameworks */,
 				A6C78D831A29436E006C66A2 /* ulibm2pa.framework in Frameworks */,
 				A6C78D8C1A294393006C66A2 /* ulib.framework in Frameworks */,
 			);
@@ -269,7 +262,6 @@
 				A6C78D881A29437B006C66A2 /* ulibsctp.framework in Frameworks */,
 				A6C78D841A29436E006C66A2 /* ulibm2pa.framework in Frameworks */,
 				A6C78D8D1A294393006C66A2 /* ulib.framework in Frameworks */,
-				A604D11219B999AA0090FC94 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,20 +302,8 @@
 				A615D90A1B4D5F2900854472 /* sctp.framework */,
 				A6C78D851A29437B006C66A2 /* ulibsctp.framework */,
 				A6C78D821A29436E006C66A2 /* ulibm2pa.framework */,
-				A604D11119B999AA0090FC94 /* XCTest.framework */,
-				A604D0FE19B999AA0090FC94 /* Other Frameworks */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		A604D0FE19B999AA0090FC94 /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				A604D0FF19B999AA0090FC94 /* Foundation.framework */,
-				A604D10019B999AA0090FC94 /* CoreData.framework */,
-				A604D10119B999AA0090FC94 /* AppKit.framework */,
-			);
-			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
 		A604D10219B999AA0090FC94 /* Classes */ = {
@@ -747,6 +727,7 @@
 				DSTROOT = /;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"/Library/Application Support/FinkTelecomServices/frameworks\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -763,7 +744,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "/Library/Application Support/FinkTelecomServices/frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -806,6 +787,7 @@
 				DSTROOT = /;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"/Library/Application Support/FinkTelecomServices/frameworks\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -815,7 +797,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "/Library/Application Support/FinkTelecomServices/frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -832,6 +814,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(LOCAL_LIBRARY_DIR)/Application\\ Support/FinkTelecomServices/frameworks",
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -854,6 +837,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(LOCAL_LIBRARY_DIR)/Application\\ Support/FinkTelecomServices/frameworks",
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
