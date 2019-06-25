@@ -1728,7 +1728,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
     _speed = M3UA_DEFAULT_SPEED;
 
-    self.logLevel = UMLOG_MAJOR;
+    self.logLevel = UMLOG_DEBUG;
     [super setConfig:cfg applicationContext:appContext];
 
     if(cfg[@"beat-time"])
