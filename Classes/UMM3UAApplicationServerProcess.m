@@ -1395,7 +1395,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         _speed_within_limit = YES;
 
         sltm_serial = 0;
-        [self logDebug:[NSString stringWithFormat:@" starting reopen timer 2 (%d s)",_reopen_timer2.seconds]];
+        [self logDebug:[NSString stringWithFormat:@" starting reopen timer 2 (%lf s)",_reopen_timer2.seconds]];
         [_reopen_timer2 start];
         if((_linktest_timer_value > 0) && (_linktest_timer))
         {
