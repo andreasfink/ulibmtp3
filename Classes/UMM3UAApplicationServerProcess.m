@@ -830,7 +830,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:@"processASPUP_ACK"];
     }
     self.status = M3UA_STATUS_INACTIVE;
-    _aspup_received = YES;
+    _aspup_received++;
     if(_standby_mode)
     {
         [self sendASPIA:NULL];
@@ -1305,6 +1305,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)start
 {
+    _aspup_received = 0;
+    self.status = M3UA_STATUS_OFF;
+    
     [_sctpLink openFor:self];
     /* as we are in point to multipoint mode, we can just send (we dont call connectx anymore) so if we initiate the connection we need to send data to establish it */
     
@@ -1339,6 +1342,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (void)stop
 {
     [_sctpLink closeFor:self];
+    _aspup_received = 0;
+    self.status = M3UA_STATUS_OFF;
 }
 
 
@@ -1996,7 +2001,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [self logDebug:@"linktest_timer_fires"];
         }
 
-        if(_aspup_received==1)
+        if(_aspup_received>0)
         {
             /* Lets send ASPAC or ASPIA */
             if(_standby_mode==1)
@@ -2031,8 +2036,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
      **
      ** called upon SCTP reporting a association to be up
      */
-
+    
     [self logInfo:@"sctpReportsUp"];
+    self.status = M3UA_STATUS_BUSY;
     [self powerOn];
 }
 
