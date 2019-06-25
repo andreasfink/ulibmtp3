@@ -1350,7 +1350,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         if(self.logLevel <= UMLOG_DEBUG)
         {
-            [self logDebug:@"powerOn"];
+            [self logInfo:@"powerOn"];
         }
         if(self.active)
         {
@@ -1390,7 +1390,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         _speed_within_limit = YES;
 
         sltm_serial = 0;
-        [self logDebug:@" starting reopen timer 2"];
+        [self logDebug:@" starting reopen timer 2 (%d s)",_reopen_timer2.seconds];
         [_reopen_timer2 start];
         if((_linktest_timer_value > 0) && (_linktest_timer))
         {
@@ -1724,6 +1724,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     _speed = M3UA_DEFAULT_SPEED;
 
     self.logLevel = UMLOG_MAJOR;
+    [super setConfig:cfg applicationContext:appContext];
 
     if(cfg[@"beat-time"])
     {
