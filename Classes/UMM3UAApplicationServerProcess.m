@@ -1999,21 +1999,43 @@ static const char *get_sctp_status_string(SCTP_Status status)
         {
             [self logDebug:@"linktest_timer_fires"];
         }
-
-        if(_aspup_received>0)
+        switch(self.status)
         {
-            /* Lets send ASPAC or ASPIA */
-            if(_standby_mode==1)
-            {
+            case M3UA_STATUS_UNUSED:    /* undefined state */
+                [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_UNUSED. Ignoring"];
+                break;
+            case M3UA_STATUS_OFF:       /* sctp is down */
+                [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OFF. Ignoring"];
+                break;
+            case M3UA_STATUS_OOS:       /* sctp is down, but connection is requested */
+                [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OOS. Ignoring"];
+                break;
+            case M3UA_STATUS_BUSY:      /* sctp is up but ASPUP is not received */
+                [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_BUSY. Ignoring"];
+                break;
+            case M3UA_STATUS_INACTIVE: /* sctp is up, ASPUP received but not in active state */
+                [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_INACTIVE"];
                 [self sendASPIA:NULL];
-            }
-            else
-            {
-                UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-                pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
-                [self sendASPAC:pl];
-            }
+                break;
+            case M3UA_STATUS_IS:
+                [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_IS"];
+                if(_aspup_received>0)
+                {
+                    /* Lets send ASPAC or ASPIA */
+                    if(_standby_mode==1)
+                    {
+                        [self sendASPIA:NULL];
+                    }
+                    else
+                    {
+                        UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+                        pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
+                        [self sendASPAC:pl];
+                    }
+                }
+                break;
         }
+
         if(_linktest_timer_value > 0)
         {
             if(self.logLevel <= UMLOG_DEBUG)
