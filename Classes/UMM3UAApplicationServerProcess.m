@@ -1080,7 +1080,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
     return d;
 }
 
-- (void)sendPduClass:(uint8_t) pclass type:(uint8_t)ptype pdu:(NSData *)pdu stream:(int)streamId
+- (void)sendPduClass:(uint8_t) pclass
+                type:(uint8_t)ptype
+                 pdu:(NSData *)pdu
+              stream:(int)streamId
 {
     NSUInteger packlen = pdu.length + 8;
     NSMutableData *data = [[NSMutableData alloc]init];
@@ -1101,6 +1104,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
         [self logDebug:[[NSString alloc]initWithFormat:@" type: %d",(int)ptype]];
         [self logDebug:[[NSString alloc]initWithFormat:@" pdu: %@",[pdu hexString]]];
         [self logDebug:[[NSString alloc]initWithFormat:@" stream: %d",streamId ]];
+    }
+    if(_sctpLink==NULL)
+    {
+        [self logMajorError:@"trying to send packet on _sctpLink==NULL"];
     }
     [_sctpLink dataFor:self
                   data:data
@@ -1412,6 +1419,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)powerOff
 {
+    _aspup_received = 0;
     [_aspLock lock];
     @try
     {
