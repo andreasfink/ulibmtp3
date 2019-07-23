@@ -2068,6 +2068,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     
     [self logInfo:@"sctpReportsUp"];
     self.status = M3UA_STATUS_BUSY;
+    _aspup_received = 0;
     [self powerOn];
 }
 
