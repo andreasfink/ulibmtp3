@@ -425,12 +425,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processERR:(UMSynchronizedSortedDictionary *)params
 {
-
+    NSLog(@"M3UA-ERR: %@",params);
 }
 
 - (void)processNTFY:(UMSynchronizedSortedDictionary *)params
 {
-
+    NSLog(@"M3UA-NTFY: %@",params);
 }
 
 #pragma mark -
@@ -449,7 +449,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
     UMMTP3PointCode *dpc;
     int sls = -200;
     int 	ni;
-    const uint8_t *data3;
+    const uint8_t *data3 = NULL;;
 
     if(self.logLevel <= UMLOG_DEBUG)
     {
@@ -1455,11 +1455,11 @@ static const char *get_sctp_status_string(SCTP_Status status)
 - (void)lookForIncomingPdu:(int)streamId
 {
     const unsigned char *data = NULL;
-    uint32_t	len = 0;
-    uint8_t		pversion;
-    uint8_t		pclass;
-    uint8_t		ptype;
-    uint32_t	packlen;
+    uint32_t    len = 0;
+    uint8_t     pversion;
+    uint8_t     pclass;
+    uint8_t     ptype;
+    uint32_t    packlen;
 
     NSMutableData *incomingStream;
     if(streamId == 0)
@@ -1477,9 +1477,15 @@ static const char *get_sctp_status_string(SCTP_Status status)
         data = incomingStream.bytes;
 
         pversion = data[0];
-        pclass	=  data[2];
-        ptype	=  data[3];
+        pclass    =  data[2];
+        ptype    =  data[3];
         packlen =  ntohl(*(uint32_t *)&data[4]);
+        if(len<packlen)
+        {
+            NSLog(@"M3UA-ASP: M3UA packet header requires more data than present");
+            break;
+        }
+
         if(packlen <= len)
         {
             if(self.logLevel <= UMLOG_DEBUG)
@@ -1496,13 +1502,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [incomingStream replaceBytesInRange:NSMakeRange(0,packlen)
                                       withBytes:NULL
                                          length:0];
-            //len = len - packlen;
+            len = len - packlen;
         }
-        else
-        {
-            break;
-        }
-		len = (uint32_t)incomingStream.length;
+        len = (uint32_t)incomingStream.length;
     }
 }
 
@@ -1653,6 +1655,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             _incomingStream0 = [[NSMutableData alloc]init];
         }
         [_incomingStream0 appendData:data];
+        [self lookForIncomingPdu:streamID];
     }
     else
     {
@@ -1661,8 +1664,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
             _incomingStream1 = [[NSMutableData alloc]init];
         }
         [_incomingStream1 appendData:data];
+        [self lookForIncomingPdu:streamID];
     }
-    [self lookForIncomingPdu:streamID];
     [_incomingStreamLock unlock];
 
 }
