@@ -50,7 +50,7 @@
             default:
             {
                 unsigned int label;
-                label  = (data[(*p)+3] << 24) + (data[(*p)+2] << 16) + (data [(*p)+1] << 8) + data[(*p)];
+                label  = ((unsigned int)data[(*p)+3] << 24) + ((unsigned int)data[(*p)+2] << 16) + ((unsigned int)data [(*p)+1] << 8) + data[(*p)];
                 (*p) +=4;
                 xdpc = label & 0x3FFF;
                 xopc = (label >> 14) & 0x3FFF;
