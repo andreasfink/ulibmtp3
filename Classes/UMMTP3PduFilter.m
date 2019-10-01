@@ -33,13 +33,13 @@
 }
 
 @end
-
+/*
 UMPlugin *plugin_create(void)
 {
     return [[UMMTP3PduFilter alloc]init];
 }
 
-int plugin_init(void)
+int plugin_init(NSDictionary *dict)
 {
     return 0;
 }
@@ -54,3 +54,4 @@ NSString *  plugin_name(void)
     return @"dummy";
 }
 
+*/

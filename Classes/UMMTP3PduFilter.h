@@ -32,14 +32,9 @@
 /*
 ** an actual implementation of this plugin would have to implement these too:
 
-int         plugin_init(void);
+int         plugin_init(NSDictionary *dict);
 int         plugin_exit(void);
 UMPlugin *  plugin_create(void);
 NSString *  plugin_name(void);
+
 */
-
-UMPlugin *plugin_create(void);
-int plugin_init(void);
-int plugin_exit(void);
-NSString *  plugin_name(void);
-
