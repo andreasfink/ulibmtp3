@@ -131,7 +131,7 @@
 {
     if(_linksByName.count==0)
     {
-        [self.logFeed debugText:@"no links in the linkset"];
+        [self.logFeed debugText:@"This link has zero links in the linkset attached"];
         return NULL;
     }
 
