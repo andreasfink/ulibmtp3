@@ -521,7 +521,10 @@ static const char *m3ua_param_name(uint16_t param_type)
         NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
         [self logDebug:s];
     }
-
+    if(pc==NULL)
+    {
+        return;
+    }
     [_routingTable updateRouteUnavailable:pc mask:mask linksetName:_name];
     [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
 
@@ -533,7 +536,10 @@ static const char *m3ua_param_name(uint16_t param_type)
         NSString *s = [NSString stringWithFormat:@"updateRouteRestricted:%@/%d",pc.stringValue,(pc.maxmask-mask)];
         [self logDebug:s];
     }
-
+    if(pc==NULL)
+    {
+        return;
+    }
     [_routingTable updateRouteRestricted:pc mask:mask linksetName:_name];
     [_mtp3 updateRouteRestricted:pc mask:mask linksetName:_name];
 

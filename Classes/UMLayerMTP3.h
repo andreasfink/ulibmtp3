@@ -271,4 +271,5 @@ typedef enum UMMTP3_Error
 
 - (UMMTP3PointCode *)adjacentPointCodeOfLinkSet:(NSString *)asname;
 
+
 @end

@@ -131,7 +131,7 @@
 {
     if(_linksByName.count==0)
     {
-        [self.logFeed debugText:@"This link has zero links in the linkset attached"];
+        [self.logFeed debugText:@"linkset has zero links attached"];
         return NULL;
     }
 
@@ -157,17 +157,17 @@
     }
     else
     {
-        [self.logFeed debugText:@"no active links in the linkset"];
+        [self.logFeed debugText:@"linkset has zero links in the IS state"];
         [self.logFeed debugText:[NSString stringWithFormat:@"_linksByName: %@",_linksByName.description]];
         [self.logFeed debugText:[NSString stringWithFormat:@"_linksBySlc: %@",_linksBySlc.description]];
         NSMutableString *s = [[NSMutableString alloc]init];
         NSArray *linkKeys = [_linksByName allKeys];
         for(NSString *key in linkKeys)
         {
-            UMMTP3Link *link = _linksByName[key];
+            UMMTP3Link *link2 = _linksByName[key];
             [s appendFormat:@"\t%@",link.name];
             [s appendFormat:@" SLC %d",link.slc];
-            switch(link.m2pa.m2pa_status)
+            switch(link2.m2pa.m2pa_status)
             {
                 case M2PA_STATUS_OFF:
                     [s appendString:@" M2PA-Status: OFF"];
@@ -1341,7 +1341,6 @@
     if(_sendTRA)
     {
         UMMTP3Label *reverse_label = [label reverseLabel];
-
         [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
         _sendTRA = NO;
         [self updateRouteAvailable:_adjacentPointCode mask:0];
@@ -2226,7 +2225,7 @@
     }
     if(link==NULL)
     {
-        NSLog(@"No link found in Linkset!");
+        [self logMajorError:@"sendPdu: No link found in Linkset!"];
     }
     NSMutableData *pdu = [[NSMutableData alloc]init];
     uint8_t len;
@@ -2769,7 +2768,11 @@
 }
 
 /* Group TFM */
-- (void)sendTFP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+- (void)sendTFP:(UMMTP3Label *)label
+    destination:(UMMTP3PointCode *)pc
+             ni:(int)ni mp:(int)mp
+            slc:(int)slc
+           link:(UMMTP3Link *)link
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -2781,6 +2784,11 @@
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
+    }
+    if(pc==NULL)
+    {
+        [self logDebug:@"sendTFP: pointcode is null. ignoring"];
+        return;
     }
     [self sendPdu:[pc asData]
             label:label
@@ -3540,11 +3548,18 @@
     [self sendTFR:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
 }
 
-- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
+                                 mask:(int)mask
 {
     if(mask != 0)
     {
         NSLog(@"We dont support advertizements with mask other than 0");
+        return;
+    }
+    if(pc==NULL)
+    {
+        NSLog(@"advertizePointcodeUnavailable: pointcode==NULL");
+        return;
     }
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = self.localPointCode;
