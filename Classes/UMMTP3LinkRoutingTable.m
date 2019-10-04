@@ -32,9 +32,9 @@
                              linksetName:(NSString *)linksetName
                                    exact:(BOOL)exact
 {
-    /* this route searches for routes matching exact (orBigger==NO) or super routes */
+    /* this route searches for routes matching exact (exact==NO) or super routes */
     /* mask for a pointcode specific is 14 or 24 (ITU vs ANSI */
-    /* if orBigger=YES then it would look for x-xxx-x/14 and then for x-xxx-y/13 etc... */
+    /* if exact=YES then it would look for x-xxx-x/14 and then for x-xxx-y/13 etc... */
     /* the mask integer indicates how many bits are in the node part (so its value is 0 for a /14, 1 for /13 etc) */
 
     int startmask = mask;
@@ -129,8 +129,6 @@
                                              exact:exact];
     return @[r];
 }
-
-
 
 - (UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc
                                  mask:(int)mask

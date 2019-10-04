@@ -42,9 +42,9 @@
 
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)pc
-                                mask:(int)mask
-                         linksetName:(NSString *)linksetName
-                               exact:(BOOL)exact
+                                    mask:(int)mask
+                             linksetName:(NSString *)linksetName
+                                   exact:(BOOL)exact
 {
     if(linksetName)
     {
