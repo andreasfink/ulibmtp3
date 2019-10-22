@@ -1502,7 +1502,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
             [incomingStream replaceBytesInRange:NSMakeRange(0,packlen)
                                       withBytes:NULL
                                          length:0];
-            len = len - packlen;
+            //len = len - packlen;
         }
         len = (uint32_t)incomingStream.length;
     }
