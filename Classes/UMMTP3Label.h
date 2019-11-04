@@ -15,7 +15,7 @@
 
 @class UMMTP3PointCode;
 
-@interface UMMTP3Label : UMObject
+@interface UMMTP3Label : UMObject<NSCopying>
 {
     UMMTP3PointCode *opc;
     UMMTP3PointCode *dpc;
@@ -32,5 +32,6 @@
 - (NSString *)opc_dpc;
 - (UMMTP3Label *)reverseLabel;
 - (NSString *)logDescription;
+- (UMMTP3Label *)copyWithZone:(NSZone *)zone;
 
 @end

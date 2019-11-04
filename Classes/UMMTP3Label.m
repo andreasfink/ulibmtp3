@@ -135,4 +135,12 @@
     return rlabel;
 }
 
+- (UMMTP3Label *)copyWithZone:(NSZone *)zone
+{
+    UMMTP3Label *nlabel = [[UMMTP3Label allocWithZone:zone]init];
+    nlabel.opc = self.opc;
+    nlabel.dpc = self.dpc;
+    nlabel.sls = self.sls;
+    return nlabel;
+}
 @end

@@ -23,6 +23,7 @@
 #import "UMMTP3RoutingTable.h"
 #import "UMMTP3LinkRoutingTable.h"
 #import "UMMTP3InstanceRoutingTable.h"
+#import "UMMTP3PointCodeTranslationTable.h"
 
 @implementation UMMTP3LinkSet
 
@@ -331,8 +332,10 @@
 
 - (UMMTP3TransitPermission_result)screenIncomingLabel:(UMMTP3Label *)label error:(NSError **)err
 {
+    UMMTP3Label *translatedLabel = [self remoteToLocalLabel:label];
+
     /* here we check if we allow the incoming pointcode from this link */
-    if(label.opc.variant != self.variant)
+    if(translatedLabel.opc.variant != self.variant)
     {
         if(err)
         {
@@ -340,7 +343,7 @@
         }
         return UMMTP3TransitPermission_errorResult;
     }
-    if(label.dpc.variant != self.variant)
+    if(translatedLabel.dpc.variant != self.variant)
     {
         if(err)
         {
@@ -357,7 +360,7 @@
     }
     else if((_incomingWhiteList!=NULL) && (_incomingBlackList==NULL))
     {
-        perm = [_incomingWhiteList isTransferAllowed:label];
+        perm = [_incomingWhiteList isTransferAllowed:translatedLabel];
         if(perm == UMMTP3TransitPermission_explicitlyPermitted)
         {
             return perm;
@@ -367,7 +370,7 @@
 
     else if((_incomingWhiteList==NULL) && (_incomingBlackList!=NULL))
     {
-        perm = [_incomingBlackList isTransferDenied:label];
+        perm = [_incomingBlackList isTransferDenied:translatedLabel];
         if(perm == UMMTP3TransitPermission_explicitlyDenied)
         {
             return perm;
@@ -376,12 +379,12 @@
     }
 
     /* white & blacklist defined */
-    UMMTP3TransitPermission_result perm_w= [_incomingWhiteList isTransferAllowed:label];
+    UMMTP3TransitPermission_result perm_w= [_incomingWhiteList isTransferAllowed:translatedLabel];
     if(perm_w == UMMTP3TransitPermission_explicitlyPermitted)
     {
         return perm_w;
     }
-    perm = [_incomingBlackList isTransferDenied:label];
+    perm = [_incomingBlackList isTransferDenied:translatedLabel];
     if(perm == UMMTP3TransitPermission_explicitlyDenied)
     {
         return perm;
@@ -481,10 +484,22 @@
                 }
                 break;
         }
+
+        if(_pointcodeTranslationTable.localNetworkIndicator)
+        {
+            if(     (_pointcodeTranslationTable.remoteNetworkIndicator == NULL)
+                ||  ([_pointcodeTranslationTable.remoteNetworkIndicator intValue]==ni) )
+            {
+                ni = _pointcodeTranslationTable.localNetworkIndicator.intValue;
+            }
+        }
+
         UMMTP3Label *label = [[UMMTP3Label alloc]initWithBytes:data pos:&idx variant:_variant];
+        UMMTP3Label *translatedLabel = [self remoteToLocalLabel:label];
+
         NSData *pdu = [NSData dataWithBytes:&data[idx] length:(maxlen - idx)];
         [self msuIndication2:pdu
-                       label:label
+                       label:translatedLabel
                           si:si
                           ni:ni
                           mp:mp
@@ -1485,11 +1500,12 @@
 
 - (void)processTFC:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc status:(int)status ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFC (Transfer-controlled signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logDebug:[NSString stringWithFormat:@" destination: %@",pc.description]];
+        [self logDebug:[NSString stringWithFormat:@" destination: %@",translatedPc.description]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1517,34 +1533,38 @@
 
 - (void)processTFP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFP (Transfer-prohibited signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logDebug:[NSString stringWithFormat:@" destination: %@",pc.description]];
+        [self logDebug:[NSString stringWithFormat:@" destination: %@",translatedPc.description]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteUnavailable:pc mask:0];
+    [self updateRouteUnavailable:translatedPc mask:0];
 
 }
 
 
 - (void)processTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFR (Transfer-restricted signal (national option))"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logDebug:[NSString stringWithFormat:@" destination: %@",pc.description]];
+        [self logDebug:[NSString stringWithFormat:@" destination: %@",translatedPc.description]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteRestricted:pc mask:0];
+    [self updateRouteRestricted:translatedPc mask:0];
 }
 
 
@@ -1562,17 +1582,19 @@
 
 - (void)processTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFA (Transfer-allowed signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logDebug:[NSString stringWithFormat:@" destination: %@",pc.description]];
+        [self logDebug:[NSString stringWithFormat:@" destination: %@",translatedPc.description]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteAvailable:pc mask:0];
+    [self updateRouteAvailable:translatedPc mask:0];
 }
 
 
@@ -1580,11 +1602,13 @@
 /* Group RSM */
 - (void)processRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processRST (Signalling-route-set-test signal for prohibited destination)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logDebug:[NSString stringWithFormat:@" destination: %@",pc.description]];
+        [self logDebug:[NSString stringWithFormat:@" destination: %@",translatedPc.description]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1594,11 +1618,13 @@
 
 - (void)processRSR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processRSR (Signalling-route-set-test signal for restricted destination (national option))"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logDebug:[NSString stringWithFormat:@" destination: %@",pc.description]];
+        [self logDebug:[NSString stringWithFormat:@" destination: %@",translatedPc.description]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1844,11 +1870,13 @@
 
 - (void)processTCA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected TCA packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logMajorError:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logMajorError:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logMajorError:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1859,7 +1887,7 @@
     {
         [self logDebug:@"processTCA"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1870,11 +1898,13 @@
 
 - (void)processTCP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected TCP packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logMajorError:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logMajorError:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logMajorError:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1885,7 +1915,7 @@
     {
         [self logDebug:@"processTCP"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1895,11 +1925,13 @@
 
 - (void)processTCR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected TCR packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logMajorError:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logMajorError:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logMajorError:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1910,7 +1942,7 @@
     {
         [self logDebug:@"processTCR"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1920,11 +1952,13 @@
 
 - (void)processRCP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected RCP packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logMajorError:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logMajorError:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logMajorError:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1935,7 +1969,7 @@
     {
         [self logDebug:@"processRCP"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1945,11 +1979,13 @@
 
 - (void)processRCR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_variant != UMMTP3Variant_ANSI)
     {
         [self logMajorError:@"unexpected RCR packet in non ANSI mode"];
         [self logMajorError:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logMajorError:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logMajorError:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logMajorError:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -1960,7 +1996,7 @@
     {
         [self logDebug:@"processRCR"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logMajorError:[NSString stringWithFormat:@" destination: %@",pc]];
+        [self logMajorError:[NSString stringWithFormat:@" destination: %@",translatedPc]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
@@ -2032,11 +2068,13 @@
 /* group UFC */
 - (void)processUPU:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc userpartId:(int)upid cause:(int)cause ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processUPU (User part unavailable signal)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logDebug:[NSString stringWithFormat:@" destination: %@",pc.description]];
+        [self logDebug:[NSString stringWithFormat:@" destination: %@",translatedPc.description]];
         [self logDebug:[NSString stringWithFormat:@" userpartId: %d",upid]];
         [self logDebug:[NSString stringWithFormat:@" cause: %d",cause]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
@@ -2132,11 +2170,11 @@
 }
 
 - (void)sendSSLTA:(UMMTP3Label *)label
-         pattern:(NSData *)pattern
-              ni:(int)ni
-              mp:(int)mp
-             slc:(int)slc
-            link:(UMMTP3Link *)link
+          pattern:(NSData *)pattern
+               ni:(int)ni
+               mp:(int)mp
+              slc:(int)slc
+             link:(UMMTP3Link *)link
 {
     if(_overrideNetworkIndicator)
     {
@@ -2214,11 +2252,20 @@
     ackRequest:(NSDictionary *)ackRequest
        options:(NSDictionary *)options
 {
+    UMMTP3Label *translatedLabel = [self localToRemoteLabel:label];
+
     if(_overrideNetworkIndicator)
     {
         ni = _overrideNetworkIndicator.intValue;
     }
-
+    if(_pointcodeTranslationTable.remoteNetworkIndicator)
+    {
+        if(     (_pointcodeTranslationTable.localNetworkIndicator == NULL)
+            ||  ([_pointcodeTranslationTable.localNetworkIndicator intValue]==ni) )
+        {
+            ni = _pointcodeTranslationTable.remoteNetworkIndicator.intValue;
+        }
+    }
     if(link == NULL)
     {
         link = [self getAnyLink];
@@ -2227,6 +2274,8 @@
     {
         [self logMajorError:@"sendPdu: No link found in Linkset!"];
     }
+
+
     NSMutableData *pdu = [[NSMutableData alloc]init];
     uint8_t len;
     
@@ -2270,15 +2319,15 @@
     if(slc < 0)
     {
         [_slsLock lock];
-        label.sls = _last_sls;
+        translatedLabel.sls = _last_sls;
         _last_sls = (_last_sls+1) % 16;
         [_slsLock unlock];
     }
     else
     {
-        label.sls = slc;
+        translatedLabel.sls = slc;
     }
-    [label appendToMutableData:pdu];
+    [translatedLabel appendToMutableData:pdu];
     if(heading >= 0)
     {
         uint8_t heading_byte = heading & 0xFF;
@@ -2743,6 +2792,7 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFC (Transfer-controlled signal)"];
@@ -2755,7 +2805,7 @@
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     
-    [self sendPdu:[pc asDataWithStatus:status]
+    [self sendPdu:[translatedPointCode asDataWithStatus:status]
             label:label
           heading:MTP3_MGMT_TFC
              link:link
@@ -2774,6 +2824,8 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFP (Transfer-prohibited signal)"];
@@ -2790,7 +2842,7 @@
         [self logDebug:@"sendTFP: pointcode is null. ignoring"];
         return;
     }
-    [self sendPdu:[pc asData]
+    [self sendPdu:[translatedPointCode asData]
             label:label
           heading:MTP3_MGMT_TFP
              link:link
@@ -2804,6 +2856,8 @@
 
 - (void)sendTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFR (Transfer-restricted signal (national option))"];
@@ -2815,7 +2869,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
-    [self sendPdu:[pc asData]
+    [self sendPdu:[translatedPointCode asData]
             label:label
           heading:MTP3_MGMT_TFR
              link:link
@@ -2833,6 +2887,8 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFA (Transfer-allowed signal)"];
@@ -2844,7 +2900,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
-    [self sendPdu:[pc asData]
+    [self sendPdu:[translatedPointCode asData]
             label:label
           heading:MTP3_MGMT_TFA
              link:link
@@ -2859,6 +2915,8 @@
 /* Group RSM */
 - (void)sendRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendRST (Signalling-route-set-test signal for prohibited destination)"];
@@ -2870,7 +2928,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
-    [self sendPdu:[pc asData]
+    [self sendPdu:[translatedPointCode asData]
             label:label
           heading:MTP3_MGMT_RST
              link:link
@@ -2883,6 +2941,8 @@
 }
 - (void)sendRSR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendRSR (Signalling-route-set-test signal for restricted destination (national option))"];
@@ -2894,7 +2954,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
-    [self sendPdu:[pc asData]
+    [self sendPdu:[translatedPointCode asData]
             label:label
           heading:MTP3_MGMT_RSR
              link:link
@@ -3245,6 +3305,8 @@
 /* group UFC */
 - (void)sendUPU:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc userpartId:(int)upid cause:(int)cause ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendUPU (User part unavailable signal)"];
@@ -3258,7 +3320,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
-    NSMutableData *pdu = [[NSMutableData alloc]initWithData:[pc asData]];
+    NSMutableData *pdu = [[NSMutableData alloc]initWithData:[translatedPointCode asData]];
     [pdu appendByte: ((upid & 0x0F) | (cause & 0x0F << 8))];
     [self sendPdu:pdu
             label:label
@@ -3281,6 +3343,8 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendUPA"];
@@ -3294,7 +3358,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
-    NSMutableData *pdu = [[NSMutableData alloc]initWithData:[pc asData]];
+    NSMutableData *pdu = [[NSMutableData alloc]initWithData:[translatedPointCode asData]];
     [pdu appendByte: ((upid & 0x0F) | (cause & 0x0F << 8))];
     [self sendPdu:pdu
             label:label
@@ -3317,6 +3381,8 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
+    UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendUPT"];
@@ -3330,7 +3396,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
-    NSMutableData *pdu = [[NSMutableData alloc]initWithData:[pc asData]];
+    NSMutableData *pdu = [[NSMutableData alloc]initWithData:[translatedPointCode asData]];
     [pdu appendByte: ((upid & 0x0F) | (cause & 0x0F << 8))];
     [self sendPdu:pdu
             label:label
@@ -3532,7 +3598,6 @@
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
-
     [self sendTFA:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
 }
 
@@ -3615,6 +3680,53 @@
     }
     [_linksLock unlock];
     return s;
+}
+
+
+#pragma mark -
+#pragma mark pointcode translation helper functions
+
+- (UMMTP3PointCode *)remoteToLocalPointcode:(UMMTP3PointCode *)pc
+{
+    if(_pointcodeTranslationTable == NULL)
+    {
+        return pc;
+    }
+    return [_pointcodeTranslationTable translateRemoteToLocal:pc];
+}
+
+- (UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc
+{
+    if(_pointcodeTranslationTable == NULL)
+    {
+        return pc;
+    }
+    return [_pointcodeTranslationTable translateLocalToRemote:pc];
+}
+
+
+-(UMMTP3Label *)remoteToLocalLabel:(UMMTP3Label *)label
+{
+    if(_pointcodeTranslationTable == NULL)
+    {
+        return label;
+    }
+    UMMTP3Label *nlabel = [label copy];
+    nlabel.opc = [_pointcodeTranslationTable translateRemoteToLocal:label.opc];
+    nlabel.dpc = [_pointcodeTranslationTable translateRemoteToLocal:label.dpc];
+    return nlabel;
+}
+
+-(UMMTP3Label *)localToRemoteLabel:(UMMTP3Label *)label
+{
+    if(_pointcodeTranslationTable == NULL)
+    {
+        return label;
+    }
+    UMMTP3Label *nlabel = [label copy];
+    nlabel.opc = [_pointcodeTranslationTable translateLocalToRemote:label.opc];
+    nlabel.dpc = [_pointcodeTranslationTable translateLocalToRemote:label.dpc];
+    return nlabel;
 }
 
 @end

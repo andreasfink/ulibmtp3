@@ -24,6 +24,7 @@
 @class UMMTP3RoutingTable;
 @class UMMTP3LinkRoutingTable;
 @class UMMTP3TranslationTableMap;
+@class UMMTP3PointCodeTranslationTable;
 
 @interface UMMTP3LinkSet : UMObject
 {
@@ -59,6 +60,7 @@
     UMMTP3TranslationTableMap   *_ttmap_in;
     UMMTP3TranslationTableMap   *_ttmap_out;
     NSString                    *_linkNamesBySlc[16];
+    UMMTP3PointCodeTranslationTable *_pointcodeTranslationTable;
 }
 
 /*
@@ -92,7 +94,7 @@
 @property(readonly,assign) int trw_received;
 @property(readwrite,assign) double speed;
 @property(readwrite,assign) BOOL  sendExtendedAttributes;
-
+@property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTable;
 
 - (void)addLink:(UMMTP3Link *)lnk;
 - (void)removeLink:(UMMTP3Link *)lnk;
@@ -368,5 +370,10 @@ options:(NSDictionary *)options;
 - (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask; /* returns YES if status has changed */
 - (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask; /* returns YES if status has changed */
 - (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask; /* returns YES if status has changed */
+
+- (UMMTP3PointCode *)remoteToLocalPointcode:(UMMTP3PointCode *)pc;
+- (UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc;
+-(UMMTP3Label *)remoteToLocalLabel:(UMMTP3Label *)label;
+-(UMMTP3Label *)localToRemoteLabel:(UMMTP3Label *)label;
 
 @end

@@ -17,6 +17,8 @@
 		A60A36F41A3063560090FC94 /* UMMTP3RoutingTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36F11A3063560090FC94 /* UMMTP3RoutingTable.m */; };
 		A60A36F91A3063E60090FC94 /* UMMTP3PointCode.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36F61A3063E60090FC94 /* UMMTP3PointCode.m */; };
 		A60A36FE1A306B710090FC94 /* UMMTP3RouteMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36FB1A306B710090FC94 /* UMMTP3RouteMetrics.m */; };
+		A691E59F237001A800589718 /* UMMTP3PointCodeTranslationTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A691E5A0237001A800589718 /* UMMTP3PointCodeTranslationTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A691E59E237001A800589718 /* UMMTP3PointCodeTranslationTable.m */; };
 		A6AD89F321CD73F300F40945 /* UMMTP3TranslationTableMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A6AD89F121CD73F300F40945 /* UMMTP3TranslationTableMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6AD89F421CD73F300F40945 /* UMMTP3TranslationTableMap.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AD89F221CD73F300F40945 /* UMMTP3TranslationTableMap.m */; };
 		A6C78D831A29436E006C66A2 /* ulibm2pa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D821A29436E006C66A2 /* ulibm2pa.framework */; };
@@ -188,6 +190,8 @@
 		A6827E141E380E6100F3048B /* UMLayerMTP3ApplicationContextProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMLayerMTP3ApplicationContextProtocol.h; sourceTree = "<group>"; };
 		A68B88B21E36A21F00CE0B05 /* ulibmtp3_version.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ulibmtp3_version.h.in; sourceTree = "<group>"; };
 		A68B88B61E36A89D00CE0B05 /* ulibmtp3_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ulibmtp3_version.h; sourceTree = "<group>"; };
+		A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3PointCodeTranslationTable.h; sourceTree = "<group>"; };
+		A691E59E237001A800589718 /* UMMTP3PointCodeTranslationTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3PointCodeTranslationTable.m; sourceTree = "<group>"; };
 		A6A2B8D01E389A0100E8F0AB /* UMM3UAApplicationServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMM3UAApplicationServer.m; sourceTree = "<group>"; };
 		A6AD89F121CD73F300F40945 /* UMMTP3TranslationTableMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3TranslationTableMap.h; sourceTree = "<group>"; };
 		A6AD89F221CD73F300F40945 /* UMMTP3TranslationTableMap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3TranslationTableMap.m; sourceTree = "<group>"; };
@@ -337,6 +341,8 @@
 				A6BE2D261E3A576F005B2B91 /* UMMTP3LinkRoutingTable.m */,
 				A60A36E11A305DCF0090FC94 /* UMMTP3LinkSet.h */,
 				A60A36E21A305DCF0090FC94 /* UMMTP3LinkSet.m */,
+				A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */,
+				A691E59E237001A800589718 /* UMMTP3PointCodeTranslationTable.m */,
 				A603428B1EA8327F00706C21 /* UMMTP3PduFilter.h */,
 				A603428C1EA8327F00706C21 /* UMMTP3PduFilter.m */,
 				A60A36F51A3063E60090FC94 /* UMMTP3PointCode.h */,
@@ -477,6 +483,7 @@
 				A6F178DF21AF03B00084D972 /* UMMTP3RoutingTable.h in Headers */,
 				A6F178CA21AF03B00084D972 /* UMLayerMTP3UserProtocol.h in Headers */,
 				A6F178CF21AF03B00084D972 /* UMMTP3BlackList.h in Headers */,
+				A691E59F237001A800589718 /* UMMTP3PointCodeTranslationTable.h in Headers */,
 				A6F178E621AF03B00084D972 /* UMMTP3Task_m2paDataIndication.h in Headers */,
 				A6F178E321AF03B00084D972 /* UMMTP3Task_adminCreateLinkSet.h in Headers */,
 				A6F178E221AF03B00084D972 /* UMMTP3Task_adminCreateLink.h in Headers */,
@@ -594,6 +601,7 @@
 				A6F1791421AF044B0084D972 /* UMMTP3WhiteList.m in Sources */,
 				A6F178F321AF044B0084D972 /* UMLayerMTP3.m in Sources */,
 				A6F178F421AF044B0084D972 /* UMM3UAApplicationServer.m in Sources */,
+				A691E5A0237001A800589718 /* UMMTP3PointCodeTranslationTable.m in Sources */,
 				A6F1791521AF044B0084D972 /* UMSyntaxToken_Pointcode.m in Sources */,
 				A6F178FB21AF044B0084D972 /* UMMTP3LinkSet.m in Sources */,
 				A6F178F921AF044B0084D972 /* UMMTP3Link.m in Sources */,
