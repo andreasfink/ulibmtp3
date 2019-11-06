@@ -332,10 +332,8 @@
 
 - (UMMTP3TransitPermission_result)screenIncomingLabel:(UMMTP3Label *)label error:(NSError **)err
 {
-    UMMTP3Label *translatedLabel = [self remoteToLocalLabel:label];
-
     /* here we check if we allow the incoming pointcode from this link */
-    if(translatedLabel.opc.variant != self.variant)
+    if(label.opc.variant != self.variant)
     {
         if(err)
         {
@@ -343,7 +341,7 @@
         }
         return UMMTP3TransitPermission_errorResult;
     }
-    if(translatedLabel.dpc.variant != self.variant)
+    if(label.dpc.variant != self.variant)
     {
         if(err)
         {
@@ -360,7 +358,7 @@
     }
     else if((_incomingWhiteList!=NULL) && (_incomingBlackList==NULL))
     {
-        perm = [_incomingWhiteList isTransferAllowed:translatedLabel];
+        perm = [_incomingWhiteList isTransferAllowed:label];
         if(perm == UMMTP3TransitPermission_explicitlyPermitted)
         {
             return perm;
@@ -370,7 +368,7 @@
 
     else if((_incomingWhiteList==NULL) && (_incomingBlackList!=NULL))
     {
-        perm = [_incomingBlackList isTransferDenied:translatedLabel];
+        perm = [_incomingBlackList isTransferDenied:label];
         if(perm == UMMTP3TransitPermission_explicitlyDenied)
         {
             return perm;
@@ -379,12 +377,12 @@
     }
 
     /* white & blacklist defined */
-    UMMTP3TransitPermission_result perm_w= [_incomingWhiteList isTransferAllowed:translatedLabel];
+    UMMTP3TransitPermission_result perm_w= [_incomingWhiteList isTransferAllowed:label];
     if(perm_w == UMMTP3TransitPermission_explicitlyPermitted)
     {
         return perm_w;
     }
-    perm = [_incomingBlackList isTransferDenied:translatedLabel];
+    perm = [_incomingBlackList isTransferDenied:label];
     if(perm == UMMTP3TransitPermission_explicitlyDenied)
     {
         return perm;
