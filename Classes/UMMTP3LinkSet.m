@@ -1353,6 +1353,8 @@
         [self protocolViolation];
         return;
     }
+    _outstandingSLTA--;
+    link.outstandingLinkTests--;
     if(_sendTRA)
     {
         UMMTP3Label *reverse_label = [label reverseLabel];
@@ -2137,6 +2139,8 @@
              slc:(int)slc
             link:(UMMTP3Link *)link
 {
+    _outstandingSLTA++;
+    link.outstandingLinkTests++;
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendSLTM"];

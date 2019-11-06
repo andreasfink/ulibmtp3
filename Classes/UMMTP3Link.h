@@ -40,6 +40,8 @@ typedef enum UMMTP3Link_attachmentStatus
     BOOL                        _speedLimitReached;
     UMTimer                     *_linkTestTimer;
     NSTimeInterval              _linkTestTime;
+    int                         _linkTestMaxOutStanding;
+    int                         _outstandingLinkTests;
     UMLogLevel                  _logLevel;
 }
 
@@ -59,6 +61,7 @@ typedef enum UMMTP3Link_attachmentStatus
 @property (readwrite,assign)    BOOL speedLimitReached;
 @property (readwrite,assign)    NSTimeInterval linkTestTime;
 @property (readwrite,assign)    UMLogLevel  logLevel;
+@property (readwrite,assign,atomic)    int outstandingLinkTests;
 
 - (void)attachmentConfirmed;
 - (void)attachmentFailed:(NSString *)reason;

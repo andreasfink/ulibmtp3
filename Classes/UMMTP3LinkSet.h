@@ -47,6 +47,8 @@
     int                         _tra_sent;
     int                         _trw_received;
     BOOL                        _sendTRA;
+
+    int                         _outstandingSLTA;
     int                         _activeLinks;
     int                         _inactiveLinks;
     int                         _readyLinks;
@@ -97,6 +99,7 @@
 @property(readwrite,assign) double speed;
 @property(readwrite,assign) BOOL  sendExtendedAttributes;
 @property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTable;
+@property(readwrite,assign) int outstandingSLTA;
 
 - (void)addLink:(UMMTP3Link *)lnk;
 - (void)removeLink:(UMMTP3Link *)lnk;

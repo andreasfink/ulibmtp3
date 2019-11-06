@@ -23,6 +23,8 @@
     {
         _logLevel = UMLOG_MAJOR;
         _last_m2pa_status = M2PA_STATUS_OFF;
+        _linkTestTime = 30.0;
+        _linkTestMaxOutStanding = 3;
     }
     return self;
 }
@@ -126,6 +128,16 @@
     {
         _linkTestTime = 30.0;
     }
+
+    if(cfg[@"link-test-max-outstanding"])
+    {
+        _linkTestMaxOutStanding  = (NSTimeInterval)[cfg[@"link-test-max-outstanding"] intValue];
+    }
+    else
+    {
+        _linkTestMaxOutStanding = 3;
+    }
+
     _logLevel = UMLOG_MAJOR;
     if(cfg[@"log-level"])
     {
