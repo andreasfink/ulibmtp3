@@ -34,7 +34,6 @@
     {
         return NULL;
     }
-    UMAssert(var != UMMTP3Variant_Undefined,@"Pointcode Variant is undefined");
     self = [super init];
     if(self)
     {
@@ -50,6 +49,10 @@
         pos = strstr(in,":");
         if(pos != NULL)
         {
+            if(var==UMMTP3Variant_Undefined)
+            {
+                var = UMMTP3Variant_China;
+            }
             sscanf(in,"%ld:%ld:%ld",&a,&b,&c);	/* for pointocdes named X:X:X we presume China */
         }
         else
@@ -57,13 +60,22 @@
             pos = strstr(in,".");
             if(pos != NULL)
             {
+                if(var==UMMTP3Variant_Undefined)
+                {
+                    var = UMMTP3Variant_ANSI;
+                }
                 sscanf(in,"%ld.%ld.%ld",&a,&b,&c);
             }
             else
             {
                 pos = strstr(in,"-");
+
                 if(pos != NULL)
                 {
+                    if(var==UMMTP3Variant_Undefined)
+                    {
+                        var = UMMTP3Variant_ITU;
+                    }
                     sscanf(in,"%ld-%ld-%ld",&a,&b,&c);
                 }
                 else
@@ -72,7 +84,6 @@
                 }
             }
         }
-        
         if((_variant == UMMTP3Variant_China)  || (_variant == UMMTP3Variant_ANSI))
         {
             res += a << 16;

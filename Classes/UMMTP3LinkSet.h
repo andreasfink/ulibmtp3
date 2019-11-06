@@ -61,6 +61,8 @@
     UMMTP3TranslationTableMap   *_ttmap_out;
     NSString                    *_linkNamesBySlc[16];
     UMMTP3PointCodeTranslationTable *_pointcodeTranslationTable;
+    NSString                    *_pointcodeTranslationTableName;
+    id<UMLayerMTP3ApplicationContextProtocol>  _appdel;
 }
 
 /*

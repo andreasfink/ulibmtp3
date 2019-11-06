@@ -90,22 +90,24 @@
 
 - (UMMTP3PointCode *)translateLocalToRemote:(UMMTP3PointCode *)pc
 {
-    UMMTP3PointCode *pc1 = _localToRemote[@(pc.pc)];
+    NSNumber *pc1 = _localToRemote[@(pc.pc)];
     if(pc1==NULL)
     {
         return _defaultLocalPointCode;
     }
-    return pc1;
+    UMMTP3PointCode *pc2 = [[UMMTP3PointCode alloc]initWithPc:pc1.intValue variant:pc.variant];
+    return pc2;
 }
 
 - (UMMTP3PointCode *)translateRemoteToLocal:(UMMTP3PointCode *)pc
 {
-    UMMTP3PointCode *pc1 = _remoteToLocal[@(pc.pc)];
+    NSNumber *pc1 = _remoteToLocal[@(pc.pc)];
     if(pc1==NULL)
     {
         return _defaultRemotePointCode;
     }
-    return pc1;
+    UMMTP3PointCode *pc2 = [[UMMTP3PointCode alloc]initWithPc:pc1.intValue variant:pc.variant];
+    return pc2;
 }
 
 @end

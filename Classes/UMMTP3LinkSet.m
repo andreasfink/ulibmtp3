@@ -2252,6 +2252,11 @@
     ackRequest:(NSDictionary *)ackRequest
        options:(NSDictionary *)options
 {
+    if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
+    {
+        _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+    }
+
     UMMTP3Label *translatedLabel = [self localToRemoteLabel:label];
 
     if(_overrideNetworkIndicator)
@@ -2416,7 +2421,7 @@
 {
     NSString *apcString = @"";
     NSString *opcString = NULL;
-
+    _appdel = appContext;
     if(cfg[@"log-level"])
     {
         _logLevel = [cfg[@"log-level"] intValue];
@@ -2454,6 +2459,10 @@
     if(cfg[@"ttmap-out"]) /* optional */
     {
         _ttmap_out_name = [cfg[@"ttmap-out"] stringValue];
+    }
+    if(cfg[@"pointcode-translation-table"]) /* optional */
+    {
+        _pointcodeTranslationTableName = [cfg[@"pointcode-translation-table"] stringValue];
     }
 
     _overrideNetworkIndicator = NULL;
@@ -3688,6 +3697,10 @@
 
 - (UMMTP3PointCode *)remoteToLocalPointcode:(UMMTP3PointCode *)pc
 {
+    if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
+    {
+        _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+    }
     if(_pointcodeTranslationTable == NULL)
     {
         return pc;
@@ -3697,6 +3710,11 @@
 
 - (UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc
 {
+    if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
+    {
+        _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+    }
+
     if(_pointcodeTranslationTable == NULL)
     {
         return pc;
@@ -3707,6 +3725,11 @@
 
 -(UMMTP3Label *)remoteToLocalLabel:(UMMTP3Label *)label
 {
+    if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
+    {
+        _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+    }
+
     if(_pointcodeTranslationTable == NULL)
     {
         return label;
@@ -3719,13 +3742,26 @@
 
 -(UMMTP3Label *)localToRemoteLabel:(UMMTP3Label *)label
 {
+    if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
+    {
+        _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+    }
+
     if(_pointcodeTranslationTable == NULL)
     {
         return label;
     }
     UMMTP3Label *nlabel = [label copy];
     nlabel.opc = [_pointcodeTranslationTable translateLocalToRemote:label.opc];
+    if(nlabel.opc==NULL)
+    {
+        nlabel.opc = label.opc;
+    }
     nlabel.dpc = [_pointcodeTranslationTable translateLocalToRemote:label.dpc];
+    if(nlabel.dpc==NULL)
+    {
+        nlabel.dpc = label.dpc;
+    }
     return nlabel;
 }
 

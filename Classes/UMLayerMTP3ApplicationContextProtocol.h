@@ -15,6 +15,7 @@
 @class UMM3UAApplicationServerProcess;
 @class UMM3UAApplicationServer;
 @class UMLayerSctp;
+@class UMMTP3PointCodeTranslationTable;
 
 @protocol UMLayerMTP3ApplicationContextProtocol<NSObject>
 
@@ -25,5 +26,6 @@
 - (UMMTP3LinkSet *)getMTP3LinkSet:(NSString *)name;
 - (UMM3UAApplicationServerProcess *)getM3UAASP:(NSString *)name;
 - (UMM3UAApplicationServer *)getM3UAAS:(NSString *)name;
+- (UMMTP3PointCodeTranslationTable *)getMTP3PointCodeTranslationTable:(NSString *)name;
 
 @end
