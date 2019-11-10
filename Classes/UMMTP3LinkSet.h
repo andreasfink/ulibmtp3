@@ -380,5 +380,7 @@ options:(NSDictionary *)options;
 - (UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc;
 -(UMMTP3Label *)remoteToLocalLabel:(UMMTP3Label *)label;
 -(UMMTP3Label *)localToRemoteLabel:(UMMTP3Label *)label;
+-(int)remoteToLocalNetworkIndicator:(int)ni;
+-(int)localToRemoteNetworkIndicator:(int)ni;
 
 @end

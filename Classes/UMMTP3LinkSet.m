@@ -483,16 +483,9 @@
                 break;
         }
 
-        if(_pointcodeTranslationTable.localNetworkIndicator)
-        {
-            if(     (_pointcodeTranslationTable.remoteNetworkIndicator == NULL)
-                ||  ([_pointcodeTranslationTable.remoteNetworkIndicator intValue]==ni) )
-            {
-                ni = _pointcodeTranslationTable.localNetworkIndicator.intValue;
-            }
-        }
-
         UMMTP3Label *label = [[UMMTP3Label alloc]initWithBytes:data pos:&idx variant:_variant];
+
+        ni = [self remoteToLocalNetworkIndicator:ni];
         UMMTP3Label *translatedLabel = [self remoteToLocalLabel:label];
 
         NSData *pdu = [NSData dataWithBytes:&data[idx] length:(maxlen - idx)];
@@ -545,6 +538,9 @@
             [self.logFeed debugText:[NSString stringWithFormat:@"    opc: %@",label.opc.description]];
             [self.logFeed debugText:[NSString stringWithFormat:@"    dpc: %@",label.dpc.description]];
         }
+
+        /* Translate incoming NI and label here */
+
         if((ni != self.networkIndicator) && (_overrideNetworkIndicator && _overrideNetworkIndicator.intValue != ni))
         {
             [self.logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,self.networkIndicator]];
@@ -2254,32 +2250,16 @@
     ackRequest:(NSDictionary *)ackRequest
        options:(NSDictionary *)options
 {
-    if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
-    {
-        _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
-    }
-
     UMMTP3Label *translatedLabel = [self localToRemoteLabel:label];
+    ni = [self localToRemoteNetworkIndicator:ni];
 
     if(_overrideNetworkIndicator)
     {
         if(self.logLevel <= UMLOG_DEBUG)
         {
-            [self.logFeed debugText:[NSString stringWithFormat:@"overrode-network-indicator: ni=%d->%d",ni,_overrideNetworkIndicator.intValue]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"overrwriting-network-indicator: ni=%d->%d",ni,_overrideNetworkIndicator.intValue]];
         }
         ni = _overrideNetworkIndicator.intValue;
-    }
-    if(_pointcodeTranslationTable.remoteNetworkIndicator)
-    {
-        if(     (_pointcodeTranslationTable.localNetworkIndicator == NULL)
-            ||  ([_pointcodeTranslationTable.localNetworkIndicator intValue]==ni) )
-        {
-            if(self.logLevel <= UMLOG_DEBUG)
-            {
-                [self.logFeed debugText:[NSString stringWithFormat:@"pointcode-translation: ni=%d->%d",ni,_pointcodeTranslationTable.remoteNetworkIndicator.intValue]];
-            }
-            ni = _pointcodeTranslationTable.remoteNetworkIndicator.intValue;
-        }
     }
     if(link == NULL)
     {
@@ -3771,6 +3751,43 @@
         }
     }
     return nlabel;
+}
+
+
+-(int)remoteToLocalNetworkIndicator:(int)ni
+{
+    if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
+    {
+        _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+    }
+
+    if(_pointcodeTranslationTable == NULL)
+    {
+        return ni;
+    }
+    if(ni == _pointcodeTranslationTable.remoteNetworkIndicator.intValue)
+    {
+        ni = _pointcodeTranslationTable.localNetworkIndicator.intValue;
+    }
+    return ni;
+}
+
+-(int)localToRemoteNetworkIndicator:(int)ni
+{
+    if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
+    {
+        _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+    }
+
+    if(_pointcodeTranslationTable == NULL)
+    {
+        return ni;
+    }
+    if(ni == _pointcodeTranslationTable.localNetworkIndicator.intValue)
+    {
+        ni = _pointcodeTranslationTable.remoteNetworkIndicator.intValue;
+    }
+    return ni;
 }
 
 @end
