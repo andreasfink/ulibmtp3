@@ -2263,6 +2263,10 @@
 
     if(_overrideNetworkIndicator)
     {
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            [self.logFeed debugText:[NSString stringWithFormat:@"overrode-network-indicator: ni=%d->%d",ni,_overrideNetworkIndicator.intValue]];
+        }
         ni = _overrideNetworkIndicator.intValue;
     }
     if(_pointcodeTranslationTable.remoteNetworkIndicator)
@@ -2270,6 +2274,10 @@
         if(     (_pointcodeTranslationTable.localNetworkIndicator == NULL)
             ||  ([_pointcodeTranslationTable.localNetworkIndicator intValue]==ni) )
         {
+            if(self.logLevel <= UMLOG_DEBUG)
+            {
+                [self.logFeed debugText:[NSString stringWithFormat:@"pointcode-translation: ni=%d->%d",ni,_pointcodeTranslationTable.remoteNetworkIndicator.intValue]];
+            }
             ni = _pointcodeTranslationTable.remoteNetworkIndicator.intValue;
         }
     }
@@ -3763,6 +3771,13 @@
     if(nlabel.dpc==NULL)
     {
         nlabel.dpc = label.dpc;
+    }
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        if(_pointcodeTranslationTable)
+        {
+            [self.logFeed debugText:[NSString stringWithFormat:@"pointcode-translation: opc=%@/dpc=%@ to opc=%@/dpc=%@",label.opc,label.dpc,nlabel.opc,nlabel.dpc]];
+        }
     }
     return nlabel;
 }
