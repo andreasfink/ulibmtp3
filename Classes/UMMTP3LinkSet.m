@@ -3559,18 +3559,9 @@
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
     label.sls = link.slc;
-    int networkIndicator;
-    if(_overrideNetworkIndicator)
-    {
-        networkIndicator = [_overrideNetworkIndicator intValue];
-    }
-    else
-    {
-        networkIndicator = _mtp3.networkIndicator;
-    }
     [self sendSLTM:label
            pattern:pattern
-                ni:networkIndicator
+                ni:_mtp3.networkIndicator
                 mp:0
                slc:link.slc
               link:link];
