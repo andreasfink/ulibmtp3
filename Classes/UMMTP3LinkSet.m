@@ -3681,7 +3681,12 @@
     if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
     {
         _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+        if(_pointcodeTranslationTable==NULL)
+        {
+            [self.logFeed debugText:[NSString stringWithFormat:@"trying to translate remote pointcode '%@' but failed due to translation table '%@' not found",pc,_pointcodeTranslationTableName]];
+        }
     }
+    
     if(_pointcodeTranslationTable == NULL)
     {
         return pc;
@@ -3694,6 +3699,10 @@
     if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
     {
         _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+        if(_pointcodeTranslationTable==NULL)
+        {
+            [self.logFeed debugText:[NSString stringWithFormat:@"trying to translate local pointcode '%@' but failed due to translation table '%@' not found",pc,_pointcodeTranslationTableName]];
+        }
     }
 
     if(_pointcodeTranslationTable == NULL)
@@ -3709,6 +3718,10 @@
     if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
     {
         _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+        if(_pointcodeTranslationTable==NULL)
+        {
+            [self.logFeed debugText:[NSString stringWithFormat:@"trying to translate remote mtp3 label '%@' but failed due to translation table '%@' not found",label,_pointcodeTranslationTableName]];
+        }
     }
 
     if(_pointcodeTranslationTable == NULL)
@@ -3726,6 +3739,10 @@
     if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
     {
         _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+        if(_pointcodeTranslationTable==NULL)
+        {
+            [self.logFeed debugText:[NSString stringWithFormat:@"trying to translate local mtp3 label '%@' but failed due to translation table '%@' not found",label,_pointcodeTranslationTableName]];
+        }
     }
 
     if(_pointcodeTranslationTable == NULL)
@@ -3759,6 +3776,10 @@
     if((_pointcodeTranslationTableName.length > 0) && (_pointcodeTranslationTable == NULL))
     {
         _pointcodeTranslationTable = [_appdel getMTP3PointCodeTranslationTable:_pointcodeTranslationTableName];
+        if(_pointcodeTranslationTable==NULL)
+        {
+            [self.logFeed debugText:[NSString stringWithFormat:@"trying to translate remote NI=%d but failed due to translation table '%@' not found",ni,_pointcodeTranslationTableName]];
+        }
     }
 
     if(_pointcodeTranslationTable == NULL)
@@ -3768,6 +3789,10 @@
     if(ni == _pointcodeTranslationTable.remoteNetworkIndicator.intValue)
     {
         ni = _pointcodeTranslationTable.localNetworkIndicator.intValue;
+    }
+    else
+    {
+        [self.logFeed debugText:[NSString stringWithFormat:@"trying to translate remote NI=%d but not matching expected NI=%d",ni,_pointcodeTranslationTable.remoteNetworkIndicator.intValue]];
     }
     return ni;
 }
@@ -3786,6 +3811,10 @@
     if(ni == _pointcodeTranslationTable.localNetworkIndicator.intValue)
     {
         ni = _pointcodeTranslationTable.remoteNetworkIndicator.intValue;
+    }
+    else
+    {
+        [self.logFeed debugText:[NSString stringWithFormat:@"trying to translate local NI=%d but not matching expected NI=%d",ni,_pointcodeTranslationTable.localNetworkIndicator.intValue]];
     }
     return ni;
 }
