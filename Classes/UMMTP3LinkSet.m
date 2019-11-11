@@ -577,7 +577,7 @@
         {
             case UMMTP3TransitPermission_errorResult:
                 @throw([NSException exceptionWithName:@"UMMTP3TransitPermission_errorResult"
-                                               reason:e
+                                               reason:e.description
                                              userInfo:@{
                                                         @"sysmsg" : @"screening failed",
                                                         @"func": @(__func__),
