@@ -29,10 +29,6 @@
 
 - (int)networkIndicator
 {
-    if(_overrideNetworkIndicator)
-    {
-        return [_overrideNetworkIndicator intValue];
-    }
     return _mtp3.networkIndicator;
 }
 
@@ -333,9 +329,10 @@
 - (UMMTP3TransitPermission_result)screenIncomingLabel:(UMMTP3Label *)label error:(NSError **)err
 {
     /* here we check if we allow the incoming pointcode from this link */
+#if 0
     if(label.opc.variant != self.variant)
     {
-        if(err)
+        if(err!=NULL)
         {
             *err = [NSError errorWithDomain:@"mtp_decode" code:0 userInfo:@{@"sysinfo":@"opc-variant does not match local variant",@"backtrace": UMBacktrace(NULL,0)}];
         }
@@ -343,13 +340,14 @@
     }
     if(label.dpc.variant != self.variant)
     {
-        if(err)
+        if(err!=NULL)
         {
             *err = [NSError errorWithDomain:@"mtp_decode" code:0 userInfo:@{@"sysinfo":@"dpc-variant does not match local variant",@"backtrace": UMBacktrace(NULL,0)}];
         }
         return UMMTP3TransitPermission_errorResult;
     }
-    
+#endif
+
     UMMTP3TransitPermission_result perm = UMMTP3TransitPermission_undefined;
     
     if((_incomingWhiteList==NULL) && (_incomingBlackList==NULL))
@@ -574,13 +572,12 @@
             }
         }
         NSError *e = NULL;
-
         UMMTP3TransitPermission_result perm = [self screenIncomingLabel:label error:&e];
         switch(perm)
         {
             case UMMTP3TransitPermission_errorResult:
                 @throw([NSException exceptionWithName:@"UMMTP3TransitPermission_errorResult"
-                                               reason:NULL
+                                               reason:e
                                              userInfo:@{
                                                         @"sysmsg" : @"screening failed",
                                                         @"func": @(__func__),
