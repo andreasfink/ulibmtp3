@@ -61,6 +61,7 @@ typedef enum UMMTP3_Error
     BOOL                            _ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
     UMMTP3SyslogClient              *_problematicPacketDumper;
     BOOL                            _stpMode;
+    BOOL                            _isStarted;
 }
 @property (readwrite,assign,atomic) int                 networkIndicator;
 @property (readwrite,assign,atomic) UMMTP3Variant       variant;
@@ -70,6 +71,7 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) UMMTP3SyslogClient  *problematicPacketDumper;
 @property (readwrite,assign,atomic) BOOL                stpMode;
 @property (readwrite,strong,atomic) UMMTP3RoutingTable  *routingTable;
+@property (readwrite,assign,atomic) BOOL                isStarted;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
 

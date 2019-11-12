@@ -886,12 +886,14 @@
 {
     UMMTP3Task_start *task = [[UMMTP3Task_start alloc]initWithReceiver:self];
     [self queueFromAdmin:task];
+
 }
 
 - (void)stop
 {
     UMMTP3Task_stop *task = [[UMMTP3Task_stop alloc]initWithReceiver:self];
     [self queueFromAdmin:task];
+
 }
 
 - (void)_start
@@ -903,8 +905,8 @@
         UMMTP3LinkSet *ls = _linksets[linksetName];
         [ls powerOn];
     }
+    _isStarted = YES;
     [_linksetLock unlock];
-
 }
 
 - (void)_stop
@@ -916,9 +918,9 @@
         UMMTP3LinkSet *ls = _linksets[linksetName];
         [ls powerOff];
     }
+    _isStarted = NO;
     [_linksetLock unlock];
 }
-
 
 - (id<UMLayerMTP3UserProtocol>)findUserPart:(int)upid
 {
