@@ -107,7 +107,7 @@ typedef enum UMMTP3RouteTestStatus
     UMMTP3RouteCongestionLevel  congestion;
     UMTimer                     *t15;
     UMThroughputCounter         *speedometer;
-
+    UMMTP3RoutePriority         _priority;
 //    double                      max_speed;
 //    double                      speed[UMMTP3_CONGESTION_LEVEL_MAX+10];		 /* in messages per sec */;
 //    double                      current_max_speed;
@@ -135,6 +135,7 @@ typedef enum UMMTP3RouteTestStatus
 @property(readwrite,assign) int limit_has_been_hit;
 @property(readwrite,assign) int speedup_counter;
 @property(readwrite,strong) UMMTP3RouteMetrics *metrics;
+@property(readwrite,assign) UMMTP3RoutePriority priority;
 
 - (NSComparisonResult)routingPreference:(UMMTP3Route *)other;
 

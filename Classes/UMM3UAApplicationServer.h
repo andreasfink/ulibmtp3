@@ -77,9 +77,21 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
    congestionIndicator:(uint32_t)congestionIndicator;
 
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp;
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp;
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp;
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
+                        mask:(int)mask
+                      forAsp:(UMM3UAApplicationServerProcess *)asp
+                    priority:(UMMTP3RoutePriority)prio;
+
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+                          mask:(int)mask
+                        forAsp:(UMM3UAApplicationServerProcess *)asp
+                      priority:(UMMTP3RoutePriority)prio;
+
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc
+                         mask:(int)mask
+                       forAsp:(UMM3UAApplicationServerProcess *)asp
+                     priority:(UMMTP3RoutePriority)prio;
+
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;

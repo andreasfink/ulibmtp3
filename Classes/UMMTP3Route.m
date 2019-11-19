@@ -87,6 +87,7 @@
     if(self)
     {
 
+        _priority = prio;
         name = [self description];
         linksetName = lsName;
         pointcode = [pc maskedPointcode:xmask];
@@ -104,10 +105,10 @@
                 metrics.local_preference = 200;
                 break;
             case UMMTP3RoutePriority_4:
-            case UMMTP3RoutePriority_undefined:
                 metrics.local_preference = 100;
                 break;
             case UMMTP3RoutePriority_5:
+            case UMMTP3RoutePriority_undefined:
                 metrics.local_preference = 50;
                 break;
             case UMMTP3RoutePriority_6:
@@ -149,6 +150,8 @@
     {
         dict[@"pointcode"] = self.pointcode.stringValue;
     }
+    dict[@"priority"] = @(_priority);
+    
     dict[@"mask"] = @(self.mask);
     if(self.metrics)
     {
@@ -217,6 +220,15 @@
     NSString *route = [[cfg configEntry:@"dpc"] stringValue];
     NSString *linkset = [[cfg configEntry:@"ls"] stringValue];
     NSString *as = [[cfg configEntry:@"as"] stringValue];
+    int prio;
+    if([cfg configEntry:@"priority"])
+    {
+        prio = [[cfg configEntry:@"priority"] intValue];
+    }
+    else
+    {
+        prio = UMMTP3RoutePriority_3;
+    }
     if(linkset==NULL)
     {
         linkset = as;
@@ -236,12 +248,18 @@
             if([a count] == 1)
             {
                 UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:a[0] variant:mtp3_instance.variant];
-                [mtp3_linkset.routingTable updateRouteAvailable:pc mask:0 linksetName:linkset];
+                [mtp3_linkset.routingTable updateRouteAvailable:pc
+                                                           mask:0
+                                                    linksetName:linkset
+                                                       priority:prio];
             }
             else if([a count]==2)
             {
                 UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:a[0] variant:mtp3_instance.variant];
-                [mtp3_linkset.routingTable updateRouteAvailable:pc mask:(pc.maxmask - [a[1] intValue]) linksetName:linkset];
+                [mtp3_linkset.routingTable updateRouteAvailable:pc
+                                                           mask:(pc.maxmask - [a[1] intValue])
+                                                    linksetName:linkset
+                                                       priority:prio];
             }
         }
     }

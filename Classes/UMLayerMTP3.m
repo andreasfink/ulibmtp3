@@ -519,7 +519,10 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [self updateRouteRestricted:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+    [self updateRouteRestricted:linkset.adjacentPointCode
+                           mask:0
+                    linksetName:linkset.name
+                       priority:UMMTP3RoutePriority_5];
     [link congestionIndication];
 }
 
@@ -535,7 +538,10 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [self updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+    [self updateRouteAvailable:linkset.adjacentPointCode
+                          mask:0
+                   linksetName:linkset.name
+                      priority:UMMTP3RoutePriority_5];
     [link congestionClearedIndication];
 }
 
@@ -550,7 +556,8 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [self updateRouteUnavailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+    [self updateRouteUnavailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name
+      priority:UMMTP3RoutePriority_5];
     [link processorOutageIndication];
 }
 
@@ -565,7 +572,8 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [self updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+    [self updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name
+      priority:UMMTP3RoutePriority_5];
     [link processorRestoredIndication];
 }
 
@@ -580,7 +588,10 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [self updateRouteRestricted:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+    [self updateRouteRestricted:linkset.adjacentPointCode
+                           mask:0
+                    linksetName:linkset.name
+                       priority:UMMTP3RoutePriority_1];
     /* inform upper layers */
     [link speedLimitReachedIndication];
 }
@@ -595,7 +606,9 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [self updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name];
+    [self updateRouteAvailable:linkset.adjacentPointCode
+                          mask:0 linksetName:linkset.name
+                      priority:UMMTP3RoutePriority_1];
     [link speedLimitReachedClearedIndication];
 }
 
@@ -610,7 +623,7 @@
     {
         [self logDebug:@"m3uaCongestion"];
     }
-    [self updateRouteRestricted:as.adjacentPointCode mask:0 linksetName:as.name];
+    [self updateRouteRestricted:as.adjacentPointCode mask:0 linksetName:as.name priority:UMMTP3RoutePriority_5];
     as.congestionLevel = 1;
 }
 
@@ -625,7 +638,7 @@
     {
         [self logDebug:@"m3uaCongestionCleared"];
     }
-    [self updateRouteAvailable:as.adjacentPointCode mask:0 linksetName:as.name];
+    [self updateRouteAvailable:as.adjacentPointCode mask:0 linksetName:as.name priority:UMMTP3RoutePriority_5];
     as.congestionLevel = 0;
 }
 
@@ -1198,8 +1211,9 @@
 - (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
                         mask:(int)mask
                  linksetName:(NSString *)name /* returns true if status changed */
+                    priority:(UMMTP3RoutePriority)prio
 {
-    BOOL r = [_routingTable updateRouteAvailable:pc mask:mask linksetName:name];
+    BOOL r = [_routingTable updateRouteAvailable:pc mask:mask linksetName:name priority:prio];
     if(r==YES) /* route status has changed */
     {
         [_linksetLock lock];
@@ -1231,9 +1245,12 @@
     return r;
 }
 
-- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
+- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
+                         mask:(int)mask
+                  linksetName:(NSString *)name
+                     priority:(UMMTP3RoutePriority)prio
 {
-    BOOL r = [_routingTable updateRouteRestricted:pc mask:mask linksetName:name];
+    BOOL r = [_routingTable updateRouteRestricted:pc mask:mask linksetName:name priority:prio];
     if(r==YES) /* route status has changed */
     {
         [_linksetLock lock];
@@ -1265,9 +1282,15 @@
     return r;
 }
 
-- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
+                          mask:(int)mask
+                   linksetName:(NSString *)name
+                      priority:(UMMTP3RoutePriority)prio
 {
-    BOOL r =[_routingTable updateRouteUnavailable:pc mask:mask linksetName:name];
+    BOOL r =[_routingTable updateRouteUnavailable:pc
+                                             mask:mask
+                                      linksetName:name
+                                         priority:prio];
     if(r==YES) /* route status has changed */
     {
         [_linksetLock lock];

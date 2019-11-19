@@ -26,7 +26,7 @@
     self = [super init];
     if(self)
     {
-        local_preference = 100;
+        local_preference = 50;
         
     }
     return self;
@@ -42,7 +42,7 @@
     dict[@"weight"] = @(weight);
     dict[@"local-preference"] = @(local_preference);
     dict[@"aggregate"] = @(aggregate);
-    dict[@"as-path-legnth"] = @(as_path_legnth);
+    dict[@"as-path-length"] = @(as_path_legnth);
     dict[@"origin-type"] = @(origin_type);
     dict[@"multi-exit-discrimators"] = @(multi_exit_discrimators);
     return dict;

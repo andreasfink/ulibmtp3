@@ -1351,7 +1351,9 @@
         UMMTP3Label *reverse_label = [label reverseLabel];
         [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
         _sendTRA = NO;
-        [self updateRouteAvailable:_adjacentPointCode mask:0];
+        [self updateRouteAvailable:_adjacentPointCode
+                              mask:0
+                          priority:UMMTP3RoutePriority_5];
     }
     [self updateLinkSetStatus];
 }
@@ -1524,7 +1526,12 @@
     return mask;
 }
 
-- (void)processTFP:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+- (void)processTFP:(UMMTP3Label *)label
+       destination:(UMMTP3PointCode *)pc
+                ni:(int)ni
+                mp:(int)mp
+               slc:(int)slc
+              link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
 
@@ -1538,12 +1545,27 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteUnavailable:translatedPc mask:0];
-
+    if(translatedPc.pc == _adjacentPointCode.pc)
+    {
+        [self updateRouteUnavailable:translatedPc
+                                mask:0
+                            priority:UMMTP3RoutePriority_1];
+    }
+    else
+    {
+        [self updateRouteUnavailable:translatedPc
+                                mask:0
+                            priority:UMMTP3RoutePriority_5];
+    }
 }
 
 
-- (void)processTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+- (void)processTFR:(UMMTP3Label *)label
+       destination:(UMMTP3PointCode *)pc
+                ni:(int)ni
+                mp:(int)mp
+               slc:(int)slc
+              link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
 
@@ -1557,7 +1579,18 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteRestricted:translatedPc mask:0];
+    if(translatedPc.pc == _adjacentPointCode.pc)
+    {
+    [self updateRouteRestricted:translatedPc
+                           mask:0
+                       priority:UMMTP3RoutePriority_1];
+    }
+    else
+    {
+        [self updateRouteRestricted:translatedPc
+                           mask:0
+                       priority:UMMTP3RoutePriority_5];
+    }
 }
 
 
@@ -1573,7 +1606,12 @@
  * availability for these routes.
  */
 
-- (void)processTFA:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+- (void)processTFA:(UMMTP3Label *)label
+       destination:(UMMTP3PointCode *)pc
+                ni:(int)ni
+                mp:(int)mp
+               slc:(int)slc
+              link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
 
@@ -1587,7 +1625,18 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteAvailable:translatedPc mask:0];
+    if(translatedPc.pc == _adjacentPointCode.pc)
+    {
+        [self updateRouteAvailable:translatedPc
+                              mask:0
+                          priority:UMMTP3RoutePriority_1];
+    }
+    else
+    {
+        [self updateRouteAvailable:translatedPc
+                              mask:0
+                          priority:UMMTP3RoutePriority_1];
+    }
 }
 
 
@@ -1737,7 +1786,11 @@
 }
 
 /* Group TRM */
-- (void)processTRA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+- (void)processTRA:(UMMTP3Label *)label
+                ni:(int)ni
+                mp:(int)mp
+               slc:(int)slc
+              link:(UMMTP3Link *)link
 {
     [self updateLinkSetStatus];
     if(_logLevel <=UMLOG_DEBUG)
@@ -1749,7 +1802,9 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    [self updateRouteAvailable:_adjacentPointCode mask:0];
+    [self updateRouteAvailable:_adjacentPointCode
+                          mask:0
+                      priority:UMMTP3RoutePriority_1];
     _mtp3.ready=YES;
 }
 
@@ -3485,18 +3540,26 @@
             case M2PA_STATUS_OOS:
             case M2PA_STATUS_INITIAL_ALIGNMENT:
             case M2PA_STATUS_ALIGNED_NOT_READY:
-                [self updateRouteUnavailable:_adjacentPointCode mask:0];
+                [self updateRouteUnavailable:_adjacentPointCode
+                                        mask:0
+                                    priority:UMMTP3RoutePriority_1];
                 inactive++;
                 break;
             case M2PA_STATUS_ALIGNED_READY:
-                [self updateRouteUnavailable:_adjacentPointCode mask:0];
+                [self updateRouteUnavailable:_adjacentPointCode
+                                        mask:0
+                                    priority:UMMTP3RoutePriority_1];
                 ready++;
                 break;
             case M2PA_STATUS_PROCESSOR_OUTAGE:
-                [self updateRouteUnavailable:_adjacentPointCode mask:0];
+                [self updateRouteUnavailable:_adjacentPointCode
+                                        mask:0
+                                    priority:UMMTP3RoutePriority_1];
                 processorOutage++;
             case M2PA_STATUS_IS:
-                if([self updateRouteAvailable:_adjacentPointCode mask:0])
+                if([self updateRouteAvailable:_adjacentPointCode
+                                         mask:0
+                                     priority:UMMTP3RoutePriority_1])
                 {
                     _sendTRA=YES;
                 }
@@ -3544,34 +3607,60 @@
               link:link];
 }
 
-- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask
+- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
+                        mask:(int)mask
+                    priority:(UMMTP3RoutePriority)prio
 {
-    if([_routingTable updateRouteAvailable:pc mask:mask linksetName:_name]==YES) /* route has changed */
+    if([_routingTable updateRouteAvailable:pc
+                                      mask:mask
+                               linksetName:_name
+                                  priority:prio
+        ]==YES) /* route has changed */
     {
-        return [_mtp3 updateRouteAvailable:pc mask:mask linksetName:_name];
+        return [_mtp3 updateRouteAvailable:pc
+                                      mask:mask
+                               linksetName:_name
+                                  priority:prio];
     }
     return NO;
 }
 
-- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask
+- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
+                         mask:(int)mask
+                     priority:(UMMTP3RoutePriority)prio
 {
-    if([_routingTable updateRouteRestricted:pc mask:mask linksetName:_name]==YES) /* route has changed */
+    if([_routingTable updateRouteRestricted:pc
+                                       mask:mask
+                                linksetName:_name
+                                   priority:prio]==YES) /* route has changed */
     {
-        return [_mtp3 updateRouteRestricted:pc mask:mask linksetName:_name];
+        return [_mtp3 updateRouteRestricted:pc
+                                       mask:mask
+                                linksetName:_name
+                                   priority:prio];
     }
     return NO;
 }
 
-- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
+                          mask:(int)mask
+                      priority:(UMMTP3RoutePriority)prio
+
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
         [self logDebug:s];
     }
-    if([_routingTable updateRouteUnavailable:pc mask:mask linksetName:_name]==YES) /* route has changed */
+    if([_routingTable updateRouteUnavailable:pc
+                                        mask:mask
+                                 linksetName:_name
+                                    priority:prio]==YES) /* route has changed */
     {
-        return [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
+        return [_mtp3 updateRouteUnavailable:pc
+                                        mask:mask
+                                 linksetName:_name
+                                    priority:prio];
     }
     return NO;
 }

@@ -14,6 +14,7 @@
 #import "UMMTP3Variant.h"
 #import "UMMTP3TransitPermission.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
+#import "UMMTP3RoutePriority.h"
 
 @class UMMTP3Link;
 @class UMLayerMTP3;
@@ -372,12 +373,20 @@ options:(NSDictionary *)options;
 - (void)stopDetachAndDestroy;
 - (NSString *)webStatus;
 
-- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask; /* returns YES if status has changed */
-- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask; /* returns YES if status has changed */
-- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask; /* returns YES if status has changed */
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
+                          mask:(int)mask
+                      priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
 
-- (UMMTP3PointCode *)remoteToLocalPointcode:(UMMTP3PointCode *)pc;
-- (UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc;
+- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
+                        mask:(int)mask
+                    priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
+
+- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
+                         mask:(int)mask
+                     priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
+
+-(UMMTP3PointCode *)remoteToLocalPointcode:(UMMTP3PointCode *)pc;
+-(UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc;
 -(UMMTP3Label *)remoteToLocalLabel:(UMMTP3Label *)label;
 -(UMMTP3Label *)localToRemoteLabel:(UMMTP3Label *)label;
 -(int)remoteToLocalNetworkIndicator:(int)ni;

@@ -21,3 +21,8 @@ typedef enum UMMTP3RoutePriority
     UMMTP3RoutePriority_9 = 9,
 } UMMTP3RoutePriority;
 
+/* used priorities:
+ adjacent pointcodes 1
+ routing updates dynamic 5
+ routing configs in config file 3 (unless priority=xxx is specified)
+ */

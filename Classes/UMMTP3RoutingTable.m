@@ -55,6 +55,7 @@
 - (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc  /* returns true if the route has changed */
                         mask:(int)mask
                  linksetName:(NSString *)linksetName
+                    priority:(UMMTP3RoutePriority)prio
 {
     UMMTP3RouteStatus oldstatus = UMMTP3_ROUTE_UNUSED;
     UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
@@ -68,7 +69,7 @@
         oldstatus = UMMTP3_ROUTE_UNKNOWN;
         r = [[UMMTP3Route alloc]initWithPc:pc
                                linksetName:linksetName
-                                  priority:UMMTP3RoutePriority_undefined
+                                  priority:prio
                                       mask:mask];
         r.status = UMMTP3_ROUTE_ALLOWED;
         routesByPointCode[r.routingTableKey] = r;
@@ -79,6 +80,7 @@
 - (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
                   linksetName:(NSString *)linksetName
+                     priority:(UMMTP3RoutePriority)prio
 {
     UMMTP3RouteStatus oldstatus = UMMTP3_ROUTE_UNUSED;
     UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
@@ -92,7 +94,7 @@
         oldstatus = UMMTP3_ROUTE_UNKNOWN;
         r = [[UMMTP3Route alloc]initWithPc:pc
                                linksetName:linksetName
-                                  priority:UMMTP3RoutePriority_undefined
+                                  priority:prio
                                       mask:mask];
         r.status = UMMTP3_ROUTE_RESTRICTED;
         routesByPointCode[r.routingTableKey] = r;
@@ -103,6 +105,7 @@
 - (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
                    linksetName:(NSString *)linksetName
+                      priority:(UMMTP3RoutePriority)prio
 {
     UMMTP3RouteStatus oldstatus = UMMTP3_ROUTE_UNUSED;
     UMMTP3Route *r = [self findRouteForDestination:pc mask:mask linksetName:linksetName exact:YES];
@@ -116,7 +119,7 @@
         oldstatus = UMMTP3_ROUTE_UNKNOWN;
         r = [[UMMTP3Route alloc]initWithPc:pc
                                linksetName:linksetName
-                                  priority:UMMTP3RoutePriority_undefined
+                                  priority:prio
                                       mask:mask];
         r.status = UMMTP3_ROUTE_PROHIBITED;
         routesByPointCode[r.routingTableKey] = r;

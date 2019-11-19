@@ -613,7 +613,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [_as updateRouteUnavailable:pc mask:mask forAsp:self];
+        [_as updateRouteUnavailable:pc
+                               mask:mask
+                             forAsp:self
+                           priority:UMMTP3RoutePriority_5];
     }
 }
 
@@ -632,7 +635,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        [_as updateRouteAvailable:pc mask:mask forAsp:self];
+        [_as updateRouteAvailable:pc
+                             mask:mask
+                           forAsp:self
+                         priority:UMMTP3RoutePriority_5];
     }
 }
 
@@ -2084,7 +2090,10 @@ static const char *get_sctp_status_string(SCTP_Status status)
     UMM3UA_Status oldStatus = self.status;
 
     [self logInfo:@"sctpReportsDown"];
-    [ _as updateRouteUnavailable:_as.pc mask:0 forAsp:self];
+    [ _as updateRouteUnavailable:_as.pc
+                            mask:0
+                          forAsp:self
+                        priority:UMMTP3RoutePriority_1];
 
     if(self.status != M3UA_STATUS_OFF)
     {

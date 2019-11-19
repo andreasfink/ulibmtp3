@@ -15,6 +15,7 @@
 
 #import "UMMTP3Variant.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
+#import "UMMTP3RoutePriority.h"
 
 @class UMMTP3LinkSet;
 @class UMMTP3Link;
@@ -262,9 +263,21 @@ typedef enum UMMTP3_Error
 - (int)maxPduSize;
 
 
-- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name;
-- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name;
-- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask linksetName:(NSString *)name;
+- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
+                        mask:(int)mask
+                 linksetName:(NSString *)name
+                    priority:(UMMTP3RoutePriority)prio;
+
+- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
+                         mask:(int)mask
+                  linksetName:(NSString *)name
+                     priority:(UMMTP3RoutePriority)prio;
+
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
+                          mask:(int)mask
+                   linksetName:(NSString *)name
+                      priority:(UMMTP3RoutePriority)prio;
+
 - (UMMTP3RoutingTable *)routingTable;
 - (NSDictionary *)apiStatus;
 - (UMSynchronizedSortedDictionary *)routeStatus;

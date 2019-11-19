@@ -45,15 +45,20 @@
 
 - (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
                         mask:(int)mask
-                 linksetName:(NSString *)linkset;
+                 linksetName:(NSString *)linkset
+                    priority:(UMMTP3RoutePriority)prio;
 
 - (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
-                  linksetName:(NSString *)linkset;
+                  linksetName:(NSString *)linkset
+                     priority:(UMMTP3RoutePriority)prio;
+
 
 - (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
-                   linksetName:(NSString *)linkset;
+                   linksetName:(NSString *)linkset
+                      priority:(UMMTP3RoutePriority)prio;
+
 
 - (UMSynchronizedSortedDictionary *)objectValue;
 

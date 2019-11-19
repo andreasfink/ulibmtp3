@@ -420,7 +420,9 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp
 {
     activeCount++;
-    [self updateRouteAvailable:_adjacentPointCode mask:0];
+    [self updateRouteAvailable:_adjacentPointCode
+                          mask:0
+                      priority:UMMTP3RoutePriority_1];
     if(_trafficMode == UMM3UATrafficMode_override)
     {
         NSArray *keys = [applicationServerProcesses allKeys];
@@ -461,7 +463,9 @@ static const char *m3ua_param_name(uint16_t param_type)
     }
     if(somethingsActive == NO)
     {
-        [self updateRouteUnavailable:_adjacentPointCode mask:0];
+        [self updateRouteUnavailable:_adjacentPointCode
+                                mask:0
+                            priority:UMMTP3RoutePriority_1];
     }
     [self updateLinkSetStatus];
 }
@@ -503,18 +507,30 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 }
 
-- (void)updateRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
+                        mask:(int)mask
+                      forAsp:(UMM3UAApplicationServerProcess *)asp
+                    priority:(UMMTP3RoutePriority)prio
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
         [self logDebug:s];
     }
-    [_routingTable updateRouteAvailable:pc mask:mask linksetName:_name];
-    [_mtp3 updateRouteAvailable:pc mask:mask linksetName:_name];
+    [_routingTable updateRouteAvailable:pc
+                                   mask:mask
+                            linksetName:_name
+                               priority:prio];
+    [_mtp3 updateRouteAvailable:pc
+                           mask:mask
+                    linksetName:_name
+                       priority:prio];
 
 }
-- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
+                          mask:(int)mask
+                        forAsp:(UMM3UAApplicationServerProcess *)asp
+                      priority:(UMMTP3RoutePriority)prio
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -525,11 +541,20 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         return;
     }
-    [_routingTable updateRouteUnavailable:pc mask:mask linksetName:_name];
-    [_mtp3 updateRouteUnavailable:pc mask:mask linksetName:_name];
+    [_routingTable updateRouteUnavailable:pc
+                                     mask:mask
+                              linksetName:_name
+                                 priority:UMMTP3RoutePriority_5];
+    [_mtp3 updateRouteUnavailable:pc
+                             mask:mask
+                      linksetName:_name
+                         priority:UMMTP3RoutePriority_5];
 
 }
-- (void)updateRouteRestricted:(UMMTP3PointCode *)pc mask:(int)mask forAsp:(UMM3UAApplicationServerProcess *)asp
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc
+                         mask:(int)mask
+                       forAsp:(UMM3UAApplicationServerProcess *)asp
+                     priority:(UMMTP3RoutePriority)prio
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -540,8 +565,14 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         return;
     }
-    [_routingTable updateRouteRestricted:pc mask:mask linksetName:_name];
-    [_mtp3 updateRouteRestricted:pc mask:mask linksetName:_name];
+    [_routingTable updateRouteRestricted:pc
+                                    mask:mask
+                             linksetName:_name
+                                priority:prio];
+    [_mtp3 updateRouteRestricted:pc
+                            mask:mask
+                     linksetName:_name
+                        priority:prio];
 
 }
 
