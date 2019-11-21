@@ -27,7 +27,7 @@
     if(self)
     {
         local_preference = 50;
-        
+        weight = 100;
     }
     return self;
 }

@@ -768,7 +768,10 @@
 
 - (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)search_dpc
 {
-    UMMTP3Route *re = [_routingTable findRouteForDestination:search_dpc mask:0 linksetName:NULL exact:NO];
+    UMMTP3Route *re = [_routingTable findRouteForDestination:search_dpc
+                                                        mask:0
+                                                 linksetName:NULL
+                                                       exact:NO];
     if(re==NULL)
     {
         return _defaultRoute;
