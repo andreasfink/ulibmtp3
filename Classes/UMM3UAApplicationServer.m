@@ -470,6 +470,33 @@ static const char *m3ua_param_name(uint16_t param_type)
     [self updateLinkSetStatus];
 }
 
+- (void)aspPending:(UMM3UAApplicationServerProcess *)asp
+{
+    activeCount--;
+    BOOL somethingsActive = NO;
+    NSArray *keys = [applicationServerProcesses allKeys];
+    for(id key in keys)
+    {
+        UMM3UAApplicationServerProcess *asp2 = applicationServerProcesses[key];
+        if(asp2 == asp)
+        {
+            continue;
+        }
+        if(asp2.active)
+        {
+            somethingsActive = YES;
+            break;
+        }
+    }
+    if(somethingsActive == NO)
+    {
+        [self updateRouteUnavailable:_adjacentPointCode
+                                mask:0
+                            priority:UMMTP3RoutePriority_1];
+    }
+    [self updateLinkSetStatus];
+}
+
 
 -(UMMTP3RouteStatus)isRouteAvailable:(UMMTP3PointCode *)pc
                                 mask:(int)mask

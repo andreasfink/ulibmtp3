@@ -101,6 +101,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 - (void)aspDown:(UMM3UAApplicationServerProcess *)asp;
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp;
 - (void)aspInactive:(UMM3UAApplicationServerProcess *)asp;
+- (void)aspPending:(UMM3UAApplicationServerProcess *)asp;
 - (void)powerOn;
 - (void)powerOff;
 

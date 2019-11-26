@@ -430,7 +430,96 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void)processNTFY:(UMSynchronizedSortedDictionary *)params
 {
-    NSLog(@"M3UA-NTFY: %@",params);
+    /* mandatory */
+    NSData *status                = [self getParam:params identifier:M3UA_PARAM_STATUS];
+    /* conditional */
+    NSData *asp_identifier        = [self getParam:params identifier:M3UA_PARAM_ASP_IDENTIFIER];
+    /* optional */
+    NSData *routing_context       = [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
+    /* optional */
+    NSData *info_string           = [self getParam:params identifier:M3UA_PARAM_INFO_STRING];
+
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"M3UA-NTFY"];
+    }
+    if(status.length == 8)
+    {
+        uint8_t *s = (uint8_t *)status.bytes;
+        uint16_t    statusType = s[0] << 8 | s[1];
+        uint16_t    statusInformation = s[2] << 8 | s[3];
+
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            switch(statusType)
+            {
+                case 1:
+                    [self logDebug:@" STATUS-TYPE: AS-State_Change"];
+                    break;
+                case 2:
+                    [self logDebug:@" STATUS-TYPE: Other"];
+                    break;
+                default:
+                    [self logDebug:@" STATUS-TYPE: unknown value "];
+                    break;
+            }
+            switch(statusInformation)
+            {
+                case 1:
+                    [self logDebug:@" STATUS: RESERVED"];
+                    break;
+                case 2:
+                    [self logDebug:@"  STATUS: AS-INACTIVE"];
+                    break;
+                case 3:
+                    [self logDebug:@" STATUS: AS-ACTIVE"];
+                    break;
+                case 4:
+                    [self logDebug:@" STATUS: AS-PENDING"];
+                    break;
+                default:
+                    [self logDebug:@" STATUS: unknown value "];
+                    break;
+            }
+        }
+        if(statusType==1)
+        {
+            if(statusInformation ==2)
+            {
+                self.status =  M3UA_STATUS_INACTIVE;
+                [_as aspInactive:self];
+            }
+            else if (statusInformation==3)
+            {
+                [_reopen_timer1 stop];
+                [_reopen_timer2 stop];
+                [_linktest_timer stop];
+                if(_linktest_timer_value > 0)
+                {
+                    [_linktest_timer start];
+                }
+                self.status =  M3UA_STATUS_IS;
+                [_as aspActive:self];
+            }
+            else if(statusInformation==4)
+            {
+                self.status =  M3UA_STATUS_INACTIVE;
+                [_as aspPending:self];
+            }
+        }
+    }
+    if((asp_identifier) &&  (self.logLevel <= UMLOG_DEBUG))
+    {
+        [self logDebug:[NSString stringWithFormat:@" ASP-IDENTIFIER: %@",asp_identifier.hexString]];
+    }
+    if((routing_context) &&  (self.logLevel <= UMLOG_DEBUG))
+    {
+        [self logDebug:[NSString stringWithFormat:@" ROUTING-CONTEXT: %@",routing_context.utf8String]];
+    }
+    if((info_string) &&  (self.logLevel <= UMLOG_DEBUG))
+    {
+        [self logDebug:[NSString stringWithFormat:@" INFO-STRING: %@",info_string.utf8String]];
+    }
 }
 
 #pragma mark -
