@@ -26,6 +26,7 @@
 		A6C78D881A29437B006C66A2 /* ulibsctp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D851A29437B006C66A2 /* ulibsctp.framework */; };
 		A6C78D8C1A294393006C66A2 /* ulib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D8B1A294392006C66A2 /* ulib.framework */; };
 		A6C78D8D1A294393006C66A2 /* ulib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D8B1A294392006C66A2 /* ulib.framework */; };
+		A6E3090823AAF32400783116 /* mtp3routeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E3090723AAF32400783116 /* mtp3routeTests.m */; };
 		A6E3D78E22BABDAE00D5B1B6 /* ulibsctp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D851A29437B006C66A2 /* ulibsctp.framework */; };
 		A6F178C521AF03B00084D972 /* ulibmtp3_version.h in Headers */ = {isa = PBXBuildFile; fileRef = A68B88B61E36A89D00CE0B05 /* ulibmtp3_version.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6F178C621AF03B00084D972 /* ulibmtp3.h in Headers */ = {isa = PBXBuildFile; fileRef = A604D10919B999AA0090FC94 /* ulibmtp3.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -232,6 +233,7 @@
 		A6C78D8B1A294392006C66A2 /* ulib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulib.framework; path = "/Library/Application Support/FinkTelecomServices/frameworks/ulib.framework"; sourceTree = "<absolute>"; };
 		A6D75F051FCF258A005C198E /* UMMTP3SyslogClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3SyslogClient.h; sourceTree = "<group>"; };
 		A6D75F061FCF258A005C198E /* UMMTP3SyslogClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3SyslogClient.m; sourceTree = "<group>"; };
+		A6E3090723AAF32400783116 /* mtp3routeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mtp3routeTests.m; sourceTree = "<group>"; };
 		A6E7BF2F1FBECDF600C53765 /* Q.708B-2011-ISPC.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Q.708B-2011-ISPC.pdf"; sourceTree = "<group>"; };
 		A6E7BF541FBED6CC00C53765 /* rfc-4666-m3ua.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "rfc-4666-m3ua.txt"; sourceTree = "<group>"; };
 		A6EB479A1A35BB8E0090FC94 /* UMMTP3Task_adminAttachOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3Task_adminAttachOrder.h; sourceTree = "<group>"; };
@@ -414,6 +416,7 @@
 			isa = PBXGroup;
 			children = (
 				A604D11D19B999AA0090FC94 /* ulibmtp3Tests.m */,
+				A6E3090723AAF32400783116 /* mtp3routeTests.m */,
 				A604D11819B999AA0090FC94 /* Supporting Files */,
 			);
 			path = ulibmtp3Tests;
@@ -548,7 +551,6 @@
 					A604D10F19B999AA0090FC94 = {
 						DevelopmentTeam = 2GSNWPNR77;
 						ProvisioningStyle = Automatic;
-						TestTargetID = A604D0F819B999AA0090FC94;
 					};
 				};
 			};
@@ -662,6 +664,7 @@
 				A6F1792321AF044B0084D972 /* UMMTP3Task_adminCreateLinkSet.m in Sources */,
 				A60A36E51A305DCF0090FC94 /* UMMTP3LinkSet.m in Sources */,
 				A60A36EA1A305DDC0090FC94 /* UMMTP3Link.m in Sources */,
+				A6E3090823AAF32400783116 /* mtp3routeTests.m in Sources */,
 				A6F1793021AF044B0084D972 /* UMMTP3WhiteList.m in Sources */,
 				A6F1791721AF044B0084D972 /* UMM3UAApplicationServerProcess.m in Sources */,
 				A6F1792021AF044B0084D972 /* UMMTP3SyslogClient.m in Sources */,
@@ -863,7 +866,6 @@
 		A604D12519B999AA0090FC94 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ulibmtp3.framework/Versions/A/ulibmtp3";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -873,8 +875,7 @@
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ulibmtp3/ulibmtp3-Prefix.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -883,7 +884,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "me.fink.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -891,7 +891,6 @@
 		A604D12619B999AA0090FC94 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ulibmtp3.framework/Versions/A/ulibmtp3";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -901,13 +900,11 @@
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ulibmtp3/ulibmtp3-Prefix.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				INFOPLIST_FILE = "ulibmtp3Tests/ulibmtp3Tests-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "me.fink.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
