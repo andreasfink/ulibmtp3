@@ -44,6 +44,7 @@
                                             mask:(int)mask
                               excludeLinkSetName:(NSString *)linksetName
                                            exact:(BOOL)exact
+
 {
     NSArray<UMMTP3InstanceRoute *> *a = [self findRoutesForDestination:pc mask:mask excludeLinkSetName:linksetName exact:exact];
     if(a.count>1)
@@ -54,7 +55,8 @@
     return NULL;
 }
 
-- (NSArray<UMMTP3InstanceRoute *> *)getRoutesForDestination:(UMMTP3PointCode *)pc
+
+- (NSArray<UMMTP3InstanceRoute *> *)findRoutesForDestination:(UMMTP3PointCode *)pc
                                                        mask:(int)mask
                                          excludeLinkSetName:(NSString *)linksetName
                                                       exact:(BOOL)exact
@@ -78,7 +80,7 @@
     return r;
 }
 
-- (NSArray<UMMTP3InstanceRoute *> *)getRoutesForDestination:(UMMTP3PointCode *)pc
+- (NSArray<UMMTP3InstanceRoute *> *)findRoutesForDestination:(UMMTP3PointCode *)pc
                                                        mask:(int)mask
                                             onlyLinksetName:(NSString *)linksetName
 {
@@ -106,7 +108,7 @@
 }
 
 
-- (void)updateDynamicRouteAvailable:(UMMTP3PointCode *)pc
+- (BOOL)updateDynamicRouteAvailable:(UMMTP3PointCode *)pc
                                mask:(int)mask
                         linksetName:(NSString *)linkset
                            priority:(UMMTP3RoutePriority)prio
@@ -137,6 +139,7 @@
         [r addObject:route];
     }
     [_lock unlock];
+    return found;
 }
 
 - (BOOL)updateDynamicRouteRestricted:(UMMTP3PointCode *)pc
@@ -342,7 +345,7 @@
 
 - (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls
 {
-    NSArray<UMMTP3InstanceRoute *> *routes = [self getRoutesForDestination:pc
+    NSArray<UMMTP3InstanceRoute *> *routes = [self findRoutesForDestination:pc
                                                                       mask:mask
                                                            onlyLinksetName:ls];
     if(routes.count == 0)
