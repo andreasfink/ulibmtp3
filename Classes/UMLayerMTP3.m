@@ -28,8 +28,7 @@
 #import "UMMTP3Task_adminCreateLink.h"
 #import "UMMTP3Label.h"
 #import "UMMTP3HeadingCode.h"
-#import "UMMTP3RoutingTable.h"
-#import "UMMTP3Route.h"
+#import "UMMTP3InstanceRoute.h"
 #import "UMM3UAApplicationServer.h"
 #import "UMMTP3Task_start.h"
 #import "UMMTP3Task_stop.h"
@@ -86,7 +85,7 @@
 - (void)refreshRoutingTable
 {
     [_linksetLock lock];
-    _routingTable = [[UMMTP3InstanceRoutingTable alloc] initWithLinkSetSortedDict:_linksets];
+    /* FIXME: do we still need this? or maybe we should check status of linkset AVAIL/UNAVAIL here and send updateLinksetAvailable: etc to routing table */
     [_linksetLock unlock];
 }
 
@@ -766,12 +765,12 @@
     }
 }
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)search_dpc
+- (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)search_dpc
 {
-    UMMTP3Route *re = [_routingTable findRouteForDestination:search_dpc
-                                                        mask:0
-                                                 linksetName:NULL
-                                                       exact:NO];
+    UMMTP3InstanceRoute *re = [_routingTable findRouteForDestination:search_dpc
+                                                                mask:0
+                                                  excludeLinkSetName:NULL
+                                                               exact:NO];
     if(re==NULL)
     {
         return _defaultRoute;
@@ -790,7 +789,7 @@
     {
         fopc = _opc;
     }
-    UMMTP3Route *route = [self findRouteForDestination:fdpc];
+    UMMTP3InstanceRoute *route = [self findRouteForDestination:fdpc];
     return [self forwardPDU:pdu
                         opc:fopc
                         dpc:fdpc
@@ -805,7 +804,7 @@
                        dpc:(UMMTP3PointCode *)fdpc
                         si:(int)si
                         mp:(int)mp
-                     route:(UMMTP3Route *)route
+                     route:(UMMTP3InstanceRoute *)route
                    options:(NSDictionary *)options
 {
     
@@ -992,7 +991,7 @@
                                   mp:(int)mp
                          linksetName:(NSString *)linksetName
 {
-    UMMTP3Route *route = [_routingTable findRouteForDestination:label.dpc mask:0 excludeLinkSetName:linksetName exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
+    UMMTP3InstanceRoute *route = [_routingTable findRouteForDestination:label.dpc mask:0 excludeLinkSetName:linksetName exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
     NSMutableDictionary *options = [[NSMutableDictionary alloc]init];
     options[@"mtp3-incoming-linkset"] = linksetName;
     if(route)
@@ -1216,7 +1215,8 @@
                  linksetName:(NSString *)name /* returns true if status changed */
                     priority:(UMMTP3RoutePriority)prio
 {
-    BOOL r = [_routingTable updateRouteAvailable:pc mask:mask linksetName:name priority:prio];
+    BOOL r =YES;
+    [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
     if(r==YES) /* route status has changed */
     {
         [_linksetLock lock];
@@ -1253,7 +1253,8 @@
                   linksetName:(NSString *)name
                      priority:(UMMTP3RoutePriority)prio
 {
-    BOOL r = [_routingTable updateRouteRestricted:pc mask:mask linksetName:name priority:prio];
+    BOOL r =YES;
+    [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
     if(r==YES) /* route status has changed */
     {
         [_linksetLock lock];
@@ -1290,10 +1291,10 @@
                    linksetName:(NSString *)name
                       priority:(UMMTP3RoutePriority)prio
 {
-    BOOL r =[_routingTable updateRouteUnavailable:pc
-                                             mask:mask
-                                      linksetName:name
-                                         priority:prio];
+    BOOL r = [_routingTable updateDynamicRouteUnavailable:pc
+                                            mask:mask
+                                     linksetName:name
+                                        priority:prio];
     if(r==YES) /* route status has changed */
     {
         [_linksetLock lock];

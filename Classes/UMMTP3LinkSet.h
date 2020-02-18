@@ -23,7 +23,6 @@
 @class UMMTP3WhiteList;
 @class UMMTP3BlackList;
 @class UMMTP3RoutingTable;
-@class UMMTP3LinkRoutingTable;
 @class UMMTP3TranslationTableMap;
 @class UMMTP3PointCodeTranslationTable;
 
@@ -44,7 +43,6 @@
     unsigned long               _nationalOptions;
     UMMTP3WhiteList             *_incomingWhiteList;
     UMMTP3BlackList             *_incomingBlackList;
-    UMMTP3LinkRoutingTable      *_routingTable;
     int                         _tra_sent;
     int                         _trw_received;
     BOOL                        _sendTRA;
@@ -373,15 +371,15 @@ options:(NSDictionary *)options;
 - (void)stopDetachAndDestroy;
 - (NSString *)webStatus;
 
-- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
+- (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
                       priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
 
-- (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
+- (void)updateRouteAvailable:(UMMTP3PointCode *)pc
                         mask:(int)mask
                     priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
 
-- (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
+- (void)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
                      priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
 

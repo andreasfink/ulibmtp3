@@ -5,7 +5,7 @@
 //  Created by Andreas Fink on 26.01.17.
 //  Copyright © 2017 Andreas Fink (andreas@fink.org). All rights reserved.
 //
-
+#if 0
 #import "UMMTP3LinkRoutingTable.h"
 #import "UMMTP3PointCode.h"
 #import "UMMTP3LinkSet.h"
@@ -166,3 +166,5 @@
 
 
 @end
+#endif
+

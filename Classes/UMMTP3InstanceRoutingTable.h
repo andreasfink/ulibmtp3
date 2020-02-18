@@ -2,29 +2,70 @@
 //  UMMTP3InstanceRoutingTable.h
 //  ulibmtp3
 //
-//  Created by Andreas Fink on 26.01.17.
-//  Copyright © 2017 Andreas Fink (andreas@fink.org). All rights reserved.
+//  Created by Andreas Fink on 17.02.20.
+//  Copyright © 2020 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
 #import <ulib/ulib.h>
-#import "UMMTP3RoutingTable.h"
 
+#import "UMMTP3InstanceRoute.h"
+#import "UMMTP3RoutePriority.h"
 
-/* in comparison to the link routing table, the instance routing table
- can have more than one entry per pointcode. Hence its a 
- UMSychronizedSortedDictionary of
- UMSychronizedSortedDictionary of 
- UMMTP3Route objects
- The first key is the linkset name, the second one is the pointcode.
- So its basically an UMSychronizedSortedDictionary of UMMTP3LinkRoutingTable objects
- */
-
-@interface UMMTP3InstanceRoutingTable : UMMTP3RoutingTable
+@interface UMMTP3InstanceRoutingTable : UMObject
 {
-    UMSynchronizedSortedDictionary *routingTablesByLinkSet;
+    NSString                            *_logFileName;
+    UMLogLevel                          _logLevel;
+    NSMutableDictionary                 *_routesByPointCode;
+    UMMutex                             *_lock;
 }
 
-- (UMMTP3InstanceRoutingTable *)initWithLinkSetSortedDict:(UMSynchronizedSortedDictionary *)arr;
+@property(readwrite,assign) UMLogLevel logLevel;
+
+- (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)pc
+                                            mask:(int)mask
+                              excludeLinkSetName:(NSString *)linksetName
+                                           exact:(BOOL)exact;
+
+- (NSArray<UMMTP3InstanceRoute *> *)findRoutesForDestination:(UMMTP3PointCode *)pc
+                                                        mask:(int)mask
+                                          excludeLinkSetName:(NSString *)linksetName
+                                                       exact:(BOOL)exact;
+
+
+- (BOOL)updateDynamicRouteAvailable:(UMMTP3PointCode *)pc
+                               mask:(int)mask
+                        linksetName:(NSString *)linkset
+                           priority:(UMMTP3RoutePriority)prio;
+
+- (BOOL)updateDynamicRouteRestricted:(UMMTP3PointCode *)pc
+                                mask:(int)mask
+                         linksetName:(NSString *)linkset
+                            priority:(UMMTP3RoutePriority)prio;
+
+
+- (BOOL)updateDynamicRouteUnavailable:(UMMTP3PointCode *)pc
+                                 mask:(int)mask
+                          linksetName:(NSString *)linkset
+                             priority:(UMMTP3RoutePriority)prio;
+
+
+- (BOOL) addStaticRoute:(UMMTP3PointCode *)pc   /* returns YES if found in table */
+                   mask:(int)mask
+            linksetName:(NSString *)linkset
+               priority:(UMMTP3RoutePriority)prio;
+
+- (BOOL) removeStaticRoute:(UMMTP3PointCode *)pc /* returns YES if found in table */
+                      mask:(int)mask
+               linksetName:(NSString *)linkset
+                  priority:(UMMTP3RoutePriority)prio;
+
+- (void)updateLinksetUnavailable:(NSString *)linkset;
+- (void)updateLinksetRestricted:(NSString *)linkset;
+- (void)updateLinksetAvailable:(NSString *)linkset;
+- (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls;
 - (UMSynchronizedSortedDictionary *)routeStatus;
+- (UMSynchronizedSortedDictionary *)objectValue;
 
 @end
+
+

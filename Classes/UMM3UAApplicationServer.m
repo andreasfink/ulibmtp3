@@ -9,11 +9,10 @@
 #import "UMM3UAApplicationServer.h"
 #import "UMMTP3PointCode.h"
 #import "UMMTP3Label.h"
-#import "UMMTP3Route.h"
+#import "UMMTP3InstanceRoute.h"
 #import "ulibmtp3_version.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 #import "UMM3UAApplicationServerProcess.h"
-#import "UMMTP3LinkRoutingTable.h"
 #import "UMMTP3HeadingCode.h"
 
 /* for arc4random */
@@ -516,13 +515,7 @@ static const char *m3ua_param_name(uint16_t param_type)
             return UMMTP3_ROUTE_ALLOWED;
         }
     }
-    if(_routingTable)
-    {
-        return [_routingTable isRouteAvailable:pc
-                                     mask:mask
-                              linksetName:_name];
-    }
-    return UMMTP3_ROUTE_UNKNOWN;
+    return [_mtp3.routingTable isRouteAvailable:pc mask:mask linkset:_name];
 }
 
 - (void)routeUpdateAll:(UMMTP3RouteStatus)status
@@ -544,10 +537,6 @@ static const char *m3ua_param_name(uint16_t param_type)
         NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
         [self logDebug:s];
     }
-    [_routingTable updateRouteAvailable:pc
-                                   mask:mask
-                            linksetName:_name
-                               priority:prio];
     [_mtp3 updateRouteAvailable:pc
                            mask:mask
                     linksetName:_name
@@ -568,10 +557,6 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         return;
     }
-    [_routingTable updateRouteUnavailable:pc
-                                     mask:mask
-                              linksetName:_name
-                                 priority:UMMTP3RoutePriority_5];
     [_mtp3 updateRouteUnavailable:pc
                              mask:mask
                       linksetName:_name
@@ -592,10 +577,6 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         return;
     }
-    [_routingTable updateRouteRestricted:pc
-                                    mask:mask
-                             linksetName:_name
-                                priority:prio];
     [_mtp3 updateRouteRestricted:pc
                             mask:mask
                      linksetName:_name

@@ -8,7 +8,7 @@
 // This source is dual licensed either under the GNU GENERAL PUBLIC LICENSE
 // Version 3 from 29 June 2007 and other commercial licenses available by
 // the author.
-
+#if 0
 #import "UMMTP3RoutingTable.h"
 #import "UMMTP3PointCode.h"
 #import "UMMTP3Route.h"
@@ -148,3 +148,5 @@
 }
 
 @end
+#endif
+

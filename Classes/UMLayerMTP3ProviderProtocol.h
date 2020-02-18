@@ -13,7 +13,7 @@
 #import <ulib/ulib.h>
 #import <ulibm2pa/ulibm2pa.h>
 #import "UMMTP3Variant.h"
-
+#import "UMMTP3InstanceRoute.h"
 
 /* defines the methods a MTP3 layer must implement from a MTP3 Users perspective */
 /* this is provided by UMLayerMTP3 and by UMLayerM3UA */
@@ -24,7 +24,7 @@
 #pragma mark -
 #pragma mark Sending from Layer 3
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)dpc;
+- (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)dpc;
 
 - (UMMTP3_Error)sendPDU:(NSData *)pdu
                     opc:(UMMTP3PointCode *)fopc
@@ -37,7 +37,7 @@
                        dpc:(UMMTP3PointCode *)fdpc
                         si:(int)si
                         mp:(int)mp
-                     route:(UMMTP3Route *)route;
+                     route:(UMMTP3InstanceRoute *)route;
 
 
 

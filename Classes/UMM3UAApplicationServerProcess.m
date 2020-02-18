@@ -10,7 +10,7 @@
 #import "UMM3UAApplicationServer.h"
 #import "UMMTP3PointCode.h"
 #import "UMMTP3Label.h"
-#import "UMMTP3Route.h"
+#import "UMMTP3InstanceRoute.h"
 #import "ulibmtp3_version.h"
 #import "UMM3UATrafficMode.h"
 #import "UMLayerMTP3.h"

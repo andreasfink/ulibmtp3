@@ -13,7 +13,7 @@
 #import "UMMTP3LinkSet.h"
 #import "UMM3UATrafficMode.h"
 #import "UMM3UAStatus.h"
-#import "UMMTP3Route.h"
+#import "UMMTP3RouteStatus.h"
 
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 /* note: a M3UA "link" is the same as what in traditional SS7 is called a linkset */

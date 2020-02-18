@@ -16,10 +16,11 @@
 #import "UMMTP3Variant.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 #import "UMMTP3RoutePriority.h"
+#import "UMMTP3InstanceRoutingTable.h"
+#import "UMMTP3InstanceRoute.h"
 
 @class UMMTP3LinkSet;
 @class UMMTP3Link;
-@class UMMTP3Route;
 @class UMMTP3PointCode;
 @class UMMTP3Task_m2paStatusIndication;
 @class UMMTP3Task_m2paSctpStatusIndication;
@@ -34,9 +35,7 @@
 @class UMMTP3Task_adminCreateLinkSet;
 @class UMMTP3Task_adminCreateLink;
 @class UMMTP3Label;
-@class UMMTP3RoutingTable;
 @class UMM3UAApplicationServer;
-@class UMMTP3InstanceRoutingTable;
 @class UMMTP3SyslogClient;
 
 #import "UMLayerMTP3UserProtocol.h"
@@ -58,7 +57,7 @@ typedef enum UMMTP3_Error
     UMMTP3PointCode                 *_opc;
     UMMTP3InstanceRoutingTable      *_routingTable;
     UMSynchronizedSortedDictionary  *_userPart;
-    UMMTP3Route                     *_defaultRoute;
+    UMMTP3InstanceRoute             *_defaultRoute;
     BOOL                            _ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
     UMMTP3SyslogClient              *_problematicPacketDumper;
     BOOL                            _stpMode;
@@ -67,11 +66,11 @@ typedef enum UMMTP3_Error
 @property (readwrite,assign,atomic) int                 networkIndicator;
 @property (readwrite,assign,atomic) UMMTP3Variant       variant;
 @property (readwrite,strong,atomic) UMMTP3PointCode     *opc;
-@property (readwrite,strong,atomic) UMMTP3Route         *defaultRoute;
+@property (readwrite,strong,atomic) UMMTP3InstanceRoute *defaultRoute;
 @property (readwrite,assign,atomic) BOOL                ready;
 @property (readwrite,strong,atomic) UMMTP3SyslogClient  *problematicPacketDumper;
 @property (readwrite,assign,atomic) BOOL                stpMode;
-@property (readwrite,strong,atomic) UMMTP3RoutingTable  *routingTable;
+@property (readwrite,strong,atomic) UMMTP3InstanceRoutingTable  *routingTable;
 @property (readwrite,assign,atomic) BOOL                isStarted;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
@@ -81,7 +80,7 @@ typedef enum UMMTP3_Error
 #pragma mark Sending from Layer 3
 
 
-- (UMMTP3Route *)findRouteForDestination:(UMMTP3PointCode *)dpc;
+- (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)dpc;
 
 /* Layer3 access methods */
 
@@ -98,7 +97,7 @@ typedef enum UMMTP3_Error
                        dpc:(UMMTP3PointCode *)fdpc
                         si:(int)si
                         mp:(int)mp
-                     route:(UMMTP3Route *)route
+                     route:(UMMTP3InstanceRoute *)route
                    options:(NSDictionary *)options;
 
 
@@ -278,7 +277,6 @@ typedef enum UMMTP3_Error
                    linksetName:(NSString *)name
                       priority:(UMMTP3RoutePriority)prio;
 
-- (UMMTP3RoutingTable *)routingTable;
 - (NSDictionary *)apiStatus;
 - (UMSynchronizedSortedDictionary *)routeStatus;
 
