@@ -428,7 +428,7 @@
             rdict[@"static-route"] = @(route.staticRoute);
             [a addObject:rdict];
         }
-        dict[pointcode] = a;
+        dict[pointcode.stringValue] = a;
     }
     [_lock unlock];
     return dict;
