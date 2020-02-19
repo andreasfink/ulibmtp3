@@ -28,7 +28,6 @@
 
     BOOL                        _speedLimitReached;
     double                      _speedLimit;
-    UMThroughputCounter         *_speedCounter;
 
     UMMTP3PointCode             *_adjacentPointCode;
     UMMTP3PointCode             *_localPointCode;
@@ -87,6 +86,12 @@
 @property(readwrite,strong,atomic)  NSDate *lastBeatAckSent;
 @property(readwrite,assign,atomic)  NSTimeInterval beatTime;
 @property(readwrite,assign,atomic)  int beatMaxOutstanding;
+
+
+@property (readonly)                BOOL congested;
+@property (readonly)                UMThroughputCounter  *speedometer;
+@property (readonly)                BOOL                 standby_mode;
+
 
 - (void)start;
 - (void)stop;
