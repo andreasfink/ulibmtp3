@@ -370,7 +370,6 @@
 - (UMSynchronizedSortedDictionary *)objectValue
 {
     UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc]init];
-
     [_lock lock];
     NSArray *pointcodes = [_routesByPointCode allKeys];
     pointcodes = [pointcodes sortedArrayUsingSelector:@selector(compare:)];
