@@ -20,7 +20,6 @@
 #import "UMMTP3WhiteList.h"
 #import "UMMTP3BlackList.h"
 #import "UMMTP3TransitPermission.h"
-#import "UMMTP3RoutingTable.h"
 #import "UMMTP3InstanceRoutingTable.h"
 #import "UMMTP3PointCodeTranslationTable.h"
 
