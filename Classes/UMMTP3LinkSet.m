@@ -3543,24 +3543,24 @@
             case M2PA_STATUS_INITIAL_ALIGNMENT:
             case M2PA_STATUS_ALIGNED_NOT_READY:
                 [self updateRouteUnavailable:_adjacentPointCode
-                                        mask:0
+                                        mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 inactive++;
                 break;
             case M2PA_STATUS_ALIGNED_READY:
                 [self updateRouteUnavailable:_adjacentPointCode
-                                        mask:0
+                                        mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 ready++;
                 break;
             case M2PA_STATUS_PROCESSOR_OUTAGE:
                 [self updateRouteUnavailable:_adjacentPointCode
-                                        mask:0
+                                        mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 processorOutage++;
             case M2PA_STATUS_IS:
                 [self updateRouteAvailable:_adjacentPointCode
-                                         mask:0
+                                      mask:_adjacentPointCode.maxmask
                                   priority:UMMTP3RoutePriority_1];
                 active++;
                 break;

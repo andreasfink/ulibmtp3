@@ -27,10 +27,15 @@
 - (NSMutableArray<UMMTP3InstanceRoute *> *)getRouteArray:(UMMTP3PointCode *)pc
                                                     mask:(int) mask
 {
-    NSMutableArray<UMMTP3InstanceRoute *> *r;
+    NSMutableArray<UMMTP3InstanceRoute *> *r = NULL;
     if((mask == pc.maxmask) || (mask == -1)) /* single pointcode */
     {
         r = _routesByPointCode[@(pc.pc)];
+        if(r==NULL)
+        {
+            r = [[NSMutableArray alloc]init];
+            _routesByPointCode[@(pc.pc)] = r;
+        }
     }
     else
     {
@@ -369,10 +374,11 @@
     [_lock lock];
     NSArray *pointcodes = [_routesByPointCode allKeys];
     pointcodes = [pointcodes sortedArrayUsingSelector:@selector(compare:)];
-    for(id pointcode in pointcodes)
+    for(NSNumber *pointcode in pointcodes)
     {
         NSArray<UMMTP3InstanceRoute *>*routes = _routesByPointCode[pointcode];
         routes = [routes sortedArrayUsingSelector:@selector(routingPreference:)];
+        NSMutableArray *a = [[NSMutableArray alloc]init];
         for(UMMTP3InstanceRoute *route in routes)
         {
             UMSynchronizedSortedDictionary *rdict = [[UMSynchronizedSortedDictionary alloc]init];
@@ -420,7 +426,9 @@
             rdict[@"priority"] = @(route.priority);
             rdict[@"queue-count"] = @(route.deliveryQueue.count);
             rdict[@"static-route"] = @(route.staticRoute);
+            [a addObject:rdict];
         }
+        dict[pointcode] = a;
     }
     [_lock unlock];
     return dict;
