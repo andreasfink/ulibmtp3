@@ -1343,14 +1343,19 @@
     }
     _outstandingSLTA--;
     link.outstandingLinkTests--;
+
+    if(_awaitFirstSLTA)
+    {
+        [self updateRouteAvailable:_adjacentPointCode
+                              mask:_adjacentPointCode.maxmask
+                          priority:UMMTP3RoutePriority_1];
+        _awaitFirstSLTA=NO;
+    }
     if(_sendTRA)
     {
         UMMTP3Label *reverse_label = [label reverseLabel];
         [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
         _sendTRA = NO;
-        [self updateRouteAvailable:_adjacentPointCode
-                              mask:_adjacentPointCode.maxmask
-                          priority:UMMTP3RoutePriority_5];
     }
     [self updateLinkSetStatus];
 }
@@ -3505,6 +3510,7 @@
     if((link.last_m2pa_status != M2PA_STATUS_IS) && (status==M2PA_STATUS_IS))
     {
         _sendTRA = YES;
+        _awaitFirstSLTA = YES;
     }
 }
 
@@ -3573,6 +3579,7 @@
         label.opc = self.localPointCode;
         label.dpc = self.adjacentPointCode;
         _sendTRA = YES;
+        _awaitFirstSLTA = YES;
         /* [self sendTRA:label
                    ni:self.networkIndicator
                    mp:0

@@ -46,6 +46,7 @@
     int                         _tra_sent;
     int                         _trw_received;
     BOOL                        _sendTRA;
+    BOOL                        _awaitFirstSLTA;
 
     int                         _outstandingSLTA;
     int                         _activeLinks;

@@ -378,9 +378,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
         *mask = 0;
         return NULL;
     }
-    *mask = bytes[0];
     int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
     UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:_as.variant];
+    *mask = pc.maxmask - bytes[0];
     return pc;
 }
 
@@ -702,10 +702,15 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
+        UMMTP3RoutePriority p = UMMTP3RoutePriority_5;
+        if(pc.pc == _as.adjacentPointCode.pc)
+        {
+            p = UMMTP3RoutePriority_1;
+        }
         [_as updateRouteUnavailable:pc
                                mask:mask
                              forAsp:self
-                           priority:UMMTP3RoutePriority_5];
+                           priority:p];
     }
 }
 
@@ -724,10 +729,15 @@ static const char *get_sctp_status_string(SCTP_Status status)
     {
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
+        UMMTP3RoutePriority p = UMMTP3RoutePriority_5;
+        if(pc.pc == _as.adjacentPointCode.pc)
+        {
+            p = UMMTP3RoutePriority_1;
+        }
         [_as updateRouteAvailable:pc
                              mask:mask
                            forAsp:self
-                         priority:UMMTP3RoutePriority_5];
+                         priority:p];
     }
 }
 

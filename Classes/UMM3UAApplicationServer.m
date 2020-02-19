@@ -177,58 +177,6 @@ static const char *m3ua_param_name(uint16_t param_type)
     [self logMajorError:s];
 }
 
-- (UMMTP3PointCode *)extractAffectedPointCode:(NSData *)d mask:(int *)mask
-{
-    NSUInteger len = d.length;
-    const uint8_t *bytes = d.bytes;
-    if(len != 4)
-    {
-        [self parameterLengthError:M3UA_PARAM_AFFECTED_POINT_CODE];
-        return NULL;
-    }
-
-    *mask = bytes[0];
-    int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:_variant];
-    return pc;
-}
-
-- (NSArray *)getAffectedPointcodes:(UMSynchronizedSortedDictionary *)params
-{
-    NSMutableArray *arr = [[NSMutableArray alloc]init];
-    NSData *affpc_data = [self getParam:params identifier:M3UA_PARAM_AFFECTED_POINT_CODE];
-    if((affpc_data.length  % 4 !=0) && (affpc_data.length == 0))
-    {
-        [self parameterLengthError:M3UA_PARAM_AFFECTED_POINT_CODE];
-        return NULL;
-    }
-    const uint8_t *bytes = affpc_data.bytes;
-    int i = 0;
-    while(i < affpc_data.length)
-    {
-        NSData *d = [NSData dataWithBytes:&bytes[i] length:4];
-        [arr addObject:d];
-        i = i + 4;
-    }
-    return arr;
-}
-
-- (UMMTP3PointCode *)getConcernedPointcode:(UMSynchronizedSortedDictionary *)params
-{
-    NSData *affpc_data = [self getParam:params identifier:M3UA_PARAM_AFFECTED_POINT_CODE];
-    if(affpc_data.length  != 4)
-    {
-        [self parameterLengthError:M3UA_PARAM_AFFECTED_POINT_CODE];
-        return NULL;
-    }
-    const uint8_t *bytes = affpc_data.bytes;
-
-    int int_pc = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:int_pc variant:_variant];
-    return pc;
-}
-
-
 #pragma mark -
 #pragma mark Management (MGMT) Messages (See Section 3.8)
 
@@ -560,7 +508,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     [_mtp3 updateRouteUnavailable:pc
                              mask:mask
                       linksetName:_name
-                         priority:UMMTP3RoutePriority_5];
+                         priority:prio];
 
 }
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc
