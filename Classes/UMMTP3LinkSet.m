@@ -3566,18 +3566,19 @@
                 break;
         }
     }
-    /* if we now have our first active link, we should send a first TRA */
+    /* if we now have our first active link, we should send a first SLTM before sending TRA */
 
     if((oldActiveLinks == 0) && (active > 0))
     {
         UMMTP3Label *label = [[UMMTP3Label alloc]init];
         label.opc = self.localPointCode;
         label.dpc = self.adjacentPointCode;
-        [self sendTRA:label
+        _sendTRA = YES;
+        /* [self sendTRA:label
                    ni:self.networkIndicator
                    mp:0
                   slc:0
-                 link:NULL];
+                 link:NULL];*/
     }
     _activeLinks = active;
     _inactiveLinks = inactive;
