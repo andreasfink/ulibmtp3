@@ -2180,7 +2180,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
     [self logInfo:@"sctpReportsDown"];
     [ _as updateRouteUnavailable:_as.pc
-                            mask:0
+                            mask:_as.pc.maxmask
                           forAsp:self
                         priority:UMMTP3RoutePriority_1];
 

@@ -1632,7 +1632,7 @@
     {
         [self updateRouteAvailable:translatedPc
                               mask:translatedPc.maxmask
-                          priority:UMMTP3RoutePriority_1];
+                          priority:UMMTP3RoutePriority_5];
     }
 }
 
@@ -3612,7 +3612,7 @@
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
-        NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,mask];
         [self logDebug:s];
     }
     [_mtp3 updateRouteAvailable:pc
@@ -3627,7 +3627,7 @@
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
-        NSString *s = [NSString stringWithFormat:@"updateRouteRestricted:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        NSString *s = [NSString stringWithFormat:@"updateRouteRestricted:%@/%d",pc.stringValue,mask];
         [self logDebug:s];
     }
 
@@ -3644,7 +3644,7 @@
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
-        NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,mask];
         [self logDebug:s];
     }
     [_mtp3 updateRouteUnavailable:pc

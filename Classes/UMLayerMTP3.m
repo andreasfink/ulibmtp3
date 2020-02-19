@@ -519,7 +519,7 @@
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
     [self updateRouteRestricted:linkset.adjacentPointCode
-                           mask:0
+                           mask:linkset.adjacentPointCode.maxmask
                     linksetName:linkset.name
                        priority:UMMTP3RoutePriority_5];
     [link congestionIndication];
@@ -538,9 +538,9 @@
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
     [self updateRouteAvailable:linkset.adjacentPointCode
-                          mask:0
+                          mask:linkset.adjacentPointCode.maxmask
                    linksetName:linkset.name
-                      priority:UMMTP3RoutePriority_5];
+                      priority:UMMTP3RoutePriority_1];
     [link congestionClearedIndication];
 }
 
@@ -555,8 +555,10 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [self updateRouteUnavailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name
-      priority:UMMTP3RoutePriority_5];
+    [self updateRouteUnavailable:linkset.adjacentPointCode
+                            mask:linkset.adjacentPointCode.maxmask
+                     linksetName:linkset.name
+      priority:UMMTP3RoutePriority_1];
     [link processorOutageIndication];
 }
 
@@ -571,8 +573,10 @@
     }
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
-    [self updateRouteAvailable:linkset.adjacentPointCode mask:0 linksetName:linkset.name
-      priority:UMMTP3RoutePriority_5];
+    [self updateRouteAvailable:linkset.adjacentPointCode
+                          mask:linkset.adjacentPointCode.maxmask
+                   linksetName:linkset.name
+      priority:UMMTP3RoutePriority_1];
     [link processorRestoredIndication];
 }
 
@@ -588,7 +592,7 @@
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
     [self updateRouteRestricted:linkset.adjacentPointCode
-                           mask:0
+                           mask:linkset.adjacentPointCode.maxmask
                     linksetName:linkset.name
                        priority:UMMTP3RoutePriority_1];
     /* inform upper layers */
@@ -606,7 +610,8 @@
     UMMTP3Link *link = [self getLinkByName:task.userId];
     UMMTP3LinkSet *linkset = link.linkset;
     [self updateRouteAvailable:linkset.adjacentPointCode
-                          mask:0 linksetName:linkset.name
+                          mask:linkset.adjacentPointCode.maxmask
+                   linksetName:linkset.name
                       priority:UMMTP3RoutePriority_1];
     [link speedLimitReachedClearedIndication];
 }
@@ -622,7 +627,10 @@
     {
         [self logDebug:@"m3uaCongestion"];
     }
-    [self updateRouteRestricted:as.adjacentPointCode mask:0 linksetName:as.name priority:UMMTP3RoutePriority_5];
+    [self updateRouteRestricted:as.adjacentPointCode
+                           mask:mask
+                    linksetName:as.name
+                       priority:UMMTP3RoutePriority_1];
     as.congestionLevel = 1;
 }
 
@@ -637,7 +645,10 @@
     {
         [self logDebug:@"m3uaCongestionCleared"];
     }
-    [self updateRouteAvailable:as.adjacentPointCode mask:0 linksetName:as.name priority:UMMTP3RoutePriority_5];
+    [self updateRouteAvailable:as.adjacentPointCode
+                          mask:mask
+                   linksetName:as.name
+                      priority:UMMTP3RoutePriority_1];
     as.congestionLevel = 0;
 }
 

@@ -420,7 +420,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     activeCount++;
     [self updateRouteAvailable:_adjacentPointCode
-                          mask:0
+                          mask:_adjacentPointCode.maxmask
                       priority:UMMTP3RoutePriority_1];
     if(_trafficMode == UMM3UATrafficMode_override)
     {
@@ -463,7 +463,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     if(somethingsActive == NO)
     {
         [self updateRouteUnavailable:_adjacentPointCode
-                                mask:0
+                                mask:_adjacentPointCode.maxmask
                             priority:UMMTP3RoutePriority_1];
     }
     [self updateLinkSetStatus];
@@ -490,7 +490,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     if(somethingsActive == NO)
     {
         [self updateRouteUnavailable:_adjacentPointCode
-                                mask:0
+                                mask:_adjacentPointCode.maxmask
                             priority:UMMTP3RoutePriority_1];
     }
     [self updateLinkSetStatus];
@@ -534,7 +534,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
-        NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,mask];
         [self logDebug:s];
     }
     [_mtp3 updateRouteAvailable:pc
@@ -550,7 +550,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
-        NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,mask];
         [self logDebug:s];
     }
     if(pc==NULL)
@@ -570,7 +570,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
-        NSString *s = [NSString stringWithFormat:@"updateRouteRestricted:%@/%d",pc.stringValue,(pc.maxmask-mask)];
+        NSString *s = [NSString stringWithFormat:@"updateRouteRestricted:%@/%d",pc.stringValue,mask];
         [self logDebug:s];
     }
     if(pc==NULL)
