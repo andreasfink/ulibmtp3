@@ -1349,7 +1349,7 @@
         [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
         _sendTRA = NO;
         [self updateRouteAvailable:_adjacentPointCode
-                              mask:0
+                              mask:_adjacentPointCode.maxmask
                           priority:UMMTP3RoutePriority_5];
     }
     [self updateLinkSetStatus];
@@ -1545,13 +1545,13 @@
     if(translatedPc.pc == _adjacentPointCode.pc)
     {
         [self updateRouteUnavailable:translatedPc
-                                mask:0
+                                mask:translatedPc.maxmask
                             priority:UMMTP3RoutePriority_1];
     }
     else
     {
         [self updateRouteUnavailable:translatedPc
-                                mask:0
+                                mask:translatedPc.maxmask
                             priority:UMMTP3RoutePriority_5];
     }
 }
@@ -1579,13 +1579,13 @@
     if(translatedPc.pc == _adjacentPointCode.pc)
     {
     [self updateRouteRestricted:translatedPc
-                           mask:0
+                           mask:translatedPc.maxmask
                        priority:UMMTP3RoutePriority_1];
     }
     else
     {
         [self updateRouteRestricted:translatedPc
-                           mask:0
+                           mask:translatedPc.maxmask
                        priority:UMMTP3RoutePriority_5];
     }
 }
@@ -1625,13 +1625,13 @@
     if(translatedPc.pc == _adjacentPointCode.pc)
     {
         [self updateRouteAvailable:translatedPc
-                              mask:0
+                              mask:translatedPc.maxmask
                           priority:UMMTP3RoutePriority_1];
     }
     else
     {
         [self updateRouteAvailable:translatedPc
-                              mask:0
+                              mask:translatedPc.maxmask
                           priority:UMMTP3RoutePriority_1];
     }
 }
@@ -1800,7 +1800,7 @@
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
     [self updateRouteAvailable:_adjacentPointCode
-                          mask:0
+                          mask:_adjacentPointCode.maxmask
                       priority:UMMTP3RoutePriority_1];
     _mtp3.ready=YES;
 }
