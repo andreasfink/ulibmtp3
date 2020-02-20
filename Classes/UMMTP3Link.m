@@ -190,6 +190,7 @@
 {
     [_m2pa powerOnFor:_linkset.mtp3];
 }
+
 - (void)powerOff
 {
     [_m2pa powerOffFor:_linkset.mtp3];

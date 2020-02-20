@@ -1003,6 +1003,15 @@
                          linksetName:(NSString *)linksetName
 {
     UMMTP3InstanceRoute *route = [_routingTable findRouteForDestination:label.dpc mask:0 excludeLinkSetName:linksetName exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
+    if(route==NULL)
+    {
+        UMMTP3LinkSet * linkset = [self getLinkSetByName:linksetName];
+        UMMTP3Label *errorLabel = [[UMMTP3Label alloc]init];
+        errorLabel.opc = _opc;
+        errorLabel.dpc = linkset.adjacentPointCode;
+        [linkset sendTFP:errorLabel destination:label.dpc ni:ni mp:mp slc:-1 link:NULL];
+        return;
+    }
     NSMutableDictionary *options = [[NSMutableDictionary alloc]init];
     options[@"mtp3-incoming-linkset"] = linksetName;
     if(route)
