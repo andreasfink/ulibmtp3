@@ -52,12 +52,16 @@
 
 {
     NSArray<UMMTP3InstanceRoute *> *a = [self findRoutesForDestination:pc mask:mask excludeLinkSetName:linksetName exact:exact];
-    if(a.count>1)
+    if(a.count<1)
     {
-        a = [a sortedArrayUsingSelector:@selector(routingPreference:)];
-        return a[a.count-1];
+        return NULL;
     }
-    return NULL;
+    else if(a.count==1)
+    {
+        return a[0];
+    }
+    a = [a sortedArrayUsingSelector:@selector(routingPreference:)];
+    return a[a.count-1];
 }
 
 

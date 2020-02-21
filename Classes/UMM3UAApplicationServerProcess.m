@@ -781,7 +781,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 {
                     if(_as.localPointCode.integerValue == pc.integerValue)
                     {
-                        [self advertizePointcodeAvailable:pc mask:0];
+                        [self advertizePointcodeAvailable:pc mask:pc.maxmask];
                         answered=YES;
                     }
                 }
@@ -789,7 +789,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
                 {
                     if(_as.mtp3.opc.integerValue == pc.integerValue)
                     {
-                        [self advertizePointcodeAvailable:_as.mtp3.opc mask:0];
+                        [self advertizePointcodeAvailable:_as.mtp3.opc mask:_as.mtp3.opc.maxmask];
                         answered=YES;
                     }
                 }
@@ -2189,8 +2189,8 @@ static const char *get_sctp_status_string(SCTP_Status status)
     UMM3UA_Status oldStatus = self.status;
 
     [self logInfo:@"sctpReportsDown"];
-    [ _as updateRouteUnavailable:_as.pc
-                            mask:_as.pc.maxmask
+    [ _as updateRouteUnavailable:_as.adjacentPointCode
+                            mask:_as.adjacentPointCode.maxmask
                           forAsp:self
                         priority:UMMTP3RoutePriority_1];
 

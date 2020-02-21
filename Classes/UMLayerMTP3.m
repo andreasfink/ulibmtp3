@@ -779,7 +779,7 @@
 - (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)search_dpc
 {
     UMMTP3InstanceRoute *re = [_routingTable findRouteForDestination:search_dpc
-                                                                mask:0
+                                                                mask:search_dpc.maxmask
                                                   excludeLinkSetName:NULL
                                                                exact:NO];
     if(re==NULL)
@@ -1002,7 +1002,10 @@
                                   mp:(int)mp
                          linksetName:(NSString *)linksetName
 {
-    UMMTP3InstanceRoute *route = [_routingTable findRouteForDestination:label.dpc mask:0 excludeLinkSetName:linksetName exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
+    UMMTP3InstanceRoute *route = [_routingTable findRouteForDestination:label.dpc
+                                                                   mask:label.dpc.maxmask
+                                                     excludeLinkSetName:linksetName
+                                                                  exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
     if(route==NULL)
     {
         UMMTP3LinkSet * linkset = [self getLinkSetByName:linksetName];

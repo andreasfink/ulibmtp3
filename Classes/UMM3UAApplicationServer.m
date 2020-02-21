@@ -362,6 +362,10 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     upCount--;
     [self updateLinkSetStatus];
+    [self updateRouteUnavailable:_adjacentPointCode
+                            mask:_adjacentPointCode.maxmask
+                        priority:UMMTP3RoutePriority_1];
+
 }
 
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp
