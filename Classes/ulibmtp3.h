@@ -24,7 +24,7 @@
 #import "UMMTP3PointCode.h"
 #import "UMMTP3InstanceRoute.h"
 #import "UMMTP3RouteMetrics.h"
-#import "UMMTP3RoutingTable.h"
+#import "UMMTP3InstanceRoutingTable.h"
 #import "UMMTP3Task_adminAttachOrder.h"
 #import "UMMTP3Task_adminCreateLink.h"
 #import "UMMTP3Task_adminCreateLinkSet.h"
