@@ -368,6 +368,7 @@ options:(NSDictionary *)options;
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link;
 - (void)updateLinkSetStatus;
 
+- (void)forgetAdvertizedPointcodes; /* call this to let the outbound cache forget which pointcodes it has already advertized */
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;

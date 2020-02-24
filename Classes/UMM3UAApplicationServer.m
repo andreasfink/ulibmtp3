@@ -957,7 +957,10 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         _mtp3.ready = YES;
     }
-
+    else
+    {
+        [self forgetAdvertizedPointcodes];
+    }
     if(activeSeen)
     {
         _m3ua_status = M3UA_STATUS_IS;

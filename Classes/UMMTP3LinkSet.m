@@ -3564,6 +3564,7 @@
                                         mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 processorOutage++;
+                break;
             case M2PA_STATUS_IS:
                 [self updateRouteAvailable:_adjacentPointCode
                                       mask:_adjacentPointCode.maxmask
@@ -3593,6 +3594,10 @@
     if(_activeLinks > 0)
     {
         _mtp3.ready = YES;
+    }
+    else
+    {
+        [self forgetAdvertizedPointcodes];
     }
 }
 
@@ -3659,6 +3664,11 @@
                              mask:mask
                       linksetName:_name
                          priority:prio];
+}
+
+- (void)forgetAdvertizedPointcodes
+{
+    self.advertizedPointcodes = [[UMSynchronizedSortedDictionary alloc]init];
 }
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
