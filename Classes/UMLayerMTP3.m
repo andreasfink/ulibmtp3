@@ -75,7 +75,7 @@
 	_links	         = [[UMSynchronizedSortedDictionary alloc]init];
     _userPart        = [[UMSynchronizedSortedDictionary  alloc]init];
     _routingTable    = [[UMMTP3InstanceRoutingTable alloc]init];
-    _linksetLock = [[UMMutex alloc]initWithName:@"mtp3-linkset-mutex"];
+    _linksetLock     = [[UMMutex alloc]initWithName:@"mtp3-linkset-mutex"];
 }
 
 
@@ -1246,12 +1246,11 @@
         NSArray *linksetNames = [_linksets allKeys];
         for(NSString *linksetName in linksetNames)
         {
-            if([linksetName isEqualToString:name])
+            if(![linksetName isEqualToString:name])/* we dont advertize to the same link  what we learned from it */
             {
-                continue; /* we dont advertize to the same link  what we learned from it */
+                UMMTP3LinkSet *linkset = _linksets[linksetName];
+                [linkset advertizePointcodeAvailable:pc mask:mask];
             }
-            UMMTP3LinkSet *linkset = _linksets[linksetName];
-            [linkset advertizePointcodeAvailable:pc mask:mask];
         }
         [_linksetLock unlock];
 
@@ -1284,12 +1283,11 @@
         NSArray *linksetNames = [_linksets allKeys];
         for(NSString *linksetName in linksetNames)
         {
-            if([linksetName isEqualToString:name])
+            if(![linksetName isEqualToString:name]) /* we dont advertize to the same link  what we learned from it */
             {
-                continue; /* we dont advertize to the same link  what we learned from it */
+                UMMTP3LinkSet *linkset = _linksets[linksetName];
+                [linkset advertizePointcodeRestricted:pc mask:mask];
             }
-            UMMTP3LinkSet *linkset = _linksets[linksetName];
-            [linkset advertizePointcodeRestricted:pc mask:mask];
         }
         [_linksetLock unlock];
 
@@ -1324,12 +1322,11 @@
         NSArray *linksetNames = [_linksets allKeys];
         for(NSString *linksetName in linksetNames)
         {
-            if([linksetName isEqualToString:name])
+            if(![linksetName isEqualToString:name]) /* we dont advertize to the same link  what we learned from it */
             {
-                continue; /* we dont advertize to the same link  what we learned from it */
+                UMMTP3LinkSet *linkset = _linksets[linksetName];
+                [linkset advertizePointcodeUnavailable:pc mask:mask];
             }
-            UMMTP3LinkSet *linkset = _linksets[linksetName];
-            [linkset advertizePointcodeUnavailable:pc mask:mask];
         }
         [_linksetLock unlock];
 
