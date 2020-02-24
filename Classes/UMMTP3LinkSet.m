@@ -46,6 +46,7 @@
         _totalLinks = -1;
         _congestionLevel = 0;
         _logLevel = UMLOG_MAJOR;
+        _advertizedPointcodes = [[UMSynchronizedSortedDictionary alloc]init];
     }
     return self;
 }
@@ -3663,35 +3664,45 @@
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
                                mask:(int)mask
 {
-    if(mask != 0)
+    if(mask != pc.maxmask)
     {
-        NSLog(@"We dont support advertizements with mask other than 0");
+        NSLog(@"We dont support advertizements with mask other than maxmask");
     }
-    UMMTP3Label *label = [[UMMTP3Label alloc]init];
-    label.opc = self.localPointCode;
-    label.dpc = self.adjacentPointCode;
-    [self sendTFA:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
+    NSNumber *n = _advertizedPointcodes[@(pc.pc)];
+    if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_ALLOWED))
+    {
+        _advertizedPointcodes[@(pc.pc)] = @(UMMTP3_ROUTE_ALLOWED);
+        UMMTP3Label *label = [[UMMTP3Label alloc]init];
+        label.opc = self.localPointCode;
+        label.dpc = self.adjacentPointCode;
+        [self sendTFA:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
+    }
 }
 
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
                                 mask:(int)mask
 {
-    if(mask != 0)
+    if(mask != pc.maxmask)
     {
-        NSLog(@"We dont support advertizements with mask other than 0");
+        NSLog(@"We dont support advertizements with mask other than maxmask");
     }
-    UMMTP3Label *label = [[UMMTP3Label alloc]init];
-    label.opc = self.localPointCode;
-    label.dpc = self.adjacentPointCode;
-    [self sendTFR:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
+    NSNumber *n = _advertizedPointcodes[@(pc.pc)];
+    if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_RESTRICTED))
+    {
+        _advertizedPointcodes[@(pc.pc)] = @(UMMTP3_ROUTE_RESTRICTED);
+        UMMTP3Label *label = [[UMMTP3Label alloc]init];
+        label.opc = self.localPointCode;
+        label.dpc = self.adjacentPointCode;
+        [self sendTFR:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
+    }
 }
 
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
                                  mask:(int)mask
 {
-    if(mask != 0)
+    if(mask != pc.maxmask)
     {
-        NSLog(@"We dont support advertizements with mask other than 0");
+        NSLog(@"We dont support advertizements with mask other than maxmask");
         return;
     }
     if(pc==NULL)
@@ -3699,10 +3710,15 @@
         NSLog(@"advertizePointcodeUnavailable: pointcode==NULL");
         return;
     }
-    UMMTP3Label *label = [[UMMTP3Label alloc]init];
-    label.opc = self.localPointCode;
-    label.dpc = self.adjacentPointCode;
-    [self sendTFP:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
+    NSNumber *n = _advertizedPointcodes[@(pc.pc)];
+    if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_PROHIBITED))
+    {
+        _advertizedPointcodes[@(pc.pc)] = @(UMMTP3_ROUTE_PROHIBITED);
+        UMMTP3Label *label = [[UMMTP3Label alloc]init];
+        label.opc = self.localPointCode;
+        label.dpc = self.adjacentPointCode;
+        [self sendTFP:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
+    }
 }
 
 - (void)stopDetachAndDestroy
@@ -3754,7 +3770,6 @@
     [_linksLock unlock];
     return s;
 }
-
 
 #pragma mark -
 #pragma mark pointcode translation helper functions

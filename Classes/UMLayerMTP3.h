@@ -51,7 +51,6 @@ typedef enum UMMTP3_Error
 {
 	UMSynchronizedSortedDictionary  *_linksets;
 	UMSynchronizedSortedDictionary  *_links;
-    UMMutex                         *_linksetLock;
     UMMTP3Variant                   _variant;
     int                             _networkIndicator;
     UMMTP3PointCode                 *_opc;
@@ -72,6 +71,7 @@ typedef enum UMMTP3_Error
 @property (readwrite,assign,atomic) BOOL                stpMode;
 @property (readwrite,strong,atomic) UMMTP3InstanceRoutingTable  *routingTable;
 @property (readwrite,assign,atomic) BOOL                isStarted;
+@property (readwrite,strong,atomic) UMSynchronizedSortedDictionary *linksets;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
 

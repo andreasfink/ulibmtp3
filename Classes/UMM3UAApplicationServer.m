@@ -14,6 +14,7 @@
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 #import "UMM3UAApplicationServerProcess.h"
 #import "UMMTP3HeadingCode.h"
+#import "UMMTP3RouteStatus.h"
 
 /* for arc4random */
 #if defined(__APPLE__) || defined(FREEBSD)
@@ -805,28 +806,60 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    NSArray *arr = [self activeApplicationServerProcessesToUse];
-    for(UMM3UAApplicationServerProcess *asp  in arr)
+    if(mask != pc.maxmask)
     {
-        [asp advertizePointcodeAvailable:pc mask:mask];
+        NSLog(@"We dont support advertizements with mask other than maxmask");
+        return;
+    }
+    NSNumber *n = _advertizedPointcodes[@(pc.pc)];
+    if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_ALLOWED))
+    {
+        _advertizedPointcodes[@(pc.pc)] = @(UMMTP3_ROUTE_ALLOWED);
+        NSArray *arr = [self activeApplicationServerProcessesToUse];
+        for(UMM3UAApplicationServerProcess *asp  in arr)
+        {
+            [asp advertizePointcodeAvailable:pc mask:mask];
+        }
     }
 }
 
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    NSArray *arr = [self activeApplicationServerProcessesToUse];
-    for(UMM3UAApplicationServerProcess *asp  in arr)
+    if(mask != pc.maxmask)
     {
-        [asp advertizePointcodeRestricted:pc mask:mask];
+        NSLog(@"We dont support advertizements with mask other than maxmask");
+        return;
+    }
+
+    NSNumber *n = _advertizedPointcodes[@(pc.pc)];
+    if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_RESTRICTED))
+    {
+        _advertizedPointcodes[@(pc.pc)] = @(UMMTP3_ROUTE_RESTRICTED);
+        NSArray *arr = [self activeApplicationServerProcessesToUse];
+        for(UMM3UAApplicationServerProcess *asp  in arr)
+        {
+            [asp advertizePointcodeRestricted:pc mask:mask];
+        }
     }
 }
 
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    NSArray *arr = [self activeApplicationServerProcessesToUse];
-    for(UMM3UAApplicationServerProcess *asp  in arr)
+    if(mask != pc.maxmask)
     {
-        [asp advertizePointcodeUnavailable:pc mask:mask];
+        NSLog(@"We dont support advertizements with mask other than maxmask");
+        return;
+    }
+
+    NSNumber *n = _advertizedPointcodes[@(pc.pc)];
+    if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_PROHIBITED))
+    {
+        _advertizedPointcodes[@(pc.pc)] = @(UMMTP3_ROUTE_PROHIBITED);
+        NSArray *arr = [self activeApplicationServerProcessesToUse];
+        for(UMM3UAApplicationServerProcess *asp  in arr)
+        {
+            [asp advertizePointcodeUnavailable:pc mask:mask];
+        }
     }
 }
 

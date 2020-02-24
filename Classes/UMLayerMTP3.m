@@ -75,7 +75,6 @@
 	_links	         = [[UMSynchronizedSortedDictionary alloc]init];
     _userPart        = [[UMSynchronizedSortedDictionary  alloc]init];
     _routingTable    = [[UMMTP3InstanceRoutingTable alloc]init];
-    _linksetLock     = [[UMMutex alloc]initWithName:@"mtp3-linkset-mutex"];
 }
 
 
@@ -84,9 +83,7 @@
 
 - (void)refreshRoutingTable
 {
-    [_linksetLock lock];
     /* FIXME: do we still need this? or maybe we should check status of linkset AVAIL/UNAVAIL here and send updateLinksetAvailable: etc to routing table */
-    [_linksetLock unlock];
 }
 
 - (void)addLinkSet:(UMMTP3LinkSet *)ls
@@ -117,38 +114,25 @@
 
 - (void)removeAllLinkSets
 {
-    [_linksetLock lock];
-    _linksets = NULL;
-    _linksets = [[UMSynchronizedSortedDictionary alloc]init];
-    [_linksetLock unlock];
-    [self refreshRoutingTable];
+    self.linksets = [[UMSynchronizedSortedDictionary alloc]init];
 }
 
 
 - (void)removeLinkSet:(UMMTP3LinkSet *)ls
 {
-    [_linksetLock lock];
     ls.mtp3 = NULL;
     [_linksets removeObjectForKey:ls.name];
-    [_linksetLock unlock];
-    [self refreshRoutingTable];
 }
 
 - (void)removeLinkSetByName:(NSString *)n
 {
-    [_linksetLock lock];
     UMMTP3LinkSet *ls = _linksets[n];
-    ls.mtp3 = NULL;
-    [_linksets removeObjectForKey:n];
-    [_linksetLock unlock];
-    [self refreshRoutingTable];
+    [self removeLinkSet:ls];
 }
 
 - (UMMTP3LinkSet *)getLinkSetByName:(NSString *)n
 {
-    [_linksetLock lock];
     UMMTP3LinkSet *ls = _linksets[n];
-    [_linksetLock unlock];
     return ls;
 }
 
@@ -203,10 +187,7 @@
                         slc:(int)slc
                      userId:(id)uid
 {
-    UMMTP3LinkSet *linkSet;
-    [_linksetLock lock];
-    linkSet = _linksets[uid];
-    [_linksetLock unlock];
+    UMMTP3LinkSet *linkSet = _linksets[uid];
     [linkSet attachmentConfirmed:slc];
 }
 
@@ -216,10 +197,7 @@
                   userId:(id)uid
                   reason:(NSString *)r
 {
-    UMMTP3LinkSet *linkSet;
-    [_linksetLock lock];
-    linkSet = _linksets[uid];
-    [_linksetLock unlock];
+    UMMTP3LinkSet *linkSet = _linksets[uid];
     [linkSet attachmentFailed:slc reason:r];
 }
 
@@ -356,19 +334,16 @@
 #pragma mark -
 #pragma mark Tasks
 
-- (void) _adminCreateLinkSetTask:(UMMTP3Task_adminCreateLinkSet *)linkset
+- (void) _adminCreateLinkSetTask:(UMMTP3Task_adminCreateLinkSet *)task
 {
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"_adminCreateLinkSetTask"];
     }
     
-    UMMTP3LinkSet *set = [[UMMTP3LinkSet alloc] init];
-	set.name = [linkset linkset];
-    [_linksetLock lock];
-    _linksets[set.name] = set;
-    [_linksetLock unlock];
-
+    UMMTP3LinkSet *ls = [[UMMTP3LinkSet alloc] init];
+	ls.name = [task linkset];
+    _linksets[ls.name] = ls;
 }
 
 - (void) _adminCreateLinkTask:(UMMTP3Task_adminCreateLink *)task
@@ -382,9 +357,7 @@
     UMMTP3Link *link =[[UMMTP3Link alloc] init];
     link.slc = task.slc;
     link.name = task.link;
-    [_linksetLock lock];
     UMMTP3LinkSet *linkset = _linksets[linksetName];
-    [_linksetLock unlock];
     [linkset addLink:link];
 }
 
@@ -676,15 +649,12 @@
     config[@"opc"] = [_opc stringValue];
     config[@"ni"] = @(_networkIndicator);
     NSMutableDictionary *linksetsConfig = [[NSMutableDictionary alloc]init];
-    [_linksetLock lock];
     NSArray *linksetNames = [_linksets allKeys];
     for(NSString *linksetName in linksetNames)
     {
         UMMTP3LinkSet *linkset = _linksets[linksetName];
         linksetsConfig[linksetName] = [linkset config];
     }
-    [_linksetLock unlock];
-
     config[@"linksets"] = linksetsConfig;
     return config;
 }
@@ -829,15 +799,9 @@
     {
         [self.logFeed majorErrorText:@"no route to destination (route==null)"];
         return UMMTP3_error_no_route_to_destination;
-
-
-
-        
     }
     NSString *linksetName = route.linksetName;
-    [_linksetLock lock];
     UMMTP3LinkSet *linkset = _linksets[linksetName];
-    [_linksetLock unlock];
     if(linkset==NULL)
     {
         [self.logFeed majorErrorText:[NSString stringWithFormat:@"linkset named '%@' not found",linksetName]];
@@ -924,7 +888,6 @@
 
 - (void)_start
 {
-    [_linksetLock lock];
     NSArray *linksetNamesArray = [_linksets allKeys];
     for(NSString *linksetName in linksetNamesArray)
     {
@@ -932,12 +895,10 @@
         [ls powerOn];
     }
     _isStarted = YES;
-    [_linksetLock unlock];
 }
 
 - (void)_stop
 {
-    [_linksetLock lock];
     NSArray *linksetNames = [_linksets allKeys];
     for(NSString *linksetName in linksetNames)
     {
@@ -945,7 +906,6 @@
         [ls powerOff];
     }
     _isStarted = NO;
-    [_linksetLock unlock];
 }
 
 - (id<UMLayerMTP3UserProtocol>)findUserPart:(int)upid
@@ -1242,7 +1202,6 @@
     [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
     if(r==YES) /* route status has changed */
     {
-        [_linksetLock lock];
         NSArray *linksetNames = [_linksets allKeys];
         for(NSString *linksetName in linksetNames)
         {
@@ -1252,7 +1211,6 @@
                 [linkset advertizePointcodeAvailable:pc mask:mask];
             }
         }
-        [_linksetLock unlock];
 
         NSArray *userKeys = [_userPart allKeys];
 
@@ -1279,7 +1237,6 @@
     [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
     if(r==YES) /* route status has changed */
     {
-        [_linksetLock lock];
         NSArray *linksetNames = [_linksets allKeys];
         for(NSString *linksetName in linksetNames)
         {
@@ -1289,7 +1246,6 @@
                 [linkset advertizePointcodeRestricted:pc mask:mask];
             }
         }
-        [_linksetLock unlock];
 
         NSArray *userKeys = [_userPart allKeys];
         for(NSNumber *userKey in userKeys)
@@ -1318,7 +1274,6 @@
                                         priority:prio];
     if(r==YES) /* route status has changed */
     {
-        [_linksetLock lock];
         NSArray *linksetNames = [_linksets allKeys];
         for(NSString *linksetName in linksetNames)
         {
@@ -1328,7 +1283,6 @@
                 [linkset advertizePointcodeUnavailable:pc mask:mask];
             }
         }
-        [_linksetLock unlock];
 
         NSArray *userKeys = [_userPart allKeys];
         for(NSNumber *userKey in userKeys)
