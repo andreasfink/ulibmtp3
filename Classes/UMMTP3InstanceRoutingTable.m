@@ -190,6 +190,23 @@
     return changed;
 }
 
+- (NSArray *)linksetNamesWhichHaveStaticRoutesForPointcode:(UMMTP3PointCode *)pc mask:(int)mask excluding:(NSString *)excluded
+{
+    NSMutableArray *arr = [[NSMutableArray alloc]init];
+    [_lock lock];
+    NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
+    NSInteger n = r.count;
+    for(NSInteger i=0;i<n;i++)
+    {
+        UMMTP3InstanceRoute *route = r[i];
+        if ((![route.linksetName isEqualToString:excluded]) && (route.staticRoute))
+        {
+            [arr addObject:route.linksetName];
+        }
+    }
+    [_lock unlock];
+    return arr;
+}
 
 - (BOOL)updateDynamicRouteUnavailable:(UMMTP3PointCode *)pc
                                  mask:(int)mask
@@ -247,6 +264,8 @@
         if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio) && (route.staticRoute==YES))
         {
             found = YES;
+            route.status = UMMTP3_ROUTE_ALLOWED;
+            route.tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
             break;
         }
     }
@@ -259,6 +278,7 @@
         route.priority = prio;
         route.staticRoute = YES;
         route.status = UMMTP3_ROUTE_ALLOWED;
+        route.tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
         [r addObject:route];
     }
     [_lock unlock];

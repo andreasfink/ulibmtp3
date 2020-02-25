@@ -1202,14 +1202,11 @@
     [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
     if(r==YES) /* route status has changed */
     {
-        NSArray *linksetNames = [_linksets allKeys];
+        NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
         for(NSString *linksetName in linksetNames)
         {
-            if(![linksetName isEqualToString:name])/* we dont advertize to the same link  what we learned from it */
-            {
-                UMMTP3LinkSet *linkset = _linksets[linksetName];
-                [linkset advertizePointcodeAvailable:pc mask:mask];
-            }
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            [linkset advertizePointcodeAvailable:pc mask:mask];
         }
 
         NSArray *userKeys = [_userPart allKeys];
@@ -1237,14 +1234,11 @@
     [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
     if(r==YES) /* route status has changed */
     {
-        NSArray *linksetNames = [_linksets allKeys];
+        NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
         for(NSString *linksetName in linksetNames)
         {
-            if(![linksetName isEqualToString:name]) /* we dont advertize to the same link  what we learned from it */
-            {
-                UMMTP3LinkSet *linkset = _linksets[linksetName];
-                [linkset advertizePointcodeRestricted:pc mask:mask];
-            }
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            [linkset advertizePointcodeRestricted:pc mask:mask];
         }
 
         NSArray *userKeys = [_userPart allKeys];
@@ -1269,19 +1263,17 @@
                       priority:(UMMTP3RoutePriority)prio
 {
     BOOL r = [_routingTable updateDynamicRouteUnavailable:pc
-                                            mask:mask
-                                     linksetName:name
-                                        priority:prio];
+                                                     mask:mask
+                                              linksetName:name
+                                                 priority:prio];
     if(r==YES) /* route status has changed */
     {
-        NSArray *linksetNames = [_linksets allKeys];
+
+        NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
         for(NSString *linksetName in linksetNames)
         {
-            if(![linksetName isEqualToString:name]) /* we dont advertize to the same link  what we learned from it */
-            {
-                UMMTP3LinkSet *linkset = _linksets[linksetName];
-                [linkset advertizePointcodeUnavailable:pc mask:mask];
-            }
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            [linkset advertizePointcodeUnavailable:pc mask:mask];
         }
 
         NSArray *userKeys = [_userPart allKeys];
