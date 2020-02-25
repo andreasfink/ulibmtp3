@@ -806,6 +806,10 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
+    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    {
+        return;
+    }
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
@@ -825,6 +829,11 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
+    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    {
+        return;
+    }
+
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
@@ -845,6 +854,11 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
+    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    {
+        return;
+    }
+
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");

@@ -2471,7 +2471,10 @@
     {
         _logLevel = [cfg[@"log-level"] intValue];
     }
-
+    if([cfg[@"disable-route-advertizement"] boolValue])
+    {
+        _dontAdvertizeRoutes = YES;
+    }
     if(cfg[@"mtp3"])
     {
         NSString *mtp3_name = [cfg[@"mtp3"] stringValue];
@@ -3674,6 +3677,10 @@
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
                                mask:(int)mask
 {
+    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    {
+        return;
+    }
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
@@ -3692,6 +3699,10 @@
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
                                 mask:(int)mask
 {
+    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    {
+        return;
+    }
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
@@ -3710,6 +3721,10 @@
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
                                  mask:(int)mask
 {
+    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    {
+        return;
+    }
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");

@@ -66,6 +66,7 @@
     NSString                    *_pointcodeTranslationTableName;
     id<UMLayerMTP3ApplicationContextProtocol>  _appdel;
     UMSynchronizedSortedDictionary *_advertizedPointcodes;
+    BOOL                        _dontAdvertizeRoutes;
 }
 
 /*
@@ -99,6 +100,7 @@
 @property(readonly,assign) int trw_received;
 @property(readwrite,assign) double speed;
 @property(readwrite,assign) BOOL  sendExtendedAttributes;
+@property(readwrite,assign) BOOL  dontAdvertizeRoutes;
 @property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTable;
 @property(readwrite,assign) int outstandingSLTA;
 @property(readwrite,strong,atomic) UMSynchronizedSortedDictionary *advertizedPointcodes;
