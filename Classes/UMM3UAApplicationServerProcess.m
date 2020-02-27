@@ -2193,20 +2193,17 @@ static const char *get_sctp_status_string(SCTP_Status status)
                             mask:_as.adjacentPointCode.maxmask
                           forAsp:self
                         priority:UMMTP3RoutePriority_1];
-
-    if(self.status != M3UA_STATUS_OFF)
+    if(oldStatus!= M3UA_STATUS_OFF)
     {
         self.status = M3UA_STATUS_OFF;
         if([_reopen_timer1 isRunning]==NO)
         {
-            if((oldStatus == M3UA_STATUS_IS) || (oldStatus == M3UA_STATUS_INACTIVE))
-            {
-                [_sctpLink closeFor:self];
-            }
+            [_sctpLink closeFor:self];
             [_reopen_timer1 stop];
             [_reopen_timer2 stop];
             [_reopen_timer1 start];
         }
+        [_as aspDown:self];
     }
 }
 
