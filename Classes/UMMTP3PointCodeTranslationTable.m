@@ -84,6 +84,30 @@
                 _localToRemote[@(lpc.pc)] = @(rpc.pc);
                 _remoteToLocal[@(rpc.pc)] = @(lpc.pc);
             }
+            else
+            {
+                NSArray *components = [s componentsSeparatedByString:@"<"];
+                if(components.count==2)
+                {
+                    NSString *localPc = components[0];
+                    UMMTP3PointCode *lpc =  [[UMMTP3PointCode alloc]initWithString:localPc variant:UMMTP3Variant_Undefined];
+                    NSString *remotePc = components[1];
+                    UMMTP3PointCode *rpc =  [[UMMTP3PointCode alloc]initWithString:remotePc variant:UMMTP3Variant_Undefined];
+                    _remoteToLocal[@(rpc.pc)] = @(lpc.pc);
+                }
+                else
+                {
+                    NSArray *components = [s componentsSeparatedByString:@">"];
+                    if(components.count==2)
+                    {
+                        NSString *localPc = components[0];
+                        UMMTP3PointCode *lpc =  [[UMMTP3PointCode alloc]initWithString:localPc variant:UMMTP3Variant_Undefined];
+                        NSString *remotePc = components[1];
+                        UMMTP3PointCode *rpc =  [[UMMTP3PointCode alloc]initWithString:remotePc variant:UMMTP3Variant_Undefined];
+                        _localToRemote[@(lpc.pc)] = @(rpc.pc);
+                    }
+                }
+            }
         }
     }
 }
