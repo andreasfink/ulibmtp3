@@ -62,8 +62,12 @@
     UMMTP3TranslationTableMap   *_ttmap_in;
     UMMTP3TranslationTableMap   *_ttmap_out;
     NSString                    *_linkNamesBySlc[16];
-    UMMTP3PointCodeTranslationTable *_pointcodeTranslationTable;
-    NSString                    *_pointcodeTranslationTableName;
+    UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableBidi;
+    UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableIn;
+    UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableOut;
+    NSString                    *_pointcodeTranslationTableNameBidi;
+    NSString                    *_pointcodeTranslationTableNameIn;
+    NSString                    *_pointcodeTranslationTableNameOut;
     id<UMLayerMTP3ApplicationContextProtocol>  _appdel;
     UMSynchronizedSortedDictionary *_advertizedPointcodes;
     BOOL                        _dontAdvertizeRoutes;
@@ -101,7 +105,13 @@
 @property(readwrite,assign) double speed;
 @property(readwrite,assign) BOOL  sendExtendedAttributes;
 @property(readwrite,assign) BOOL  dontAdvertizeRoutes;
-@property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTable;
+@property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTableIn;
+@property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTableOut;
+@property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTableBidi;
+@property(readwrite,strong) NSString *pointcodeTranslationTableNameBidi;
+@property(readwrite,strong) NSString *pointcodeTranslationTableNameIn;
+@property(readwrite,strong) NSString *pointcodeTranslationTableNameOut;
+
 @property(readwrite,assign) int outstandingSLTA;
 @property(readwrite,strong,atomic) UMSynchronizedSortedDictionary *advertizedPointcodes;
 
