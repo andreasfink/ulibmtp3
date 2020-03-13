@@ -117,7 +117,11 @@
     NSNumber *pc1 = _localToRemote[@(pc.pc)];
     if(pc1==NULL)
     {
-        return _defaultLocalPointCode;
+        if(_defaultLocalPointCode)
+        {
+            return _defaultLocalPointCode;
+        }
+        return pc;
     }
     UMMTP3PointCode *pc2 = [[UMMTP3PointCode alloc]initWithPc:pc1.intValue variant:pc.variant];
     return pc2;
@@ -128,7 +132,11 @@
     NSNumber *pc1 = _remoteToLocal[@(pc.pc)];
     if(pc1==NULL)
     {
-        return _defaultRemotePointCode;
+        if(_defaultRemotePointCode)
+        {
+            return _defaultRemotePointCode;
+        }
+        return pc;
     }
     UMMTP3PointCode *pc2 = [[UMMTP3PointCode alloc]initWithPc:pc1.intValue variant:pc.variant];
     return pc2;
