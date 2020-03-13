@@ -61,6 +61,7 @@ typedef enum UMMTP3_Error
     UMMTP3SyslogClient              *_problematicPacketDumper;
     BOOL                            _stpMode;
     BOOL                            _isStarted;
+    id<UMLayerMTP3ApplicationContextProtocol>   _appContext;
 }
 @property (readwrite,assign,atomic) int                 networkIndicator;
 @property (readwrite,assign,atomic) UMMTP3Variant       variant;
@@ -222,14 +223,18 @@ typedef enum UMMTP3_Error
                 userpartId:(int)upid
                         ni:(int)ni
                         mp:(int)mp
-               linksetName:(NSString *)linksetName;
+               linksetName:(NSString *)linksetName
+                   linkset:(UMMTP3LinkSet *)linkset;
+
 
 - (void)processIncomingPduForward:(UMMTP3Label *)label
                              data:(NSData *)data
                        userpartId:(int)upid
                                ni:(int)ni
                                mp:(int)mp
-                      linksetName:(NSString *)linksetName;
+                      linksetName:(NSString *)linksetName
+                          linkset:(UMMTP3LinkSet *)linkset;
+
 
 
 - (void)processIncomingPduLocal:(UMMTP3Label *)label
@@ -237,14 +242,17 @@ typedef enum UMMTP3_Error
                      userpartId:(int)upid
                              ni:(int)ni
                              mp:(int)mp
-                    linksetName:(NSString *)linksetName;
+                    linksetName:(NSString *)linksetName
+                        linkset:(UMMTP3LinkSet *)linkset;
 
 - (void)processUserPart:(UMMTP3Label *)label
                    data:(NSData *)data
              userpartId:(int)upid
                      ni:(int)ni
                      mp:(int)mp
-            linksetName:(NSString *)linksetName;
+            linksetName:(NSString *)linksetName
+                linkset:(UMMTP3LinkSet *)linkset;
+
 
 
 #pragma mark -

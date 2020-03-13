@@ -10,13 +10,25 @@
 
 @implementation UMMTP3TranslationTableMap
 
+- (UMMTP3TranslationTableMap *)init
+{
+    self = [super init];
+    if(self)
+    {
+        for(int i=0;i<256;i++)
+        {
+            _map[i]=i;
+        }
+    }
+    return self;
+}
 
 - (int)mapTT:(int)input
 {
     return _map[input % 256];
 }
 
-- (void)setCondig:(NSDictionary *)config
+- (void)setConfig:(NSDictionary *)config
 {
     for(int i=0;i<256;i++)
     {

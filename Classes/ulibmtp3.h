@@ -50,3 +50,4 @@
 #import "UMMTP3PointcodeFilter.h"
 #import "UMMTP3SyslogClient.h"
 #import "UMMTP3PointCodeTranslationTable.h"
+#import "UMMTP3TranslationTableMap.h"

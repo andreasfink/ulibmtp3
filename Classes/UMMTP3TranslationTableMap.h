@@ -14,7 +14,7 @@
 }
 
 - (int)mapTT:(int)input;
-- (void)setCondig:(NSDictionary *)config;
+- (void)setConfig:(NSDictionary *)config;
 
 @end
 

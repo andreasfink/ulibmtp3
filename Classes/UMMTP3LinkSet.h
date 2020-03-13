@@ -111,6 +111,10 @@
 @property(readwrite,strong) NSString *pointcodeTranslationTableNameBidi;
 @property(readwrite,strong) NSString *pointcodeTranslationTableNameIn;
 @property(readwrite,strong) NSString *pointcodeTranslationTableNameOut;
+@property(readwrite,strong) NSString *ttmap_in_name;
+@property(readwrite,strong) NSString *ttmap_out_name;
+@property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_in;
+@property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_out;
 
 @property(readwrite,assign) int outstandingSLTA;
 @property(readwrite,strong,atomic) UMSynchronizedSortedDictionary *advertizedPointcodes;
