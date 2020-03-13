@@ -2503,10 +2503,12 @@
     if(cfg[@"tt-map-in"]) /* optional */
     {
         _ttmap_in_name = [cfg[@"tt-map-in"] stringValue];
+        _ttmap_in = [appContext getTTMap:_ttmap_in_name];
     }
     if(cfg[@"tt-map-out"]) /* optional */
     {
         _ttmap_out_name = [cfg[@"tt-map-out"] stringValue];
+        _ttmap_out = [appContext getTTMap:_ttmap_in_name];
     }
     if(cfg[@"pointcode-translation-table"]) /* optional */
     {
