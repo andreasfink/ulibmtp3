@@ -2500,13 +2500,13 @@
     }
 
 
-    if(cfg[@"ttmap-in"]) /* optional */
+    if(cfg[@"tt-map-in"]) /* optional */
     {
-        _ttmap_in_name = [cfg[@"ttmap-in"] stringValue];
+        _ttmap_in_name = [cfg[@"tt-map-in"] stringValue];
     }
-    if(cfg[@"ttmap-out"]) /* optional */
+    if(cfg[@"tt-map-out"]) /* optional */
     {
-        _ttmap_out_name = [cfg[@"ttmap-out"] stringValue];
+        _ttmap_out_name = [cfg[@"tt-map-out"] stringValue];
     }
     if(cfg[@"pointcode-translation-table"]) /* optional */
     {
