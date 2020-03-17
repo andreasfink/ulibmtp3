@@ -32,7 +32,14 @@
     {
         return NSOrderedDescending;
     }
-
+    if(_priority > other.priority)
+    {
+        return NSOrderedAscending;
+    }
+    if(_priority < other.priority)
+    {
+        return NSOrderedDescending;
+    }
     if(_metrics.combinedMetricsValue > other.metrics.combinedMetricsValue)
     {
         return NSOrderedDescending;
@@ -41,6 +48,8 @@
     {
         return NSOrderedAscending;
     }
+
+
     double load1 = _current_speed / _current_max_speed;
     double load2 = other.current_speed / other.current_max_speed;
     if(load1 > load2)

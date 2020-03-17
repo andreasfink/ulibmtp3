@@ -61,6 +61,7 @@
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
+/*
 
 - (void)testSingleRoute
 {
@@ -114,5 +115,5 @@
     s = [_mtp3.routingTable isRouteAvailable:_pc101 mask:14 linksetName:@"linkset101"];
     XCTAssert(UMMTP3_ROUTE_ALLOWED == s,@"route is not UMMTP3_ROUTE_ALLOWED but should be");
 
-}
+}*/
 @end
