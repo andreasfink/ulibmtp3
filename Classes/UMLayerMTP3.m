@@ -392,8 +392,8 @@
         
         switch(task.status)
         {
-            case M2PA_STATUS_UNUSED:
-                [self logDebug:[NSString stringWithFormat:@" status: UNUSED (%d)",task.status]];
+            case M2PA_STATUS_UNDEFINED:
+                [self logDebug:[NSString stringWithFormat:@" status: UNDEFINED (%d)",task.status]];
                 break;
             case M2PA_STATUS_OFF:
                 [self logDebug:[NSString stringWithFormat:@" status: OFF (%d)",task.status]];

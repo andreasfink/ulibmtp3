@@ -3556,7 +3556,7 @@
         UMMTP3Link *link = _linksByName[key];
         switch(link.m2pa.m2pa_status)
         {
-            case M2PA_STATUS_UNUSED:
+            case M2PA_STATUS_UNDEFINED:
             case M2PA_STATUS_OFF:
             case M2PA_STATUS_OOS:
             case M2PA_STATUS_INITIAL_ALIGNMENT:
@@ -3579,6 +3579,7 @@
                 processorOutage++;
                 break;
             case M2PA_STATUS_IS:
+            case M2PA_STATUS_BUSY:
                 [self updateRouteAvailable:_adjacentPointCode
                                       mask:_adjacentPointCode.maxmask
                                   priority:UMMTP3RoutePriority_1];
