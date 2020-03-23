@@ -539,18 +539,10 @@
 
         if((ni != self.networkIndicator) && (_overrideNetworkIndicator && _overrideNetworkIndicator.intValue != ni))
         {
-            [self.logFeed majorErrorText:[NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,self.networkIndicator]];
+            self.lastError = [NSString stringWithFormat:@"NI received is %d but is expected to be %d",ni,self.networkIndicator];
+            [self.logFeed majorErrorText:self.lastError];
             [self protocolViolation];
-            @throw([NSException exceptionWithName:@"MTP_PACKET_INVALID"
-                                           reason:NULL
-                                         userInfo:@{
-                                                    @"sysmsg" : @"non-matching network indicator",
-                                                    @"func": @(__func__),
-                                                    @"obj":self,
-                                                    @"backtrace": UMBacktrace(NULL,0)
-                                                    }
-                    ]);
-
+            return;
         }
         if(link && (link.m2pa.m2pa_status != M2PA_STATUS_IS))
         {
@@ -558,15 +550,8 @@
             if(![label.dpc isEqualToPointCode:_localPointCode])
             {
                 [self logMinorError:@"MTP_DECODE: no-relay-during-startup"];
-                @throw([NSException exceptionWithName:@"MTP_DECODE"
-                                               reason:NULL
-                                             userInfo:@{
-                                                        @"sysmsg" : @"no-relay-during-startup",
-                                                        @"func": @(__func__),
-                                                        @"obj":self,
-                                                        @"backtrace": UMBacktrace(NULL,0)
-                                                        }
-                        ]);
+                [self protocolViolation];
+                return;
             }
         }
         NSError *e = NULL;
@@ -1307,7 +1292,8 @@
     }
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected SLTM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
+        self.lastError = [NSString stringWithFormat:@"unexpected SLTM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription];
+        [self logMajorError:self.lastError];
         [self protocolViolation];
         return;
     }
@@ -3518,13 +3504,16 @@
 
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc
 {
+
     UMMTP3Link *link = [self getLinkBySlc:slc];
+    M2PA_Status old_status = link.last_m2pa_status;
     [link m2paStatusUpdate:status];
     [self updateLinkSetStatus];
-    if((link.last_m2pa_status != M2PA_STATUS_IS) && (status==M2PA_STATUS_IS))
+    if(( old_status != M2PA_STATUS_IS) && (status==M2PA_STATUS_IS))
     {
         _sendTRA = YES;
         _awaitFirstSLTA = YES;
+        [self linktestTimeEventForLink:link];
     }
 }
 

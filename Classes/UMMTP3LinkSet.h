@@ -71,6 +71,7 @@
     id<UMLayerMTP3ApplicationContextProtocol>  _appdel;
     UMSynchronizedSortedDictionary *_advertizedPointcodes;
     BOOL                        _dontAdvertizeRoutes;
+    NSString                    *_lastError;
 }
 
 /*
@@ -115,6 +116,7 @@
 @property(readwrite,strong) NSString *ttmap_out_name;
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_in;
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_out;
+@property(readwrite,strong) NSString                    *lastError;
 
 @property(readwrite,assign) int outstandingSLTA;
 @property(readwrite,strong,atomic) UMSynchronizedSortedDictionary *advertizedPointcodes;
