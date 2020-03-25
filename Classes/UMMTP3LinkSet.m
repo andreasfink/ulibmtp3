@@ -3541,6 +3541,7 @@
 /* reopen Timer Event 1 happens when a link got closed. We wait a small amount of time and restart the link */
 - (void)reopenTimer1EventFor:(UMMTP3Link *)link
 {
+    [link.m2pa.stateMachineLogFeed debugText:@"reopenTimer1Event"];
     [link powerOn];
     [link stopLinkTestTimer];
     [link startReopenTimer2];
@@ -3556,6 +3557,7 @@
         [link stopLinkTestTimer];
         [link stopReopenTimer1];
         [link stopReopenTimer2];
+        [link.m2pa.stateMachineLogFeed debugText:@"reopenTimer2Event"];
         [link powerOff];
         [link startReopenTimer1];
     }
