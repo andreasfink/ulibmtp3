@@ -26,7 +26,6 @@ typedef enum UMMTP3Link_attachmentStatus
 @interface UMMTP3Link : UMObject
 {
     NSString                    *_name;
-
     int                         _slc;
     NSMutableDictionary         *_userId;
     M2PA_Status                 _last_m2pa_status;
@@ -39,10 +38,15 @@ typedef enum UMMTP3Link_attachmentStatus
     BOOL                        _processorOutage;
     BOOL                        _speedLimitReached;
     UMTimer                     *_linkTestTimer;
+    UMTimer                     *_reopenTimer1;
+    UMTimer                     *_reopenTimer2;
     NSTimeInterval              _linkTestTime;
+    NSTimeInterval              _reopenTime1;
+    NSTimeInterval              _reopenTime2;
     int                         _linkTestMaxOutStanding;
     int                         _outstandingLinkTests;
     UMLogLevel                  _logLevel;
+    BOOL                        _forcedOutOfService;
 }
 
 - (NSString *)name;
@@ -59,7 +63,13 @@ typedef enum UMMTP3Link_attachmentStatus
 @property (readwrite,assign)    BOOL congested;
 @property (readwrite,assign)    BOOL processorOutage;
 @property (readwrite,assign)    BOOL speedLimitReached;
+@property (readwrite,assign)    BOOL emergency;
+@property (readwrite,assign)    BOOL forcedOutOfService;
 @property (readwrite,assign)    NSTimeInterval linkTestTime;
+@property (readwrite,assign)    NSTimeInterval reopenTime1;
+@property (readwrite,strong)    UMTimer *reopenTimer1;
+@property (readwrite,assign)    NSTimeInterval reopenTime2;
+@property (readwrite,strong)    UMTimer *reopenTimer2;
 @property (readwrite,assign)    UMLogLevel  logLevel;
 @property (readwrite,assign,atomic)    int outstandingLinkTests;
 
@@ -67,7 +77,6 @@ typedef enum UMMTP3Link_attachmentStatus
 - (void)attachmentFailed:(NSString *)reason;
 - (void)sctpStatusUpdate:(SCTP_Status)s;
 
-- (void)m2paStatusUpdate:(M2PA_Status)s;
 - (void)congestionIndication;
 - (void)congestionClearedIndication;
 - (void)processorOutageIndication;
@@ -85,4 +94,11 @@ typedef enum UMMTP3Link_attachmentStatus
 - (void)stop;
 
 - (void)stopDetachAndDestroy;
+
+- (void)startLinkTestTimer;
+- (void)stopLinkTestTimer;
+- (void)startReopenTimer1;
+- (void)startReopenTimer2;
+- (void)stopReopenTimer1;
+- (void)stopReopenTimer2;
 @end

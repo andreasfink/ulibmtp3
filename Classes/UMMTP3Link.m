@@ -14,6 +14,9 @@
 #import "UMLayerMTP3.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 
+#define MTP3_LINK_REOPEN_TIME1_DEFAULT   6.0 /* if link goes down, we restart it in 6 seconds */
+#define MTP3_LINK_REOPEN_TIME2_DEFAULT   180 /* if link doesnt come up within 3 minutes, we kill it and after restarttimer1 restart it */
+
 @implementation UMMTP3Link
 
 - (UMMTP3Link *) init
@@ -25,6 +28,23 @@
         _last_m2pa_status = M2PA_STATUS_OFF;
         _linkTestTime = 30.0;
         _linkTestMaxOutStanding = 3;
+        _reopenTime1 = MTP3_LINK_REOPEN_TIME1_DEFAULT;
+        _reopenTime2 = MTP3_LINK_REOPEN_TIME2_DEFAULT;
+        _reopenTimer1 = [[UMTimer alloc]initWithTarget:self
+                                             selector:@selector(reopenTimer1Event:)
+                                               object:NULL
+                                              seconds:_reopenTime1
+                                                 name:@"reopenTimer1"
+                                              repeats:NO
+                                      runInForeground:YES];
+        _reopenTimer2 = [[UMTimer alloc]initWithTarget:self
+                                             selector:@selector(reopenTimer2Event:)
+                                               object:NULL
+                                              seconds:_reopenTime2
+                                                 name:@"reopenTimer1"
+                                              repeats:NO
+                                      runInForeground:YES];
+
     }
     return self;
 }
@@ -58,27 +78,6 @@
     self.sctp_status = s;
 }
 
-- (void)m2paStatusUpdate:(M2PA_Status)newStatus
-{
-    M2PA_Status old_status = _last_m2pa_status;
-    _last_m2pa_status = newStatus;
-
-    if((old_status == M2PA_STATUS_OFF) && (newStatus == M2PA_STATUS_OOS))
-    {
-        [_m2pa startFor:_linkset.mtp3];
-    }
-    if(newStatus==M2PA_STATUS_ALIGNED_READY)
-    {
-    }
-    if((old_status != M2PA_STATUS_IS) && (newStatus == M2PA_STATUS_IS))
-    {
-        [self startLinkTestTimer];
-    }
-    else if((old_status == M2PA_STATUS_IS) && (newStatus != M2PA_STATUS_IS))
-    {
-        [self stopLinkTestTimer];
-    }
-}
 
 - (void)congestionIndication
 {
@@ -157,6 +156,28 @@
         }
     }
 
+
+    if (cfg[@"reopen-timer1"])
+    {
+        _reopenTime1 = [cfg[@"reopen-timer1"] doubleValue];
+    }
+    else
+    {
+        _reopenTime1 = MTP3_LINK_REOPEN_TIME1_DEFAULT;
+    }
+    _reopenTimer1.seconds = _reopenTime1;
+
+    if (cfg[@"reopen-timer2"])
+    {
+        _reopenTime2 = [cfg[@"reopen-timer2"] doubleValue];
+    }
+    else
+    {
+        _reopenTime2 = MTP3_LINK_REOPEN_TIME2_DEFAULT;
+    }
+    _reopenTimer2.seconds = _reopenTime2;
+
+
     if (cfg[@"m2pa"])
     {
         NSString *m2pa_name = [cfg[@"m2pa"] stringValue];
@@ -170,6 +191,7 @@
 
         }
     }
+
     [_linkset addLink:self];
     UMLayerM2PAUserProfile *up = [[UMLayerM2PAUserProfile alloc]initWithDefaultProfile];
     [_m2pa adminAttachFor:self.linkset.mtp3
@@ -188,7 +210,10 @@
 
 - (void)powerOn
 {
-    [_m2pa powerOnFor:_linkset.mtp3];
+    if(_forcedOutOfService==NO)
+    {
+        [_m2pa powerOnFor:_linkset.mtp3];
+    }
 }
 
 - (void)powerOff
@@ -196,10 +221,48 @@
     [_m2pa powerOffFor:_linkset.mtp3];
 }
 
+- (BOOL)emergency
+{
+    return _m2pa.emergency;
+}
+
+- (void)setEmergency:(BOOL)emergency
+{
+    _m2pa.emergency = emergency;
+    if(emergency)
+    {
+        [_m2pa  emergencyFor:_linkset.mtp3];
+    }
+    else
+    {
+        [_m2pa  emergencyCheasesFor:_linkset.mtp3];
+    }
+}
+
+
+- (BOOL)forcedOutOfService
+{
+    return _forcedOutOfService;
+}
+
+- (void)setForcedOutOfService:(BOOL)foos
+{
+    _forcedOutOfService = foos;
+    if(foos==YES)
+    {
+        [_m2pa powerOffFor:_linkset.mtp3];
+    }
+    else
+    {
+        [_m2pa powerOnFor:_linkset.mtp3];
+    }
+}
+
 - (void)start
 {
     [_m2pa startFor:_linkset.mtp3];
 }
+
 - (void)stop
 {
     [_m2pa stopFor:_linkset.mtp3];
@@ -210,13 +273,6 @@
     [_linkset linktestTimeEventForLink:self];
 }
 
--(void)startLinkTestTimer2
-{
-    /*    NSTimer *linkTestTimer = [NSTimer timerWithTimeInterval:linkTestTime target:self selector:@selector(linkTestTimerEvent:) userInfo:nil repeats:YES];
-     NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-     [runLoop addTimer:linkTestTimer forMode:NSDefaultRunLoopMode];
-     */
-}
 
 - (void)startLinkTestTimer
 {
@@ -240,6 +296,65 @@
 {
     [_linkTestTimer stop];
 }
+
+- (void)startReopenTimer1
+{
+    if(_reopenTime1 > 0)
+    {
+        if(_reopenTimer1==NULL)
+        {
+            _reopenTimer1 = [[UMTimer alloc]initWithTarget:self
+                                                 selector:@selector(reopenTimer1Event:)
+                                                   object:NULL
+                                                  seconds:_reopenTime1
+                                                     name:@"reopenTimer1"
+                                                  repeats:NO
+                                          runInForeground:YES];
+        }
+        [_reopenTimer1 startIfNotRunning];
+    }
+}
+
+- (void)startReopenTimer2
+{
+    if(_reopenTime2 > 0)
+    {
+        if(_reopenTimer2==NULL)
+        {
+            _reopenTimer2 = [[UMTimer alloc]initWithTarget:self
+                                                 selector:@selector(reopenTimer2Event:)
+                                                   object:NULL
+                                                  seconds:_reopenTime2
+                                                     name:@"reopenTimer2"
+                                                  repeats:NO
+                                          runInForeground:YES];
+        }
+        [_reopenTimer2 startIfNotRunning];
+    }
+}
+
+- (void)stopReopenTimer1
+{
+    [_reopenTimer1 stop];
+}
+
+- (void)stopReopenTimer2
+{
+    [_reopenTimer2 stop];
+}
+
+
+- (void)reopenTimer1Event:(id)parameter
+{
+    [_linkset reopenTimer1EventFor:self];
+}
+
+- (void)reopenTimer2Event:(id)parameter
+{
+    [_linkset reopenTimer2EventFor:self];
+}
+
+
 
 - (void)stopDetachAndDestroy
 {

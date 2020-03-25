@@ -389,35 +389,23 @@
         [self logDebug:@"_m2paStatusIndicationTask"];
         [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
         [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
-        
-        switch(task.status)
-        {
-            case M2PA_STATUS_UNDEFINED:
-                [self logDebug:[NSString stringWithFormat:@" status: UNDEFINED (%d)",task.status]];
-                break;
-            case M2PA_STATUS_OFF:
-                [self logDebug:[NSString stringWithFormat:@" status: OFF (%d)",task.status]];
-                break;
-            case M2PA_STATUS_OOS:
-                [self logDebug:[NSString stringWithFormat:@" status: OOS (%d)",task.status]];
-                break;
-            case M2PA_STATUS_INITIAL_ALIGNMENT:
-                [self logDebug:[NSString stringWithFormat:@" status: INITIAL_ALIGNMENT (%d)",task.status]];
-                break;
-            case M2PA_STATUS_ALIGNED_NOT_READY:
-                [self logDebug:[NSString stringWithFormat:@" status: ALIGNED_NOT_READY (%d)",task.status]];
-                break;
-            case M2PA_STATUS_ALIGNED_READY:
-                [self logDebug:[NSString stringWithFormat:@" status: ALIGNED_READY (%d)",task.status]];
-                break;
-            case M2PA_STATUS_IS:
-                [self logDebug:[NSString stringWithFormat:@" status: IS (%d)",task.status]];
-                break;
-            default:
-                [self logDebug:[NSString stringWithFormat:@" status: UNKNOWN(%d)",task.status]];
-                break;
-        }
-        [self logDebug:[NSString stringWithFormat:@" status: %d",task.status]];
+        [self logDebug:[NSString stringWithFormat:@" status: %@ (%d)", [UMLayerM2PA m2paStatusString:task.status], task.status]];
+    }
+    
+    UMMTP3Link *link = [self getLinkByName: task.userId];
+    UMMTP3LinkSet *linkset = link.linkset;
+    [linkset m2paStatusUpdate:task.status slc:task.slc];
+}
+
+
+- (void) _m2paRemoteProcessorOutage:(UMMTP3Task_m2paStatusIndication *)task;
+{
+    if(self.logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:@"_m2paStatusIndicationTask"];
+        [self logDebug:[NSString stringWithFormat:@" slc: %d",task.slc]];
+        [self logDebug:[NSString stringWithFormat:@" userId: %@",task.userId]];
+        [self logDebug:[NSString stringWithFormat:@" status: %@ (%d)", [UMLayerM2PA m2paStatusString:task.status], task.status]];
     }
 
     UMMTP3Link *link = [self getLinkByName: task.userId];

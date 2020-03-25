@@ -162,33 +162,7 @@
             UMMTP3Link *link2 = _linksByName[key];
             [s appendFormat:@"\t%@",link.name];
             [s appendFormat:@" SLC %d",link.slc];
-            switch(link2.m2pa.m2pa_status)
-            {
-                case M2PA_STATUS_OFF:
-                    [s appendString:@" M2PA-Status: OFF"];
-                    break;
-                case M2PA_STATUS_OOS:
-                    [s appendString:@" M2PA-Status: OOS"];
-                    break;
-                case M2PA_STATUS_INITIAL_ALIGNMENT:
-                    [s appendString:@" M2PA-Status: INITIAL-ALIGNMENT"];
-                    break;
-                case M2PA_STATUS_ALIGNED_NOT_READY:
-                    [s appendString:@" M2PA-Status: ALIGNED-NOT-READY"];
-                    break;
-                case M2PA_STATUS_ALIGNED_READY:
-                    [s appendString:@" M2PA-Status: ALIGNED-READY"];
-                    break;
-                case M2PA_STATUS_IS:
-                    [s appendString:@" M2PA-Status: IS"];
-                    break;
-                case M2PA_STATUS_PROCESSOR_OUTAGE:
-                    [s appendString:@" M2PA-Status: PROCESSOR-OUTAGE"];
-                    break;
-                default:
-                    [s appendFormat:@" M2PA-Status: Undefined(%d)",link.m2pa.m2pa_status];
-                    break;
-            }
+            [s appendFormat:@" %@",[UMLayerM2PA m2paStatusString:link2.m2pa.m2pa_status]];
             [s appendString:@"\n"];
 
         }
@@ -3502,18 +3476,88 @@
     [self updateLinkSetStatus];
 }
 
+
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc
 {
 
     UMMTP3Link *link = [self getLinkBySlc:slc];
     M2PA_Status old_status = link.last_m2pa_status;
-    [link m2paStatusUpdate:status];
+    link.last_m2pa_status = status;
+
     [self updateLinkSetStatus];
-    if(( old_status != M2PA_STATUS_IS) && (status==M2PA_STATUS_IS))
+    if(_activeLinks==0)
     {
-        _sendTRA = YES;
-        _awaitFirstSLTA = YES;
-        [self linktestTimeEventForLink:link];
+        link.emergency = YES;
+    }
+    else
+    {
+        link.emergency = NO;
+    }
+
+    if(old_status == status)
+    {
+        return;
+    }
+
+    switch(status)
+    {
+        case M2PA_STATUS_FOOS:
+            [link stopLinkTestTimer];
+            [link stopReopenTimer1];
+            [link stopReopenTimer2];
+            [link powerOff];
+            break;
+        case M2PA_STATUS_DISCONNECTED:
+            [link stopLinkTestTimer];
+            [link stopReopenTimer1];
+            [link stopReopenTimer2];
+            [link powerOff];
+            [link startReopenTimer1]; /* this will power on in few sec */
+            break;
+        case M2PA_STATUS_OFF:
+            [link stopLinkTestTimer];
+            [link stopReopenTimer1];
+            break;
+        case M2PA_STATUS_OOS:
+            [link stopLinkTestTimer];
+            [link stopReopenTimer1];
+            [link start];
+            break;
+        case M2PA_STATUS_INITIAL_ALIGNMENT:
+        case M2PA_STATUS_ALIGNED_NOT_READY:
+        case M2PA_STATUS_ALIGNED_READY:
+            break;
+        case M2PA_STATUS_IS:
+            _sendTRA = YES;
+            _awaitFirstSLTA = YES;
+            [link stopLinkTestTimer];
+            [self linktestTimeEventForLink:link];
+            [link startLinkTestTimer];
+            [link stopReopenTimer2];
+            break;
+    }
+}
+
+/* reopen Timer Event 1 happens when a link got closed. We wait a small amount of time and restart the link */
+- (void)reopenTimer1EventFor:(UMMTP3Link *)link
+{
+    [link powerOn];
+    [link stopLinkTestTimer];
+    [link startReopenTimer2];
+}
+
+
+/* reopen Timer Event 2 happens when a link got started but doesnt come up after a while.
+ we tear everythign down after reopen timer 2 and restart the link */
+- (void)reopenTimer2EventFor:(UMMTP3Link *)link
+{
+    if(link.last_m2pa_status != M2PA_STATUS_IS)
+    {
+        [link stopLinkTestTimer];
+        [link stopReopenTimer1];
+        [link stopReopenTimer2];
+        [link powerOff];
+        [link startReopenTimer1];
     }
 }
 
@@ -3545,7 +3589,7 @@
         UMMTP3Link *link = _linksByName[key];
         switch(link.m2pa.m2pa_status)
         {
-            case M2PA_STATUS_UNDEFINED:
+            default:
             case M2PA_STATUS_OFF:
             case M2PA_STATUS_OOS:
             case M2PA_STATUS_INITIAL_ALIGNMENT:
@@ -3561,18 +3605,21 @@
                                     priority:UMMTP3RoutePriority_1];
                 ready++;
                 break;
-            case M2PA_STATUS_PROCESSOR_OUTAGE:
-                [self updateRouteUnavailable:_adjacentPointCode
-                                        mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1];
-                processorOutage++;
-                break;
             case M2PA_STATUS_IS:
-            case M2PA_STATUS_BUSY:
-                [self updateRouteAvailable:_adjacentPointCode
-                                      mask:_adjacentPointCode.maxmask
-                                  priority:UMMTP3RoutePriority_1];
-                active++;
+                if(link.m2pa.remote_processor_outage)
+                {
+                        [self updateRouteUnavailable:_adjacentPointCode
+                                                mask:_adjacentPointCode.maxmask
+                                            priority:UMMTP3RoutePriority_1];
+                        processorOutage++;
+                }
+                else
+                {
+                    [self updateRouteAvailable:_adjacentPointCode
+                                          mask:_adjacentPointCode.maxmask
+                                      priority:UMMTP3RoutePriority_1];
+                    active++;
+                }
                 break;
         }
     }
@@ -3762,33 +3809,7 @@
         UMMTP3Link *link = _linksByName[key];
         [s appendFormat:@"\t%@",link.name];
         [s appendFormat:@" SLC %d",link.slc];
-        switch(link.m2pa.m2pa_status)
-        {
-            case M2PA_STATUS_OFF:
-                [s appendString:@" M2PA-Status: OFF"];
-                break;
-            case M2PA_STATUS_OOS:
-                [s appendString:@" M2PA-Status: OOS"];
-                break;
-            case M2PA_STATUS_INITIAL_ALIGNMENT:
-                [s appendString:@" M2PA-Status: INITIAL-ALIGNMENT"];
-                break;
-            case M2PA_STATUS_ALIGNED_NOT_READY:
-                [s appendString:@" M2PA-Status: ALIGNED-NOT-READY"];
-                break;
-            case M2PA_STATUS_ALIGNED_READY:
-                [s appendString:@" M2PA-Status: ALIGNED-READY"];
-                break;
-            case M2PA_STATUS_IS:
-                [s appendString:@" M2PA-Status: IS"];
-                break;
-            case M2PA_STATUS_PROCESSOR_OUTAGE:
-                [s appendString:@" M2PA-Status: PROCESSOR-OUTAGE"];
-                break;
-            default:
-                [s appendFormat:@" M2PA-Status: Undefined(%d)",link.m2pa.m2pa_status];
-                break;
-        }
+        [s appendFormat:@" M2PA-Status: %@",[UMLayerM2PA m2paStatusString:link.m2pa.m2pa_status]];
         [s appendString:@"\n"];
 
     }

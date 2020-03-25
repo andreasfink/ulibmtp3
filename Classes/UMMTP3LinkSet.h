@@ -47,7 +47,6 @@
     int                         _trw_received;
     BOOL                        _sendTRA;
     BOOL                        _awaitFirstSLTA;
-
     int                         _outstandingSLTA;
     int                         _activeLinks;
     int                         _inactiveLinks;
@@ -411,5 +410,8 @@ options:(NSDictionary *)options;
 -(UMMTP3Label *)localToRemoteLabel:(UMMTP3Label *)label;
 -(int)remoteToLocalNetworkIndicator:(int)ni;
 -(int)localToRemoteNetworkIndicator:(int)ni;
+
+- (void)reopenTimer1EventFor:(UMMTP3Link *)link;
+- (void)reopenTimer2EventFor:(UMMTP3Link *)link;
 
 @end
