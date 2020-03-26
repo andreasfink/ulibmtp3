@@ -22,8 +22,8 @@
 /* this is not necessary in M3UA. So think of UMM3UALink as a linkset with */
 /* a fixed prebuiltin link with SLC = 0*/
 
-#define	M3UA_DEFAULT_REOPEN1_TIMER	  3.5000	/* reopen SCTP link after 3 seconds of being down */
-#define	M3UA_DEFAULT_REOPEN2_TIMER	 120.000	/* once reopen order has been given, wait up to 2 minutes
+#define	M3UA_DEFAULT_REOPEN1_TIMER	   6.000	/* reopen SCTP link after 6 seconds of being down */
+#define	M3UA_DEFAULT_REOPEN2_TIMER	 180.000	/* once reopen order has been given, wait up to 2 minutes
 for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 timer and power it on again */
 #define	M3UA_DEFAULT_LINKTEST_TIMER	25.000 /* every so many seconds we send out a SLTM */
 #define M3UA_DEFAULT_SPEED      100;        /* default speed limit */
