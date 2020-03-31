@@ -441,7 +441,6 @@
                 break;
         }
     }
-    
     UMMTP3LinkSet *linkset = [self getLinkSetByName:task.userId];
     [linkset sctpStatusUpdate:task.status slc:task.slc];
 }
