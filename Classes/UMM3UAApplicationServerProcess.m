@@ -760,63 +760,54 @@ static const char *get_sctp_status_string(SCTP_Status status)
     }
     for (NSData *d in affpcs)
     {
-
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
         [self logDebug:[NSString stringWithFormat:@" affected pointcode %@",pc]];
-        if(mask != 0)
+        if(pc)
         {
-            [self.logFeed minorErrorText:@"affected pointcode with a mask > 0 are not supported and ignored"];
-        }
-        else
-        {
-            if(pc)
+            BOOL answered = NO;
+            [self logDebug:[NSString stringWithFormat:@" as.localPointCode: %@",_as.localPointCode]];
+            [self logDebug:[NSString stringWithFormat:@" as.mtp3.opc: %@",_as.mtp3.opc]];
+
+            if(_as.localPointCode)
             {
-                BOOL answered = NO;
-
-                [self logDebug:[NSString stringWithFormat:@" as.localPointCode: %@",_as.localPointCode]];
-                [self logDebug:[NSString stringWithFormat:@" as.mtp3.opc: %@",_as.mtp3.opc]];
-
-                if(_as.localPointCode)
+                if(_as.localPointCode.integerValue == pc.integerValue)
                 {
-                    if(_as.localPointCode.integerValue == pc.integerValue)
-                    {
-                        [self advertizePointcodeAvailable:pc mask:pc.maxmask];
-                        answered=YES;
-                    }
+                    [self advertizePointcodeAvailable:pc mask:pc.maxmask];
+                    answered=YES;
                 }
-                else if((_as.mtp3.opc) && (!answered))
+            }
+            else if((_as.mtp3.opc) && (!answered))
+            {
+                if(_as.mtp3.opc.integerValue == pc.integerValue)
                 {
-                    if(_as.mtp3.opc.integerValue == pc.integerValue)
-                    {
-                        [self advertizePointcodeAvailable:_as.mtp3.opc mask:_as.mtp3.opc.maxmask];
-                        answered=YES;
-                    }
+                    [self advertizePointcodeAvailable:_as.mtp3.opc mask:_as.mtp3.opc.maxmask];
+                    answered=YES;
                 }
+            }
 
-                if(answered==NO)
+            if(answered==NO)
+            {
+                UMMTP3RouteStatus rstatus = [_as isRouteAvailable:pc mask:mask forAsp:self];
+                if(rstatus == UMMTP3_ROUTE_ALLOWED)
                 {
-                    UMMTP3RouteStatus rstatus = [_as isRouteAvailable:pc mask:mask forAsp:self];
-                    if(rstatus == UMMTP3_ROUTE_ALLOWED)
-                    {
-                        [self logDebug:@" rstatus=UMMTP3_ROUTE_ALLOWED"];
-                        [self advertizePointcodeAvailable:pc mask:mask];
+                    [self logDebug:@" rstatus=UMMTP3_ROUTE_ALLOWED"];
+                    [self advertizePointcodeAvailable:pc mask:mask];
 
-                    }
-                    else if(rstatus == UMMTP3_ROUTE_PROHIBITED)
-                    {
-                        [self logDebug:@" rstatus=UMMTP3_ROUTE_PROHIBITED"];
-                        [self advertizePointcodeUnavailable:pc mask:mask];
-                    }
-                    else if(rstatus == UMMTP3_ROUTE_RESTRICTED)
-                    {
-                        [self logDebug:@" rstatus=UMMTP3_ROUTE_RESTRICTED"];
-                        [self advertizePointcodeRestricted:pc mask:mask];
-                    }
-                    else if(rstatus == UMMTP3_ROUTE_UNKNOWN)
-                    {
-                        [self logDebug:[NSString stringWithFormat:@"    status of pointcode %@ is unknown",pc]];
-                    }
+                }
+                else if(rstatus == UMMTP3_ROUTE_PROHIBITED)
+                {
+                    [self logDebug:@" rstatus=UMMTP3_ROUTE_PROHIBITED"];
+                    [self advertizePointcodeUnavailable:pc mask:mask];
+                }
+                else if(rstatus == UMMTP3_ROUTE_RESTRICTED)
+                {
+                    [self logDebug:@" rstatus=UMMTP3_ROUTE_RESTRICTED"];
+                    [self advertizePointcodeRestricted:pc mask:mask];
+                }
+                else if(rstatus == UMMTP3_ROUTE_UNKNOWN)
+                {
+                    [self logDebug:[NSString stringWithFormat:@"    status of pointcode %@ is unknown",pc]];
                 }
             }
         }
