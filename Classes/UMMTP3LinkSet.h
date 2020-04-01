@@ -380,7 +380,7 @@ options:(NSDictionary *)options;
 - (void)stop:(int)slc;
 - (void)attachmentConfirmed:(int)slc;
 - (void)attachmentFailed:(int)slc reason:(NSString *)r;
-- (void)sctpStatusUpdate:(SCTP_Status)status slc:(int)slc;
+- (void)sctpStatusUpdate:(UMSocketStatus)status slc:(int)slc;
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc;
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link;
 - (void)updateLinkSetStatus;

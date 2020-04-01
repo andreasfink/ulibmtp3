@@ -237,7 +237,7 @@
 - (void) m2paSctpStatusIndication:(UMLayer *)caller
                               slc:(int)xslc
                            userId:(id)uid
-                           status:(SCTP_Status)s
+                           status:(UMSocketStatus)s
 {
     
     UMMTP3Task_m2paSctpStatusIndication *task = [[UMMTP3Task_m2paSctpStatusIndication alloc]initWithReceiver:self
@@ -424,16 +424,16 @@
         switch(task.status)
         {
                 
-            case SCTP_STATUS_M_FOOS:
+            case UMSOCKET_STATUS_FOOS:
                 [self logDebug:[NSString stringWithFormat:@" status: M_FOOS (%d)",task.status]];
                 break;
-            case SCTP_STATUS_OFF:
+            case UMSOCKET_STATUS_OFF:
                 [self logDebug:[NSString stringWithFormat:@" status: OFF (%d)",task.status]];
                 break;
-            case SCTP_STATUS_OOS:
+            case UMSOCKET_STATUS_OOS:
                 [self logDebug:[NSString stringWithFormat:@" status: OOS (%d)",task.status]];
                 break;
-            case SCTP_STATUS_IS:
+            case UMSOCKET_STATUS_IS:
                 [self logDebug:[NSString stringWithFormat:@" status: IS (%d)",task.status]];
                 break;
             default:

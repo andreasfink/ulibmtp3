@@ -73,7 +73,7 @@
     _attachmentFailureStatus = reason;
 }
 
-- (void)sctpStatusUpdate:(SCTP_Status)s
+- (void)sctpStatusUpdate:(UMSocketStatus)s
 {
     self.sctp_status = s;
 }

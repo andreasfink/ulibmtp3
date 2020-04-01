@@ -22,7 +22,7 @@
                                                sender:(id)tx
                                                   slc:(int)xslc
                                                userId:(id)uid
-                                               status:(SCTP_Status)s;
+                                               status:(UMSocketStatus)s;
 {
     self = [super initWithName:[[self class]description]  receiver:rx sender:tx requiresSynchronisation:NO];
     if(self)

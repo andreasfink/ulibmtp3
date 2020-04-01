@@ -72,7 +72,7 @@
 static const char *m3ua_class_string(uint8_t pclass);
 static const char *m3ua_type_string(uint8_t pclass,uint8_t ptype);
 static const char *m3ua_param_name(uint16_t param_type);
-static const char *get_sctp_status_string(SCTP_Status status);
+static const char *get_sctp_status_string(UMSocketStatus status);
 
 static const char *m3ua_class_string(uint8_t pclass)
 {
@@ -208,18 +208,18 @@ static const char *m3ua_param_name(uint16_t param_type)
     return "unknown";
 }
 
-static const char *get_sctp_status_string(SCTP_Status status)
+static const char *get_sctp_status_string(UMSocketStatus status)
 {
     switch(status)
     {
-        case SCTP_STATUS_M_FOOS:
-            return "SCTP_STATUS_M_FOOS";
-        case SCTP_STATUS_OFF:
-            return "SCTP_STATUS_OFF";
-        case SCTP_STATUS_OOS:
-            return "SCTP_STATUS_OOS";
-        case SCTP_STATUS_IS:
-            return "SCTP_STATUS_IS";
+        case UMSOCKET_STATUS_FOOS:
+            return "UMSOCKET_STATUS_FOOS";
+        case UMSOCKET_STATUS_OFF:
+            return "UMSOCKET_STATUS_OFF";
+        case UMSOCKET_STATUS_OOS:
+            return "UMSOCKET_STATUS_OOS";
+        case UMSOCKET_STATUS_IS:
+            return "UMSOCKET_STATUS_IS";
         default:
             return "SCTP_UNKNOWN";
     }
@@ -303,7 +303,7 @@ static const char *get_sctp_status_string(SCTP_Status status)
         _speed_within_limit = YES;
         self.logLevel = UMLOG_MAJOR;
         _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
-        _sctp_status = SCTP_STATUS_OFF;
+        _sctp_status = UMSOCKET_STATUS_OFF;
         _status = M3UA_STATUS_OFF;
         _incomingStreamLock =  [[UMMutex alloc]initWithName:@"m3ua-incomingStreamLock"];
         _houseKeepingTimer = [[UMTimer alloc]initWithTarget:self
@@ -1377,9 +1377,9 @@ static const char *get_sctp_status_string(SCTP_Status status)
 
 - (void) sctpStatusIndication:(UMLayer *)caller
                        userId:(id)uid
-                       status:(SCTP_Status)new_status
+                       status:(UMSocketStatus)new_status
 {
-    SCTP_Status	old_status;
+    UMSocketStatus	old_status;
     old_status = _sctp_status;
     if(self.logLevel <= UMLOG_DEBUG)
     {
@@ -1395,12 +1395,12 @@ static const char *get_sctp_status_string(SCTP_Status status)
     _sctp_status = new_status;
     switch(_sctp_status)
     {
-        case SCTP_STATUS_M_FOOS:
-        case SCTP_STATUS_OFF:
-        case SCTP_STATUS_OOS:
+        case UMSOCKET_STATUS_FOOS:
+        case UMSOCKET_STATUS_OFF:
+        case UMSOCKET_STATUS_OOS:
             [self sctpReportsDown];
             break;
-        case SCTP_STATUS_IS:
+        case UMSOCKET_STATUS_IS:
             [self sctpReportsUp];
             break;
     }

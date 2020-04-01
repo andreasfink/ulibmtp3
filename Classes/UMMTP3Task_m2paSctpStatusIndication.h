@@ -17,19 +17,19 @@
 {
     int slc;
     id userId;
-    SCTP_Status status;
+    UMSocketStatus status;
 }
 
 @property(readwrite,assign) int slc;
 @property(readwrite,strong) id userId;
-@property(readwrite,assign) SCTP_Status status;
+@property(readwrite,assign) UMSocketStatus status;
 
 
 - (UMMTP3Task_m2paSctpStatusIndication *)initWithReceiver:(UMLayerMTP3 *)rx
                                                    sender:(id)tx
                                                       slc:(int)slc
                                                    userId:(id)uid
-                                                   status:(SCTP_Status)s;
+                                                   status:(UMSocketStatus)s;
 - (void)main;
 
 @end

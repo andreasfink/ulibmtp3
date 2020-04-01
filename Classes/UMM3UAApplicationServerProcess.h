@@ -77,7 +77,7 @@
 @property (readonly) BOOL sctp_up;
 @property (readonly) BOOL up;
 @property (readonly) BOOL active;
-@property(readonly)    SCTP_Status                 sctp_status;
+@property(readonly)    UMSocketStatus                 sctp_status;
 @property(readwrite,assign,atomic)   UMM3UA_Status status;
 
 @property(readwrite,strong,atomic)  NSDate *lastBeatReceived;

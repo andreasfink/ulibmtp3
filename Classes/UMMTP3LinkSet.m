@@ -3469,7 +3469,7 @@
     [link attachmentFailed:r];
 }
 
-- (void)sctpStatusUpdate:(SCTP_Status)status slc:(int)slc
+- (void)sctpStatusUpdate:(UMSocketStatus)status slc:(int)slc
 {
     UMMTP3Link *link = [self getLinkBySlc:slc];
     [link sctpStatusUpdate:status];
