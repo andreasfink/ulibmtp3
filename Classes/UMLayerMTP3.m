@@ -954,21 +954,13 @@
                          linksetName:(NSString *)linksetName
                           linkset:(UMMTP3LinkSet *)linkset
 {
+    NSMutableDictionary *options = [[NSMutableDictionary alloc]init];
+    options[@"mtp3-incoming-linkset"] = linksetName;
+
     UMMTP3InstanceRoute *route = [_routingTable findRouteForDestination:label.dpc
                                                                    mask:label.dpc.maxmask
                                                      excludeLinkSetName:linksetName
                                                                   exact:NO]; /* we never send back to the link the PDU came from to avoid loops */
-    if(route==NULL)
-    {
-        UMMTP3LinkSet * linkset = [self getLinkSetByName:linksetName];
-        UMMTP3Label *errorLabel = [[UMMTP3Label alloc]init];
-        errorLabel.opc = _opc;
-        errorLabel.dpc = linkset.adjacentPointCode;
-        [linkset sendTFP:errorLabel destination:label.dpc ni:ni mp:mp slc:-1 link:NULL];
-        return;
-    }
-    NSMutableDictionary *options = [[NSMutableDictionary alloc]init];
-    options[@"mtp3-incoming-linkset"] = linksetName;
     if(route)
     {
         [self forwardPDU:data
@@ -978,20 +970,21 @@
                       mp:mp
                    route:route
                  options:options];
-    }
-    if((linksetName == NULL) || (![_defaultRoute.linksetName isEqualToString:linksetName]))
-    {
-        [self forwardPDU:data
-                     opc:label.opc
-                     dpc:label.dpc
-                      si:si
-                      mp:mp
-                   route:_defaultRoute
-                 options:options];
 
     }
-    NSString *s = [NSString stringWithFormat:@"DroppingPDU from LinkSet: %@ OPC:%@ DPC:%@ to avoid loop",linksetName,label.opc.stringValue, label.dpc.stringValue];
-    [self logMinorError:s];
+    else
+    {
+        /* no route found */
+        NSString *s = [NSString stringWithFormat:@"DroppingPDU from LinkSet: %@ OPC:%@ DPC:%@ no route found. Sending TFP",linksetName,label.opc.stringValue, label.dpc.stringValue];
+        [self logMinorError:s];
+
+        UMMTP3LinkSet * linkset = [self getLinkSetByName:linksetName];
+        UMMTP3Label *errorLabel = [[UMMTP3Label alloc]init];
+        errorLabel.opc = _opc;
+        errorLabel.dpc = linkset.adjacentPointCode;
+        [linkset sendTFP:errorLabel destination:label.dpc ni:ni mp:mp slc:-1 link:NULL];
+        return;
+    }
 }
 
 
