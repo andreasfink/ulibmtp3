@@ -1403,6 +1403,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         case UMSOCKET_STATUS_IS:
             [self sctpReportsUp];
             break;
+        case UMSOCKET_STATUS_LISTENING:
+            break;
     }
 }
 
