@@ -119,6 +119,10 @@
     {
         if(_defaultLocalPointCode)
         {
+            if(_defaultLocalPointCode.variant == UMMTP3Variant_Undefined)
+            {
+                _defaultLocalPointCode.variant = pc.variant;
+            }
             return _defaultLocalPointCode;
         }
         return pc;
@@ -134,6 +138,10 @@
     {
         if(_defaultRemotePointCode)
         {
+            if(_defaultRemotePointCode.variant == UMMTP3Variant_Undefined)
+            {
+                _defaultRemotePointCode.variant = pc.variant;
+            }
             return _defaultRemotePointCode;
         }
         return pc;
