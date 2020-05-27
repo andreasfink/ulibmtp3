@@ -35,8 +35,11 @@
 
 - (void)main
 {
-    UMLayerMTP3 *mtp3 = (UMLayerMTP3 *)receiver;
-    [mtp3 _m2paProcessorOutageTask:self];
+    @autoreleasepool
+    {
+        UMLayerMTP3 *mtp3 = (UMLayerMTP3 *)receiver;
+        [mtp3 _m2paProcessorOutageTask:self];
+    }
 }
 
 @end

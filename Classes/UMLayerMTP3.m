@@ -230,7 +230,10 @@
 #if 0
     [self queueFromLowerWithPriority:task];
 #else
-    [task main];
+    @autoreleasepool
+    {
+        [task main];
+    }
 #endif
 }
 

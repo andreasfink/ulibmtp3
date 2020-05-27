@@ -26,8 +26,11 @@
 
 - (void)main
 {
-    UMLayerMTP3 *mtp3 = (UMLayerMTP3 *)receiver;
-    [mtp3 _stop];
+    @autoreleasepool
+    {
+        UMLayerMTP3 *mtp3 = (UMLayerMTP3 *)receiver;
+        [mtp3 _stop];
+    }
 }
 
 @end
