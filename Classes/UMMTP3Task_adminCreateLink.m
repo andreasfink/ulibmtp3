@@ -36,8 +36,11 @@
 
 - (void)main
 {
-    UMLayerMTP3 *mtp3 = (UMLayerMTP3 *)receiver;
-    [mtp3 _adminCreateLinkTask:self];
+    @autoreleasepool
+    {
+        UMLayerMTP3 *mtp3 = (UMLayerMTP3 *)receiver;
+        [mtp3 _adminCreateLinkTask:self];
+    }
 }
 
 @end
