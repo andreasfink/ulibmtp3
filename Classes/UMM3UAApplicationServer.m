@@ -917,6 +917,8 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         for(UMM3UAApplicationServerProcess *asp in asps)
         {
+            [_speedometerTx increase];
+            [_speedometerTxBytes increaseBy:(uint32_t)data.length];
             [asp sendPdu:data
                    label:label
                  heading:heading

@@ -921,6 +921,10 @@
                linksetName:(NSString *)linksetName
                    linkset:(UMMTP3LinkSet *)linkset
 {
+    
+    [linkset.speedometerRx increase];
+    [linkset.speedometerRxBytes increaseBy:(uint32_t)data.length];
+
     if([label.dpc isEqualToPointCode:_opc])
     {
         [self processIncomingPduLocal:label

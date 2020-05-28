@@ -1673,6 +1673,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [self processNTFY:params];
             break;
         case M3UA_CLASS_TYPE_DATA:
+            [_as.speedometerRx increase];
+            [_as.speedometerRxBytes increaseBy:(uint32_t)pdu.length];
             [self processDATA:params];
             break;
         case M3UA_CLASS_TYPE_DUNA:

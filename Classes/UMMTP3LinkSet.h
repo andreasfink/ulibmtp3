@@ -71,6 +71,10 @@
     UMSynchronizedSortedDictionary *_advertizedPointcodes;
     BOOL                        _dontAdvertizeRoutes;
     NSString                    *_lastError;
+    UMThroughputCounter         *_speedometerRx;
+    UMThroughputCounter         *_speedometerTx;
+    UMThroughputCounter         *_speedometerRxBytes;
+    UMThroughputCounter         *_speedometerTxBytes;
 }
 
 /*
@@ -103,6 +107,10 @@
 @property(readonly,assign) int tra_sent;
 @property(readonly,assign) int trw_received;
 @property(readwrite,assign) double speed;
+@property(readwrite,strong) UMThroughputCounter *speedometerRx;
+@property(readwrite,strong) UMThroughputCounter *speedometerTx;
+@property(readwrite,strong) UMThroughputCounter *speedometerRxBytes;
+@property(readwrite,strong) UMThroughputCounter *speedometerTxBytes;
 @property(readwrite,assign) BOOL  sendExtendedAttributes;
 @property(readwrite,assign) BOOL  dontAdvertizeRoutes;
 @property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTableIn;

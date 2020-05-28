@@ -47,6 +47,10 @@
         _congestionLevel = 0;
         _logLevel = UMLOG_MAJOR;
         _advertizedPointcodes = [[UMSynchronizedSortedDictionary alloc]init];
+        _speedometerRx = [[UMThroughputCounter alloc]init];
+        _speedometerTx  = [[UMThroughputCounter alloc]init];
+        _speedometerRxBytes  = [[UMThroughputCounter alloc]init];
+        _speedometerTxBytes = [[UMThroughputCounter alloc]init];
     }
     return self;
 }
@@ -164,7 +168,6 @@
             [s appendFormat:@" SLC %d",link.slc];
             [s appendFormat:@" %@",[UMLayerM2PA m2paStatusString:link2.m2pa.m2pa_status]];
             [s appendString:@"\n"];
-
         }
         [self.logFeed debugText:s];
     }
@@ -2100,11 +2103,11 @@
 #pragma mark Send Routines
 
 - (void)sendSLTA:(UMMTP3Label *)label
-            pattern:(NSData *)pattern
-                 ni:(int)ni
-                 mp:(int)mp
-                slc:(int)slc
-               link:(UMMTP3Link *)link
+         pattern:(NSData *)pattern
+              ni:(int)ni
+              mp:(int)mp
+             slc:(int)slc
+            link:(UMMTP3Link *)link
 {
 
     if(_overrideNetworkIndicator)
@@ -2347,6 +2350,8 @@
     {
         [pdu appendData:data];
     }
+    [_speedometerTx increase];
+    [_speedometerTxBytes increaseBy:(uint32_t)pdu.length];
     [link.m2pa dataFor:_mtp3 data:pdu ackRequest:ackRequest];
 }
 
