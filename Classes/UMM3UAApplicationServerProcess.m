@@ -1611,129 +1611,132 @@ static const char *get_sctp_status_string(UMSocketStatus status)
               class:(int)pclass
                type:(int)ptype pdu:(NSData *)pdu
 {
-    int		pos = 0;
-    uint16_t	param_len;	/* effective */
-    uint16_t	param_len2;	/* padded, rounded to the next 4 byte boundary */
-    uint16_t	classtype;
-
-    classtype = (pclass << 8) | ptype;
-
-
-    pos=0;
-    UMSynchronizedSortedDictionary	*params = [[UMSynchronizedSortedDictionary alloc]init];
-    NSUInteger len = pdu.length;
-    const uint8_t *bytes = pdu.bytes;
-
-    while((pos+4)<len)
-    {
-        uint16_t param_type= ntohs(*(uint16_t *)&bytes[pos]);
-        param_len = (bytes[pos+2] << 8) | bytes[pos+3];
-        /* param_len2 is the length of the data including padding */
-        if((param_len % 4)==0)
+    @autoreleasepool
         {
-            param_len2 = param_len;
-        }
-        else
+
+        int		pos = 0;
+        uint16_t	param_len;	/* effective */
+        uint16_t	param_len2;	/* padded, rounded to the next 4 byte boundary */
+        uint16_t	classtype;
+
+        classtype = (pclass << 8) | ptype;
+
+
+        pos=0;
+        UMSynchronizedSortedDictionary	*params = [[UMSynchronizedSortedDictionary alloc]init];
+        NSUInteger len = pdu.length;
+        const uint8_t *bytes = pdu.bytes;
+
+        while((pos+4)<len)
         {
-            param_len2 = (param_len+3) & ~0x03;
-        }
-        if((pos + param_len2) > len)
-        {
-            break;
-        }
-        if((pos + param_len) > len)
-        {
-            break;
+            uint16_t param_type= ntohs(*(uint16_t *)&bytes[pos]);
+            param_len = (bytes[pos+2] << 8) | bytes[pos+3];
+            /* param_len2 is the length of the data including padding */
+            if((param_len % 4)==0)
+            {
+                param_len2 = param_len;
+            }
+            else
+            {
+                param_len2 = (param_len+3) & ~0x03;
+            }
+            if((pos + param_len2) > len)
+            {
+                break;
+            }
+            if((pos + param_len) > len)
+            {
+                break;
+            }
+
+            NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4)];
+            pos += param_len2;
+            if(self.logLevel <= UMLOG_DEBUG)
+            {
+                [self logDebug:@"M3UA Packet:"];
+                [self logDebug:[NSString stringWithFormat:@"  Parameter: 0x%04x (%s)",param_type,m3ua_param_name(param_type)]];
+                [self logDebug:[NSString stringWithFormat:@"  Data: %@",[data hexString]]];
+            }
+            params[@(param_type)]=data;
         }
 
-        NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4)];
-        pos += param_len2;
-        if(self.logLevel <= UMLOG_DEBUG)
+        switch(classtype)
         {
-            [self logDebug:@"M3UA Packet:"];
-            [self logDebug:[NSString stringWithFormat:@"  Parameter: 0x%04x (%s)",param_type,m3ua_param_name(param_type)]];
-            [self logDebug:[NSString stringWithFormat:@"  Data: %@",[data hexString]]];
+            case M3UA_CLASS_TYPE_BEAT:
+                [self processBEAT:params];
+                return;
+            case M3UA_CLASS_TYPE_BEAT_ACK:
+                [self processBEAT_ACK:params];
+                return;
+
+            case M3UA_CLASS_TYPE_ERR: /* management */
+                [self processERR:params];
+                break;
+            case M3UA_CLASS_TYPE_NTFY:
+                [self processNTFY:params];
+                break;
+            case M3UA_CLASS_TYPE_DATA:
+                [_as.speedometerRx increase];
+                [_as.speedometerRxBytes increaseBy:(uint32_t)pdu.length];
+                [self processDATA:params];
+                break;
+            case M3UA_CLASS_TYPE_DUNA:
+                [self processDUNA:params];
+                break;
+            case M3UA_CLASS_TYPE_DAVA:
+                [self processDAVA:params];
+                break;
+            case M3UA_CLASS_TYPE_DAUD:
+                [self processDAUD:params];
+                break;
+            case M3UA_CLASS_TYPE_SCON:
+                [self processSCON:params];
+                break;
+            case M3UA_CLASS_TYPE_DUPU:
+                [self processDUPU:params];
+                break;
+            case M3UA_CLASS_TYPE_DRST:
+                [self processDRST:params];
+                break;
+            case M3UA_CLASS_TYPE_ASPUP:
+                [self processASPUP:params];
+                break;
+            case M3UA_CLASS_TYPE_ASPDN:
+                [self processASPDN:params];
+                break;
+            case M3UA_CLASS_TYPE_ASPUP_ACK:
+                [self processASPUP_ACK:params];
+                break;
+            case M3UA_CLASS_TYPE_ASPDN_ACK:
+                [self processASPDN_ACK:params];
+                break;
+            case M3UA_CLASS_TYPE_ASPAC:
+                [self processASPAC:params];
+                break;
+            case M3UA_CLASS_TYPE_ASPIA:
+                [self processASPIA:params];
+                break;
+            case M3UA_CLASS_TYPE_ASPAC_ACK:
+                [self processASPAC_ACK:params];
+                break;
+            case M3UA_CLASS_TYPE_ASPIA_ACK:
+                [self processASPIA_ACK:params];
+                break;
+            case M3UA_CLASS_TYPE_REG_REQ:
+                [self processREG_REQ:params];
+                break;
+            case M3UA_CLASS_TYPE_REG_RSP:
+                [self processREG_RSP:params];
+                break;
+            case M3UA_CLASS_TYPE_DEREG_REQ:
+                [self processDEREG_REQ:params];
+                break;
+            case M3UA_CLASS_TYPE_DEREG_RSP:
+                [self processDEREG_RSP:params];
+                break;
         }
-        params[@(param_type)]=data;
-    }
-
-    switch(classtype)
-    {
-        case M3UA_CLASS_TYPE_BEAT:
-            [self processBEAT:params];
-            return;
-        case M3UA_CLASS_TYPE_BEAT_ACK:
-            [self processBEAT_ACK:params];
-            return;
-
-        case M3UA_CLASS_TYPE_ERR: /* management */
-            [self processERR:params];
-            break;
-        case M3UA_CLASS_TYPE_NTFY:
-            [self processNTFY:params];
-            break;
-        case M3UA_CLASS_TYPE_DATA:
-            [_as.speedometerRx increase];
-            [_as.speedometerRxBytes increaseBy:(uint32_t)pdu.length];
-            [self processDATA:params];
-            break;
-        case M3UA_CLASS_TYPE_DUNA:
-            [self processDUNA:params];
-            break;
-        case M3UA_CLASS_TYPE_DAVA:
-            [self processDAVA:params];
-            break;
-        case M3UA_CLASS_TYPE_DAUD:
-            [self processDAUD:params];
-            break;
-        case M3UA_CLASS_TYPE_SCON:
-            [self processSCON:params];
-            break;
-        case M3UA_CLASS_TYPE_DUPU:
-            [self processDUPU:params];
-            break;
-        case M3UA_CLASS_TYPE_DRST:
-            [self processDRST:params];
-            break;
-        case M3UA_CLASS_TYPE_ASPUP:
-            [self processASPUP:params];
-            break;
-        case M3UA_CLASS_TYPE_ASPDN:
-            [self processASPDN:params];
-            break;
-        case M3UA_CLASS_TYPE_ASPUP_ACK:
-            [self processASPUP_ACK:params];
-            break;
-        case M3UA_CLASS_TYPE_ASPDN_ACK:
-            [self processASPDN_ACK:params];
-            break;
-        case M3UA_CLASS_TYPE_ASPAC:
-            [self processASPAC:params];
-            break;
-        case M3UA_CLASS_TYPE_ASPIA:
-            [self processASPIA:params];
-            break;
-        case M3UA_CLASS_TYPE_ASPAC_ACK:
-            [self processASPAC_ACK:params];
-            break;
-        case M3UA_CLASS_TYPE_ASPIA_ACK:
-            [self processASPIA_ACK:params];
-            break;
-        case M3UA_CLASS_TYPE_REG_REQ:
-            [self processREG_REQ:params];
-            break;
-        case M3UA_CLASS_TYPE_REG_RSP:
-            [self processREG_RSP:params];
-            break;
-        case M3UA_CLASS_TYPE_DEREG_REQ:
-            [self processDEREG_REQ:params];
-            break;
-        case M3UA_CLASS_TYPE_DEREG_RSP:
-            [self processDEREG_RSP:params];
-            break;
     }
 }
-
 
 - (void) sctpDataIndication:(UMLayer *)caller
                      userId:(id)uid
@@ -1741,33 +1744,37 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                  protocolId:(uint32_t)pid
                        data:(NSData *)data
 {
-    [_incomingStreamLock lock];
-    if(self.logLevel <= UMLOG_DEBUG)
-    {
-        [self logDebug:@"sctpDataIndication"];
-        [self logDebug:[NSString stringWithFormat:@" rx-streamid: %d",streamID]];
-        [self logDebug:[NSString stringWithFormat:@" rx-data: %@",[data hexString]]];
-    }
-    if(streamID == 0)
-    {
-        if(_incomingStream0 == NULL)
+    @autoreleasepool
         {
-            _incomingStream0 = [[NSMutableData alloc]init];
-        }
-        [_incomingStream0 appendData:data];
-        [self lookForIncomingPdu:streamID];
-    }
-    else
-    {
-        if(_incomingStream1 == NULL)
-        {
-            _incomingStream1 = [[NSMutableData alloc]init];
-        }
-        [_incomingStream1 appendData:data];
-        [self lookForIncomingPdu:streamID];
-    }
-    [_incomingStreamLock unlock];
 
+        [_incomingStreamLock lock];
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            [self logDebug:@"sctpDataIndication"];
+            [self logDebug:[NSString stringWithFormat:@" rx-streamid: %d",streamID]];
+            [self logDebug:[NSString stringWithFormat:@" rx-data: %@",[data hexString]]];
+        }
+        if(streamID == 0)
+        {
+            if(_incomingStream0 == NULL)
+            {
+                _incomingStream0 = [[NSMutableData alloc]init];
+            }
+            [_incomingStream0 appendData:data];
+            [self lookForIncomingPdu:streamID];
+        }
+        else
+        {
+            if(_incomingStream1 == NULL)
+            {
+                _incomingStream1 = [[NSMutableData alloc]init];
+            }
+            [_incomingStream1 appendData:data];
+            [self lookForIncomingPdu:streamID];
+        }
+        [_incomingStreamLock unlock];
+
+    }
 }
 
 - (void) sctpMonitorIndication:(UMLayer *)caller
@@ -1838,367 +1845,386 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
-    _reopen_timer1_value  = M3UA_DEFAULT_REOPEN1_TIMER;
-    _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
-    _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
-    _speed = M3UA_DEFAULT_SPEED;
-
-    self.logLevel = UMLOG_DEBUG;
-    
-    if(cfg[@"beat-time"])
-    {
-        self.beatTime = [cfg[@"beat-time"] doubleValue];
-    }
-    else
-    {
-        self.beatTime = M3UA_DEFAULT_BEAT_TIMER;
-    }
-    if(cfg[@"beat-max-outstanding"])
-    {
-        self.beatMaxOutstanding = [cfg[@"beat-max-outstanding"] intValue];
-    }
-    else
-    {
-        self.beatMaxOutstanding = M3UA_DEFAULT_MAX_BEAT_OUTSTANDING;
-    }
-
-    if(cfg[@"name"])
-    {
-        self.layerName =  [cfg[@"name"] stringValue];
-    }
-    if(cfg[@"log-level"])
-    {
-        self.logLevel = [cfg[@"log-level"] intValue];
-    }
-
-    if(self.logLevel <=UMLOG_DEBUG)
-    {
-        [self logDebug:[NSString stringWithFormat:@"M3UA-ASP: setConfig: \n%@",cfg]];
-    }
-
-    if(cfg[@"attach-to"])
-    {
-        NSString *attachTo =  [cfg[@"attach-to"] stringValue];
-        _sctpLink = [appContext getSCTP:attachTo];
-        if(_sctpLink==NULL)
+    @autoreleasepool
         {
-            [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to SCTP '%@' failed. layer not found",attachTo]];
-        }
-    }
-    if(cfg[@"m3ua-as"])
-    {
-        NSString *as_name =  [cfg[@"m3ua-as"] stringValue];
-        _as = [appContext getM3UAAS:as_name];
-        if(_as==NULL)
-        {
-            [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to M3UA-AS '%@' failed. layer not found",as_name]];
-        }
-        [_as addAsp:self];
-    }
-    if (cfg[@"speed"])
-    {
-        _speed = [cfg[@"speed"] doubleValue];
-    }
-    if (cfg[@"reopen-timer1"])
-    {
-        _reopen_timer1_value = [cfg[@"reopen-timer1"] doubleValue];
-    }
-    if (cfg[@"reopen-timer2"])
-    {
-        _reopen_timer2_value = [cfg[@"reopen-timer2"] doubleValue];
-    }
-    if (cfg[@"linktest-timer"])
-    {
-        _linktest_timer_value = [cfg[@"linktest-timer"] doubleValue];
-    }
-	else
-	{
-		_linktest_timer_value = 30.0;
-	}
-    _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
-                                           selector:@selector(reopen_timer1_fires:)
-                                             object:NULL
-                                            seconds:_reopen_timer1_value
-                                               name:@"umm3ua_asp_reopen_timer1"
-                                            repeats:NO
-                                    runInForeground:YES];
 
-    _reopen_timer2 = [[UMTimer alloc]initWithTarget:self
-                                           selector:@selector(reopen_timer2_fires:)
-                                             object:NULL
-                                            seconds:_reopen_timer2_value
-                                               name:@"umm3ua_asp_reopen_timer2"
-                                            repeats:NO
-                                    runInForeground:YES];
+        _reopen_timer1_value  = M3UA_DEFAULT_REOPEN1_TIMER;
+        _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
+        _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
+        _speed = M3UA_DEFAULT_SPEED;
 
-    if(_linktest_timer_value>10.00)
-    {
-        if(_linktest_timer==NULL)
+        self.logLevel = UMLOG_DEBUG;
+        
+        if(cfg[@"beat-time"])
         {
-            _linktest_timer = [[UMTimer alloc]initWithTarget:self
-                                                    selector:@selector(linktest_timer_fires:)
-                                                      object:NULL
-                                                     seconds:_linktest_timer_value
-                                                        name:@"umm3ua_asp_linktest_timer"
-                                                     repeats:NO
-                                             runInForeground:YES];
+            self.beatTime = [cfg[@"beat-time"] doubleValue];
         }
         else
         {
-            _linktest_timer.seconds = _linktest_timer_value;
+            self.beatTime = M3UA_DEFAULT_BEAT_TIMER;
         }
-    }
-
-
-    if(_beatTime >= 1.0)
-    {
-        if(_beatTimer==NULL)
+        if(cfg[@"beat-max-outstanding"])
         {
-            _beatTimer = [[UMTimer alloc]initWithTarget:self
-                                               selector:@selector(beatTimerEvent)
+            self.beatMaxOutstanding = [cfg[@"beat-max-outstanding"] intValue];
+        }
+        else
+        {
+            self.beatMaxOutstanding = M3UA_DEFAULT_MAX_BEAT_OUTSTANDING;
+        }
+
+        if(cfg[@"name"])
+        {
+            self.layerName =  [cfg[@"name"] stringValue];
+        }
+        if(cfg[@"log-level"])
+        {
+            self.logLevel = [cfg[@"log-level"] intValue];
+        }
+
+        if(self.logLevel <=UMLOG_DEBUG)
+        {
+            [self logDebug:[NSString stringWithFormat:@"M3UA-ASP: setConfig: \n%@",cfg]];
+        }
+
+        if(cfg[@"attach-to"])
+        {
+            NSString *attachTo =  [cfg[@"attach-to"] stringValue];
+            _sctpLink = [appContext getSCTP:attachTo];
+            if(_sctpLink==NULL)
+            {
+                [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to SCTP '%@' failed. layer not found",attachTo]];
+            }
+        }
+        if(cfg[@"m3ua-as"])
+        {
+            NSString *as_name =  [cfg[@"m3ua-as"] stringValue];
+            _as = [appContext getM3UAAS:as_name];
+            if(_as==NULL)
+            {
+                [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to M3UA-AS '%@' failed. layer not found",as_name]];
+            }
+            [_as addAsp:self];
+        }
+        if (cfg[@"speed"])
+        {
+            _speed = [cfg[@"speed"] doubleValue];
+        }
+        if (cfg[@"reopen-timer1"])
+        {
+            _reopen_timer1_value = [cfg[@"reopen-timer1"] doubleValue];
+        }
+        if (cfg[@"reopen-timer2"])
+        {
+            _reopen_timer2_value = [cfg[@"reopen-timer2"] doubleValue];
+        }
+        if (cfg[@"linktest-timer"])
+        {
+            _linktest_timer_value = [cfg[@"linktest-timer"] doubleValue];
+        }
+        else
+        {
+            _linktest_timer_value = 30.0;
+        }
+        _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
+                                               selector:@selector(reopen_timer1_fires:)
                                                  object:NULL
-                                                seconds:_beatTime
-                                                   name:@"beat-timer"
-                                                repeats:YES
+                                                seconds:_reopen_timer1_value
+                                                   name:@"umm3ua_asp_reopen_timer1"
+                                                repeats:NO
                                         runInForeground:YES];
-        }
-        else
+
+        _reopen_timer2 = [[UMTimer alloc]initWithTarget:self
+                                               selector:@selector(reopen_timer2_fires:)
+                                                 object:NULL
+                                                seconds:_reopen_timer2_value
+                                                   name:@"umm3ua_asp_reopen_timer2"
+                                                repeats:NO
+                                        runInForeground:YES];
+
+        if(_linktest_timer_value>10.00)
         {
-            _beatTimer.seconds = _beatTime;
+            if(_linktest_timer==NULL)
+            {
+                _linktest_timer = [[UMTimer alloc]initWithTarget:self
+                                                        selector:@selector(linktest_timer_fires:)
+                                                          object:NULL
+                                                         seconds:_linktest_timer_value
+                                                            name:@"umm3ua_asp_linktest_timer"
+                                                         repeats:NO
+                                                 runInForeground:YES];
+            }
+            else
+            {
+                _linktest_timer.seconds = _linktest_timer_value;
+            }
         }
+
+
+        if(_beatTime >= 1.0)
+        {
+            if(_beatTimer==NULL)
+            {
+                _beatTimer = [[UMTimer alloc]initWithTarget:self
+                                                   selector:@selector(beatTimerEvent)
+                                                     object:NULL
+                                                    seconds:_beatTime
+                                                       name:@"beat-timer"
+                                                    repeats:YES
+                                            runInForeground:YES];
+            }
+            else
+            {
+                _beatTimer.seconds = _beatTime;
+            }
+        }
+        UMLayerSctpUserProfile *profile = [[UMLayerSctpUserProfile alloc]init];
+        profile.statusUpdates = YES;
+        [_sctpLink adminAttachFor:self
+                         profile:profile
+                          userId:self.layerName];
     }
-    UMLayerSctpUserProfile *profile = [[UMLayerSctpUserProfile alloc]init];
-    profile.statusUpdates = YES;
-    [_sctpLink adminAttachFor:self
-                     profile:profile
-                      userId:self.layerName];
 }
 
 - (void)reopen_timer1_fires:(id)param
 {
-    [_aspLock lock];
-    @try
+    @autoreleasepool
     {
-        if(self.logLevel <= UMLOG_DEBUG)
-        {
-            [self logDebug:@"reopen_timer1_fires"];
-        }
-        switch(self.status)
-        {
-            case M3UA_STATUS_OOS:
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"OOS state. Ignoring Timer Event"];
-                }
-                [_reopen_timer1 stop];
-                [_linktest_timer stop];
-                break;
-            case M3UA_STATUS_BUSY:
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"BUSY state. Ignoring Timer Event"];
-                }
-                [_reopen_timer1 stop];
-                [_linktest_timer stop];
-                break;
-            case M3UA_STATUS_INACTIVE:
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"INACTIVE state. Ignoring Timer Event"];
-                }
-                [_reopen_timer1 stop];
-                [_reopen_timer2 stop];
-                [_linktest_timer stop];
-                break;
 
-            case M3UA_STATUS_IS:
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"IS state. Ignoring Timer Event"];
-                }
-                [_reopen_timer1 stop];
-                [_reopen_timer2 stop];
-                [_linktest_timer stop];
-                break;
-            case M3UA_STATUS_OFF:
-            case M3UA_STATUS_UNUSED:
-            default:
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"OFF state. Asking SCTP to power on the link"];
-                }
-                [_reopen_timer1 stop];
-                [_reopen_timer2 stop];
-                [_linktest_timer stop];
-                [_sctpLink openFor:self];
-                [_reopen_timer2 start];
-                break;
-        }
-    }
-    @finally
-    {
-        [_aspLock unlock];
-    }
-}
-
-
-- (void)reopen_timer2_fires:(id)param
-{
-    [_aspLock lock];
-    @try
-    {
-        if(self.logLevel <= UMLOG_DEBUG)
-        {
-            [self logDebug:@"reopen_timer1_fires"];
-        }
-        switch(self.status)
-        {
-            case M3UA_STATUS_UNUSED:
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"M3UA_STATUS_UNUSED state. Ignoring timer event"];
-                }
-                [_reopen_timer1 stop];
-                [_reopen_timer2 stop];
-                [_linktest_timer stop];
-                break;
-            case M3UA_STATUS_OFF:
-            case M3UA_STATUS_OOS:
-            case M3UA_STATUS_BUSY:
-                /* reopen timer 1 has expired and the sctp link has been asked to power on
-                 after that reopen timer 2 has excpired. So if its still not in "on" state
-                 we have to restart from scratch */
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"Status is OFF/OOS or BUSY but still not in service state. Asking SCTP to power off/on the link"];
-                }
-                [_sctpLink closeFor:self];
-                self.status = M3UA_STATUS_OFF;
-                [_reopen_timer1 stop];
-                [_reopen_timer2 stop];
-                [_reopen_timer1 start];
-                break;
-            case M3UA_STATUS_INACTIVE:
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"Status M3UA_STATUS_INACTIVE. Stopping timers"];
-                }
-                [_reopen_timer1 stop];
-                [_reopen_timer2 stop];
-                break;
-            case M3UA_STATUS_IS:
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"Status M3UA_STATUS_IS. Stopping timers"];
-                }
-                [_reopen_timer1 stop];
-                [_reopen_timer2 stop];
-                break;
-        }
-    }
-    @finally
-    {
-        [_aspLock unlock];
-    }
-}
-
-
-- (void)linktest_timer_fires:(id)param
-{
-    [_aspLock lock];
-    @try
-    {
-        /* if status is out of service, we restart the link */
-
-        if(self.logLevel <= UMLOG_DEBUG)
-        {
-            [self logDebug:@"linktest_timer_fires"];
-        }
-        switch(self.status)
-        {
-            case M3UA_STATUS_UNUSED:    /* undefined state */
-                [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_UNUSED. Ignoring"];
-                break;
-            case M3UA_STATUS_OFF:       /* sctp is down */
-                [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OFF. Ignoring"];
-                break;
-            case M3UA_STATUS_OOS:       /* sctp is down, but connection is requested */
-                [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OOS. Ignoring"];
-                break;
-            case M3UA_STATUS_BUSY:      /* sctp is up but ASPUP is not received */
-                [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_BUSY. Ignoring"];
-                break;
-            case M3UA_STATUS_INACTIVE: /* sctp is up, ASPUP received but not in active state */
-                [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_INACTIVE"];
-                [self sendASPIA:NULL];
-                break;
-            case M3UA_STATUS_IS:
-                [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_IS"];
-                if(_aspup_received>0)
-                {
-                    /* Lets send ASPAC or ASPIA */
-                    if(_standby_mode==1)
-                    {
-                        [self sendASPIA:NULL];
-                    }
-                    else
-                    {
-                        UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-                        pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
-                        [self sendASPAC:pl];
-                    }
-                }
-                break;
-        }
-
-        if(_linktest_timer_value > 0)
+        [_aspLock lock];
+        @try
         {
             if(self.logLevel <= UMLOG_DEBUG)
             {
-                [self logDebug:@"restarting linktest timers"];
+                [self logDebug:@"reopen_timer1_fires"];
             }
-            [_linktest_timer start];
+            switch(self.status)
+            {
+                case M3UA_STATUS_OOS:
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"OOS state. Ignoring Timer Event"];
+                    }
+                    [_reopen_timer1 stop];
+                    [_linktest_timer stop];
+                    break;
+                case M3UA_STATUS_BUSY:
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"BUSY state. Ignoring Timer Event"];
+                    }
+                    [_reopen_timer1 stop];
+                    [_linktest_timer stop];
+                    break;
+                case M3UA_STATUS_INACTIVE:
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"INACTIVE state. Ignoring Timer Event"];
+                    }
+                    [_reopen_timer1 stop];
+                    [_reopen_timer2 stop];
+                    [_linktest_timer stop];
+                    break;
+
+                case M3UA_STATUS_IS:
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"IS state. Ignoring Timer Event"];
+                    }
+                    [_reopen_timer1 stop];
+                    [_reopen_timer2 stop];
+                    [_linktest_timer stop];
+                    break;
+                case M3UA_STATUS_OFF:
+                case M3UA_STATUS_UNUSED:
+                default:
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"OFF state. Asking SCTP to power on the link"];
+                    }
+                    [_reopen_timer1 stop];
+                    [_reopen_timer2 stop];
+                    [_linktest_timer stop];
+                    [_sctpLink openFor:self];
+                    [_reopen_timer2 start];
+                    break;
+            }
+        }
+        @finally
+        {
+            [_aspLock unlock];
         }
     }
-    @finally
+}
+
+- (void)reopen_timer2_fires:(id)param
+{
+    @autoreleasepool
     {
-        [_aspLock unlock];
+
+        [_aspLock lock];
+        @try
+        {
+            if(self.logLevel <= UMLOG_DEBUG)
+            {
+                [self logDebug:@"reopen_timer1_fires"];
+            }
+            switch(self.status)
+            {
+                case M3UA_STATUS_UNUSED:
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"M3UA_STATUS_UNUSED state. Ignoring timer event"];
+                    }
+                    [_reopen_timer1 stop];
+                    [_reopen_timer2 stop];
+                    [_linktest_timer stop];
+                    break;
+                case M3UA_STATUS_OFF:
+                case M3UA_STATUS_OOS:
+                case M3UA_STATUS_BUSY:
+                    /* reopen timer 1 has expired and the sctp link has been asked to power on
+                     after that reopen timer 2 has excpired. So if its still not in "on" state
+                     we have to restart from scratch */
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"Status is OFF/OOS or BUSY but still not in service state. Asking SCTP to power off/on the link"];
+                    }
+                    [_sctpLink closeFor:self];
+                    self.status = M3UA_STATUS_OFF;
+                    [_reopen_timer1 stop];
+                    [_reopen_timer2 stop];
+                    [_reopen_timer1 start];
+                    break;
+                case M3UA_STATUS_INACTIVE:
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"Status M3UA_STATUS_INACTIVE. Stopping timers"];
+                    }
+                    [_reopen_timer1 stop];
+                    [_reopen_timer2 stop];
+                    break;
+                case M3UA_STATUS_IS:
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"Status M3UA_STATUS_IS. Stopping timers"];
+                    }
+                    [_reopen_timer1 stop];
+                    [_reopen_timer2 stop];
+                    break;
+            }
+        }
+        @finally
+        {
+            [_aspLock unlock];
+        }
+    }
+}
+
+- (void)linktest_timer_fires:(id)param
+{
+    @autoreleasepool
+    {
+        [_aspLock lock];
+        @try
+        {
+            /* if status is out of service, we restart the link */
+
+            if(self.logLevel <= UMLOG_DEBUG)
+            {
+                [self logDebug:@"linktest_timer_fires"];
+            }
+            switch(self.status)
+            {
+                case M3UA_STATUS_UNUSED:    /* undefined state */
+                    [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_UNUSED. Ignoring"];
+                    break;
+                case M3UA_STATUS_OFF:       /* sctp is down */
+                    [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OFF. Ignoring"];
+                    break;
+                case M3UA_STATUS_OOS:       /* sctp is down, but connection is requested */
+                    [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OOS. Ignoring"];
+                    break;
+                case M3UA_STATUS_BUSY:      /* sctp is up but ASPUP is not received */
+                    [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_BUSY. Ignoring"];
+                    break;
+                case M3UA_STATUS_INACTIVE: /* sctp is up, ASPUP received but not in active state */
+                    [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_INACTIVE"];
+                    [self sendASPIA:NULL];
+                    break;
+                case M3UA_STATUS_IS:
+                    [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_IS"];
+                    if(_aspup_received>0)
+                    {
+                        /* Lets send ASPAC or ASPIA */
+                        if(_standby_mode==1)
+                        {
+                            [self sendASPIA:NULL];
+                        }
+                        else
+                        {
+                            UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+                            pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
+                            [self sendASPAC:pl];
+                        }
+                    }
+                    break;
+            }
+
+            if(_linktest_timer_value > 0)
+            {
+                if(self.logLevel <= UMLOG_DEBUG)
+                {
+                    [self logDebug:@"restarting linktest timers"];
+                }
+                [_linktest_timer start];
+            }
+        }
+        @finally
+        {
+            [_aspLock unlock];
+        }
     }
 }
 
 - (void)sctpReportsUp
 {
-    /***************************************************************************
-     **
-     ** called upon SCTP reporting a association to be up
-     */
-    
-    [self logInfo:@"sctpReportsUp"];
-    self.status = M3UA_STATUS_BUSY;
-    _aspup_received = 0;
-    [self powerOn];
+    @autoreleasepool
+    {
+        /***************************************************************************
+         **
+         ** called upon SCTP reporting a association to be up
+         */
+        
+        [self logInfo:@"sctpReportsUp"];
+        self.status = M3UA_STATUS_BUSY;
+        _aspup_received = 0;
+        [self powerOn];
+    }
 }
 
 - (void)sctpReportsDown
 {
-    UMM3UA_Status oldStatus = self.status;
-
-    [self logInfo:@"sctpReportsDown"];
-    [ _as updateRouteUnavailable:_as.adjacentPointCode
-                            mask:_as.adjacentPointCode.maxmask
-                          forAsp:self
-                        priority:UMMTP3RoutePriority_1];
-    if(oldStatus!= M3UA_STATUS_OFF)
+    @autoreleasepool
     {
-        self.status = M3UA_STATUS_OFF;
-        if([_reopen_timer1 isRunning]==NO)
+        UMM3UA_Status oldStatus = self.status;
+
+        [self logInfo:@"sctpReportsDown"];
+        [ _as updateRouteUnavailable:_as.adjacentPointCode
+                                mask:_as.adjacentPointCode.maxmask
+                              forAsp:self
+                            priority:UMMTP3RoutePriority_1];
+        if(oldStatus!= M3UA_STATUS_OFF)
         {
-            [_sctpLink closeFor:self];
-            [_reopen_timer1 stop];
-            [_reopen_timer2 stop];
-            [_reopen_timer1 start];
+            self.status = M3UA_STATUS_OFF;
+            if([_reopen_timer1 isRunning]==NO)
+            {
+                [_sctpLink closeFor:self];
+                [_reopen_timer1 stop];
+                [_reopen_timer2 stop];
+                [_reopen_timer1 start];
+            }
+            [_as aspDown:self];
         }
-        [_as aspDown:self];
     }
 }
 
@@ -2288,15 +2314,18 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)housekeeping
 {
-    if([_beatTimer isRunning])
+    @autoreleasepool
     {
-        if(_lastBeatSent)
+        if([_beatTimer isRunning])
         {
-            NSTimeInterval diff = [[NSDate date]timeIntervalSinceDate:_lastBeatReceived];
-            if(diff > (_beatMaxOutstanding * _beatTime))
+            if(_lastBeatSent)
             {
-                [self logMinorError:@"powering off due to missing beat-ack messages"];
-                [self powerOff];
+                NSTimeInterval diff = [[NSDate date]timeIntervalSinceDate:_lastBeatReceived];
+                if(diff > (_beatMaxOutstanding * _beatTime))
+                {
+                    [self logMinorError:@"powering off due to missing beat-ack messages"];
+                    [self powerOff];
+                }
             }
         }
     }

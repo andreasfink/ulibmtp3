@@ -196,156 +196,160 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)processDATA:(UMSynchronizedSortedDictionary *)params
 {
-    NSData *network_appearance;
-    NSData *routing_context;
-    NSData *correlation_id;
-    NSData *protocolData;
-
-    int i;
-    int mp;
-    int si;
-    UMMTP3PointCode *opc;
-    UMMTP3PointCode *dpc;
-    int sls = -200;
-    int 	ni;
-    const uint8_t *data3;
-
-    if(self.logLevel <= UMLOG_DEBUG)
+    @autoreleasepool
     {
-        [self logDebug:@"process_DATA"];
-    }
 
-    protocolData = [self getParam:params identifier:M3UA_PARAM_PROTOCOL_DATA];
-    if(!protocolData)
-    {
-        [self missingMandatoryParameterError:M3UA_PARAM_PROTOCOL_DATA];
-        return;
-    }
+        NSData *network_appearance;
+        NSData *routing_context;
+        NSData *correlation_id;
+        NSData *protocolData;
 
-    network_appearance	= [self getParam:params identifier:M3UA_PARAM_NETWORK_APPEARANCE];
-    correlation_id		= [self getParam:params identifier:M3UA_PARAM_CORRELATION_ID];
-    routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
+        int i;
+        int mp;
+        int si;
+        UMMTP3PointCode *opc;
+        UMMTP3PointCode *dpc;
+        int sls = -200;
+        int 	ni;
+        const uint8_t *data3;
 
-    if(self.logLevel <= UMLOG_DEBUG)
-    {
-        [self logDebug:@"process_DATA"];
-        [self logDebug:[NSString stringWithFormat: @" PDU: %@", [protocolData hexString]]];
-    }
-    if(protocolData.length < 12)
-    {
-        [self logMajorError:@"Packet too short!"];
-        return;
-    }
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            [self logDebug:@"process_DATA"];
+        }
 
-    data3 = protocolData.bytes;
-    i = 0;
-    /* here M3UA starts */
-    uint32_t opc_int = ntohl(*(uint32_t *)&data3[i]);
-    opc =     [[UMMTP3PointCode alloc]initWithPc:opc_int variant:_variant];
-    i += 4;
+        protocolData = [self getParam:params identifier:M3UA_PARAM_PROTOCOL_DATA];
+        if(!protocolData)
+        {
+            [self missingMandatoryParameterError:M3UA_PARAM_PROTOCOL_DATA];
+            return;
+        }
 
-    uint32_t dpc_int  = ntohl(*(uint32_t *)&data3[i]);
-    i += 4;
-    dpc =     [[UMMTP3PointCode alloc]initWithPc:dpc_int variant:_variant];
+        network_appearance	= [self getParam:params identifier:M3UA_PARAM_NETWORK_APPEARANCE];
+        correlation_id		= [self getParam:params identifier:M3UA_PARAM_CORRELATION_ID];
+        routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
 
-    si	= data3[i++];
-    ni	= data3[i++];
-    mp	= data3[i++];
-    sls = data3[i++];
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            [self logDebug:@"process_DATA"];
+            [self logDebug:[NSString stringWithFormat: @" PDU: %@", [protocolData hexString]]];
+        }
+        if(protocolData.length < 12)
+        {
+            [self logMajorError:@"Packet too short!"];
+            return;
+        }
 
-    if(self.logLevel <= UMLOG_DEBUG)
-    {
-        NSString *s = [NSString stringWithFormat:@"Originating Pointcode OPC: %@",opc.description];
-        [self logDebug:s];
-        s = [NSString stringWithFormat:@"Destination Pointcode DPC: %@",dpc.description];
-        [self logDebug:s];
-    }
+        data3 = protocolData.bytes;
+        i = 0;
+        /* here M3UA starts */
+        uint32_t opc_int = ntohl(*(uint32_t *)&data3[i]);
+        opc =     [[UMMTP3PointCode alloc]initWithPc:opc_int variant:_variant];
+        i += 4;
 
-    if(self.logLevel <= UMLOG_DEBUG)
-    {
+        uint32_t dpc_int  = ntohl(*(uint32_t *)&data3[i]);
+        i += 4;
+        dpc =     [[UMMTP3PointCode alloc]initWithPc:dpc_int variant:_variant];
+
+        si	= data3[i++];
+        ni	= data3[i++];
+        mp	= data3[i++];
+        sls = data3[i++];
+
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            NSString *s = [NSString stringWithFormat:@"Originating Pointcode OPC: %@",opc.description];
+            [self logDebug:s];
+            s = [NSString stringWithFormat:@"Destination Pointcode DPC: %@",dpc.description];
+            [self logDebug:s];
+        }
+
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            switch(si)
+            {
+                case 0x00:
+                    [self logDebug:@" Service Indicator: [0x00] Signalling network management messages"];
+                    break;
+                case 0x01:
+                    [self logDebug:@" Service Indicator: [0x01] Signalling network testing and maintenance messages"];
+                    break;
+                case 0x03:
+                    [self logDebug:@" Service Indicator: [0x03] SCCP"];
+                    break;
+                case 0x04:
+                    [self logDebug:@" Service Indicator: [0x04] TUP"];
+                    break;
+                case 0x05:
+                    [self logDebug:@" Service Indicator: [0x05] ISUP"];
+                    break;
+                case 0x06:
+                    [self logDebug:@" Service Indicator: [0x06] DUP (call/circuit related)"];
+                    break;
+                case 0x07:
+                    [self logDebug:@" Service Indicator: [0x07] DUP (facility related)"];
+                    break;
+                case 0x08:
+                    [self logDebug:@" Service Indicator: [0x08] MTP Testing User Part"];
+                    break;
+                case 0x09:
+                    [self logDebug:@" Service Indicator: [0x09] Broadband ISUP"];
+                    break;
+                case 0x0A:
+                    [self logDebug:@" Service Indicator: [0x0A] Satellite ISUP"];
+                    break;
+                default:
+                    [self logDebug:[NSString stringWithFormat:@" Service Indicator: [0x%02x] spare",si]];
+                    break;
+            }
+
+            switch(ni)
+            {
+                case 0x00:
+                    [self logDebug:@" Network Indicator: [0] International"];
+                    break;
+                case 0x01:
+                    [self logDebug:@" Network Indicator: [1] International spare"];
+                    break;
+                case 0x02:
+                    [self logDebug:@" Network Indicator: [2] National"];
+                    break;
+                case 0x03:
+                    [self logDebug:@" Network Indicator: [3] National spare"];
+                    break;
+            }
+
+            [self logDebug:[NSString stringWithFormat:@" Message Priority (MP): [%d]",mp]];
+            [self logDebug:[NSString stringWithFormat:@" Signalling link Selector (SLS): [%d]",sls]];
+        }
+
+        UMMTP3Label *label = [[UMMTP3Label alloc]init];
+        label.opc = opc;
+        label.dpc = dpc;
+        label.sls = sls;
+
         switch(si)
         {
             case 0x00:
-                [self logDebug:@" Service Indicator: [0x00] Signalling network management messages"];
+                /* Signalling network management messages */
+                //[self processSignallingNetworkManagementMessages];
                 break;
             case 0x01:
-                [self logDebug:@" Service Indicator: [0x01] Signalling network testing and maintenance messages"];
-                break;
-            case 0x03:
-                [self logDebug:@" Service Indicator: [0x03] SCCP"];
-                break;
-            case 0x04:
-                [self logDebug:@" Service Indicator: [0x04] TUP"];
-                break;
-            case 0x05:
-                [self logDebug:@" Service Indicator: [0x05] ISUP"];
-                break;
-            case 0x06:
-                [self logDebug:@" Service Indicator: [0x06] DUP (call/circuit related)"];
-                break;
-            case 0x07:
-                [self logDebug:@" Service Indicator: [0x07] DUP (facility related)"];
-                break;
-            case 0x08:
-                [self logDebug:@" Service Indicator: [0x08] MTP Testing User Part"];
-                break;
-            case 0x09:
-                [self logDebug:@" Service Indicator: [0x09] Broadband ISUP"];
-                break;
-            case 0x0A:
-                [self logDebug:@" Service Indicator: [0x0A] Satellite ISUP"];
+                /* Signalling network testing and maintenance messages */
                 break;
             default:
-                [self logDebug:[NSString stringWithFormat:@" Service Indicator: [0x%02x] spare",si]];
+                [self msuIndication2:protocolData
+                               label:label
+                                  si:si
+                                  ni:ni
+                                  mp:mp
+                                 slc:0
+                                link:NULL
+                   networkAppearance:network_appearance
+                       correlationId:correlation_id
+                      routingContext:routing_context];
                 break;
         }
-
-        switch(ni)
-        {
-            case 0x00:
-                [self logDebug:@" Network Indicator: [0] International"];
-                break;
-            case 0x01:
-                [self logDebug:@" Network Indicator: [1] International spare"];
-                break;
-            case 0x02:
-                [self logDebug:@" Network Indicator: [2] National"];
-                break;
-            case 0x03:
-                [self logDebug:@" Network Indicator: [3] National spare"];
-                break;
-        }
-
-        [self logDebug:[NSString stringWithFormat:@" Message Priority (MP): [%d]",mp]];
-        [self logDebug:[NSString stringWithFormat:@" Signalling link Selector (SLS): [%d]",sls]];
-    }
-
-    UMMTP3Label *label = [[UMMTP3Label alloc]init];
-    label.opc = opc;
-    label.dpc = dpc;
-    label.sls = sls;
-
-    switch(si)
-    {
-        case 0x00:
-            /* Signalling network management messages */
-            //[self processSignallingNetworkManagementMessages];
-            break;
-        case 0x01:
-            /* Signalling network testing and maintenance messages */
-            break;
-        default:
-            [self msuIndication2:protocolData
-                           label:label
-                              si:si
-                              ni:ni
-                              mp:mp
-                             slc:0
-                            link:NULL
-               networkAppearance:network_appearance
-                   correlationId:correlation_id
-                  routingContext:routing_context];
-            break;
     }
 }
 
@@ -397,29 +401,32 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)aspInactive:(UMM3UAApplicationServerProcess *)asp
 {
-    activeCount--;
-    BOOL somethingsActive = NO;
-    NSArray *keys = [applicationServerProcesses allKeys];
-    for(id key in keys)
+    @autoreleasepool
     {
-        UMM3UAApplicationServerProcess *asp2 = applicationServerProcesses[key];
-        if(asp2 == asp)
+        activeCount--;
+        BOOL somethingsActive = NO;
+        NSArray *keys = [applicationServerProcesses allKeys];
+        for(id key in keys)
         {
-            continue;
+            UMM3UAApplicationServerProcess *asp2 = applicationServerProcesses[key];
+            if(asp2 == asp)
+            {
+                continue;
+            }
+            if(asp2.active)
+            {
+                somethingsActive = YES;
+                break;
+            }
         }
-        if(asp2.active)
+        if(somethingsActive == NO)
         {
-            somethingsActive = YES;
-            break;
+            [self updateRouteUnavailable:_adjacentPointCode
+                                    mask:_adjacentPointCode.maxmask
+                                priority:UMMTP3RoutePriority_1];
         }
+        [self updateLinkSetStatus];
     }
-    if(somethingsActive == NO)
-    {
-        [self updateRouteUnavailable:_adjacentPointCode
-                                mask:_adjacentPointCode.maxmask
-                            priority:UMMTP3RoutePriority_1];
-    }
-    [self updateLinkSetStatus];
 }
 
 - (void)aspPending:(UMM3UAApplicationServerProcess *)asp
