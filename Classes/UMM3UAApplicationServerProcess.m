@@ -2149,7 +2149,16 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     break;
                 case M3UA_STATUS_INACTIVE: /* sctp is up, ASPUP received but not in active state */
                     [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_INACTIVE"];
-                    [self sendASPIA:NULL];
+                    if(_standby_mode)
+                    {
+                        /* we want active */
+                        [self sendASPIA:NULL];
+                    }
+                    else
+                    {
+                       /* we want to be active */
+                        [self sendASPAC:NULL];
+                    }
                     break;
                 case M3UA_STATUS_IS:
                     [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_IS"];
