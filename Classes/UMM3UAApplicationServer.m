@@ -42,7 +42,7 @@
 #define M3UA_CLASS_TYPE_ASPAC		0x0401
 #define M3UA_CLASS_TYPE_ASPIA		0x0402
 #define M3UA_CLASS_TYPE_ASPAC_ACK	0x0403
-#define M3UA_CLASS_TYPE_ASPIA_ACK	0x0504
+#define M3UA_CLASS_TYPE_ASPIA_ACK	0x0404
 #define M3UA_CLASS_TYPE_REG_REQ		0x0901
 #define M3UA_CLASS_TYPE_REG_RSP		0x0902
 #define M3UA_CLASS_TYPE_DEREG_REQ	0x0903
@@ -149,7 +149,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     self = [super init];
     if(self)
     {
-        applicationServerProcesses = [[UMSynchronizedSortedDictionary alloc]init];
+        _applicationServerProcesses = [[UMSynchronizedSortedDictionary alloc]init];
         self.logLevel = UMLOG_MAJOR;
         _m3ua_status = M3UA_STATUS_OFF;
     }
@@ -381,10 +381,10 @@ static const char *m3ua_param_name(uint16_t param_type)
                       priority:UMMTP3RoutePriority_1];
     if(_trafficMode == UMM3UATrafficMode_override)
     {
-        NSArray *keys = [applicationServerProcesses allKeys];
+        NSArray *keys = [_applicationServerProcesses allKeys];
         for(id key in keys)
         {
-            UMM3UAApplicationServerProcess *asp2 = applicationServerProcesses[key];
+            UMM3UAApplicationServerProcess *asp2 = _applicationServerProcesses[key];
             if(asp2 == asp)
             {
                 continue;
@@ -405,10 +405,10 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         activeCount--;
         BOOL somethingsActive = NO;
-        NSArray *keys = [applicationServerProcesses allKeys];
+        NSArray *keys = [_applicationServerProcesses allKeys];
         for(id key in keys)
         {
-            UMM3UAApplicationServerProcess *asp2 = applicationServerProcesses[key];
+            UMM3UAApplicationServerProcess *asp2 = _applicationServerProcesses[key];
             if(asp2 == asp)
             {
                 continue;
@@ -433,10 +433,10 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     activeCount--;
     BOOL somethingsActive = NO;
-    NSArray *keys = [applicationServerProcesses allKeys];
+    NSArray *keys = [_applicationServerProcesses allKeys];
     for(id key in keys)
     {
-        UMM3UAApplicationServerProcess *asp2 = applicationServerProcesses[key];
+        UMM3UAApplicationServerProcess *asp2 = _applicationServerProcesses[key];
         if(asp2 == asp)
         {
             continue;
@@ -561,10 +561,10 @@ static const char *m3ua_param_name(uint16_t param_type)
 		{
             [self logDebug:@"activate: all"];
 		}
-		id keys = [applicationServerProcesses allKeys];
+		id keys = [_applicationServerProcesses allKeys];
 		for(id key in keys)
 		{
-			UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+			UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
 			[asp goActive];
 		}
 	}
@@ -576,11 +576,11 @@ static const char *m3ua_param_name(uint16_t param_type)
 			{
                 [self logDebug:@"activate: one"];
 			}
-            NSUInteger randomIndex = [UMUtil random:(uint32_t)applicationServerProcesses.count];
+            NSUInteger randomIndex = [UMUtil random:(uint32_t)_applicationServerProcesses.count];
 
-			id key = [applicationServerProcesses keyAtIndex:randomIndex];
+			id key = [_applicationServerProcesses keyAtIndex:randomIndex];
 			
-			UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+			UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
 			[asp goActive];
 		}
 		else if(self.m3ua_status == M3UA_STATUS_IS)
@@ -620,10 +620,10 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         [self logDebug:@"deactivate"];
     }
-    id keys = [applicationServerProcesses allKeys];
+    id keys = [_applicationServerProcesses allKeys];
     for(id key in keys)
     {
-        UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+        UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
         [asp goInactive];
     }
     self.m3ua_status = M3UA_STATUS_INACTIVE;
@@ -636,10 +636,10 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         [self logDebug:@"start"];
     }
-    id keys = [applicationServerProcesses allKeys];
+    id keys = [_applicationServerProcesses allKeys];
     for(id key in keys)
     {
-        UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+        UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
         [asp start];
     }
 }
@@ -650,10 +650,10 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         [self logDebug:@"stop"];
     }
-    id keys = [applicationServerProcesses allKeys];
+    id keys = [_applicationServerProcesses allKeys];
     for(id key in keys)
     {
-        UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+        UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
         [asp stop];
     }
 }
@@ -661,7 +661,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void) addAsp:(UMM3UAApplicationServerProcess *)asp
 {
     asp.as = self;
-    applicationServerProcesses[asp.layerName] = asp;
+    _applicationServerProcesses[asp.layerName] = asp;
 }
 
 - (void) adminAttachConfirm:(UMLayer *)attachedLayer
@@ -787,10 +787,10 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     NSMutableArray *applicableProcesses = [[NSMutableArray alloc]init];
 
-    NSArray *keys = [applicationServerProcesses allKeys];
+    NSArray *keys = [_applicationServerProcesses allKeys];
     for(id key in keys)
     {
-        UMM3UAApplicationServerProcess *asp = applicationServerProcesses[key];
+        UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
         if(asp.active)
         {
             [applicableProcesses addObject:asp];
@@ -947,10 +947,10 @@ static const char *m3ua_param_name(uint16_t param_type)
     BOOL activeSeen = NO;;
     BOOL inactiveSeen = NO;
     BOOL busySeen = NO;
-    NSArray *keys = [applicationServerProcesses allKeys];
+    NSArray *keys = [_applicationServerProcesses allKeys];
     for (NSString *key in keys)
     {
-        UMM3UAApplicationServerProcess *link = applicationServerProcesses[key];
+        UMM3UAApplicationServerProcess *link = _applicationServerProcesses[key];
         switch(link.status)
         {
             case M3UA_STATUS_UNUSED:
@@ -1029,4 +1029,23 @@ static const char *m3ua_param_name(uint16_t param_type)
             return @"UNDEFINED";
     }
 }
+
+
+- (UMSynchronizedSortedDictionary *)m3uaStatusDict
+{
+    UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc]init];
+    dict[@"name"] = _name;
+    dict[@"as-status"] = [self statusString];
+    
+    UMSynchronizedArray *array2 = [[UMSynchronizedArray alloc]init];
+    id keys = [_applicationServerProcesses allKeys];
+    for(id key in keys)
+    {
+        UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
+        [array2 addObject:[asp m3uaStatusDict]];
+    }
+    dict[@"asp"] =array2;
+    return dict;
+}
+
 @end

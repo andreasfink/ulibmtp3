@@ -153,4 +153,5 @@
 
 - (NSString *)statusString;
 
+- (UMSynchronizedSortedDictionary *)m3uaStatusDict;
 @end

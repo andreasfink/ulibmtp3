@@ -258,9 +258,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     switch(_status)
     {
         case M3UA_STATUS_UNUSED:
-        case  M3UA_STATUS_OFF:
+        case M3UA_STATUS_OFF:
         case M3UA_STATUS_OOS:
-        case M3UA_STATUS_BUSY:
+        case M3UA_STATUS_BUSY: /* sctp is up but ASPUP is not yet received */
             return NO;
         case M3UA_STATUS_INACTIVE:
         case M3UA_STATUS_IS:
@@ -276,7 +276,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         case M3UA_STATUS_UNUSED:
         case M3UA_STATUS_OFF:
         case M3UA_STATUS_OOS:
-        case M3UA_STATUS_BUSY:
+        case M3UA_STATUS_BUSY: /* sctp is up but ASPUP is not received */
         case M3UA_STATUS_INACTIVE:
             return NO;
         case M3UA_STATUS_IS:
@@ -2329,6 +2329,34 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             }
         }
     }
+}
+
+- (UMSynchronizedSortedDictionary *)m3uaStatusDict
+{
+    UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc]init];
+    dict[@"name"] = _layerName;
+    dict[@"congested"] = _congested ? @"YES" : @"NO";
+    dict[@"asp-status"] = [self statusString];
+    dict[@"speed-limit-reached"] = _speedLimitReached ? @"YES" : @"NO";
+    dict[@"speed-limit"] = @(_speedLimit);
+    dict[@"aspup-received"] = _aspup_received ? @"YES" : @"NO";
+    dict[@"standby-mode"] = _standby_mode ? @"YES" : @"NO";
+    dict[@"linktest-timer-running"] = _linktest_timer.isRunning ? @"YES" : @"NO";
+    dict[@"reopen-timer1-running"] = _reopen_timer1.isRunning ? @"YES" : @"NO";
+    dict[@"reopen-timer2-running"] = _reopen_timer2.isRunning ? @"YES" : @"NO";
+    dict[@"sltm-serial"] = @(sltm_serial);
+    dict[@"configured-speed"] = @(_speed);
+    dict[@"current-speed"] = [_speedometer getSpeedTripleJson];
+    dict[@"submission-speed"] = [_submission_speed getSpeedTripleJson];
+    dict[@"speed-within-limit"] = _speed_within_limit ? @"YES" : @"NO";
+    dict[@"last-beat-received"] = _lastBeatReceived;
+    dict[@"last-beat-ack-received"] = _lastBeatReceived;
+    dict[@"last-beat-sent"] = _lastBeatSent;
+    dict[@"last-beat-ack-sent"] = _lastBeatAckSent;
+    dict[@"beat-timer-running"] = _beatTimer.isRunning ? @"YES" : @"NO";
+    dict[@"housekeeping-timer-running"] = _houseKeepingTimer.isRunning ? @"YES" : @"NO";
+
+    return dict;
 }
 
 @end
