@@ -1467,14 +1467,20 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [self logMinorError:@" already active"];
             if(![_reopen_timer2 isRunning])
             {
-                [self logDebug:@" starting reopen timer 2 which was not running"];
+                if(self.logLevel <= UMLOG_DEBUG)
+                {
+                    [self logDebug:@" starting reopen timer 2 which was not running"];
+                }
                 [_reopen_timer2 start];
             }
             if(![_linktest_timer isRunning])
             {
                 if((_linktest_timer_value > 0) && (_linktest_timer))
                 {
-                    [self logDebug:@" starting linktest_timer which was not running"];
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@" starting linktest_timer which was not running"];
+                    }
                     [_linktest_timer start];
                 }
             }
@@ -1482,8 +1488,11 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         }
         if(self.logLevel <= UMLOG_DEBUG)
         {
-            [self logDebug:@" setting status OOS"];
-            [self logDebug:@" sending ASPUP"];
+            if(self.logLevel <= UMLOG_DEBUG)
+            {
+                [self logDebug:@" setting status OOS"];
+                [self logDebug:@" sending ASPUP"];
+            }
         }
 
         if(_aspup_received==0)
@@ -1500,11 +1509,17 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         _speed_within_limit = YES;
 
         sltm_serial = 0;
-        [self logDebug:[NSString stringWithFormat:@" starting reopen timer 2 (%lf s)",_reopen_timer2.seconds]];
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            [self logDebug:[NSString stringWithFormat:@" starting reopen timer 2 (%lf s)",_reopen_timer2.seconds]];
+        }
         [_reopen_timer2 start];
         if((_linktest_timer_value > 0) && (_linktest_timer))
         {
-            [self logDebug:@" starting linktest_timer"];
+            if(self.logLevel <= UMLOG_DEBUG)
+            {
+                [self logDebug:@" starting linktest_timer"];
+            }
             [_linktest_timer stop];
             [_linktest_timer start];
         }
@@ -1580,7 +1595,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         packlen =  ntohl(*(uint32_t *)&data[4]);
         if(len<packlen)
         {
-            NSLog(@"M3UA-ASP: M3UA packet header requires more data than present");
+            if(self.logLevel <= UMLOG_WARNING)
+            {
+                [self logWarning:@"M3UA-ASP: M3UA packet header requires more data than present"];
+            }
             break;
         }
 
@@ -2136,19 +2154,34 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             switch(self.status)
             {
                 case M3UA_STATUS_UNUSED:    /* undefined state */
-                    [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_UNUSED. Ignoring"];
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_UNUSED. Ignoring"];
+                    }
                     break;
                 case M3UA_STATUS_OFF:       /* sctp is down */
-                    [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OFF. Ignoring"];
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OFF. Ignoring"];
+                    }
                     break;
                 case M3UA_STATUS_OOS:       /* sctp is down, but connection is requested */
-                    [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OOS. Ignoring"];
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_OOS. Ignoring"];
+                    }
                     break;
                 case M3UA_STATUS_BUSY:      /* sctp is up but ASPUP is not received */
-                    [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_BUSY. Ignoring"];
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"linktest_timer_fires but we are in state M3UA_STATUS_BUSY. Ignoring"];
+                    }
                     break;
                 case M3UA_STATUS_INACTIVE: /* sctp is up, ASPUP received but not in active state */
-                    [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_INACTIVE"];
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_INACTIVE"];
+                    }
                     if(_standby_mode)
                     {
                         /* we want active */
@@ -2161,7 +2194,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     }
                     break;
                 case M3UA_STATUS_IS:
-                    [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_IS"];
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_IS"];
+                    }
                     if(_aspup_received>0)
                     {
                         /* Lets send ASPAC or ASPIA */
