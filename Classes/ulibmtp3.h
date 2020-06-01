@@ -51,3 +51,6 @@
 #import "UMMTP3SyslogClient.h"
 #import "UMMTP3PointCodeTranslationTable.h"
 #import "UMMTP3TranslationTableMap.h"
+#import "UMMTP3StatisticDb.h"
+#import "UMMTP3StatisticDbRecord.h"
+

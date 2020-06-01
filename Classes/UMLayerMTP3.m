@@ -36,6 +36,7 @@
 #import "UMMTP3InstanceRoutingTable.h"
 #import "UMM3UAApplicationServerProcess.h"
 #import "UMMTP3SyslogClient.h"
+#import "UMMTP3StatisticDb.h"
 
 @implementation UMLayerMTP3
 
@@ -75,6 +76,13 @@
 	_links	         = [[UMSynchronizedSortedDictionary alloc]init];
     _userPart        = [[UMSynchronizedSortedDictionary  alloc]init];
     _routingTable    = [[UMMTP3InstanceRoutingTable alloc]init];
+    _housekeepingTimer = [[UMTimer alloc]initWithTarget:self
+                                               selector:@selector(housekeeping)
+                                                 object:NULL
+                                                seconds:6
+                                                   name:@"housekeeping"
+                                                repeats:YES
+                                        runInForeground:YES];
 }
 
 
@@ -814,6 +822,27 @@
             [linkset setConfig:linksetConfig applicationContext:appContext];
             [self addLinkSet:linkset];
         }
+
+        if(cfg[@"statistic-db-instance"])
+        {
+            _statisticDbInstance       = [cfg[@"statistic-db-instance"] stringValue];
+        }
+        if(cfg[@"statistic-db-pool"])
+        {
+            _statisticDbPool        = [cfg[@"statistic-db-pool"] stringValue];
+        }
+        if(cfg[@"statistic-db-table"])
+        {
+            _statisticDbTable       = [cfg[@"statistic-db-table"] stringValue];
+        }
+        if(cfg[@"statistic-db-autocreate"])
+        {
+            _statisticDbAutoCreate  = @([cfg[@"statistic-db-autocreate"] boolValue]);
+        }
+        else
+        {
+            _statisticDbAutoCreate=@(YES);
+        }
     }
 }
 
@@ -857,12 +886,32 @@
 }
 
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
+                        opc:(UMMTP3PointCode *)fopc
+                        dpc:(UMMTP3PointCode *)fdpc
+                         si:(int)si
+                         mp:(int)mp
+                      route:(UMMTP3InstanceRoute *)route
+                    options:(NSDictionary *)options
+{
+    return [self forwardPDU:pdu
+                        opc:fopc
+                        dpc:fdpc
+                         si:si
+                         mp:mp
+                      route:route
+                    options:options
+              sourceLinkset:@"local"];
+
+}
+
+- (UMMTP3_Error)forwardPDU:(NSData *)pdu
                        opc:(UMMTP3PointCode *)fopc
                        dpc:(UMMTP3PointCode *)fdpc
                         si:(int)si
                         mp:(int)mp
                      route:(UMMTP3InstanceRoute *)route
                    options:(NSDictionary *)options
+             sourceLinkset:(NSString *)sourceLinkset
 {
     @autoreleasepool
     {
@@ -925,6 +974,12 @@
                   ackRequest:NULL
                correlationId:0
                      options:options];
+            [_statisticDb addByteCount:(int)pdu.length
+                       incomingLinkset:linksetName
+                       outgoingLinkset:linkset.name
+                                   opc:label.opc.pc
+                                   dpc:label.dpc.pc
+                                    si:si];
         }
         else
         {
@@ -945,7 +1000,12 @@
                   ackRequest:NULL
                correlationId:0
                      options:options];
-
+            [_statisticDb addByteCount:(int)pdu.length
+                       incomingLinkset:linksetName
+                       outgoingLinkset:linkset.name
+                                   opc:label.opc.pc
+                                   dpc:label.dpc.pc
+                                    si:si];
         }
         return UMMTP3_no_error;
     }
@@ -953,8 +1013,25 @@
 
 - (void)start
 {
+    
     @autoreleasepool
     {
+        if(_statisticDbPool && _statisticDbTable)
+        {
+            if(_statisticDbInstance==NULL)
+            {
+                _statisticDbInstance = _layerName;
+            }
+            _statisticDb = [[UMMTP3StatisticDb alloc]initWithPoolName:_statisticDbPool
+                                                            tableName:_statisticDbTable
+                                                           appContext:_appContext
+                                                           autocreate:_statisticDbAutoCreate.boolValue
+                                                             instance:_statisticDbInstance];
+            if(_statisticDbAutoCreate.boolValue)
+            {
+                [_statisticDb doAutocreate];
+            }
+        }
         UMMTP3Task_start *task = [[UMMTP3Task_start alloc]initWithReceiver:self];
         [self queueFromAdmin:task];
     }
@@ -1031,6 +1108,12 @@
                                        mp:mp
                               linksetName:linksetName
                                   linkset:linkset];
+            [_statisticDb addByteCount:(int)data.length
+                       incomingLinkset:linksetName
+                       outgoingLinkset:@"local"
+                                   opc:label.opc.pc
+                                   dpc:label.dpc.pc
+                                    si:si];
         }
         else
         {
@@ -1078,8 +1161,8 @@
                           si:si
                           mp:mp
                        route:route
-                     options:options];
-
+                     options:options
+               sourceLinkset:linksetName];
         }
         else
         {
@@ -1092,6 +1175,12 @@
             errorLabel.opc = _opc;
             errorLabel.dpc = linkset.adjacentPointCode;
             [linkset sendTFP:errorLabel destination:label.dpc ni:ni mp:mp slc:-1 link:NULL];
+            [_statisticDb addByteCount:(int)data.length
+                       incomingLinkset:linksetName
+                       outgoingLinkset:@"no-route-to-destination"
+                                   opc:label.opc.pc
+                                   dpc:label.dpc.pc
+                                    si:si];
             return;
         }
     }
@@ -1428,5 +1517,10 @@
 - (void)stopDetachAndDestroy
 {
     /* FIXME: do something here */
+}
+
+- (void)housekeeping
+{
+    [_statisticDb flush];
 }
 @end

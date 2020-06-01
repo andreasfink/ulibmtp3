@@ -17,6 +17,7 @@
 @class UMLayerSctp;
 @class UMMTP3PointCodeTranslationTable;
 @class UMMTP3TranslationTableMap;
+@class UMDbPool;
 @protocol UMLayerMTP3ApplicationContextProtocol<NSObject>
 
 - (UMLayerSctp *)getSCTP:(NSString *)name;
@@ -28,5 +29,6 @@
 - (UMM3UAApplicationServer *)getM3UAAS:(NSString *)name;
 - (UMMTP3PointCodeTranslationTable *)getMTP3PointCodeTranslationTable:(NSString *)name;
 - (UMMTP3TranslationTableMap *)getTTMap:(NSString *)name;
+- (UMSynchronizedDictionary *)dbPools;
 
 @end

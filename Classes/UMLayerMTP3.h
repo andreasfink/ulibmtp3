@@ -18,7 +18,6 @@
 #import "UMMTP3RoutePriority.h"
 #import "UMMTP3InstanceRoutingTable.h"
 #import "UMMTP3InstanceRoute.h"
-
 @class UMMTP3LinkSet;
 @class UMMTP3Link;
 @class UMMTP3PointCode;
@@ -37,6 +36,7 @@
 @class UMMTP3Label;
 @class UMM3UAApplicationServer;
 @class UMMTP3SyslogClient;
+@class UMMTP3StatisticDb;
 
 #import "UMLayerMTP3UserProtocol.h"
 typedef enum UMMTP3_Error
@@ -62,6 +62,13 @@ typedef enum UMMTP3_Error
     BOOL                            _stpMode;
     BOOL                            _isStarted;
     id<UMLayerMTP3ApplicationContextProtocol>   _appContext;
+    NSString                    *_statisticDbPool;
+    NSString                    *_statisticDbTable;
+    NSNumber                    *_statisticDbAutoCreate;
+    NSString                    *_statisticDbInstance;
+    UMMTP3StatisticDb           *_statisticDb;
+    UMTimer                     *_housekeepingTimer;
+
 }
 @property (readwrite,assign,atomic) int                 networkIndicator;
 @property (readwrite,assign,atomic) UMMTP3Variant       variant;
@@ -101,6 +108,14 @@ typedef enum UMMTP3_Error
                      route:(UMMTP3InstanceRoute *)route
                    options:(NSDictionary *)options;
 
+- (UMMTP3_Error)forwardPDU:(NSData *)pdu
+                       opc:(UMMTP3PointCode *)fopc
+                       dpc:(UMMTP3PointCode *)fdpc
+                        si:(int)si
+                        mp:(int)mp
+                     route:(UMMTP3InstanceRoute *)route
+                   options:(NSDictionary *)options
+             sourceLinkset:(NSString *)sourceLinkset;
 
 #pragma mark -
 #pragma mark LinkSet Handling

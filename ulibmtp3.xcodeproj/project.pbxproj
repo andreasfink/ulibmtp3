@@ -17,6 +17,11 @@
 		A60A36FE1A306B710090FC94 /* UMMTP3RouteMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36FB1A306B710090FC94 /* UMMTP3RouteMetrics.m */; };
 		A691E59F237001A800589718 /* UMMTP3PointCodeTranslationTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A691E5A0237001A800589718 /* UMMTP3PointCodeTranslationTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A691E59E237001A800589718 /* UMMTP3PointCodeTranslationTable.m */; };
+		A6AA23C924854164008D5A57 /* UMMTP3StatisticDbRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = A6AA23C724854164008D5A57 /* UMMTP3StatisticDbRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6AA23CA24854164008D5A57 /* UMMTP3StatisticDbRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AA23C824854164008D5A57 /* UMMTP3StatisticDbRecord.m */; };
+		A6AA23CE2485420A008D5A57 /* ulibdb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6AA23CD24854209008D5A57 /* ulibdb.framework */; };
+		A6AA23D724855071008D5A57 /* UMMTP3StatisticDb.h in Headers */ = {isa = PBXBuildFile; fileRef = A6AA23D524855071008D5A57 /* UMMTP3StatisticDb.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6AA23D824855071008D5A57 /* UMMTP3StatisticDb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AA23D624855071008D5A57 /* UMMTP3StatisticDb.m */; };
 		A6AD89F321CD73F300F40945 /* UMMTP3TranslationTableMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A6AD89F121CD73F300F40945 /* UMMTP3TranslationTableMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6AD89F421CD73F300F40945 /* UMMTP3TranslationTableMap.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AD89F221CD73F300F40945 /* UMMTP3TranslationTableMap.m */; };
 		A6B3761223FA6525007F6F20 /* UMMTP3InstanceRoute.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B3761023FA6525007F6F20 /* UMMTP3InstanceRoute.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -185,6 +190,11 @@
 		A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3PointCodeTranslationTable.h; sourceTree = "<group>"; };
 		A691E59E237001A800589718 /* UMMTP3PointCodeTranslationTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3PointCodeTranslationTable.m; sourceTree = "<group>"; };
 		A6A2B8D01E389A0100E8F0AB /* UMM3UAApplicationServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMM3UAApplicationServer.m; sourceTree = "<group>"; };
+		A6AA23C724854164008D5A57 /* UMMTP3StatisticDbRecord.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3StatisticDbRecord.h; sourceTree = "<group>"; };
+		A6AA23C824854164008D5A57 /* UMMTP3StatisticDbRecord.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3StatisticDbRecord.m; sourceTree = "<group>"; };
+		A6AA23CD24854209008D5A57 /* ulibdb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulibdb.framework; path = "../../../../../Library/Application Support/FinkTelecomServices/frameworks/ulibdb.framework"; sourceTree = "<group>"; };
+		A6AA23D524855071008D5A57 /* UMMTP3StatisticDb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3StatisticDb.h; sourceTree = "<group>"; };
+		A6AA23D624855071008D5A57 /* UMMTP3StatisticDb.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3StatisticDb.m; sourceTree = "<group>"; };
 		A6AD89F121CD73F300F40945 /* UMMTP3TranslationTableMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3TranslationTableMap.h; sourceTree = "<group>"; };
 		A6AD89F221CD73F300F40945 /* UMMTP3TranslationTableMap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3TranslationTableMap.m; sourceTree = "<group>"; };
 		A6B3761023FA6525007F6F20 /* UMMTP3InstanceRoute.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3InstanceRoute.h; sourceTree = "<group>"; };
@@ -250,6 +260,7 @@
 			files = (
 				A6E3D78E22BABDAE00D5B1B6 /* ulibsctp.framework in Frameworks */,
 				A6C78D831A29436E006C66A2 /* ulibm2pa.framework in Frameworks */,
+				A6AA23CE2485420A008D5A57 /* ulibdb.framework in Frameworks */,
 				A6C78D8C1A294393006C66A2 /* ulib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -300,6 +311,7 @@
 			children = (
 				A6C78D8B1A294392006C66A2 /* ulib.framework */,
 				A615D90A1B4D5F2900854472 /* sctp.framework */,
+				A6AA23CD24854209008D5A57 /* ulibdb.framework */,
 				A6C78D851A29437B006C66A2 /* ulibsctp.framework */,
 				A6C78D821A29436E006C66A2 /* ulibm2pa.framework */,
 			);
@@ -390,6 +402,10 @@
 				A666EF691E89C4AF004804CB /* UMSyntaxToken_Pointcode.m */,
 				A6AD89F121CD73F300F40945 /* UMMTP3TranslationTableMap.h */,
 				A6AD89F221CD73F300F40945 /* UMMTP3TranslationTableMap.m */,
+				A6AA23D524855071008D5A57 /* UMMTP3StatisticDb.h */,
+				A6AA23D624855071008D5A57 /* UMMTP3StatisticDb.m */,
+				A6AA23C724854164008D5A57 /* UMMTP3StatisticDbRecord.h */,
+				A6AA23C824854164008D5A57 /* UMMTP3StatisticDbRecord.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -442,6 +458,7 @@
 			files = (
 				A6F178CC21AF03B00084D972 /* UMM3UAApplicationServerProcess.h in Headers */,
 				A6F178D021AF03B00084D972 /* UMMTP3Filter_Result.h in Headers */,
+				A6AA23C924854164008D5A57 /* UMMTP3StatisticDbRecord.h in Headers */,
 				A6F178DE21AF03B00084D972 /* UMMTP3RoutePriority.h in Headers */,
 				A6F178E921AF03B00084D972 /* UMMTP3Task_m2paSctpStatusIndication.h in Headers */,
 				A6F178D121AF03B00084D972 /* UMMTP3HeadingCode.h in Headers */,
@@ -462,6 +479,7 @@
 				A6B3762A23FA7BE1007F6F20 /* UMMTP3RouteCongestionLevel.h in Headers */,
 				A6F178E821AF03B00084D972 /* UMMTP3Task_m2paProcessorRestored.h in Headers */,
 				A6F178EC21AF03B00084D972 /* UMMTP3Task_m2paStatusIndication.h in Headers */,
+				A6AA23D724855071008D5A57 /* UMMTP3StatisticDb.h in Headers */,
 				A6B3761223FA6525007F6F20 /* UMMTP3InstanceRoute.h in Headers */,
 				A6F178D421AF03B00084D972 /* UMMTP3Link.h in Headers */,
 				A6F178E721AF03B00084D972 /* UMMTP3Task_m2paProcessorOutage.h in Headers */,
@@ -593,6 +611,7 @@
 				A6F1790E21AF044B0084D972 /* UMMTP3Task_m2paSpeedLimitReached.m in Sources */,
 				A6B3761723FA6539007F6F20 /* UMMTP3InstanceRoutingTable.m in Sources */,
 				A6F178FE21AF044B0084D972 /* UMMTP3PduFilter.m in Sources */,
+				A6AA23D824855071008D5A57 /* UMMTP3StatisticDb.m in Sources */,
 				A6F1790621AF044B0084D972 /* UMMTP3Task_adminCreateLink.m in Sources */,
 				A6F178FF21AF044B0084D972 /* UMMTP3PointCode.m in Sources */,
 				A6F1791421AF044B0084D972 /* UMMTP3WhiteList.m in Sources */,
@@ -603,6 +622,7 @@
 				A6F178FB21AF044B0084D972 /* UMMTP3LinkSet.m in Sources */,
 				A6F178F921AF044B0084D972 /* UMMTP3Link.m in Sources */,
 				A6F1791221AF044B0084D972 /* UMMTP3Task_stop.m in Sources */,
+				A6AA23CA24854164008D5A57 /* UMMTP3StatisticDbRecord.m in Sources */,
 				A6AD89F421CD73F300F40945 /* UMMTP3TranslationTableMap.m in Sources */,
 				A6F1791021AF044B0084D972 /* UMMTP3Task_m2paStatusIndication.m in Sources */,
 				A6F178F821AF044B0084D972 /* UMMTP3Label.m in Sources */,
@@ -816,6 +836,7 @@
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 					"$(LOCAL_LIBRARY_DIR)/Application\\ Support/FinkTelecomServices/frameworks",
+					"$(LOCAL_LIBRARY_DIR)/Application\\ Support/FinkTelecomServices/frameworks",
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -838,6 +859,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(LOCAL_LIBRARY_DIR)/Application\\ Support/FinkTelecomServices/frameworks",
 					"$(LOCAL_LIBRARY_DIR)/Application\\ Support/FinkTelecomServices/frameworks",
 				);
 				FRAMEWORK_VERSION = A;
