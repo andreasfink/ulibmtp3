@@ -12,11 +12,11 @@
 
 static dbFieldDef UMMTP3StatisticDb_fields[] =
 {
-    {"key",                 NULL,       NO,     DB_PRIMARY_INDEX,   DB_FIELD_TYPE_STRING,              255,   0,NULL,NULL,1},
-    {"ymdh",                NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_STRING,              32,    0,NULL,NULL,2},
-    {"instance",            NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_STRING,              32,    0,NULL,NULL,2},
-    {"incoming_linkset",    NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_STRING,              32,    0,NULL,NULL,2},
-    {"outgoing_linkset",    NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_STRING,              32,    0,NULL,NULL,2},
+    {"dbkey",               NULL,       NO,     DB_PRIMARY_INDEX,   DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,1},
+    {"ymdh",                NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             32,    0,NULL,NULL,2},
+    {"instance",            NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             32,    0,NULL,NULL,2},
+    {"incoming_linkset",    NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             32,    0,NULL,NULL,2},
+    {"outgoing_linkset",    NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             32,    0,NULL,NULL,2},
     {"opc",                 NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_INTEGER,             0,     0,NULL,NULL,2},
     {"dpc",                 NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_INTEGER,             0,     0,NULL,NULL,2},
     {"si",                  NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_INTEGER,             0,     0,NULL,NULL,2},
@@ -27,39 +27,48 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
 
 @implementation UMMTP3StatisticDb
 
-- (UMMTP3StatisticDb *)initWithPoolName:(NSString *)pool
+- (UMMTP3StatisticDb *)initWithPoolName:(NSString *)poolName
                               tableName:(NSString *)table
                              appContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
                              autocreate:(BOOL)autocreate
                                instance:(NSString *)instance
 {
-    self = [super init];
-    if(self)
+    @autoreleasepool
     {
-        NSDictionary *config =@{ @"enable"     : @(YES),
-                                   @"table-name" : table,
-                                   @"autocreate" : @(autocreate),
-                                   @"pool-name"  : pool };
-        _table = [[UMDbTable alloc]initWithConfig:config andPools:appContext.dbPools];
-        _lock = [[UMMutex alloc]initWithName:@"UMMTP3StatisticDb-lock"];
-        _entries = [[UMSynchronizedDictionary alloc]init];
-        _instance = instance;
-        
-        NSTimeZone *tz = [NSTimeZone timeZoneWithName:@"UTC"];
-        NSDateFormatter *_ymdhDateFormatter= [[NSDateFormatter alloc]init];
-        NSLocale *ukLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_UK"];
-        [_ymdhDateFormatter setLocale:ukLocale];
-        [_ymdhDateFormatter setDateFormat:@"yyyyMMddHH"];
-        [_ymdhDateFormatter setTimeZone:tz];
+        self = [super init];
+        if(self)
+        {
+            NSDictionary *config =@{   @"enable"     : @(YES),
+                                       @"table-name" : table,
+                                       @"autocreate" : @(autocreate),
+                                       @"pool-name"  : poolName };
+            _poolName = poolName;
+            _pool = [appContext dbPools][_poolName];
+            _table = [[UMDbTable alloc]initWithConfig:config andPools:[appContext dbPools]];
+            _lock = [[UMMutex alloc]initWithName:@"UMMTP3StatisticDb-lock"];
+            _entries = [[UMSynchronizedDictionary alloc]init];
+            _instance = instance;
+            
+            NSTimeZone *tz = [NSTimeZone timeZoneWithName:@"UTC"];
+            NSDateFormatter *_ymdhDateFormatter= [[NSDateFormatter alloc]init];
+            NSLocale *ukLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_UK"];
+            [_ymdhDateFormatter setLocale:ukLocale];
+            [_ymdhDateFormatter setDateFormat:@"yyyyMMddHH"];
+            [_ymdhDateFormatter setTimeZone:tz];
+        }
+        return self;
     }
-    return self;
 }
 
 - (void)doAutocreate
 {
-    UMDbSession *session = [_table.pool grabSession:__FILE__ line:__LINE__ func:__func__];
+    if(_pool==NULL)
+    {
+        _pool = _table.pools[_poolName];
+    }
+    UMDbSession *session = [_pool grabSession:__FILE__ line:__LINE__ func:__func__];
     [_table autoCreate:UMMTP3StatisticDb_fields session:session];
-    [_table.pool returnSession:session file:__FILE__ line:__LINE__ func:__func__];
+    [_pool returnSession:session file:__FILE__ line:__LINE__ func:__func__];
 }
 
 - (void)addByteCount:(int)byteCount
@@ -107,7 +116,7 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
     for(NSString *key in keys)
     {
         UMMTP3StatisticDbRecord *rec = tmp[key];
-        [rec flushToPool:_table.pool table:_table];
+        [rec flushToPool:_pool table:_table];
     }
 }
 @end

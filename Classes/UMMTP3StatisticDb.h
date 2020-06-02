@@ -18,6 +18,7 @@
     UMSynchronizedDictionary *_entries;
     NSDateFormatter *_ymdhDateFormatter;
     NSString *_instance;
+    NSString *_poolName;
 }
 
 - (UMMTP3StatisticDb *)initWithPoolName:(NSString *)pool
