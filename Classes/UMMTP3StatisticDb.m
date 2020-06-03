@@ -51,7 +51,7 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
             _instance = instance;
             
             NSTimeZone *tz = [NSTimeZone timeZoneWithName:@"UTC"];
-            NSDateFormatter *_ymdhDateFormatter= [[NSDateFormatter alloc]init];
+            _ymdhDateFormatter= [[NSDateFormatter alloc]init];
             NSLocale *ukLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"];
             [_ymdhDateFormatter setLocale:ukLocale];
             [_ymdhDateFormatter setDateFormat:@"yyyyMMddHH"];
