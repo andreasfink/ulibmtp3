@@ -78,45 +78,51 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
                  dpc:(int)dpc
                   si:(int)si
 {
-    NSString *ymdh = [_ymdhDateFormatter stringFromDate:[NSDate date]];
-
-    NSString *key = [UMMTP3StatisticDbRecord keystringFor:ymdh
-                                          incomingLinkset:incomingLinkset
-                                          outgoingLinkset:outgoingLinkset
-                                                      opc:opc
-                                                      dpc:dpc
-                                                       si:si
-                                                 instance:_instance];
-    [_lock lock];
-    UMMTP3StatisticDbRecord *rec = _entries[key];
-    if(rec == NULL)
+    @autoreleasepool
     {
-        rec = [[UMMTP3StatisticDbRecord alloc]init];
-        rec.ymdh = ymdh;
-        rec.incoming_linkset = incomingLinkset;
-        rec.outgoing_linkset = outgoingLinkset;
-        rec.opc = opc;
-        rec.dpc = dpc;
-        rec.si = si;
-        rec.instance = _instance;
-        _entries[key] = rec;
+        NSString *ymdh = [_ymdhDateFormatter stringFromDate:[NSDate date]];
+
+        NSString *key = [UMMTP3StatisticDbRecord keystringFor:ymdh
+                                              incomingLinkset:incomingLinkset
+                                              outgoingLinkset:outgoingLinkset
+                                                          opc:opc
+                                                          dpc:dpc
+                                                           si:si
+                                                     instance:_instance];
+        [_lock lock];
+        UMMTP3StatisticDbRecord *rec = _entries[key];
+        if(rec == NULL)
+        {
+            rec = [[UMMTP3StatisticDbRecord alloc]init];
+            rec.ymdh = ymdh;
+            rec.incoming_linkset = incomingLinkset;
+            rec.outgoing_linkset = outgoingLinkset;
+            rec.opc = opc;
+            rec.dpc = dpc;
+            rec.si = si;
+            rec.instance = _instance;
+            _entries[key] = rec;
+        }
+        [_lock unlock];
+        [rec increaseMsuCount:1 byteCount:byteCount];
     }
-    [_lock unlock];
-    [rec increaseMsuCount:1 byteCount:byteCount];
 }
 
 - (void)flush
 {
-    [_lock lock];
-    UMSynchronizedDictionary *tmp = _entries;
-    _entries = [[UMSynchronizedDictionary alloc]init];
-    [_lock unlock];
-    
-    NSArray *keys = [tmp allKeys];
-    for(NSString *key in keys)
+    @autoreleasepool
     {
-        UMMTP3StatisticDbRecord *rec = tmp[key];
-        [rec flushToPool:_pool table:_table];
+        [_lock lock];
+        UMSynchronizedDictionary *tmp = _entries;
+        _entries = [[UMSynchronizedDictionary alloc]init];
+        [_lock unlock];
+        
+        NSArray *keys = [tmp allKeys];
+        for(NSString *key in keys)
+        {
+            UMMTP3StatisticDbRecord *rec = tmp[key];
+            [rec flushToPool:_pool table:_table];
+        }
     }
 }
 @end

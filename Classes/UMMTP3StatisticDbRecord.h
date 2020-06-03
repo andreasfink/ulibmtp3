@@ -8,7 +8,6 @@
 
 #import <ulib/ulib.h>
 
-
 @interface UMMTP3StatisticDbRecord : UMObject
 {
     NSString *_ymdh;
