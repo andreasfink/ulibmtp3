@@ -881,7 +881,8 @@
                              si:si
                              mp:mp
                           route:route
-                        options:options];
+                        options:options
+                  sourceLinkset:@"local"];
     }
 }
 
@@ -915,7 +916,6 @@
 {
     @autoreleasepool
     {
-
         if(self.logLevel <= UMLOG_DEBUG)
         {
             [self.logFeed debugText:[NSString stringWithFormat:@"routed to route '%@'",route.name]];
@@ -975,7 +975,7 @@
                correlationId:0
                      options:options];
             [_statisticDb addByteCount:(int)pdu.length
-                       incomingLinkset:linksetName
+                       incomingLinkset:sourceLinkset
                        outgoingLinkset:linkset.name
                                    opc:label.opc.pc
                                    dpc:label.dpc.pc
@@ -1001,7 +1001,7 @@
                correlationId:0
                      options:options];
             [_statisticDb addByteCount:(int)pdu.length
-                       incomingLinkset:linksetName
+                       incomingLinkset:sourceLinkset
                        outgoingLinkset:linkset.name
                                    opc:label.opc.pc
                                    dpc:label.dpc.pc
