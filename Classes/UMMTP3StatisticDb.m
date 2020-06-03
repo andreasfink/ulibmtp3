@@ -9,6 +9,7 @@
 #import "UMMTP3StatisticDb.h"
 
 #import "UMMTP3StatisticDbRecord.h"
+#define UMMTP3_STATISTICS_DEBUG 1
 
 static dbFieldDef UMMTP3StatisticDb_fields[] =
 {
@@ -78,6 +79,16 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
                  dpc:(int)dpc
                   si:(int)si
 {
+#if defined(UMMTP3_STATISTICS_DEBUG)
+    NSLog(@"UMMTP3_STATISTICS_DEBUG: addByteCount:%d\n"
+          @"                      incomingLinkset:%@\n"
+          @"                      outgoingLinkset:%@\n"
+          @"                                  opc:%d\n"
+          @"                                  dpc:%d\n"
+          @"                                   si:%d\n"
+          ,byteCount,incomingLinkset,outgoingLinkset,opc,dpc,si);
+#endif
+
     @autoreleasepool
     {
         NSString *ymdh = [_ymdhDateFormatter stringFromDate:[NSDate date]];
@@ -89,10 +100,19 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
                                                           dpc:dpc
                                                            si:si
                                                      instance:_instance];
+        
+#if defined(UMMTP3_STATISTICS_DEBUG)
+        NSLog(@"UMMTP3_STATISTICS_DEBUG: key:%@\n"
+              @"                        ymdh:%@",key,ymdh);
+#endif
+
+
         [_lock lock];
         UMMTP3StatisticDbRecord *rec = _entries[key];
         if(rec == NULL)
         {
+            NSLog(@"UMMTP3_STATISTICS_DEBUG: creating new record");
+
             rec = [[UMMTP3StatisticDbRecord alloc]init];
             rec.ymdh = ymdh;
             rec.incoming_linkset = incomingLinkset;
@@ -103,6 +123,12 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
             rec.instance = _instance;
             _entries[key] = rec;
         }
+#if defined(UMMTP3_STATISTICS_DEBUG)
+        else
+        {
+            NSLog(@"UMMTP3_STATISTICS_DEBUG: using existing record");
+        }
+#endif
         [_lock unlock];
         [rec increaseMsuCount:1 byteCount:byteCount];
     }
