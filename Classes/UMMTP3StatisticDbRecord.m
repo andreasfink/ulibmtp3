@@ -135,6 +135,9 @@
                                 [NSNumber numberWithInt:_bytes_count],
                                  NULL];
             NSString *key = [self keystring];
+#if defined(UMMTP3_STATISTICS_DEBUG)
+    NSLog(@"UMMTP3_STATISTICS_DEBUG: updateDb: key=%@",key);
+#endif
             UMDbSession *session = [pool grabSession:__FILE__ line:__LINE__ func:__func__];
             success = [session cachedQueryWithNoResult:query parameters:params allowFail:YES primaryKeyValue:key];
             [pool returnSession:session file:__FILE__ line:__LINE__ func:__func__];
