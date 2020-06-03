@@ -52,7 +52,7 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
             
             NSTimeZone *tz = [NSTimeZone timeZoneWithName:@"UTC"];
             NSDateFormatter *_ymdhDateFormatter= [[NSDateFormatter alloc]init];
-            NSLocale *ukLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_UK"];
+            NSLocale *ukLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"];
             [_ymdhDateFormatter setLocale:ukLocale];
             [_ymdhDateFormatter setDateFormat:@"yyyyMMddHH"];
             [_ymdhDateFormatter setTimeZone:tz];
@@ -91,7 +91,15 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
 
     @autoreleasepool
     {
-        NSString *ymdh = [_ymdhDateFormatter stringFromDate:[NSDate date]];
+#if defined(UMMTP3_STATISTICS_DEBUG)
+        NSDate *d = [NSDate date];
+        NSLog(@"UMMTP3_STATISTICS_DEBUG: d:%@",d);
+#endif
+
+        NSString *ymdh = [_ymdhDateFormatter stringFromDate:d];
+#if defined(UMMTP3_STATISTICS_DEBUG)
+        NSLog(@"UMMTP3_STATISTICS_DEBUG: ymdh:%@",ymdh);
+#endif
 
         NSString *key = [UMMTP3StatisticDbRecord keystringFor:ymdh
                                               incomingLinkset:incomingLinkset
