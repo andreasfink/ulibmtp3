@@ -146,6 +146,9 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
 {
     @autoreleasepool
     {
+#if defined(UMMTP3_STATISTICS_DEBUG)
+    NSLog(@"UMMTP3_STATISTICS_DEBUG: flush");
+#endif
         [_lock lock];
         UMSynchronizedDictionary *tmp = _entries;
         _entries = [[UMSynchronizedDictionary alloc]init];
