@@ -9,7 +9,7 @@
 #import "UMMTP3StatisticDb.h"
 
 #import "UMMTP3StatisticDbRecord.h"
-#define UMMTP3_STATISTICS_DEBUG 1
+//#define UMMTP3_STATISTICS_DEBUG 1
 
 static dbFieldDef UMMTP3StatisticDb_fields[] =
 {
@@ -91,8 +91,9 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
 
     @autoreleasepool
     {
-#if defined(UMMTP3_STATISTICS_DEBUG)
         NSDate *d = [NSDate date];
+
+#if defined(UMMTP3_STATISTICS_DEBUG)
         NSLog(@"UMMTP3_STATISTICS_DEBUG: d:%@",d);
 #endif
 
@@ -119,8 +120,9 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
         UMMTP3StatisticDbRecord *rec = _entries[key];
         if(rec == NULL)
         {
+#if defined(UMMTP3_STATISTICS_DEBUG)
             NSLog(@"UMMTP3_STATISTICS_DEBUG: creating new record");
-
+#endif
             rec = [[UMMTP3StatisticDbRecord alloc]init];
             rec.ymdh = ymdh;
             rec.incoming_linkset = incomingLinkset;

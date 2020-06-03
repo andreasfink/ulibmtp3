@@ -10,7 +10,7 @@
 #import "UMMTP3StatisticDbRecord.h"
 
 
-#define UMMTP3_STATISTICS_DEBUG 1
+//#define UMMTP3_STATISTICS_DEBUG 1
 
 @implementation UMMTP3StatisticDbRecord
 
