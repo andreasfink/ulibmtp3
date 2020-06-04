@@ -11,6 +11,6 @@ Libs: -L${libdir} -l:libulibmtp3.@SHARED_LIBRARY_EXTENSION@.@MAJORVER@.@MINORVER
 Name: ulibmtp3
 Description: universal SS7 MTP3 library
 Version: @VERSION@
-Requires: ulib ulibm2pa
+Requires: ulib ulibm2pa ulibdb ulibsctp
 
 
