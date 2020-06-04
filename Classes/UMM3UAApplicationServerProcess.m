@@ -2201,7 +2201,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     if(_aspup_received>0)
                     {
                         /* Lets send ASPAC or ASPIA */
-                        if(_standby_mode==1)
+                        if(_standby_mode)
                         {
                             [self sendASPIA:NULL];
                         }
