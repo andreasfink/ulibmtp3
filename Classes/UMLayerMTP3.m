@@ -1405,25 +1405,8 @@
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
         if(r==YES) /* route status has changed */
         {
-            NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
-            for(NSString *linksetName in linksetNames)
-            {
-                UMMTP3LinkSet *linkset = _linksets[linksetName];
-                [linkset advertizePointcodeAvailable:pc mask:mask];
-            }
-
-            NSArray *userKeys = [_userPart allKeys];
-
-            for(NSNumber *userKey in userKeys)
-            {
-                id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
-                [u mtpResume:NULL
-                callingLayer:self
-                  affectedPc:pc
-                          si:(int)[userKey integerValue]
-                          ni:_networkIndicator
-                     options:@{}];
-            }
+            UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
+            [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
         }
         return r;
     }
@@ -1440,25 +1423,8 @@
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
         if(r==YES) /* route status has changed */
         {
-            NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
-            for(NSString *linksetName in linksetNames)
-            {
-                UMMTP3LinkSet *linkset = _linksets[linksetName];
-                [linkset advertizePointcodeRestricted:pc mask:mask];
-            }
-
-            NSArray *userKeys = [_userPart allKeys];
-            for(NSNumber *userKey in userKeys)
-            {
-                id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
-                [u mtpStatus:NULL
-                callingLayer:self
-                  affectedPc:pc
-                          si:(int)[userKey integerValue]
-                          ni:_networkIndicator
-                      status:1 /* FIXME: we could use congestion levels here but its national specific */
-                     options:@{}];
-            }
+            UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
+            [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
         }
         return r;
     }
@@ -1478,27 +1444,109 @@
                                                      priority:prio];
         if(r==YES) /* route status has changed */
         {
-
-            NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
-            for(NSString *linksetName in linksetNames)
-            {
-                UMMTP3LinkSet *linkset = _linksets[linksetName];
-                [linkset advertizePointcodeUnavailable:pc mask:mask];
-            }
-
-            NSArray *userKeys = [_userPart allKeys];
-            for(NSNumber *userKey in userKeys)
-            {
-                id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
-                [u mtpPause:NULL
-               callingLayer:self
-                 affectedPc:pc
-                         si:(int)[userKey integerValue]
-                         ni:_networkIndicator
-                    options:@{}];
-            }
+            UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
+            [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
         }
         return r;
+    }
+}
+
+- (void)updateUpperLevelPointCode:(UMMTP3PointCode *)pc mask:(int)mask status:(UMMTP3RouteStatus)status excludeLinkSetName:(NSString *)name
+{
+    UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
+    if(ir.status == UMMTP3_ROUTE_PROHIBITED)
+    {
+        [self updateOtherLinksetsPointCodeUnavailable:pc mask:mask excludeLinkSetName:name];
+        [self updateUpperLevelPointCodeUnavailable:pc];
+    }
+    else if(ir.status == UMMTP3_ROUTE_RESTRICTED)
+    {
+        [self updateOtherLinksetsPointCodeRestricted:pc mask:mask excludeLinkSetName:name];
+        [self updateUpperLevelPointCodeRestricted:pc];
+
+    }
+    else if(ir.status == UMMTP3_ROUTE_ALLOWED)
+    {
+        [self updateOtherLinksetsPointCodeAvailable:pc mask:mask excludeLinkSetName:name];
+        [self updateUpperLevelPointCodeAvailable:pc];
+    }
+}
+
+- (void)updateUpperLevelPointCodeUnavailable:(UMMTP3PointCode *)pc
+{
+    NSArray *userKeys = [_userPart allKeys];
+    for(NSNumber *userKey in userKeys)
+    {
+        id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
+        [u mtpPause:NULL
+       callingLayer:self
+         affectedPc:pc
+                 si:(int)[userKey integerValue]
+                 ni:_networkIndicator
+            options:@{}];
+    }
+}
+
+- (void)updateUpperLevelPointCodeRestricted:(UMMTP3PointCode *)pc
+{
+    NSArray *userKeys = [_userPart allKeys];
+    for(NSNumber *userKey in userKeys)
+    {
+        id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
+        [u mtpStatus:NULL
+       callingLayer:self
+         affectedPc:pc
+                 si:(int)[userKey integerValue]
+                 ni:_networkIndicator
+             status:1 /* FIXME: we could use congestion levels here but its national specific */
+            options:@{}];
+    }
+}
+
+- (void)updateUpperLevelPointCodeAvailable:(UMMTP3PointCode *)pc
+{
+    NSArray *userKeys = [_userPart allKeys];
+    for(NSNumber *userKey in userKeys)
+    {
+        id<UMLayerMTP3UserProtocol> u = _userPart[userKey];
+        [u mtpResume:NULL
+       callingLayer:self
+         affectedPc:pc
+                 si:(int)[userKey integerValue]
+                 ni:_networkIndicator
+            options:@{}];
+    }
+}
+
+
+- (void)updateOtherLinksetsPointCodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask excludeLinkSetName:(NSString *)name
+{
+    NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
+    for(NSString *linksetName in linksetNames)
+    {
+        UMMTP3LinkSet *linkset = _linksets[linksetName];
+        [linkset advertizePointcodeUnavailable:pc mask:mask];
+    }
+}
+
+- (void)updateOtherLinksetsPointCodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask excludeLinkSetName:(NSString *)name
+{
+    NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
+    for(NSString *linksetName in linksetNames)
+    {
+        UMMTP3LinkSet *linkset = _linksets[linksetName];
+        [linkset advertizePointcodeRestricted:pc mask:mask];
+    }
+
+}
+
+- (void)updateOtherLinksetsPointCodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask excludeLinkSetName:(NSString *)name
+{
+    NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
+    for(NSString *linksetName in linksetNames)
+    {
+        UMMTP3LinkSet *linkset = _linksets[linksetName];
+        [linkset advertizePointcodeAvailable:pc mask:mask];
     }
 }
 
