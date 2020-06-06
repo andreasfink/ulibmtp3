@@ -10,8 +10,6 @@
 #import "UMMTP3StatisticDbRecord.h"
 
 
-//#define UMMTP3_STATISTICS_DEBUG 1
-
 @implementation UMMTP3StatisticDbRecord
 
 
@@ -43,9 +41,6 @@
 
 - (BOOL)insertIntoDb:(UMDbPool *)pool table:(UMDbTable *)dbt /* returns YES on success */
 {
-#if defined(UMMTP3_STATISTICS_DEBUG)
-    NSLog(@"UMMTP3_STATISTICS_DEBUG: insertIntoDb( pool=%@ table=%@",pool.poolName,dbt.tableName);
-#endif
     BOOL success = NO;
     @autoreleasepool
     {
@@ -92,28 +87,17 @@
         @catch (NSException *e)
         {
             NSLog(@"Exception: %@",e);
-            #if defined(UMMTP3_STATISTICS_DEBUG)
-                NSLog(@"UMMTP3_STATISTICS_DEBUG: insert into DB **FAILED **");
-            #endif
         }
         @finally
         {
             [_lock unlock];
         }
     }
-#if defined(UMMTP3_STATISTICS_DEBUG)
-    NSLog(@"UMMTP3_STATISTICS_DEBUG: insert into DB returns %@",success ? @"YES":@"NO");
-#endif
-
     return success;
 }
 
 - (BOOL)updateDb:(UMDbPool *)pool table:(UMDbTable *)dbt /* returns YES on success */
 {
-#if defined(UMMTP3_STATISTICS_DEBUG)
-    NSLog(@"UMMTP3_STATISTICS_DEBUG: updateDb: pool=%@ table=%@",pool.poolName,dbt.tableName);
-#endif
-
     BOOL success = NO;
     @autoreleasepool
     {
@@ -135,11 +119,17 @@
                                 [NSNumber numberWithInt:_bytes_count],
                                  NULL];
             NSString *key = [self keystring];
-#if defined(UMMTP3_STATISTICS_DEBUG)
-    NSLog(@"UMMTP3_STATISTICS_DEBUG: updateDb: key=%@",key);
-#endif
             UMDbSession *session = [pool grabSession:__FILE__ line:__LINE__ func:__func__];
-            success = [session cachedQueryWithNoResult:query parameters:params allowFail:YES primaryKeyValue:key];
+            unsigned long long rowCount;
+            success = [session cachedQueryWithNoResult:query
+                                            parameters:params
+                                             allowFail:YES
+                                       primaryKeyValue:key
+                                          affectedRows:&rowCount];
+            if(rowCount==0)
+            {
+                success = NO;
+            }
             [pool returnSession:session file:__FILE__ line:__LINE__ func:__func__];
         }
         @catch (NSException *e)
@@ -151,19 +141,11 @@
             [_lock unlock];
         }
     }
-#if defined(UMMTP3_STATISTICS_DEBUG)
-    NSLog(@"UMMTP3_STATISTICS_DEBUG: updateDb returns %@",success ? @"YES":@"NO");
-#endif
-
     return success;
 }
 
 - (void)increaseMsuCount:(int)msuCount byteCount:(int)byteCount
 {
-#if defined(UMMTP3_STATISTICS_DEBUG)
-    NSLog(@"UMMTP3_STATISTICS_DEBUG: increaseMsuCount:%d bytecount:%d",msuCount,byteCount);
-#endif
-
     [_lock lock];
     _msu_count += msuCount;
     _bytes_count += byteCount;
@@ -172,9 +154,6 @@
 
 - (void)flushToPool:(UMDbPool *)pool table:(UMDbTable *)table
 {
-#if defined(UMMTP3_STATISTICS_DEBUG)
-    NSLog(@"UMMTP3_STATISTICS_DEBUG: flushToPool:%@ table:%@",pool.poolName,table.tableName);
-#endif
     [_lock lock];
     if([self updateDb:pool table:table] == NO)
     {
