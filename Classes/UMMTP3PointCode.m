@@ -51,7 +51,7 @@
         {
             if(var==UMMTP3Variant_Undefined)
             {
-                var = UMMTP3Variant_China;
+                _variant = UMMTP3Variant_China;
             }
             sscanf(in,"%ld:%ld:%ld",&a,&b,&c);	/* for pointocdes named X:X:X we presume China */
         }
@@ -62,7 +62,7 @@
             {
                 if(var==UMMTP3Variant_Undefined)
                 {
-                    var = UMMTP3Variant_ANSI;
+                    _variant = UMMTP3Variant_ANSI;
                 }
                 sscanf(in,"%ld.%ld.%ld",&a,&b,&c);
             }
@@ -74,7 +74,7 @@
                 {
                     if(var==UMMTP3Variant_Undefined)
                     {
-                        var = UMMTP3Variant_ITU;
+                        _variant = UMMTP3Variant_ITU;
                     }
                     sscanf(in,"%ld-%ld-%ld",&a,&b,&c);
                 }
@@ -83,6 +83,7 @@
                     sscanf(in,"%ld",&res);
                 }
             }
+
         }
         if((_variant == UMMTP3Variant_China)  || (_variant == UMMTP3Variant_ANSI))
         {

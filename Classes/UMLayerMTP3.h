@@ -92,14 +92,24 @@ typedef enum UMMTP3_Error
 
 /* Layer3 access methods */
 
-
+/*
 - (UMMTP3_Error)sendPDU:(NSData *)pdu
                     opc:(UMMTP3PointCode *)fopc
                     dpc:(UMMTP3PointCode *)fdpc
                      si:(int)si
                      mp:(int)mp
                 options:(NSDictionary *)options;
+*/
+- (UMMTP3_Error)sendPDU:(NSData *)pdu
+                    opc:(UMMTP3PointCode *)fopc
+                    dpc:(UMMTP3PointCode *)fdpc
+                     si:(int)si
+                     mp:(int)mp
+                options:(NSDictionary *)options
+        routedToLinkset:(NSString **)routedToLinkset;
 
+
+/*
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
                        opc:(UMMTP3PointCode *)fopc
                        dpc:(UMMTP3PointCode *)fdpc
@@ -107,7 +117,7 @@ typedef enum UMMTP3_Error
                         mp:(int)mp
                      route:(UMMTP3InstanceRoute *)route
                    options:(NSDictionary *)options;
-
+*/
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
                        opc:(UMMTP3PointCode *)fopc
                        dpc:(UMMTP3PointCode *)fdpc
@@ -115,7 +125,9 @@ typedef enum UMMTP3_Error
                         mp:(int)mp
                      route:(UMMTP3InstanceRoute *)route
                    options:(NSDictionary *)options
-             sourceLinkset:(NSString *)sourceLinkset;
+             sourceLinkset:(NSString *)sourceLinkset
+           routedToLinkset:(NSString **)routedToLinkset;
+
 
 #pragma mark -
 #pragma mark LinkSet Handling

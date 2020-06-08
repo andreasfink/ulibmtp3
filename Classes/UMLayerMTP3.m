@@ -860,7 +860,21 @@
     return re;
 }
 
-
+- (UMMTP3_Error)sendPDU:(NSData *)pdu
+            opc:(UMMTP3PointCode *)fopc
+            dpc:(UMMTP3PointCode *)fdpc
+             si:(int)si
+             mp:(int)mp
+        options:(NSDictionary *)options
+{
+    return [self sendPDU:pdu
+                opc:fopc
+                dpc:fdpc
+                 si:si
+                 mp:mp
+            options:options
+    routedToLinkset:NULL];
+}
 
 - (UMMTP3_Error)sendPDU:(NSData *)pdu
                     opc:(UMMTP3PointCode *)fopc
@@ -868,6 +882,7 @@
                      si:(int)si
                      mp:(int)mp
                 options:(NSDictionary *)options
+        routedToLinkset:(NSString **)routedToLinkset
 {
     @autoreleasepool
     {
@@ -883,7 +898,8 @@
                              mp:mp
                           route:route
                         options:options
-                  sourceLinkset:@"local"];
+                  sourceLinkset:@"local"
+                routedToLinkset:routedToLinkset];
     }
 }
 
@@ -902,7 +918,8 @@
                          mp:mp
                       route:route
                     options:options
-              sourceLinkset:@"local"];
+              sourceLinkset:@"local"
+            routedToLinkset:NULL];
 
 }
 
@@ -914,6 +931,7 @@
                      route:(UMMTP3InstanceRoute *)route
                    options:(NSDictionary *)options
              sourceLinkset:(NSString *)sourceLinkset
+           routedToLinkset:(NSString **)routedToLinkset
 {
     @autoreleasepool
     {
@@ -929,12 +947,21 @@
             return UMMTP3_error_no_route_to_destination;
         }
         NSString *linksetName = route.linksetName;
+        if(routedToLinkset)
+        {
+            *routedToLinkset = linksetName;
+        }
         UMMTP3LinkSet *linkset = _linksets[linksetName];
         if(linkset==NULL)
         {
             [self.logFeed majorErrorText:[NSString stringWithFormat:@"linkset named '%@' not found",linksetName]];
+            if(routedToLinkset)
+            {
+                *routedToLinkset = @"no-route-to-destination";
+            }
             return UMMTP3_error_no_route_to_destination;
         }
+
         UMMTP3Label *label = [[UMMTP3Label alloc]init];
         label.opc = fopc;
         label.dpc = fdpc;
@@ -1164,7 +1191,8 @@
                           mp:mp
                        route:route
                      options:options
-               sourceLinkset:linksetName];
+               sourceLinkset:linksetName
+             routedToLinkset:NULL];
         }
         else
         {
