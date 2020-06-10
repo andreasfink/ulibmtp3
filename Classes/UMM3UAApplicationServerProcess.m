@@ -2184,7 +2184,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     }
                     if(_standby_mode)
                     {
-                        /* we want active */
+                        /* we want to be active */
                         [self sendASPIA:NULL];
                     }
                     else
