@@ -710,17 +710,30 @@ static const char *m3ua_param_name(uint16_t param_type)
 
     [super setConfig:cfg applicationContext:appContext];
 
-    _routingKey = NULL;
+    _routingContext = NULL;
     if(cfg[@"routing-key"])
     {
         NSString *s = [cfg[@"routing-key"] stringValue];
         if([s isEqualToStringCaseInsensitive:@"none"])
         {
-            _routingKey =NULL;
+            _routingContext =NULL;
         }
         else
         {
-            _routingKey = @([s integerValue]);
+            _routingContext = @([s integerValue]);
+        }
+    }
+
+    if(cfg[@"routing-context"])
+    {
+        NSString *s = [cfg[@"routing-context"] stringValue];
+        if([s isEqualToStringCaseInsensitive:@"none"])
+        {
+            _routingContext =NULL;
+        }
+        else
+        {
+            _routingContext = @([s integerValue]);
         }
     }
 

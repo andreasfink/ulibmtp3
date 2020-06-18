@@ -32,7 +32,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 {
     /* config params */
     UMM3UATrafficMode   _trafficMode;
-    NSNumber			*_routingKey;
+    NSNumber			*_routingContext;
     NSNumber            *_networkAppearance;
     UMM3UA_Status       _m3ua_status;
     UMSynchronizedSortedDictionary *_applicationServerProcesses;
@@ -43,7 +43,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 
 @property(readwrite,assign,atomic)  UMM3UA_Status       m3ua_status;
 @property(readwrite,assign,atomic)  UMM3UATrafficMode   trafficMode;
-@property(readwrite,strong,atomic)  NSNumber			*routingKey;
+@property(readwrite,strong,atomic)  NSNumber			*routingContext;
 @property(readwrite,strong,atomic)  NSNumber            *networkAppearance;
 @property(readwrite,strong,atomic)  UMMTP3PointCode     *pc;
 
