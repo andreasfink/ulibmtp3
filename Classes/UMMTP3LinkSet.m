@@ -614,7 +614,7 @@
                         }
                         if(slc != slc2)
                         {
-                            [self.logFeed majorErrorText:@"SLTM: SLC received is not matching the links configured SLC"];
+                            [self.logFeed majorErrorText:@"SSLTM: SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
                         if ((idx + len)>maxlen)
@@ -659,7 +659,7 @@
                         }
                         if(slc != slc2)
                         {
-                            [self logMajorError:@"MTP_DECODE: SLTA SLC received is not matching the links configured SLC"];
+                            [self logMajorError:@"MTP_DECODE: SSLTA SLC received is not matching the links configured SLC"];
                             [self protocolViolation];
                         }
                         if ((idx+len)>maxlen)
@@ -1299,9 +1299,14 @@
         [self logDebug:@"processSLTA"];
     }
 
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"processSLTA"];
+    }
+
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected SLTM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
+        [self logMajorError:[NSString stringWithFormat:@"unexpected SLTA transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
@@ -1331,6 +1336,10 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"processSSLTM"];
+    }
 
     if(![self isFromAdjacentToLocal:label])
     {
@@ -1350,9 +1359,13 @@
                  slc:(int)slc
                 link:(UMMTP3Link *)link
 {
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"processSSLTA"];
+    }
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected STLM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
+        [self logMajorError:[NSString stringWithFormat:@"unexpected SSLTA transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
@@ -2114,11 +2127,6 @@
     {
         ni = _overrideNetworkIndicator.intValue;
     }
-
-    if(self.logLevel <= UMLOG_DEBUG)
-    {
-        [self logDebug:@"sendSLTA"];
-    }
     NSMutableData *pdu = [[NSMutableData alloc]init];
     if(_variant==UMMTP3Variant_ANSI)
     {
@@ -2130,6 +2138,18 @@
         [pdu appendByte:([pattern length]<<4)];
     }
     [pdu appendData:pattern];
+    
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+           [self logDebug:@"sendSLTA (Signaling Link Test Answer)"];
+           [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+           [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+           [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
+           [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+           [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+           [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
+           [self logDebug:[NSString stringWithFormat:@" pattern: %@",pattern]];
+    }
     [self sendPdu:pdu
             label:label
           heading:MTP3_TESTING_SLTA
@@ -2171,7 +2191,7 @@
     [pdu appendData:pattern];
     if(_logLevel <=UMLOG_DEBUG)
     {
-        [self logDebug:@"sendSLTM (Traffic-restart-allowed signal)"];
+        [self logDebug:@"sendSLTM (Signaling Link Test Message)"];
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
         [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
@@ -2217,6 +2237,18 @@
     }
     [pdu appendData:pattern];
     label.sls = slc;
+    
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+           [self logDebug:@"sendSSLTA"];
+           [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+           [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+           [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
+           [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+           [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+           [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
+           [self logDebug:[NSString stringWithFormat:@" pattern: %@",pattern]];
+    }
     [self sendPdu:pdu
             label:label
           heading:MTP3_ANSI_TESTING_SSLTA
@@ -2252,6 +2284,18 @@
         [pdu appendByte:([pattern length]<<4)];
     }
     [pdu appendData:pattern];
+    
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+           [self logDebug:@"sendSSLTM"];
+           [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+           [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+           [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
+           [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+           [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+           [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
+           [self logDebug:[NSString stringWithFormat:@" pattern: %@",pattern]];
+    }
     [self sendPdu:pdu
             label:label
           heading:MTP3_ANSI_TESTING_SSLTM
