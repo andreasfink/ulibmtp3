@@ -3719,6 +3719,12 @@
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
     label.sls = link.slc;
+
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        NSString *s = [NSString stringWithFormat:@"LinktestTimerEvent (%d/%d)",_variant,_mtp3.variant];
+        [self logDebug:s];
+    }
     if(_variant == UMMTP3Variant_ANSI)
     {
         [self sendSSLTM:label
