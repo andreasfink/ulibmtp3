@@ -778,6 +778,45 @@
 
         NSString *pcStr = cfg[@"opc"];
         self.opc = [[UMMTP3PointCode alloc]initWithString:pcStr variant:_variant];
+        switch(_variant)
+        {
+            case UMMTP3Variant_ANSI:
+                _ansiOpc = _opc;
+                break;
+            case UMMTP3Variant_Japan:
+                _japanOpc = _opc;
+                break;
+            case UMMTP3Variant_ITU:
+                _ituOpc = _opc;
+                break;
+            case UMMTP3Variant_China:
+                _chinaOpc = _opc;
+                break;
+            default:
+                break;
+        }
+        pcStr = cfg[@"ansi-opc"];
+        if(pcStr)
+        {
+            _ansiOpc = [[UMMTP3PointCode alloc]initWithString:pcStr variant:UMMTP3Variant_ANSI];
+        }
+        pcStr = cfg[@"japan-opc"];
+        if(pcStr)
+        {
+            _japanOpc = [[UMMTP3PointCode alloc]initWithString:pcStr variant:UMMTP3Variant_Japan];
+        }
+        pcStr = cfg[@"japan-opc"];
+        if(pcStr)
+        {
+            _japanOpc = [[UMMTP3PointCode alloc]initWithString:pcStr variant:UMMTP3Variant_Japan];
+        }
+        pcStr = cfg[@"china-opc"];
+        if(pcStr)
+        {
+            _chinaOpc = [[UMMTP3PointCode alloc]initWithString:pcStr variant:UMMTP3Variant_Japan];
+        }
+
+
         NSDictionary *linksetsConfig = cfg[@"linksets"];
         NSString *s = [cfg[@"ni"]stringValue];
 

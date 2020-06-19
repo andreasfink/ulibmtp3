@@ -2277,7 +2277,6 @@
     if(_variant==UMMTP3Variant_ANSI)
     {
         [pdu appendByte:([pattern length]<<4) | (slc & 0x0F)];
-        
     }
     else
     {
@@ -3720,13 +3719,24 @@
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
     label.sls = link.slc;
-    
-    [self sendSLTM:label
-           pattern:pattern
-                ni:_mtp3.networkIndicator
-                mp:0
-               slc:link.slc
-              link:link];
+    if(_variant == UMMTP3Variant_ANSI)
+    {
+        [self sendSSLTM:label
+               pattern:pattern
+                    ni:_mtp3.networkIndicator
+                    mp:0
+                   slc:link.slc
+                  link:link];
+    }
+    else
+    {
+        [self sendSLTM:label
+               pattern:pattern
+                    ni:_mtp3.networkIndicator
+                    mp:0
+                   slc:link.slc
+                  link:link];
+    }
 }
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc

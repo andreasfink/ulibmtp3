@@ -54,6 +54,10 @@ typedef enum UMMTP3_Error
     UMMTP3Variant                   _variant;
     int                             _networkIndicator;
     UMMTP3PointCode                 *_opc;
+    UMMTP3PointCode                 *_ituOpc;
+    UMMTP3PointCode                 *_ansiOpc;
+    UMMTP3PointCode                 *_chinaOpc;
+    UMMTP3PointCode                 *_japanOpc;
     UMMTP3InstanceRoutingTable      *_routingTable;
     UMSynchronizedSortedDictionary  *_userPart;
     UMMTP3InstanceRoute             *_defaultRoute;
@@ -73,6 +77,11 @@ typedef enum UMMTP3_Error
 @property (readwrite,assign,atomic) int                 networkIndicator;
 @property (readwrite,assign,atomic) UMMTP3Variant       variant;
 @property (readwrite,strong,atomic) UMMTP3PointCode     *opc;
+@property (readwrite,strong,atomic) UMMTP3PointCode     *ituOpc;
+@property (readwrite,strong,atomic) UMMTP3PointCode     *ansiOpc;
+@property (readwrite,strong,atomic) UMMTP3PointCode     *chinaOpc;
+@property (readwrite,strong,atomic) UMMTP3PointCode     *japanOpc;
+
 @property (readwrite,strong,atomic) UMMTP3InstanceRoute *defaultRoute;
 @property (readwrite,assign,atomic) BOOL                ready;
 @property (readwrite,strong,atomic) UMMTP3SyslogClient  *problematicPacketDumper;
