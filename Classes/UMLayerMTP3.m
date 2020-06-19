@@ -1472,19 +1472,15 @@
 
 - (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
                         mask:(int)mask
-                 linksetName:(NSString *)name /* returns true if status changed */
-                    priority:(UMMTP3RoutePriority)prio
+                 linksetName:(NSString *)name
+                    priority:(UMMTP3RoutePriority)prio /* returns true if status changed */
 {
     @autoreleasepool
     {
-        BOOL r =YES;
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
-        if(r==YES) /* route status has changed */
-        {
-            UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
-            [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
-        }
-        return r;
+        UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
+        [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
+        return YES;
     }
 }
 
@@ -1495,14 +1491,10 @@
 {
     @autoreleasepool
     {
-        BOOL r =YES;
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
-        if(r==YES) /* route status has changed */
-        {
-            UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
-            [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
-        }
-        return r;
+        UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
+        [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
+        return YES;
     }
 }
 
@@ -1514,16 +1506,13 @@
     @autoreleasepool
     {
 
-        BOOL r = [_routingTable updateDynamicRouteUnavailable:pc
-                                                         mask:mask
-                                                  linksetName:name
-                                                     priority:prio];
-        if(r==YES) /* route status has changed */
-        {
-            UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
-            [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
-        }
-        return r;
+        [_routingTable updateDynamicRouteUnavailable:pc
+                                                mask:mask
+                                         linksetName:name
+                                            priority:prio];
+        UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
+        [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
+        return YES;
     }
 }
 

@@ -66,9 +66,9 @@
 
 
 - (NSArray<UMMTP3InstanceRoute *> *)findRoutesForDestination:(UMMTP3PointCode *)pc
-                                                       mask:(int)mask
-                                         excludeLinkSetName:(NSString *)linksetName
-                                                      exact:(BOOL)exact
+                                                        mask:(int)mask
+                                          excludeLinkSetName:(NSString *)linksetName
+                                                       exact:(BOOL)exact
 {
     [_lock lock];
     NSMutableArray<UMMTP3InstanceRoute *> *r = [[self getRouteArray:pc mask:mask] mutableCopy];
