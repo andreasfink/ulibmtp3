@@ -764,6 +764,7 @@
         else if([var isEqualToString:@"ansi"])
         {
             _variant = UMMTP3Variant_ANSI;
+            _networkIndicator = 2;
         }
         else if([var isEqualToString:@"china"])
         {
@@ -808,8 +809,16 @@
         }
         else
         {
-            [self logMajorError:[NSString stringWithFormat:@"Unknown MTP3 network-indicator '%@' defaulting to international",s]];
-            _networkIndicator = 0;
+            if(_variant == UMMTP3Variant_ANSI)
+            {
+                [self logMajorError:[NSString stringWithFormat:@"Unknown MTP3 network-indicator '%@' defaulting to national (ansi)",s]];
+                _networkIndicator = 2;
+            }
+            else
+            {
+                [self logMajorError:[NSString stringWithFormat:@"Unknown MTP3 network-indicator '%@' defaulting to international",s]];
+                _networkIndicator = 0;
+            }
         }
 
         [self removeAllLinkSets];

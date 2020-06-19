@@ -2152,11 +2152,8 @@
             link:(UMMTP3Link *)link
 {
     _outstandingSLTA++;
+ 
     link.outstandingLinkTests++;
-    if(self.logLevel <= UMLOG_DEBUG)
-    {
-        [self logDebug:@"sendSLTM"];
-    }
     if(_overrideNetworkIndicator)
     {
         ni = _overrideNetworkIndicator.intValue;
@@ -2172,6 +2169,17 @@
         [pdu appendByte:([pattern length]<<4)];
     }
     [pdu appendData:pattern];
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:@"sendSLTM (Traffic-restart-allowed signal)"];
+        [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+        [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+        [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
+        [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+        [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
+        [self logDebug:[NSString stringWithFormat:@" pattern: %@",pattern]];
+    }
     label.sls = slc;
     [self sendPdu:pdu
             label:label
@@ -3663,11 +3671,12 @@
     const char *patternBytes = "I need coffee!";
     unsigned long patternLength = strlen(patternBytes);
     NSData *pattern = [NSData dataWithBytes:patternBytes length:patternLength];
-    
+
     UMMTP3Label *label = [[UMMTP3Label alloc]init];
     label.opc = self.localPointCode;
     label.dpc = self.adjacentPointCode;
     label.sls = link.slc;
+    
     [self sendSLTM:label
            pattern:pattern
                 ni:_mtp3.networkIndicator

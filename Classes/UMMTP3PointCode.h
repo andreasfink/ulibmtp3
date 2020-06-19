@@ -15,7 +15,7 @@
 @interface UMMTP3PointCode : UMObject
 {
     UMMTP3Variant _variant;
-    int _pc;
+    int           _pc;
 }
 
 @property(readwrite,assign) UMMTP3Variant variant;
