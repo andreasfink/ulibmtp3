@@ -990,17 +990,20 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self logDebug:@" stop reopen timer2"];
         [self logDebug:@" start linktest timer"];
     }
-    [_reopen_timer1 stop];
-    [_reopen_timer2 stop];
-    [_linktest_timer stop];
-    if(_linktest_timer_value > 0)
+    if((_status == M3UA_STATUS_INACTIVE) || (_status == M3UA_STATUS_IS))
     {
-        [_linktest_timer start];
+        /* link just came up, why are we getting ASP_AC? */
+        [_reopen_timer1 stop];
+        [_reopen_timer2 stop];
+        [_linktest_timer stop];
+        if(_linktest_timer_value > 0)
+        {
+            [_linktest_timer start];
+        }
+        self.status =  M3UA_STATUS_IS;
+        [_as aspActive:self];
     }
-    self.status =  M3UA_STATUS_IS;
-    [_as aspActive:self];
 }
-
 - (void)processASPIA_ACK:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Inactive acknowledgment */
@@ -2310,7 +2313,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     if(self.active==YES)
     {
-        [self sendASPIA:NULL];
+        if(_status == M3UA_STATUS_IS)
+        {
+            [self sendASPIA:NULL];
+        }
     }
     self.status =  M3UA_STATUS_INACTIVE;
 }
@@ -2319,9 +2325,11 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     if(self.active==NO)
     {
-        [self sendASPAC:NULL];
+        if(_status == M3UA_STATUS_INACTIVE)
+        {
+            [self sendASPAC:NULL];
+        }
     }
-
 }
 
 - (NSString *)statusString
