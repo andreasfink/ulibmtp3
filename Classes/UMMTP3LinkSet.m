@@ -531,6 +531,8 @@
                 return;
             }
         }
+        
+
         NSError *e = NULL;
         UMMTP3TransitPermission_result perm = [self screenIncomingLabel:label error:&e];
         switch(perm)
