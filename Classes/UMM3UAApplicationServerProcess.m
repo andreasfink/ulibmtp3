@@ -1003,13 +1003,18 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         self.status =  M3UA_STATUS_IS;
         [_as aspActive:self];
     }
+    else
+    {
+        [self logDebug:@"received ASPAC-ACK while in wrong state. Powering down to restart"];
+        [self powerOff];
+    }
 }
+
 - (void)processASPIA_ACK:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Inactive acknowledgment */
     self.status =  M3UA_STATUS_INACTIVE;
     [_as aspInactive:self];
-
 }
 
 #pragma mark -
@@ -1560,6 +1565,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [_reopen_timer1 stop];
             [_reopen_timer1 start];
             [_sctpLink closeFor:self];
+            self.status = M3UA_STATUS_OFF;
         }
     }
     @finally
