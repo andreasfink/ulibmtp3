@@ -1421,7 +1421,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     _aspup_received = 0;
     self.status = M3UA_STATUS_OFF;
     
-    [_sctpLink openFor:self sendAbortFirst:YES];
+    [_sctpLink openFor:self sendAbortFirst:NO];
     /* as we are in point to multipoint mode, we can just send (we dont call connectx anymore) so if we initiate the connection we need to send data to establish it */
     
     NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
@@ -2071,7 +2071,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     [_reopen_timer1 stop];
                     [_reopen_timer2 stop];
                     [_linktest_timer stop];
-                    [_sctpLink openFor:self sendAbortFirst:YES];
+                    [_sctpLink openFor:self sendAbortFirst:NO];
                     [_reopen_timer2 start];
                     break;
             }
