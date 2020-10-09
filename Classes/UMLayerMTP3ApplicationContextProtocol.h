@@ -31,4 +31,5 @@
 - (UMMTP3TranslationTableMap *)getTTMap:(NSString *)name;
 - (UMSynchronizedDictionary *)dbPools;
 - (NSString *)filterEnginesPath;
+- (id)licenseDirectory;
 @end

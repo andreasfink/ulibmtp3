@@ -328,7 +328,7 @@
         {
             NSMutableDictionary *open_dict = [[NSMutableDictionary alloc]init];
             open_dict[@"app-delegate"]      = _appdel;
-            open_dict[@"license-directory"] = _licenseDictionary;
+            open_dict[@"license-directory"] = _appdel.licenseDirectory;
             open_dict[@"linkset-delegate"]  = self;
             int r = [ph openWithDictionary:open_dict];
             if(r<0)

@@ -83,7 +83,6 @@
     NSString                    *_mtp3_screeningPluginName;
     NSString                    *_mtp3_screeningPluginConfig;
     UMPlugin<UMMTP3ScreeningPluginProtocol>   *_mtp3_screeningPlugin;
-    id                          _licenseDictionary;
 }
 
 /*
@@ -133,12 +132,9 @@
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_in;
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_out;
 @property(readwrite,strong) NSString                    *lastError;
-
-@property(readwrite,strong) NSString                    *screeningPluginPath;
 @property(readwrite,strong) NSString                    *mtp3_screeningPluginName;
 @property(readwrite,strong) NSString                    *mtp3_screeningPluginConfig;
 @property(readwrite,strong) UMPlugin<UMMTP3ScreeningPluginProtocol>  *mtp3_screeningPlugin;
-@property(readwrite,strong) id                          licenseDictionary;
 
 @property(readwrite,assign) int outstandingSLTA;
 @property(readwrite,strong,atomic) UMSynchronizedSortedDictionary *advertizedPointcodes;
