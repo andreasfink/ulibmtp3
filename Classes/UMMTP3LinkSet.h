@@ -26,6 +26,11 @@
 @class UMMTP3TranslationTableMap;
 @class UMMTP3PointCodeTranslationTable;
 
+@protocol UMMTP3ScreeningPluginProtocol
+-(UMMTP3TransitPermission_result) screenIncomingLabel:(UMMTP3Label *)label  error:(NSError **)e linkset:(NSString *)linksetName;
+- (NSError *)setMtp3ScreeningConfig:(NSString *)config;
+@end
+
 @interface UMMTP3LinkSet : UMObject
 {
     UMLayerMTP3                 *_mtp3;
@@ -75,6 +80,11 @@
     UMThroughputCounter         *_speedometerTx;
     UMThroughputCounter         *_speedometerRxBytes;
     UMThroughputCounter         *_speedometerTxBytes;
+    NSString                    *_screeningPluginPath;
+    NSString                    *_mtp3_screeningPluginName;
+    NSString                    *_mtp3_screeningPluginConfig;
+    UMPlugin<UMMTP3ScreeningPluginProtocol>   *_mtp3_screeningPlugin;
+    id                          _licenseDictionary;
 }
 
 /*
@@ -124,6 +134,12 @@
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_in;
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_out;
 @property(readwrite,strong) NSString                    *lastError;
+
+@property(readwrite,strong) NSString                    *screeningPluginPath;
+@property(readwrite,strong) NSString                    *mtp3_screeningPluginName;
+@property(readwrite,strong) NSString                    *mtp3_screeningPluginConfig;
+@property(readwrite,strong) UMPlugin<UMMTP3ScreeningPluginProtocol>  *mtp3_screeningPlugin;
+@property(readwrite,strong) id                          licenseDictionary;
 
 @property(readwrite,assign) int outstandingSLTA;
 @property(readwrite,strong,atomic) UMSynchronizedSortedDictionary *advertizedPointcodes;
@@ -412,13 +428,12 @@ options:(NSDictionary *)options;
                          mask:(int)mask
                      priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
 
--(UMMTP3PointCode *)remoteToLocalPointcode:(UMMTP3PointCode *)pc;
--(UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc;
--(UMMTP3Label *)remoteToLocalLabel:(UMMTP3Label *)label;
--(UMMTP3Label *)localToRemoteLabel:(UMMTP3Label *)label;
--(int)remoteToLocalNetworkIndicator:(int)ni;
--(int)localToRemoteNetworkIndicator:(int)ni;
-
+- (UMMTP3PointCode *)remoteToLocalPointcode:(UMMTP3PointCode *)pc;
+- (UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc;
+- (UMMTP3Label *)remoteToLocalLabel:(UMMTP3Label *)label;
+- (UMMTP3Label *)localToRemoteLabel:(UMMTP3Label *)label;
+- (int)remoteToLocalNetworkIndicator:(int)ni;
+- (int)localToRemoteNetworkIndicator:(int)ni;
 - (void)reopenTimer1EventFor:(UMMTP3Link *)link;
 - (void)reopenTimer2EventFor:(UMMTP3Link *)link;
 

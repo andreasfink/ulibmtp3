@@ -23,6 +23,7 @@
 #import "UMMTP3InstanceRoutingTable.h"
 #import "UMMTP3PointCodeTranslationTable.h"
 
+
 @implementation UMMTP3LinkSet
 
 - (int)networkIndicator
@@ -303,6 +304,77 @@
 
 - (UMMTP3TransitPermission_result)screenIncomingLabel:(UMMTP3Label *)label error:(NSError **)err
 {
+    if((_mtp3_screeningPluginName.length > 0) && (_mtp3_screeningPlugin == NULL))
+    {
+        /* we have a plugin but it has not been loaded yet */
+        
+        NSString *filepath = [NSString stringWithFormat:@"%@/%@",_screeningPluginPath,_mtp3_screeningPlugin];
+        UMPluginHandler *ph = [[UMPluginHandler alloc]initWithFile:filepath];
+        if(ph==NULL)
+        {
+            NSLog(@"PLUGIN-ERROR: can not load plugin at %@",filepath);
+            _mtp3_screeningPluginName = NULL;
+            _mtp3_screeningPlugin = NULL;
+        }
+        else
+        {
+            NSMutableDictionary *open_dict = [[NSMutableDictionary alloc]init];
+            open_dict[@"app-delegate"]      = _appdel;
+            open_dict[@"license-directory"] = _licenseDictionary;
+            open_dict[@"linkset-delegate"]  = self;
+            int r = [ph openWithDictionary:open_dict];
+            if(r<0)
+            {
+                [ph close];
+                _mtp3_screeningPlugin = NULL;
+                _mtp3_screeningPluginName = NULL;
+                NSLog(@"LOADING-ERROR: can not open plugin at path %@. Reason %@",filepath,ph.error);
+            }
+            else
+            {
+                NSDictionary *info = ph.info;
+                NSString *type = info[@"type"];
+                if(![type isEqualToString:@"mtp3-screening"])
+                {
+                    [ph close];
+                    _mtp3_screeningPlugin = NULL;
+                    _mtp3_screeningPluginName = NULL;
+                    NSLog(@"LOADING-ERROR: plugin at path %@ is not of type mtp3-screening but %@",filepath,type);
+                }
+                else
+                {
+                    UMPlugin<UMMTP3ScreeningPluginProtocol> *p = (UMPlugin<UMMTP3ScreeningPluginProtocol> *)[ph instantiate];
+                    if(![p respondsToSelector:@selector(screenIncomingLabel:error:linkset:)])
+                    {
+                        [ph close];
+                        _mtp3_screeningPlugin = NULL;
+                        _mtp3_screeningPluginName = NULL;
+                        NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method screenIncomingLabel:error:linkset:",filepath);
+                    }
+                    else
+                    {
+                        if(![p respondsToSelector:@selector(setMtp3ScreeningConfig:)])
+                        {
+                            [ph close];
+                            _mtp3_screeningPlugin = NULL;
+                            _mtp3_screeningPluginName = NULL;
+                            NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method setScreeningConfig:",filepath);
+                        }
+                        else
+                        {
+                            [p setMtp3ScreeningConfig:_mtp3_screeningPluginConfig];
+                            _mtp3_screeningPlugin = p;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if(_mtp3_screeningPlugin)
+    {
+        UMMTP3TransitPermission_result r = [_mtp3_screeningPlugin screenIncomingLabel:label  error:err linkset:self.name];
+        return r;
+    }
     /* here we check if we allow the incoming pointcode from this link */
 #if 0
     if(label.opc.variant != self.variant)
@@ -2638,6 +2710,16 @@
     else
     {
         _localPointCode = _mtp3.opc;
+    }
+    if (cfg[@"screening-plugin-name"])
+    {
+        _mtp3_screeningPluginName = [cfg[@"screening-plugin-name"] stringValue];
+        _mtp3_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
+    }
+    if (cfg[@"screening-plugin-config"])
+    {
+        _mtp3_screeningPluginConfig = [cfg[@"screening-plugin-config"] stringValue];
+        _mtp3_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
     }
 
     [self removeAllLinks];
