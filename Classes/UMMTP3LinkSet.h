@@ -72,7 +72,7 @@
     NSString                    *_pointcodeTranslationTableNameBidi;
     NSString                    *_pointcodeTranslationTableNameIn;
     NSString                    *_pointcodeTranslationTableNameOut;
-    id<UMLayerMTP3ApplicationContextProtocol>  _appdel;
+    id<UMLayerMTP3ApplicationContextProtocol>  _appdel; 
     UMSynchronizedSortedDictionary *_advertizedPointcodes;
     BOOL                        _dontAdvertizeRoutes;
     NSString                    *_lastError;
@@ -80,7 +80,6 @@
     UMThroughputCounter         *_speedometerTx;
     UMThroughputCounter         *_speedometerRxBytes;
     UMThroughputCounter         *_speedometerTxBytes;
-    NSString                    *_screeningPluginPath;
     NSString                    *_mtp3_screeningPluginName;
     NSString                    *_mtp3_screeningPluginConfig;
     UMPlugin<UMMTP3ScreeningPluginProtocol>   *_mtp3_screeningPlugin;

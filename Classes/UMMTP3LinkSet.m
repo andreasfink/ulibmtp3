@@ -307,8 +307,16 @@
     if((_mtp3_screeningPluginName.length > 0) && (_mtp3_screeningPlugin == NULL))
     {
         /* we have a plugin but it has not been loaded yet */
+        NSString *filepath;
+        if(([_mtp3_screeningPluginName hasPrefix:@"/"]) || (_appdel.filterEnginesPath.length==0))
+        {
+            filepath = _mtp3_screeningPluginName;
+        }
+        else
+        {
+            filepath = [NSString stringWithFormat:@"%@/%@",_appdel.filterEnginesPath,_mtp3_screeningPluginName];
+        }
         
-        NSString *filepath = [NSString stringWithFormat:@"%@/%@",_screeningPluginPath,_mtp3_screeningPlugin];
         UMPluginHandler *ph = [[UMPluginHandler alloc]initWithFile:filepath];
         if(ph==NULL)
         {

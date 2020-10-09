@@ -30,5 +30,5 @@
 - (UMMTP3PointCodeTranslationTable *)getMTP3PointCodeTranslationTable:(NSString *)name;
 - (UMMTP3TranslationTableMap *)getTTMap:(NSString *)name;
 - (UMSynchronizedDictionary *)dbPools;
-
+- (NSString *)filterEnginesPath;
 @end
