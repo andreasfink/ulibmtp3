@@ -2573,6 +2573,8 @@
     {
         _dontAdvertizeRoutes = YES;
     }
+   
+    
     if(cfg[@"mtp3"])
     {
         NSString *mtp3_name = [cfg[@"mtp3"] stringValue];
@@ -2730,6 +2732,91 @@
         _mtp3_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
     }
 
+    if(cfg[@"routing-update-allow"])
+    {
+        NSString *pcstr = [cfg[@"routing-update-allow"] stringValue];
+        if([pcstr isEqual:@"*"])
+        {
+            _permittedPointcodesInRoutingUpdatesAll = YES;
+        }
+        else
+        {
+            UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
+            if(_permittedPointcodesInRoutingUpdates == NULL)
+            {
+                _permittedPointcodesInRoutingUpdates = @[pc];
+            }
+            else
+            {
+                _permittedPointcodesInRoutingUpdates = [_permittedPointcodesInRoutingUpdates arrayByAddingObject:pc];
+            }
+        }
+    }
+
+    if(cfg[@"routing-update-deny"])
+    {
+        NSString *pcstr = [cfg[@"routing-update-deny"] stringValue];
+        if([pcstr isEqual:@"*"])
+        {
+            _deniedPointcodesInRoutingUpdatesAll = YES;
+        }
+        else
+        {
+            UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
+            if(_deniedPointcodesInRoutingUpdates == NULL)
+            {
+                _deniedPointcodesInRoutingUpdates = @[pc];
+            }
+            else
+            {
+                _deniedPointcodesInRoutingUpdates =  [_deniedPointcodesInRoutingUpdates arrayByAddingObject:pc];
+            }
+        }
+    }
+    
+    
+    if(cfg[@"routing-advertisement-allow"])
+    {
+        NSString *pcstr = [cfg[@"routing-advertisement-allow"] stringValue];
+        if([pcstr isEqual:@"*"])
+        {
+            _dontAdvertizeRoutes = NO;
+        }
+        else
+        {
+            UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
+            if(_allowedAdvertizedPointcodes == NULL)
+            {
+                _allowedAdvertizedPointcodes = @[pc];
+            }
+            else
+            {
+                _allowedAdvertizedPointcodes = [_allowedAdvertizedPointcodes  arrayByAddingObject:pc];
+            }
+        }
+    }
+    if(cfg[@"routing-advertisement-deny"])
+    {
+        NSString *pcstr = [cfg[@"routing-advertisement-deny"] stringValue];
+        if([pcstr isEqual:@"*"])
+        {
+            _dontAdvertizeRoutes = YES;
+        }
+        else
+        {
+            UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
+            if(_deniedAdvertizedPointcodes == NULL)
+            {
+                _deniedAdvertizedPointcodes = @[pc];
+            }
+            else
+            {
+                _deniedAdvertizedPointcodes = [_deniedAdvertizedPointcodes arrayByAddingObject:pc];
+            }
+        }
+    }
+
+    
     [self removeAllLinks];
 }
 
@@ -3841,6 +3928,12 @@
                         mask:(int)mask
                     priority:(UMMTP3RoutePriority)prio
 {
+    if([self allowRoutingUpdateForPointcode:pc mask:mask] == NO)
+    {
+        return;
+    }
+    
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,mask];
@@ -3856,6 +3949,11 @@
                          mask:(int)mask
                      priority:(UMMTP3RoutePriority)prio
 {
+    if([self allowRoutingUpdateForPointcode:pc mask:mask] == NO)
+    {
+        return;
+    }
+
     if(_logLevel <=UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"updateRouteRestricted:%@/%d",pc.stringValue,mask];
@@ -3873,6 +3971,10 @@
                       priority:(UMMTP3RoutePriority)prio
 
 {
+    if([self allowRoutingUpdateForPointcode:pc mask:mask] == NO)
+    {
+        return;
+    }
     if(_logLevel <=UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"updateRouteUnavailable:%@/%d",pc.stringValue,mask];
@@ -3896,6 +3998,11 @@
     {
         return;
     }
+    if([self allowRoutingUpdateForPointcode:pc mask:mask]==NO)
+    {
+        return;
+    }
+
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
@@ -3918,6 +4025,11 @@
     {
         return;
     }
+    if([self allowRoutingUpdateForPointcode:pc mask:mask]==NO)
+    {
+        return;
+    }
+
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
@@ -3940,6 +4052,11 @@
     {
         return;
     }
+    if([self allowRoutingUpdateForPointcode:pc mask:mask]==NO)
+    {
+        return;
+    }
+
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
@@ -4123,5 +4240,72 @@
     }
     return ni;
 }
+
+- (BOOL)allowRoutingUpdateForPointcode:(UMMTP3PointCode *)pc mask:(int)mask
+{
+    if((pc.pc) == (self.adjacentPointCode.pc))
+    {
+        return YES; /* adjacent pointcodes are always allowed as otherwise things would not work at all */
+    }
+    BOOL allowed = YES;
+    if(_deniedPointcodesInRoutingUpdates != NULL)
+    {
+        for(UMMTP3PointCode *ppc in _deniedPointcodesInRoutingUpdates)
+        {
+            if((pc.pc) == (ppc.pc))
+            {
+                allowed = NO;
+                break;
+            }
+        }
+    }
+    if(_permittedPointcodesInRoutingUpdates != NULL)
+    {
+        allowed = NO; /* if we have an allowed list, then it must be in the list */
+        for(UMMTP3PointCode *ppc in _permittedPointcodesInRoutingUpdates)
+        {
+            if((pc.pc) == (ppc.pc))
+            {
+                allowed = YES;
+                break;
+            }
+        }
+    }
+    return allowed;
+}
+
+- (BOOL)allowAdvertizingPointcode:(UMMTP3PointCode *)pc mask:(int)mask /* mask is ignored for now */
+{
+    if((pc.pc) == (self.localPointCode.pc))
+    {
+        return YES; /* local pointcodes are always allowed as otherwise things would not work at all */
+    }
+    BOOL allowed = YES;
+    if(_deniedAdvertizedPointcodes != NULL)
+    {
+        for(UMMTP3PointCode *ppc in _deniedAdvertizedPointcodes)
+        {
+            if((pc.pc) == (ppc.pc))
+            {
+                allowed = NO;
+                break;
+            }
+        }
+    }
+    if(_allowedAdvertizedPointcodes != NULL)
+    {
+        allowed = NO;  /* if we have an allowed list, then it must be in the list */
+        for(UMMTP3PointCode *ppc in _allowedAdvertizedPointcodes)
+        {
+            if((pc.pc) == (ppc.pc))
+            {
+                allowed = YES;
+                break;
+            }
+        }
+    }
+    return allowed;
+}
+
 
 @end

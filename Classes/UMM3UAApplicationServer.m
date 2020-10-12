@@ -497,11 +497,13 @@ static const char *m3ua_param_name(uint16_t param_type)
         NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,mask];
         [self logDebug:s];
     }
-    [_mtp3 updateRouteAvailable:pc
-                           mask:mask
-                    linksetName:_name
-                       priority:prio];
-
+    if([self allowRoutingUpdateForPointcode:pc mask:mask])
+    {
+        [_mtp3 updateRouteAvailable:pc
+                               mask:mask
+                        linksetName:_name
+                           priority:prio];
+    }
 }
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
@@ -517,12 +519,15 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         return;
     }
-    [_mtp3 updateRouteUnavailable:pc
-                             mask:mask
-                      linksetName:_name
-                         priority:prio];
-
+    if([self allowRoutingUpdateForPointcode:pc mask:mask])
+    {
+        [_mtp3 updateRouteUnavailable:pc
+                                 mask:mask
+                          linksetName:_name
+                             priority:prio];
+    }
 }
+
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
                        forAsp:(UMM3UAApplicationServerProcess *)asp
@@ -537,11 +542,14 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         return;
     }
-    [_mtp3 updateRouteRestricted:pc
-                            mask:mask
-                     linksetName:_name
-                        priority:prio];
-
+    if([self allowRoutingUpdateForPointcode:pc mask:mask])
+    {
+        
+        [_mtp3 updateRouteRestricted:pc
+                                mask:mask
+                         linksetName:_name
+                            priority:prio];
+    }
 }
 
 #pragma mark -
@@ -826,10 +834,17 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
+    
     if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
     {
         return;
     }
+    
+    if([self allowRoutingUpdateForPointcode:pc mask:mask]==NO)
+    {
+        return;
+    }
+
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
@@ -850,6 +865,10 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
     if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    {
+        return;
+    }
+    if([self allowRoutingUpdateForPointcode:pc mask:mask]==NO)
     {
         return;
     }
@@ -875,6 +894,10 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    {
+        return;
+    }
+    if([self allowRoutingUpdateForPointcode:pc mask:mask]==NO)
     {
         return;
     }

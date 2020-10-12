@@ -83,6 +83,14 @@
     NSString                    *_mtp3_screeningPluginName;
     NSString                    *_mtp3_screeningPluginConfig;
     UMPlugin<UMMTP3ScreeningPluginProtocol>   *_mtp3_screeningPlugin;
+    NSArray                     *_permittedPointcodesInRoutingUpdates;
+    NSArray                     *_deniedPointcodesInRoutingUpdates;
+    BOOL                        _permittedPointcodesInRoutingUpdatesAll;
+    BOOL                        _deniedPointcodesInRoutingUpdatesAll;
+    
+    NSArray                     *_allowedAdvertizedPointcodes;
+    NSArray                     *_deniedAdvertizedPointcodes;
+
 }
 
 /*
@@ -120,7 +128,6 @@
 @property(readwrite,strong) UMThroughputCounter *speedometerRxBytes;
 @property(readwrite,strong) UMThroughputCounter *speedometerTxBytes;
 @property(readwrite,assign) BOOL  sendExtendedAttributes;
-@property(readwrite,assign) BOOL  dontAdvertizeRoutes;
 @property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTableIn;
 @property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTableOut;
 @property(readwrite,strong) UMMTP3PointCodeTranslationTable *pointcodeTranslationTableBidi;
@@ -138,6 +145,14 @@
 
 @property(readwrite,assign) int outstandingSLTA;
 @property(readwrite,strong,atomic) UMSynchronizedSortedDictionary *advertizedPointcodes;
+
+@property(readwrite,strong,atomic) NSArray                     *permittedPointcodesInRoutingUpdates;
+@property(readwrite,strong,atomic) NSArray                     *deniedPointcodesInRoutingUpdates;
+@property(readwrite,assign,atomic) BOOL                        permittedPointcodesInRoutingUpdatesAll;
+@property(readwrite,assign,atomic) BOOL                        deniedPointcodesInRoutingUpdatesAll;
+@property(readwrite,strong,atomic) NSArray                     *allowedAdvertizedPointcodes;
+@property(readwrite,strong,atomic) NSArray                     *deniedAdvertizedPointcodes;
+@property(readwrite,assign,atomic) BOOL                        dontAdvertizeRoutes;
 
 - (void)addLink:(UMMTP3Link *)lnk;
 - (void)removeLink:(UMMTP3Link *)lnk;
@@ -431,5 +446,7 @@ options:(NSDictionary *)options;
 - (int)localToRemoteNetworkIndicator:(int)ni;
 - (void)reopenTimer1EventFor:(UMMTP3Link *)link;
 - (void)reopenTimer2EventFor:(UMMTP3Link *)link;
+- (BOOL)allowRoutingUpdateForPointcode:(UMMTP3PointCode *)pc mask:(int)mask;
+- (BOOL)allowAdvertizingPointcode:(UMMTP3PointCode *)pc mask:(int)mask;
 
 @end
