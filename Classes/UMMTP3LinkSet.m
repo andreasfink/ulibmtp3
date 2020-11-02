@@ -2734,42 +2734,70 @@
 
     if(cfg[@"routing-update-allow"])
     {
-        NSString *pcstr = [cfg[@"routing-update-allow"] stringValue];
-        if([pcstr isEqual:@"*"])
+        id p = cfg[@"routing-update-allow"];
+        if([p isKindOfClass:[NSString class]])
         {
-            _permittedPointcodesInRoutingUpdatesAll = YES;
+            p = @[p];
         }
-        else
+        if([p isKindOfClass:[NSArray class]])
         {
-            UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
-            if(_permittedPointcodesInRoutingUpdates == NULL)
+            NSArray *p1 = (NSArray *)p;
+            for(NSString *pcstr in p1)
             {
-                _permittedPointcodesInRoutingUpdates = @[pc];
-            }
-            else
-            {
-                _permittedPointcodesInRoutingUpdates = [_permittedPointcodesInRoutingUpdates arrayByAddingObject:pc];
+                if([pcstr isEqual:@"*"])
+                {
+                    _permittedPointcodesInRoutingUpdatesAll = YES;
+                }
+                else
+                {
+                    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
+                    if(pc)
+                    {
+                        if(_permittedPointcodesInRoutingUpdates == NULL)
+                        {
+                            _permittedPointcodesInRoutingUpdates = @[pc];
+                        }
+                        else
+                        {
+                            _permittedPointcodesInRoutingUpdates = [_permittedPointcodesInRoutingUpdates arrayByAddingObject:pc];
+                        }
+                    }
+                }
             }
         }
     }
 
     if(cfg[@"routing-update-deny"])
     {
-        NSString *pcstr = [cfg[@"routing-update-deny"] stringValue];
-        if([pcstr isEqual:@"*"])
+        id p = cfg[@"routing-update-deny"];
+        if([p isKindOfClass:[NSString class]])
         {
-            _deniedPointcodesInRoutingUpdatesAll = YES;
+            p = @[p];
         }
-        else
+        if([p isKindOfClass:[NSArray class]])
         {
-            UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
-            if(_deniedPointcodesInRoutingUpdates == NULL)
+            NSArray *p1 = (NSArray *)p;
+            for(NSString *pcstr in p1)
             {
-                _deniedPointcodesInRoutingUpdates = @[pc];
-            }
-            else
-            {
-                _deniedPointcodesInRoutingUpdates =  [_deniedPointcodesInRoutingUpdates arrayByAddingObject:pc];
+                if([pcstr isEqual:@"*"])
+                {
+                    _deniedPointcodesInRoutingUpdatesAll = YES;
+                }
+                else
+                {
+                    UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
+                    if(pc)
+                    {
+                        if(_deniedPointcodesInRoutingUpdates == NULL)
+                        {
+                            _deniedPointcodesInRoutingUpdates = @[pc];
+                        }
+                        else
+                        {
+                            _deniedPointcodesInRoutingUpdates =  [_deniedPointcodesInRoutingUpdates arrayByAddingObject:pc];
+                        }
+                    }
+                }
             }
         }
     }
