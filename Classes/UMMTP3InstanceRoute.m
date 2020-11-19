@@ -109,7 +109,7 @@
                 _metrics.local_preference = 3;
                 break;
         }
-        _deliveryQueue = [[UMQueue alloc]init];
+        _deliveryQueue = [[UMQueueSingle alloc]init];
         _status = UMMTP3_ROUTE_UNKNOWN;
         _tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
         _last_test = 0;

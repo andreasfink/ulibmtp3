@@ -26,7 +26,7 @@
     UMMTP3PointCode             *_pointcode;
     int                         _mask;
     UMMTP3RouteMetrics          *_metrics;
-    UMQueue                     *_deliveryQueue;
+    UMQueueSingle               *_deliveryQueue;
     UMMTP3RouteStatus           _status;
     UMMTP3RouteTestStatus       _tstatus;
     time_t                      _last_test;
@@ -43,7 +43,7 @@
 @property(readwrite,strong,atomic) NSString *linksetName;
 
 
-@property(readwrite,strong) UMQueue *deliveryQueue;
+@property(readwrite,strong) UMQueueSingle *deliveryQueue;
 @property(readwrite,assign,atomic) UMMTP3RouteStatus           status;
 @property(readwrite,assign) UMMTP3RouteTestStatus       tstatus;
 @property(readwrite,assign) UMMTP3RouteCongestionLevel  congestion;
