@@ -1104,7 +1104,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [pdu appendData:data];
 
     [_outboundThroughputPackets increaseBy:1];
-    [_outboundThroughputBytes increaseBy:pdu.length];
+    [_outboundThroughputBytes increaseBy:(uint32_t)pdu.length];
 
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     if(_as.networkAppearance)
