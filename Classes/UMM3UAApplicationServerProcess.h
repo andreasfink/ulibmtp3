@@ -68,6 +68,11 @@
     NSTimeInterval              _beatTime;
     int                         _beatMaxOutstanding;
     UMTimer                     *_houseKeepingTimer;
+    
+    UMThroughputCounter *_inboundThroughputPackets;
+    UMThroughputCounter *_outboundThroughputPackets;
+    UMThroughputCounter *_inboundThroughputBytes;
+    UMThroughputCounter *_outboundThroughputBytes;
 }
 
 
@@ -86,6 +91,10 @@
 @property(readwrite,strong,atomic)  NSDate *lastBeatAckSent;
 @property(readwrite,assign,atomic)  NSTimeInterval beatTime;
 @property(readwrite,assign,atomic)  int beatMaxOutstanding;
+@property(readwrite,strong,atomic)  UMThroughputCounter *inboundThroughputPackets;
+@property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputPackets;
+@property(readwrite,strong,atomic)  UMThroughputCounter *inboundThroughputBytes;
+@property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputBytes;
 
 
 @property (readonly)                BOOL congested;

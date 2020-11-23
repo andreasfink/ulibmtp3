@@ -87,10 +87,8 @@
     NSArray                     *_deniedPointcodesInRoutingUpdates;
     BOOL                        _permittedPointcodesInRoutingUpdatesAll;
     BOOL                        _deniedPointcodesInRoutingUpdatesAll;
-    
     NSArray                     *_allowedAdvertizedPointcodes;
     NSArray                     *_deniedAdvertizedPointcodes;
-
 }
 
 /*

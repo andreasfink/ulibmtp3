@@ -313,6 +313,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                                                        name:@"housekeeping"
                                                     repeats:YES
                                             runInForeground:YES];
+        _inboundThroughputPackets   = [[UMThroughputCounter alloc]init];
+        _outboundThroughputPackets  = [[UMThroughputCounter alloc]init];
+        _inboundThroughputBytes     = [[UMThroughputCounter alloc]init];
+        _outboundThroughputBytes    = [[UMThroughputCounter alloc]init];
     }
     return self;
 }
@@ -552,6 +556,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         return;
     }
 
+
     network_appearance	= [self getParam:params identifier:M3UA_PARAM_NETWORK_APPEARANCE];
     correlation_id		= [self getParam:params identifier:M3UA_PARAM_CORRELATION_ID];
     routing_context		= [self getParam:params identifier:M3UA_PARAM_ROUTING_CONTEXT];
@@ -572,6 +577,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
 
     data3 = protocolData.bytes;
+    
+    [_inboundThroughputPackets increaseBy:1];
+    [_inboundThroughputBytes increaseBy:(uint32_t)protocolData.length];
+
     i = 0;
     /* here M3UA starts */
     uint32_t opc_int = ntohl(*(uint32_t *)&data3[i]);
@@ -1093,6 +1102,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     header[11] = label.sls & 0xFF;
     NSMutableData *pdu = [NSMutableData dataWithBytes:header length:12];
     [pdu appendData:data];
+
+    [_outboundThroughputPackets increaseBy:1];
+    [_outboundThroughputBytes increaseBy:pdu.length];
 
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     if(_as.networkAppearance)
@@ -2414,7 +2426,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     dict[@"last-beat-ack-sent"] = _lastBeatAckSent;
     dict[@"beat-timer-running"] = _beatTimer.isRunning ? @"YES" : @"NO";
     dict[@"housekeeping-timer-running"] = _houseKeepingTimer.isRunning ? @"YES" : @"NO";
-
+    dict[@"inbound-bytes"] = [_inboundThroughputBytes getSpeedTripleJson];
+    dict[@"inbound-packets"] = [_inboundThroughputPackets getSpeedTripleJson];
+    dict[@"outbound-bytes"] = [_outboundThroughputBytes getSpeedTripleJson];
+    dict[@"outbound-packets"] = [_outboundThroughputPackets getSpeedTripleJson];
     return dict;
 }
 
