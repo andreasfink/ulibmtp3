@@ -770,6 +770,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = "-Wimplicit-fallthrough=3";
 			};
 			name = Debug;
 		};
@@ -822,6 +823,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = "-Wimplicit-fallthrough=3";
 			};
 			name = Release;
 		};
