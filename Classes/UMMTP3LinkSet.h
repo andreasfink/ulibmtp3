@@ -408,6 +408,8 @@ options:(NSDictionary *)options;
 
 - (void)powerOn;
 - (void)powerOff;
+- (void)forcedPowerOn;
+- (void)forcedPowerOff;
 - (void)start:(int)slc;
 - (void)stop:(int)slc;
 - (void)attachmentConfirmed:(int)slc;

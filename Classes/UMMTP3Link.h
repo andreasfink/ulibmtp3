@@ -90,6 +90,9 @@ typedef enum UMMTP3Link_attachmentStatus
 
 - (void)powerOn;
 - (void)powerOff;
+- (void)forcedPowerOn;
+- (void)forcedPowerOff;
+
 - (void)start;
 - (void)stop;
 

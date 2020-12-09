@@ -3720,6 +3720,27 @@
     }
 }
 
+- (void)forcedPowerOff
+{
+    NSArray *linkKeys = [_linksByName allKeys];
+    for(NSString *key in linkKeys)
+    {
+        UMMTP3Link *link = _linksByName[key];
+        [link forcedPowerOff];
+    }
+}
+
+- (void)forcedPowerOn
+{
+    NSArray *linkKeys = [_linksByName allKeys];
+    for(NSString *key in linkKeys)
+    {
+        UMMTP3Link *link = _linksByName[key];
+        [link forcedPowerOn];
+    }
+}
+
+
 - (void)attachmentConfirmed:(int)slc
 {
     UMMTP3Link *link = [self getLinkBySlc:slc];

@@ -208,17 +208,28 @@
 }
 
 
+- (void)forcedPowerOn
+{
+    _forcedOutOfService = NO;
+    [_m2pa powerOnFor:_linkset.mtp3 forced:YES];
+}
+
+- (void)forcedPowerOff
+{
+    _forcedOutOfService = YES;
+    [_m2pa powerOffFor:_linkset.mtp3 forced:YES];
+}
+
 - (void)powerOn
 {
     if(_forcedOutOfService==NO)
     {
-        [_m2pa powerOnFor:_linkset.mtp3];
+        [_m2pa powerOnFor:_linkset.mtp3 forced:NO];
     }
 }
-
 - (void)powerOff
 {
-    [_m2pa powerOffFor:_linkset.mtp3];
+    [_m2pa powerOffFor:_linkset.mtp3 forced:NO];
 }
 
 - (BOOL)emergency
@@ -260,12 +271,16 @@
 
 - (void)start
 {
-    [_m2pa startFor:_linkset.mtp3];
+    if(!_forcedOutOfService)
+    {
+        [_m2pa startFor:_linkset.mtp3];
+    }
+    
 }
 
 - (void)stop
 {
-    [_m2pa stopFor:_linkset.mtp3];
+    [_m2pa stopFor:_linkset.mtp3 forced:_forcedOutOfService];
 }
 
 - (void)linkTestTimerEvent:(id)parameter
