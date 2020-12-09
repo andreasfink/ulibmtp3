@@ -73,6 +73,7 @@
     UMThroughputCounter *_outboundThroughputPackets;
     UMThroughputCounter *_inboundThroughputBytes;
     UMThroughputCounter *_outboundThroughputBytes;
+    BOOL _forcedOutOfService;
 }
 
 
@@ -107,6 +108,9 @@
 
 - (void)powerOn;
 - (void)powerOff;
+
+- (void)forcedPowerOn;
+- (void)forcedPowerOff;
 
 - (void)goInactive;
 - (void)goActive;

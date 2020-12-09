@@ -1472,9 +1472,25 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 }
 
 
+- (void)forcedPowerOn
+{
+    _forcedOutOfService = NO;
+    [self powerOn];
+}
+
+- (void)forcedPowerOff
+{
+    _forcedOutOfService = YES;
+    [self powerOff];
+}
 
 - (void)powerOn
 {
+    if(_forcedOutOfService==YES)
+    {
+        [self logInfo:@"powerOn ignored due to forcedOutOfService"];
+        return;
+    }
     [_aspLock lock];
     @try
     {
