@@ -1131,6 +1131,11 @@
         for(NSString *linksetName in linksetNamesArray)
         {
             UMMTP3LinkSet *ls = _linksets[linksetName];
+            [ls reloadPlugins];
+            [ls reloadPluginConfigs];
+            [ls reopenLogfiles];
+            [ls openMtp3ScreeningTraceFile];
+            [ls openSccpScreeningTraceFile];
             [ls powerOn];
         }
         _isStarted = YES;
@@ -1638,4 +1643,36 @@
 {
     [_statisticDb flush];
 }
+
+
+- (void)reopenLogfiles
+{
+    NSArray *linksetKeys = [_linksets allKeys];
+    for(NSString *name in linksetKeys)
+    {
+        UMMTP3LinkSet *ls = _linksets[name];
+        [ls reopenLogfiles];
+    }
+}
+
+- (void)reloadPluginConfigs
+{
+    NSArray *linksetKeys = [_linksets allKeys];
+    for(NSString *name in linksetKeys)
+    {
+        UMMTP3LinkSet *ls = _linksets[name];
+        [ls reloadPluginConfigs];
+    }
+}
+
+- (void)reloadPlugins
+{
+    NSArray *linksetKeys = [_linksets allKeys];
+    for(NSString *name in linksetKeys)
+    {
+        UMMTP3LinkSet *ls = _linksets[name];
+        [ls reloadPlugins];
+    }
+}
+
 @end

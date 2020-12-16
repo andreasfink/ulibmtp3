@@ -52,6 +52,9 @@
         _speedometerTx  = [[UMThroughputCounter alloc]init];
         _speedometerRxBytes  = [[UMThroughputCounter alloc]init];
         _speedometerTxBytes = [[UMThroughputCounter alloc]init];
+        
+        _sccp_traceLock = [[UMMutex alloc]init];
+        _mtp3_traceLock = [[UMMutex alloc]init];
     }
     return self;
 }
@@ -306,77 +309,7 @@
 {
     if((_mtp3_screeningPluginName.length > 0) && (_mtp3_screeningPlugin == NULL))
     {
-        /* we have a plugin but it has not been loaded yet */
-        NSString *filepath;
-        if(([_mtp3_screeningPluginName hasPrefix:@"/"]) || (_appdel.filterEnginesPath.length==0))
-        {
-            filepath = _mtp3_screeningPluginName;
-        }
-        else
-        {
-            filepath = [NSString stringWithFormat:@"%@/%@",_appdel.filterEnginesPath,_mtp3_screeningPluginName];
-        }
-        
-        UMPluginHandler *ph = [[UMPluginHandler alloc]initWithFile:filepath];
-        if(ph==NULL)
-        {
-            NSLog(@"PLUGIN-ERROR: can not load plugin at %@",filepath);
-            _mtp3_screeningPluginName = NULL;
-            _mtp3_screeningPlugin = NULL;
-        }
-        else
-        {
-            NSMutableDictionary *open_dict = [[NSMutableDictionary alloc]init];
-            open_dict[@"app-delegate"]      = _appdel;
-            open_dict[@"license-directory"] = _appdel.licenseDirectory;
-            open_dict[@"linkset-delegate"]  = self;
-            int r = [ph openWithDictionary:open_dict];
-            if(r<0)
-            {
-                [ph close];
-                _mtp3_screeningPlugin = NULL;
-                _mtp3_screeningPluginName = NULL;
-                NSLog(@"LOADING-ERROR: can not open plugin at path %@. Reason %@",filepath,ph.error);
-            }
-            else
-            {
-                NSDictionary *info = ph.info;
-                NSString *type = info[@"type"];
-                if(![type isEqualToString:@"mtp3-screening"])
-                {
-                    [ph close];
-                    _mtp3_screeningPlugin = NULL;
-                    _mtp3_screeningPluginName = NULL;
-                    NSLog(@"LOADING-ERROR: plugin at path %@ is not of type mtp3-screening but %@",filepath,type);
-                }
-                else
-                {
-                    UMPlugin<UMMTP3ScreeningPluginProtocol> *p = (UMPlugin<UMMTP3ScreeningPluginProtocol> *)[ph instantiate];
-                    if(![p respondsToSelector:@selector(screenIncomingLabel:error:linkset:)])
-                    {
-                        [ph close];
-                        _mtp3_screeningPlugin = NULL;
-                        _mtp3_screeningPluginName = NULL;
-                        NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method screenIncomingLabel:error:linkset:",filepath);
-                    }
-                    else
-                    {
-                        if(![p respondsToSelector:@selector(setMtp3ScreeningConfig:)])
-                        {
-                            [ph close];
-                            _mtp3_screeningPlugin = NULL;
-                            _mtp3_screeningPluginName = NULL;
-                            NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method setScreeningConfig:",filepath);
-                        }
-                        else
-                        {
-                            [p setMtp3ScreeningConfig:_mtp3_screeningPluginConfig];
-                            _mtp3_screeningPlugin = p;
-                        }
-                    }
-                }
-            }
-        }
+        [self loadMtp3ScreeningPlugin];
     }
     if(_mtp3_screeningPlugin)
     {
@@ -2721,15 +2654,36 @@
     {
         _localPointCode = _mtp3.opc;
     }
-    if (cfg[@"screening-plugin-name"])
+    if (cfg[@"screening-mtp3-plugin-name"])
     {
-        _mtp3_screeningPluginName = [cfg[@"screening-plugin-name"] stringValue];
+        _mtp3_screeningPluginName = [cfg[@"screening-mtp3-plugin-name"] stringValue];
         _mtp3_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
     }
-    if (cfg[@"screening-plugin-config-file"])
+    if (cfg[@"screening-mtp3-plugin-config-file"])
     {
-        _mtp3_screeningPluginConfig = [cfg[@"screening-plugin-config-file"] stringValue];
+        _mtp3_screeningPluginConfigFileName = [cfg[@"screening-mtp3-plugin-config-file"] stringValue];
         _mtp3_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
+    }
+    if (cfg[@"screening-mtp3-plugin-trace-file"])
+    {
+        _mtp3_screeningPluginTraceFileName = [cfg[@"screening-mtp3-plugin-trace-file"] stringValue];
+        _mtp3_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
+    }
+
+    if (cfg[@"screening-sccp-plugin-name"])
+    {
+        _sccp_screeningPluginName = [cfg[@"screening-sccp-plugin-name"] stringValue];
+        _sccp_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
+    }
+    if (cfg[@"screening-sccp-plugin-config-file"])
+    {
+        _sccp_screeningPluginConfigFileName = [cfg[@"screening-sccp-plugin-config-file"] stringValue];
+        _sccp_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
+    }
+    if (cfg[@"screening-sccp-plugin-trace-file"])
+    {
+        _sccp_screeningPluginTraceFileName = [cfg[@"screening-sccp-plugin-trace-file"] stringValue];
+        _sccp_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
     }
 
     if(cfg[@"routing-update-allow"])
@@ -2843,8 +2797,6 @@
             }
         }
     }
-
-    
     [self removeAllLinks];
 }
 
@@ -4356,5 +4308,239 @@
     return allowed;
 }
 
+- (void)openSccpScreeningTraceFile
+{
+    [self closeSccpScreeningTraceFile];
+    if(_sccp_screeningPluginTraceFileName.length > 0)
+    {
+        _sccp_screeningPluginTraceFile = fopen(_sccp_screeningPluginTraceFileName.UTF8String,"a+");
+    }
+}
 
+- (void)closeSccpScreeningTraceFile
+{
+    if(_sccp_screeningPluginTraceFile)
+    {
+        fclose(_sccp_screeningPluginTraceFile);
+        _sccp_screeningPluginTraceFile = NULL;
+    }
+}
+
+- (void)writeSccpScreeningTraceFile:(NSString *)s
+{
+    if(_sccp_screeningPluginTraceFile)
+    {
+        [_sccp_traceLock lock];
+        const char *str = [s UTF8String];
+        fprintf(_sccp_screeningPluginTraceFile,"%s\n",str);
+        fflush(_sccp_screeningPluginTraceFile);
+        [_sccp_traceLock unlock];
+    }
+}
+
+
+- (void)openMtp3ScreeningTraceFile
+{
+    [self closeMtp3ScreeningTraceFile];
+    if(_mtp3_screeningPluginTraceFileName.length > 0)
+    {
+        _mtp3_screeningPluginTraceFile = fopen(_mtp3_screeningPluginTraceFileName.UTF8String,"a+");
+    }
+}
+
+- (void)closeMtp3ScreeningTraceFile
+{
+    if(_mtp3_screeningPluginTraceFile)
+    {
+        fclose(_mtp3_screeningPluginTraceFile);
+        _mtp3_screeningPluginTraceFile = NULL;
+    }
+}
+
+- (void)writeMtp3ScreeningTraceFile:(NSString *)s;
+{
+    if(_mtp3_screeningPluginTraceFile)
+    {
+        [_mtp3_traceLock lock];
+        const char *str = [s UTF8String];
+        fprintf(_mtp3_screeningPluginTraceFile,"%s\n",str);
+        fflush(_mtp3_screeningPluginTraceFile);
+        [_mtp3_traceLock unlock];
+    }
+}
+
+- (void)reopenLogfiles
+{
+    [self openMtp3ScreeningTraceFile];
+    [self openSccpScreeningTraceFile];
+}
+
+- (void)reloadPluginConfigs
+{
+    [_mtp3_screeningPlugin reloadConfig];
+    [_sccp_screeningPlugin reloadConfig];
+}
+
+
+- (void)reloadPlugins
+{
+    [_sccp_screeningPlugin close];
+    _sccp_screeningPlugin = NULL;
+    [self loadSccpScreeningPlugin];
+    
+    [_mtp3_screeningPlugin close];
+    _mtp3_screeningPlugin = NULL;
+    [self loadMtp3ScreeningPlugin];
+}
+
+- (void)loadMtp3ScreeningPlugin
+{
+    /* we have a plugin but it has not been loaded yet */
+    NSString *filepath;
+    if(([_mtp3_screeningPluginName hasPrefix:@"/"]) || (_appdel.filterEnginesPath.length==0))
+    {
+        filepath = _mtp3_screeningPluginName;
+    }
+    else
+    {
+        filepath = [NSString stringWithFormat:@"%@/%@",_appdel.filterEnginesPath,_mtp3_screeningPluginName];
+    }
+    
+    UMPluginHandler *ph = [[UMPluginHandler alloc]initWithFile:filepath];
+    if(ph==NULL)
+    {
+        NSLog(@"PLUGIN-ERROR: can not load plugin at %@",filepath);
+        _mtp3_screeningPluginName = NULL;
+        _mtp3_screeningPlugin = NULL;
+    }
+    else
+    {
+        NSMutableDictionary *open_dict = [[NSMutableDictionary alloc]init];
+        open_dict[@"app-delegate"]      = _appdel;
+        open_dict[@"license-directory"] = _appdel.licenseDirectory;
+        open_dict[@"linkset-delegate"]  = self;
+        int r = [ph openWithDictionary:open_dict];
+        if(r<0)
+        {
+            [ph close];
+            _mtp3_screeningPlugin = NULL;
+            _mtp3_screeningPluginName = NULL;
+            NSLog(@"LOADING-ERROR: can not open plugin at path %@. Reason %@",filepath,ph.error);
+        }
+        else
+        {
+            NSDictionary *info = ph.info;
+            NSString *type = info[@"type"];
+            if(![type isEqualToString:@"mtp3-screening"])
+            {
+                [ph close];
+                _mtp3_screeningPlugin = NULL;
+                _mtp3_screeningPluginName = NULL;
+                NSLog(@"LOADING-ERROR: plugin at path %@ is not of type mtp3-screening but %@",filepath,type);
+            }
+            else
+            {
+                UMPlugin<UMMTP3ScreeningPluginProtocol> *p = (UMPlugin<UMMTP3ScreeningPluginProtocol> *)[ph instantiate];
+                if(![p respondsToSelector:@selector(screenIncomingLabel:error:linkset:)])
+                {
+                    [ph close];
+                    _mtp3_screeningPlugin = NULL;
+                    _mtp3_screeningPluginName = NULL;
+                    NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method screenIncomingLabel:error:linkset:",filepath);
+                }
+                else
+                {
+                    if(![p respondsToSelector:@selector(setMtp3ScreeningConfigFile:)])
+                    {
+                        [ph close];
+                        _mtp3_screeningPlugin = NULL;
+                        _mtp3_screeningPluginName = NULL;
+                        NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method setMtp3ScreeningConfigFile:",filepath);
+                    }
+                    else
+                    {
+                        [p setMtp3ScreeningConfigFile:_mtp3_screeningPluginConfigFileName];
+                        _mtp3_screeningPlugin = p;
+                    }
+                }
+            }
+        }
+    }
+}
+
+- (void)loadSccpScreeningPlugin
+{
+    /* we have a plugin but it has not been loaded yet */
+    NSString *filepath;
+    if(([_sccp_screeningPluginName hasPrefix:@"/"]) || (_appdel.filterEnginesPath.length==0))
+    {
+        filepath = _sccp_screeningPluginName;
+    }
+    else
+    {
+        filepath = [NSString stringWithFormat:@"%@/%@",_appdel.filterEnginesPath,_sccp_screeningPluginName];
+    }
+    
+    UMPluginHandler *ph = [[UMPluginHandler alloc]initWithFile:filepath];
+    if(ph==NULL)
+    {
+        NSLog(@"PLUGIN-ERROR: can not load sccp-screening plugin at %@ for layer %@",filepath,_name);
+        _sccp_screeningPlugin = NULL;
+        _sccp_screeningPluginName = NULL;
+    }
+    else
+    {
+        NSMutableDictionary *open_dict = [[NSMutableDictionary alloc]init];
+        open_dict[@"app-delegate"]      = _appdel;
+        open_dict[@"license-directory"] = _appdel.licenseDirectory;
+        open_dict[@"linkset-delegate"]  = self;
+        int r = [ph openWithDictionary:open_dict];
+        if(r<0)
+        {
+            [ph close];
+            _sccp_screeningPlugin = NULL;
+            _sccp_screeningPluginName = NULL;
+            NSLog(@"LOADING-ERROR: can not open plugin at path %@. Reason %@",filepath,ph.error);
+        }
+        else
+        {
+            NSDictionary *info = ph.info;
+            NSString *type = info[@"type"];
+            if(![type isEqualToString:@"sccp-screening"])
+            {
+                [ph close];
+                _sccp_screeningPlugin = NULL;
+                _sccp_screeningPluginName = NULL;
+                NSLog(@"LOADING-ERROR: plugin at path %@ is not of type mtp3-screening but %@",filepath,type);
+            }
+            else
+            {
+                UMPlugin<UMMTP3SCCPScreeningPluginProtocol> *p = (UMPlugin<UMMTP3SCCPScreeningPluginProtocol> *)[ph instantiate];
+                if(![p respondsToSelector:@selector(screenSccpPacketInbound:error:)])
+                {
+                    [ph close];
+                    _sccp_screeningPlugin = NULL;
+                    _sccp_screeningPluginName = NULL;
+                    NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method screenSccpPacketInbound:error:plugin:traceDestination:",filepath);
+                }
+                else
+                {
+
+                    if(![p respondsToSelector:@selector(loadConfigFromFile:)])
+                    {
+                        [ph close];
+                        _mtp3_screeningPlugin = NULL;
+                        _mtp3_screeningPluginName = NULL;
+                        NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method screenSccpPacketInbound:error:plugin:traceDestination::",filepath);
+                    }
+                    else
+                    {
+                        [p loadConfigFromFile:_sccp_screeningPluginConfigFileName];
+                        _sccp_screeningPlugin = p;
+                    }
+                }
+            }
+        }
+    }
+}
 @end

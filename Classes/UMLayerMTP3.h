@@ -328,5 +328,8 @@ typedef enum UMMTP3_Error
 
 - (UMMTP3PointCode *)adjacentPointCodeOfLinkSet:(NSString *)asname;
 
+- (void)reopenLogfiles;
+- (void)reloadPluginConfigs;
+- (void)reloadPlugins;
 
 @end

@@ -14,10 +14,6 @@
 
 @implementation UMMTP3Label
 
-@synthesize opc;
-@synthesize dpc;
-@synthesize sls;
-
 - (UMMTP3Label *)initWithBytes:(const unsigned char *)data pos:(int *)p variant:(UMMTP3Variant) variant
 {
     self = [super init];
@@ -39,11 +35,11 @@
                 xopc |= data[(*p)++] << 16;
                 if(variant==UMMTP3Variant_ANSI)
                 {
-                    sls = data[(*p)++];
+                    _sls = data[(*p)++];
                 }
                 else
                 {
-                    sls = data[(*p)++] & 0x1F;
+                    _sls = data[(*p)++] & 0x1F;
                 }
                 break;
                 
@@ -54,29 +50,29 @@
                 (*p) +=4;
                 xdpc = label & 0x3FFF;
                 xopc = (label >> 14) & 0x3FFF;
-                sls = (label >> 28) & 0x0F;
+                _sls = (label >> 28) & 0x0F;
             }
                 break;
         }
-        opc = [[UMMTP3PointCode alloc]initWithPc:xopc variant:variant];
-        dpc = [[UMMTP3PointCode alloc]initWithPc:xdpc variant:variant];
+        _opc = [[UMMTP3PointCode alloc]initWithPc:xopc variant:variant];
+        _dpc = [[UMMTP3PointCode alloc]initWithPc:xdpc variant:variant];
     }
     return self;
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"[OPC=%@/DPC=%@/SLS=%d]",opc.description,dpc.description,sls];
+    return [NSString stringWithFormat:@"[OPC=%@/DPC=%@/SLS=%d]",_opc.description,_dpc.description,_sls];
 }
 
 - (NSString *)logDescription
 {
-    return [NSString stringWithFormat:@"%@->%@",opc.logDescription,dpc.logDescription];
+    return [NSString stringWithFormat:@"%@->%@",_opc.logDescription,_dpc.logDescription];
 }
 
 - (void) appendToMutableData:(NSMutableData *)d
 {
-    switch(dpc.variant)
+    switch(_dpc.variant)
     {
         case UMMTP3Variant_ANSI:
         case UMMTP3Variant_China:
@@ -84,19 +80,19 @@
         {
             char buf[7];
             
-            buf[0]= dpc.pc & 0xFF;
-            buf[1]= (dpc.pc >> 8) & 0xFF;
-            buf[2]= (dpc.pc >> 16) & 0xFF;
-            buf[3]= opc.pc & 0xFF;
-            buf[4]= (opc.pc >> 8) & 0xFF;
-            buf[5]= (opc.pc >> 16) & 0xFF;
-            if(dpc.variant==UMMTP3Variant_ANSI)
+            buf[0]= _dpc.pc & 0xFF;
+            buf[1]= (_dpc.pc >> 8) & 0xFF;
+            buf[2]= (_dpc.pc >> 16) & 0xFF;
+            buf[3]= _opc.pc & 0xFF;
+            buf[4]= (_opc.pc >> 8) & 0xFF;
+            buf[5]= (_opc.pc >> 16) & 0xFF;
+            if(_dpc.variant==UMMTP3Variant_ANSI)
             {
-                buf[6]= sls;
+                buf[6]= _sls & 0xFF;
             }
             else
             {
-                buf[6]= sls & 0x1F;
+                buf[6]= _sls & 0x1F;
             }
             [d appendBytes:buf length:7];
             
@@ -107,9 +103,9 @@
             char buf[4];
             
             unsigned long label;
-            label = dpc.pc & 0x3FFFF;
-            label = label | ((opc.pc & 0x3FFF) << 14);
-            label = label | ((sls & 0x0F) << 28);
+            label = _dpc.pc & 0x3FFFF;
+            label = label | ((_opc.pc & 0x3FFF) << 14);
+            label = label | ((_sls & 0x0F) << 28);
             buf[0]= label & 0xFF;
             buf[1]= (label>>8) & 0xFF;
             buf[2]= (label>>16) & 0xFF;
@@ -124,24 +120,24 @@
 }
 - (NSString *)opc_dpc
 {
-    return [NSString stringWithFormat:@"%d>%d",opc.pc,dpc.pc];
+    return [NSString stringWithFormat:@"%d>%d",_opc.pc,_dpc.pc];
 }
 
 - (UMMTP3Label *)reverseLabel
 {
     UMMTP3Label *rlabel = [[UMMTP3Label alloc]init];
-    rlabel.opc = self.dpc;
-    rlabel.dpc = self.opc;
-    rlabel.sls = self.sls;
+    rlabel.opc = _dpc;
+    rlabel.dpc = _opc;
+    rlabel.sls = _sls;
     return rlabel;
 }
 
 - (UMMTP3Label *)copyWithZone:(NSZone *)zone
 {
     UMMTP3Label *nlabel = [[UMMTP3Label allocWithZone:zone]init];
-    nlabel.opc = self.opc;
-    nlabel.dpc = self.dpc;
-    nlabel.sls = self.sls;
+    nlabel.opc = _opc;
+    nlabel.dpc = _dpc;
+    nlabel.sls = _sls;
     return nlabel;
 }
 @end

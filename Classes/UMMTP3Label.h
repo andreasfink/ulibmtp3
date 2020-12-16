@@ -17,9 +17,9 @@
 
 @interface UMMTP3Label : UMObject<NSCopying>
 {
-    UMMTP3PointCode *opc;
-    UMMTP3PointCode *dpc;
-    int sls;
+    UMMTP3PointCode *_opc;
+    UMMTP3PointCode *_dpc;
+    int _sls;
 }
 
 @property (readwrite,strong) UMMTP3PointCode *opc;
@@ -35,3 +35,4 @@
 - (UMMTP3Label *)copyWithZone:(NSZone *)zone;
 
 @end
+ 

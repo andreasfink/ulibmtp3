@@ -27,10 +27,21 @@
 @class UMMTP3PointCodeTranslationTable;
 
 @protocol UMMTP3ScreeningPluginProtocol
--(UMMTP3TransitPermission_result) screenIncomingLabel:(UMMTP3Label *)label  error:(NSError **)e linkset:(NSString *)linksetName;
-- (NSError *)setMtp3ScreeningConfig:(NSString *)config;
+-(UMMTP3TransitPermission_result) screenIncomingLabel:(UMMTP3Label *)label
+                                                error:(NSError **)e
+                                              linkset:(NSString *)linksetName;
+- (NSError *)setMtp3ScreeningConfigFile:(NSString *)config;
 - (void)reloadConfig;
+- (void)close;
 @end
+
+@protocol UMMTP3SCCPScreeningPluginProtocol
+- (int)screenSccpPacketInbound:(id)packet error:(NSError **)err;
+- (void)loadConfigFromFile:(NSString *)filename;
+- (void)reloadConfig;
+- (void)close;
+@end
+
 
 @interface UMMTP3LinkSet : UMObject
 {
@@ -81,9 +92,22 @@
     UMThroughputCounter         *_speedometerTx;
     UMThroughputCounter         *_speedometerRxBytes;
     UMThroughputCounter         *_speedometerTxBytes;
-    NSString                    *_mtp3_screeningPluginName;
-    NSString                    *_mtp3_screeningPluginConfig;
-    UMPlugin<UMMTP3ScreeningPluginProtocol>   *_mtp3_screeningPlugin;
+
+    UMPlugin<UMMTP3ScreeningPluginProtocol> *_mtp3_screeningPlugin;
+    NSString                                *_mtp3_screeningPluginName;
+    NSString                                *_mtp3_screeningPluginConfigFileName;
+    NSString                                *_mtp3_screeningPluginTraceFileName;
+    FILE                                    *_mtp3_screeningPluginTraceFile;
+
+    UMPlugin<UMMTP3SCCPScreeningPluginProtocol>*_sccp_screeningPlugin;
+    NSString                                *_sccp_screeningPluginName;
+    NSString                                *_sccp_screeningPluginConfigFileName;
+    NSString                                *_sccp_screeningPluginTraceFileName;
+    FILE                                    *_sccp_screeningPluginTraceFile;
+
+    UMMutex                                 *_mtp3_traceLock;
+    UMMutex                                 *_sccp_traceLock;
+
     NSArray                     *_permittedPointcodesInRoutingUpdates;
     NSArray                     *_deniedPointcodesInRoutingUpdates;
     BOOL                        _permittedPointcodesInRoutingUpdatesAll;
@@ -138,9 +162,20 @@
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_in;
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_out;
 @property(readwrite,strong) NSString                    *lastError;
-@property(readwrite,strong) NSString                    *mtp3_screeningPluginName;
-@property(readwrite,strong) NSString                    *mtp3_screeningPluginConfig;
-@property(readwrite,strong) UMPlugin<UMMTP3ScreeningPluginProtocol>  *mtp3_screeningPlugin;
+
+
+@property(readwrite,strong) UMPlugin<UMMTP3ScreeningPluginProtocol> *mtp3_screeningPlugin;
+@property(readwrite,strong) NSString                                *mtp3_screeningPluginName;
+@property(readwrite,strong) NSString                                *mtp3_screeningPluginConfigFileName;
+@property(readwrite,strong) NSString                                *mtp3_screeningPluginTraceFileName;
+
+@property(readwrite,strong) UMPlugin                                *sccp_screeningPlugin;
+@property(readwrite,strong) NSString                                *sccp_screeningPluginName;
+@property(readwrite,strong) NSString                                *sccp_screeningPluginConfigFileName;
+@property(readwrite,strong) NSString                                *sccp_screeningPluginTraceFileName;
+
+@property(readwrite,strong) UMMutex                                 *traceLock;
+
 
 @property(readwrite,assign) int outstandingSLTA;
 @property(readwrite,strong,atomic) UMSynchronizedSortedDictionary *advertizedPointcodes;
@@ -449,5 +484,19 @@ options:(NSDictionary *)options;
 - (void)reopenTimer2EventFor:(UMMTP3Link *)link;
 - (BOOL)allowRoutingUpdateForPointcode:(UMMTP3PointCode *)pc mask:(int)mask;
 - (BOOL)allowAdvertizingPointcode:(UMMTP3PointCode *)pc mask:(int)mask;
+
+
+- (void)openMtp3ScreeningTraceFile;
+- (void)closeMtp3ScreeningTraceFile;
+- (void)writeMtp3ScreeningTraceFile:(NSString *)s;
+
+- (void)openSccpScreeningTraceFile;
+- (void)closeSccpScreeningTraceFile;
+- (void)writeSccpScreeningTraceFile:(NSString *)s;
+
+
+- (void)reopenLogfiles;
+- (void)reloadPluginConfigs;
+- (void)reloadPlugins;
 
 @end
