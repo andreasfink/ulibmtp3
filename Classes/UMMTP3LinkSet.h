@@ -29,6 +29,7 @@
 @protocol UMMTP3ScreeningPluginProtocol
 -(UMMTP3TransitPermission_result) screenIncomingLabel:(UMMTP3Label *)label  error:(NSError **)e linkset:(NSString *)linksetName;
 - (NSError *)setMtp3ScreeningConfig:(NSString *)config;
+- (void)reloadConfig;
 @end
 
 @interface UMMTP3LinkSet : UMObject

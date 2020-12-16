@@ -2726,9 +2726,9 @@
         _mtp3_screeningPluginName = [cfg[@"screening-plugin-name"] stringValue];
         _mtp3_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
     }
-    if (cfg[@"screening-plugin-config"])
+    if (cfg[@"screening-plugin-config-file"])
     {
-        _mtp3_screeningPluginConfig = [cfg[@"screening-plugin-config"] stringValue];
+        _mtp3_screeningPluginConfig = [cfg[@"screening-plugin-config-file"] stringValue];
         _mtp3_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
     }
 
