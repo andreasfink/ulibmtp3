@@ -857,7 +857,7 @@
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.14.0;
+				MARKETING_VERSION = 1.14.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.fink.ulibmtp3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -883,7 +883,7 @@
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.14.0;
+				MARKETING_VERSION = 1.14.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.fink.ulibmtp3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
