@@ -52,9 +52,8 @@
         _speedometerTx  = [[UMThroughputCounter alloc]init];
         _speedometerRxBytes  = [[UMThroughputCounter alloc]init];
         _speedometerTxBytes = [[UMThroughputCounter alloc]init];
-        
-        _sccp_traceLock = [[UMMutex alloc]init];
-        _mtp3_traceLock = [[UMMutex alloc]init];
+        _sccp_traceLock = [[UMMutex alloc]initWithName:@"sccp-trace-lock"];
+        _mtp3_traceLock = [[UMMutex alloc]initWithName:@"mtp3-trace-lock"];
     }
     return self;
 }
