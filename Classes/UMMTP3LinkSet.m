@@ -4449,16 +4449,16 @@
                 }
                 else
                 {
-                    if(![p respondsToSelector:@selector(setMtp3ScreeningConfigFile:)])
+                    if(![p respondsToSelector:@selector(loadConfigFromFile:)])
                     {
                         [ph close];
                         _mtp3_screeningPlugin = NULL;
                         _mtp3_screeningPluginName = NULL;
-                        NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method setMtp3ScreeningConfigFile:",filepath);
+                        NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method loadConfigFromFile:",filepath);
                     }
                     else
                     {
-                        [p setMtp3ScreeningConfigFile:_mtp3_screeningPluginConfigFileName];
+                        [p loadConfigFromFile:_mtp3_screeningPluginConfigFileName];
                         _mtp3_screeningPlugin = p;
                     }
                 }
