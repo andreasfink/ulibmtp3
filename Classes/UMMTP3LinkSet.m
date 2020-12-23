@@ -4329,11 +4329,14 @@
 {
     if(_sccp_screeningPluginTraceFile)
     {
-        [_sccp_traceLock lock];
-        const char *str = [s UTF8String];
-        fprintf(_sccp_screeningPluginTraceFile,"%s\n",str);
-        fflush(_sccp_screeningPluginTraceFile);
-        [_sccp_traceLock unlock];
+        @autoreleasepool
+        {
+            [_sccp_traceLock lock];
+            const char *str = [s UTF8String];
+            fprintf(_sccp_screeningPluginTraceFile,"%s\n",str);
+            fflush(_sccp_screeningPluginTraceFile);
+            [_sccp_traceLock unlock];
+        }
     }
 }
 
@@ -4360,11 +4363,14 @@
 {
     if(_mtp3_screeningPluginTraceFile)
     {
-        [_mtp3_traceLock lock];
-        const char *str = [s UTF8String];
-        fprintf(_mtp3_screeningPluginTraceFile,"%s\n",str);
-        fflush(_mtp3_screeningPluginTraceFile);
-        [_mtp3_traceLock unlock];
+        @autoreleasepool
+        {
+            [_mtp3_traceLock lock];
+            const char *str = [s UTF8String];
+            fprintf(_mtp3_screeningPluginTraceFile,"%s\n",str);
+            fflush(_mtp3_screeningPluginTraceFile);
+            [_mtp3_traceLock unlock];
+        }
     }
 }
 

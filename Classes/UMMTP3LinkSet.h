@@ -36,12 +36,19 @@
 @end
 
 @protocol UMMTP3SCCPScreeningPluginProtocol
-- (int)screenSccpPacketInbound:(id)packet error:(NSError **)err;
+- (int)screenSccpPacketInbound:(id)packet
+                         error:(NSError **)err;
 - (void)loadConfigFromFile:(NSString *)filename;
 - (void)reloadConfig;
 - (void)close;
 @end
 
+typedef enum UMMTP3ScreeningTraceLevel
+{
+    UMMTP3ScreeningTraceLevel_none = 0,
+    UMMTP3ScreeningTraceLevel_rejected_only = 1,
+    UMMTP3ScreeningTraceLevel_everything = 2,
+} UMMTP3ScreeningTraceLevel;
 
 @interface UMMTP3LinkSet : UMObject
 {
@@ -114,6 +121,9 @@
     BOOL                        _deniedPointcodesInRoutingUpdatesAll;
     NSArray                     *_allowedAdvertizedPointcodes;
     NSArray                     *_deniedAdvertizedPointcodes;
+    
+    UMMTP3ScreeningTraceLevel _sccpScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
+    UMMTP3ScreeningTraceLevel _mtp3ScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
 }
 
 /*
@@ -187,6 +197,8 @@
 @property(readwrite,strong,atomic) NSArray                     *allowedAdvertizedPointcodes;
 @property(readwrite,strong,atomic) NSArray                     *deniedAdvertizedPointcodes;
 @property(readwrite,assign,atomic) BOOL                        dontAdvertizeRoutes;
+@property(readwrite,assign,atomic) UMMTP3ScreeningTraceLevel    sccpScreeningTraceLevel;
+@property(readwrite,assign,atomic) UMMTP3ScreeningTraceLevel    mtp3ScreeningTraceLevel;
 
 - (void)addLink:(UMMTP3Link *)lnk;
 - (void)removeLink:(UMMTP3Link *)lnk;
@@ -493,7 +505,6 @@ options:(NSDictionary *)options;
 - (void)openSccpScreeningTraceFile;
 - (void)closeSccpScreeningTraceFile;
 - (void)writeSccpScreeningTraceFile:(NSString *)s;
-
 
 - (void)reopenLogfiles;
 - (void)reloadPluginConfigs;
