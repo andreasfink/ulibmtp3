@@ -2668,6 +2668,25 @@
         _mtp3_screeningPluginTraceFileName = [cfg[@"screening-mtp3-plugin-trace-file"] stringValue];
         _mtp3_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
     }
+    if (cfg[@"screening-mtp3-plugin-trace-level"])
+    {
+        NSNumber *n = cfg[@"screening-mtp3-plugin-trace-level"];
+        NSInteger i = n.integerValue;
+        switch(i)
+        {
+            case 0:
+                _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_none;
+                break;
+            case 1:
+                _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_rejected_only;
+                break;
+            case 2:
+                _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_everything;
+                break;
+            default:
+                NSLog(@"Invalid value for screening-mtp3-plugin-trace-level. Should be 0...2");
+        }
+    }
 
     if (cfg[@"screening-sccp-plugin-name"])
     {
@@ -2683,6 +2702,26 @@
     {
         _sccp_screeningPluginTraceFileName = [cfg[@"screening-sccp-plugin-trace-file"] stringValue];
         _sccp_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
+    }
+
+    if (cfg[@"screening-sccp-plugin-trace-level"])
+    {
+        NSNumber *n = cfg[@"screening-sccp-plugin-trace-level"];
+        NSInteger i = n.integerValue;
+        switch(i)
+        {
+            case 0:
+                _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_none;
+                break;
+            case 1:
+                _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_rejected_only;
+                break;
+            case 2:
+                _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_everything;
+                break;
+            default:
+                NSLog(@"Invalid value for screening-sccp-plugin-trace-level. Should be 0...2");
+        }
     }
 
     if(cfg[@"routing-update-allow"])

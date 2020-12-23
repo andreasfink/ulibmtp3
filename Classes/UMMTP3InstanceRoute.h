@@ -42,7 +42,6 @@
 @property(readwrite,assign,atomic) int mask;
 @property(readwrite,strong,atomic) NSString *linksetName;
 
-
 @property(readwrite,strong) UMQueueSingle *deliveryQueue;
 @property(readwrite,assign,atomic) UMMTP3RouteStatus           status;
 @property(readwrite,assign) UMMTP3RouteTestStatus       tstatus;
