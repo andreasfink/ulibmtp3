@@ -4351,7 +4351,7 @@
     [self closeSccpScreeningTraceFile];
     if(_sccp_screeningPluginTraceFileName.length > 0)
     {
-        _sccp_screeningPluginTraceFile = fopen(_sccp_screeningPluginTraceFileName.UTF8String,"a+");
+        _sccp_screeningPluginTraceFile = fopen(_sccp_screeningPluginTraceFileName.UTF8String,"a+");        
     }
 }
 
