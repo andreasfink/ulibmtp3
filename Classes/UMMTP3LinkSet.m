@@ -4439,6 +4439,10 @@
 
 - (void)loadMtp3ScreeningPlugin
 {
+    if(_mtp3_screeningPluginName ==NULL)
+    {
+        return;
+    }
     /* we have a plugin but it has not been loaded yet */
     NSString *filepath;
     if(([_mtp3_screeningPluginName hasPrefix:@"/"]) || (_appdel.filterEnginesPath.length==0))
@@ -4516,6 +4520,10 @@
 {
     /* we have a plugin but it has not been loaded yet */
     NSString *filepath;
+    if(_sccp_screeningPluginName == NULL)
+    {
+        return;
+    }
     if(([_sccp_screeningPluginName hasPrefix:@"/"]) || (_appdel.filterEnginesPath.length==0))
     {
         filepath = _sccp_screeningPluginName;
