@@ -1090,8 +1090,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     ni = [_as localToRemoteNetworkIndicator:ni];
 
     uint8_t header[12];
-    uint32_t opc = label.opc.integerValue;
-    uint32_t dpc = label.dpc.integerValue;
+    uint32_t opc = translatedLabel.opc.integerValue;
+    uint32_t dpc = translatedLabel.dpc.integerValue;
 
     header[0] = (opc & 0xFF000000) >> 24;
     header[1] = (opc & 0x00FF0000) >> 16;
