@@ -668,9 +668,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     label.dpc = dpc;
     label.sls = sls;
     NSData *protocolData2 = [NSData dataWithBytes:&data3[i] length:protocolData.length-i];
-    ni = [_as remoteToLocalNetworkIndicator:ni];
     UMMTP3Label *translatedLabel = [_as remoteToLocalLabel:label];
-
+    ni = [_as remoteToLocalNetworkIndicator:ni];
     switch(si)
     {
         case 0x00:
