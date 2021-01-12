@@ -781,7 +781,6 @@ static const char *m3ua_param_name(uint16_t param_type)
         }
     }
     
-    
     if(cfg[@"pointcode-translation-table"]) /* optional */
     {
         _pointcodeTranslationTableNameBidi = [cfg[@"pointcode-translation-table"] stringValue];
@@ -831,7 +830,6 @@ static const char *m3ua_param_name(uint16_t param_type)
             _overrideNetworkIndicator = 0;
         }
     }
-
 }
 
 - (void)m3uaCongestion:(UMM3UAApplicationServerProcess *)asp
@@ -849,12 +847,10 @@ static const char *m3ua_param_name(uint16_t param_type)
      congestionIndicator:congestion_indicator];
 }
 
-
 - (void)protocolViolation
 {
 
 }
-
 
 - (NSArray *)activeApplicationServerProcessesToUse
 {

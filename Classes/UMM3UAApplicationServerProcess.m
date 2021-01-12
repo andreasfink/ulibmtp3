@@ -714,6 +714,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
+        pc = [_as remoteToLocalPointcode:pc];
         UMMTP3RoutePriority p = UMMTP3RoutePriority_5;
         if(pc.pc == _as.adjacentPointCode.pc)
         {
@@ -741,6 +742,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
+        pc = [_as remoteToLocalPointcode:pc];
         UMMTP3RoutePriority p = UMMTP3RoutePriority_5;
         if(pc.pc == _as.adjacentPointCode.pc)
         {
@@ -774,6 +776,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         int mask = 0;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
+        pc = [_as remoteToLocalPointcode:pc];
         [self logDebug:[NSString stringWithFormat:@" affected pointcode %@",pc]];
         if(pc)
         {
@@ -853,6 +856,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         int mask = 14;
         UMMTP3PointCode *aff_pc = [self extractAffectedPointCode:d mask:&mask];
+        aff_pc = [_as remoteToLocalPointcode:aff_pc];
         if(aff_pc)
         {
             [_as m3uaCongestion:self
@@ -894,6 +898,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         int mask;
         UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
 #pragma unused(pc)
+        //pc = [_as remoteToLocalPointcode:pc];
         //[self processTFR:label destination:pc ni:ni mp:mp slc:0 link:NULL mask:mask];
     }
 }
@@ -1086,7 +1091,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     ackRequest:(NSDictionary *)ackRequest
  correlationId:(uint32_t)correlation_id
        options:(NSDictionary *)options
-{
+{  
     UMMTP3Label *translatedLabel = [_as localToRemoteLabel:label];
     ni = [_as localToRemoteNetworkIndicator:ni];
 
@@ -2331,21 +2336,24 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:mask]];
+    UMMTP3PointCode *translatedPointCode = [_as localToRemotePointcode:pc];
+    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:translatedPointCode mask:mask]];
     [self sendDAVA:pl];
 }
 
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:mask]];
+    UMMTP3PointCode *translatedPointCode = [_as localToRemotePointcode:pc];
+    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:translatedPointCode mask:mask]];
     [self sendDUNA:pl];
 }
 
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:pc mask:mask]];
+    UMMTP3PointCode *translatedPointCode = [_as localToRemotePointcode:pc];
+    [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:translatedPointCode mask:mask]];
     [self sendDUNA:pl];
 }
 
