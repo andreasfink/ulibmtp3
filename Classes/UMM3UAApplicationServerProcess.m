@@ -668,6 +668,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     label.dpc = dpc;
     label.sls = sls;
     NSData *protocolData2 = [NSData dataWithBytes:&data3[i] length:protocolData.length-i];
+    ni = [_as remoteToLocalNetworkIndicator:ni];
+    UMMTP3Label *translatedLabel = [_as remoteToLocalLabel:label];
+
     switch(si)
     {
         case 0x00:
@@ -679,7 +682,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             break;
         default:
             [_as msuIndication2:protocolData2
-                         label:label
+                         label:translatedLabel
                             si:si
                             ni:ni
                             mp:mp
@@ -1084,6 +1087,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
  correlationId:(uint32_t)correlation_id
        options:(NSDictionary *)options
 {
+    UMMTP3Label *translatedLabel = [_as localToRemoteLabel:label];
+    ni = [_as localToRemoteNetworkIndicator:ni];
+
     uint8_t header[12];
     uint32_t opc = label.opc.integerValue;
     uint32_t dpc = label.dpc.integerValue;
