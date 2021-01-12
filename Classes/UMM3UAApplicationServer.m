@@ -780,6 +780,58 @@ static const char *m3ua_param_name(uint16_t param_type)
             _trafficMode = UMM3UATrafficMode_loadshare;
         }
     }
+    
+    
+    if(cfg[@"pointcode-translation-table"]) /* optional */
+    {
+        _pointcodeTranslationTableNameBidi = [cfg[@"pointcode-translation-table"] stringValue];
+    }
+    if(cfg[@"pointcode-translation-table-in"]) /* optional */
+    {
+        _pointcodeTranslationTableNameIn = [cfg[@"pointcode-translation-table-in"] stringValue];
+    }
+    if(cfg[@"pointcode-translation-table-out"]) /* optional */
+    {
+        _pointcodeTranslationTableNameOut = [cfg[@"pointcode-translation-table-out"] stringValue];
+    }
+
+    _overrideNetworkIndicator = NULL;
+    if (cfg[@"override-network-indicator"])
+    {
+        NSString *s = [cfg[@"override-network-indicator"] stringValue];
+        if((  [s isEqualToStringCaseInsensitive:@"international"])
+           || ([s isEqualToStringCaseInsensitive:@"int"])
+           || ([s isEqualToStringCaseInsensitive:@"0"]))
+        {
+            _overrideNetworkIndicator = @(0);
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"national"])
+                || ([s isEqualToStringCaseInsensitive:@"nat"])
+                || ([s isEqualToStringCaseInsensitive:@"2"]))
+        {
+            _overrideNetworkIndicator = @(2);
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"spare"])
+                || ([s isEqualToStringCaseInsensitive:@"international-spare"])
+                || ([s isEqualToStringCaseInsensitive:@"int-spare"])
+                || ([s isEqualToStringCaseInsensitive:@"1"]))
+        {
+            _overrideNetworkIndicator = @(1);
+        }
+        else if(([s isEqualToStringCaseInsensitive:@"reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"national-reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"nat-reserved"])
+                || ([s isEqualToStringCaseInsensitive:@"3"]))
+        {
+            _overrideNetworkIndicator = @(3);
+        }
+        else
+        {
+            [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA network-indicator '%@' defaulting to international",s]];
+            _overrideNetworkIndicator = 0;
+        }
+    }
+
 }
 
 - (void)m3uaCongestion:(UMM3UAApplicationServerProcess *)asp
