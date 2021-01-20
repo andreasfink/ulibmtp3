@@ -1,0 +1,23 @@
+
+ton = type of number  (E164=1, E212, E214, alphanumeric=5)
+npi = numbering plan indicator  (International  / National / unspecified ..)
+digits = 1234
+
+
+1234  = national
++12345 = ton=1, npi=1  international nubmer
+0012345 ->   +12345
+012345 -> 12345, national
+abcdxzy ->   ton=5 (alpha), npi=0 (unspecified)
+
+
+:7:5:0:12345
+    ton=7
+    npi=5
+    nai=0
+    digits:12345
+    
+
+:5:0:0:abc
+    alphanumeric
+    
