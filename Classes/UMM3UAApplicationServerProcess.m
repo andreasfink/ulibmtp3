@@ -957,7 +957,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         }
         UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
         pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
-        [self sendASPAC:pl];
+        if(_as.send_aspac)
+        {
+            [self sendASPAC:pl];
+        }
     }
 }
 
@@ -1547,8 +1550,11 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
             UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
             pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
-            sleep(1);
-            [self sendASPUP:pl];
+            if(_as.send_aspup)
+            {
+                sleep(1);
+                [self sendASPUP:pl];
+            }
         }
         self.status = M3UA_STATUS_BUSY;
         [_speedometer clear];
@@ -2230,16 +2236,20 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     {
                         [self logDebug:@"linktest_timer_fires we are in state M3UA_STATUS_INACTIVE"];
                     }
-                    if(_standby_mode)
+                    if(_as.send_aspac)
                     {
-                        /* we want to be active */
-                        [self sendASPIA:NULL];
+                        if(_standby_mode)
+                        {
+                            /* we want to be active */
+                            [self sendASPIA:NULL];
+                        }
+                        else
+                        {
+                           /* we want to be active */
+                            [self sendASPAC:NULL];
+                        }
                     }
-                    else
-                    {
-                       /* we want to be active */
-                        [self sendASPAC:NULL];
-                    }
+                    
                     break;
                 case M3UA_STATUS_IS:
                     if(self.logLevel <= UMLOG_DEBUG)
@@ -2248,16 +2258,19 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     }
                     if(_aspup_received>0)
                     {
-                        /* Lets send ASPAC or ASPIA */
-                        if(_standby_mode)
+                        if(_as.send_aspac)
                         {
-                            [self sendASPIA:NULL];
-                        }
-                        else
-                        {
-                            UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-                            pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
-                            [self sendASPAC:pl];
+                            /* Lets send ASPAC or ASPIA */
+                            if(_standby_mode)
+                            {
+                                [self sendASPIA:NULL];
+                            }
+                            else
+                            {
+                                UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+                                pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
+                                [self sendASPAC:pl];
+                            }
                         }
                     }
                     break;

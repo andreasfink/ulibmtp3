@@ -830,6 +830,29 @@ static const char *m3ua_param_name(uint16_t param_type)
             _overrideNetworkIndicator = 0;
         }
     }
+    if(cfg[@"mode"])
+    {
+        NSString *s = [cfg[@"mode"]stringValue];
+        if([s isEqualToString:@"server"])
+        {
+            _mode = UMM3UAApplicationServerMode_server;
+            _send_aspup = NO;
+            _send_aspac = NO;
+        }
+        else if([s isEqualToString:@"client"])
+        {
+            _mode = UMM3UAApplicationServerMode_client;
+            _send_aspup = YES;
+            _send_aspac = YES;
+        }
+        else if([s isEqualToString:@"peer"])
+        {
+            _mode = UMM3UAApplicationServerMode_peer;
+            _send_aspup = YES;
+            _send_aspac = YES;
+        }
+    }
+
 }
 
 - (void)m3uaCongestion:(UMM3UAApplicationServerProcess *)asp

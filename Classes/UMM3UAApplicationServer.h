@@ -1,5 +1,5 @@
 //
-//  UMM3UALink.h
+//  UMM3UAApplicatoinServer.h
 //  ulibmtp3
 //
 //  Created by Andreas Fink on 25.11.16.
@@ -14,6 +14,7 @@
 #import "UMM3UATrafficMode.h"
 #import "UMM3UAStatus.h"
 #import "UMMTP3RouteStatus.h"
+#import "UMM3UAApplicationServerMode.h"
 
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 /* note: a M3UA "link" is the same as what in traditional SS7 is called a linkset */
@@ -39,13 +40,18 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
     int                 upCount;
     int                 activeCount;
     BOOL                _useRoutingKey;
+    BOOL                _send_aspup;
+    BOOL                _send_aspac;
+    UMM3UAApplicationServerMode _mode;
 }
 
 @property(readwrite,assign,atomic)  UMM3UA_Status       m3ua_status;
 @property(readwrite,assign,atomic)  UMM3UATrafficMode   trafficMode;
 @property(readwrite,strong,atomic)  NSNumber			*routingContext;
 @property(readwrite,strong,atomic)  NSNumber            *networkAppearance;
-@property(readwrite,strong,atomic)  UMMTP3PointCode     *pc;
+@property(readwrite,assign,atomic)  BOOL send_aspup;
+@property(readwrite,assign,atomic)  BOOL send_aspac;
+@property(readwrite,assign,atomic)  UMM3UAApplicationServerMode mode;
 
 /* UMSCTP callbacks */
 - (NSString *)layerName;

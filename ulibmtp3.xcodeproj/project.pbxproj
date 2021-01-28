@@ -15,6 +15,7 @@
 		A60A36EA1A305DDC0090FC94 /* UMMTP3Link.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36E71A305DDC0090FC94 /* UMMTP3Link.m */; };
 		A60A36F91A3063E60090FC94 /* UMMTP3PointCode.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36F61A3063E60090FC94 /* UMMTP3PointCode.m */; };
 		A60A36FE1A306B710090FC94 /* UMMTP3RouteMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36FB1A306B710090FC94 /* UMMTP3RouteMetrics.m */; };
+		A65270F825C33580007CF832 /* UMM3UAApplicationServerMode.h in Headers */ = {isa = PBXBuildFile; fileRef = A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A691E59F237001A800589718 /* UMMTP3PointCodeTranslationTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A691E5A0237001A800589718 /* UMMTP3PointCodeTranslationTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A691E59E237001A800589718 /* UMMTP3PointCodeTranslationTable.m */; };
 		A6AA23C924854164008D5A57 /* UMMTP3StatisticDbRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = A6AA23C724854164008D5A57 /* UMMTP3StatisticDbRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -177,6 +178,7 @@
 		A628513F1A46E4010090FC94 /* UMMTP3BlackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3BlackList.h; sourceTree = "<group>"; };
 		A62851401A46E4010090FC94 /* UMMTP3BlackList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3BlackList.m; sourceTree = "<group>"; };
 		A629F27C25B86C2E00C209E5 /* File */ = {isa = PBXFileReference; lastKnownFileType = text; path = File; sourceTree = "<group>"; };
+		A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM3UAApplicationServerMode.h; sourceTree = "<group>"; };
 		A666EF681E89C4AF004804CB /* UMSyntaxToken_Pointcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMSyntaxToken_Pointcode.h; sourceTree = "<group>"; };
 		A666EF691E89C4AF004804CB /* UMSyntaxToken_Pointcode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMSyntaxToken_Pointcode.m; sourceTree = "<group>"; };
 		A6813F0B1DE8177C001FC87D /* UMLayerMTP3ProviderProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = UMLayerMTP3ProviderProtocol.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -331,6 +333,7 @@
 				A6827E141E380E6100F3048B /* UMLayerMTP3ApplicationContextProtocol.h */,
 				A6813F0B1DE8177C001FC87D /* UMLayerMTP3ProviderProtocol.h */,
 				A60A36D81A305B8A0090FC94 /* UMLayerMTP3UserProtocol.h */,
+				A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */,
 				A6813F121DE82266001FC87D /* UMM3UAApplicationServer.h */,
 				A6A2B8D01E389A0100E8F0AB /* UMM3UAApplicationServer.m */,
 				A6827E041E37DD0F00F3048B /* UMM3UAApplicationServerProcess.h */,
@@ -505,6 +508,7 @@
 				A6F178E321AF03B00084D972 /* UMMTP3Task_adminCreateLinkSet.h in Headers */,
 				A6F178E221AF03B00084D972 /* UMMTP3Task_adminCreateLink.h in Headers */,
 				A6F178D921AF03B00084D972 /* UMMTP3PduFilter.h in Headers */,
+				A65270F825C33580007CF832 /* UMM3UAApplicationServerMode.h in Headers */,
 				A6F178EA21AF03B00084D972 /* UMMTP3Task_m2paSpeedLimitReached.h in Headers */,
 				A6F178CE21AF03B00084D972 /* UMM3UATrafficMode.h in Headers */,
 			);
