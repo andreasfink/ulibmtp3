@@ -852,6 +852,15 @@ static const char *m3ua_param_name(uint16_t param_type)
             _send_aspac = YES;
         }
     }
+    if(cfg[@"send-aspup"])
+    {
+        _send_aspup = [cfg[@"send-aspup"] boolValue];
+    }
+    if(cfg[@"send-aspac"])
+    {
+        _send_aspup = [cfg[@"send-aspac"] boolValue];
+    }
+
 
 }
 
