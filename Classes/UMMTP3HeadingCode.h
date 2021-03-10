@@ -43,6 +43,8 @@
 
 #define MTP3_MGMT_COO   0x11    /* signalling link test message */
 #define MTP3_MGMT_COA   0x21    /* signalling link test message */
+#define MTP3_MGMT_XCO   0x31    /* extended changeover order */
+#define MTP3_MGMT_XCA   0x41    /* extended changeover acknowledgmenbt  */
 #define MTP3_MGMT_CBD   0x51    /* Changeback Declaration */
 #define MTP3_MGMT_CBA   0x61    /* Changeback acknowledgement */
 #define MTP3_MGMT_ECO   0x12    /* Emergency Changeover Order */

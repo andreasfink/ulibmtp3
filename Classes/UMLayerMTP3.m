@@ -263,10 +263,10 @@
     @autoreleasepool
     {
         UMMTP3Task_m2paSctpStatusIndication *task = [[UMMTP3Task_m2paSctpStatusIndication alloc]initWithReceiver:self
-                                                                                                  sender:caller
-                                                                                                     slc:xslc
-                                                                                                  userId:uid
-                                                                                                  status:s];
+                                                                                                          sender:caller
+                                                                                                             slc:xslc
+                                                                                                          userId:uid
+                                                                                                          status:s];
         [self queueFromLowerWithPriority:task];
     }
 }
@@ -278,7 +278,8 @@
 {
     @autoreleasepool
     {
-        UMMTP3Task_m2paDataIndication *task = [[UMMTP3Task_m2paDataIndication alloc]initWithReceiver:self																						 									  sender:caller
+        UMMTP3Task_m2paDataIndication *task = [[UMMTP3Task_m2paDataIndication alloc]initWithReceiver:self
+                                                                                              sender:caller
                                                                                                  slc:xslc
                                                                                         mtp3linkName:linkName
                                                                                                 data:d];

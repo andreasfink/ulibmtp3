@@ -857,10 +857,38 @@
                         else
                         {
                             slc = label.sls;
-                            GRAB_BYTE(fsn,data,idx,maxlen);
+                            GRAB_BYTE(fsn,data,idx,maxlen); /* Forward sequence number of last accepted message signal unit (7 bits )*/
                             fsn = fsn & 0x7F;
                         }
                         [self processCOO:label lastFSN:fsn ni:ni mp:mp slc:slc link:link];
+                    }
+                        break;
+                    case MTP3_MGMT_XCO:
+                    {
+                        int fsn;
+                        slc = label.sls;
+                        int fsn1;
+                        int fsn2;
+                        int fsn3;
+                        GRAB_BYTE(fsn1,data,idx,maxlen);
+                        GRAB_BYTE(fsn2,data,idx,maxlen);
+                        GRAB_BYTE(fsn3,data,idx,maxlen);
+                        fsn = (fsn1 << 16 | fsn2 <<8 | fsn3);
+                        [self processXCO:label lastFSN:fsn ni:ni mp:mp slc:slc link:link];
+                    }
+                        break;
+                    case MTP3_MGMT_XCA:
+                    {
+                        int fsn;
+                        slc = label.sls;
+                        int fsn1;
+                        int fsn2;
+                        int fsn3;
+                        GRAB_BYTE(fsn1,data,idx,maxlen);
+                        GRAB_BYTE(fsn2,data,idx,maxlen);
+                        GRAB_BYTE(fsn3,data,idx,maxlen);
+                        fsn = (fsn1 << 16 | fsn2 <<8 | fsn3);
+                        [self processXCA:label lastFSN:fsn ni:ni mp:mp slc:slc link:link];
                     }
                         break;
 
@@ -1398,6 +1426,24 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
+    /* should we do something here ? */
+    [self sendCOA:[label reverseLabel] lastFSN:fsn ni:ni mp:mp slc:slc link:link];
+}
+
+- (void)processXCO:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+{
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:@"processXCO (Extended Changeover)"];
+        [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+        [self logDebug:[NSString stringWithFormat:@" lastFSN: %d",fsn]];
+        [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+        [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+        [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
+    }
+    /* maybe we should do something else here as well */
+    [self sendXCA:[label reverseLabel] lastFSN:fsn ni:ni mp:mp slc:slc link:link];
 }
 
 - (void)processCOA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -1412,8 +1458,22 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    
 }
+
+- (void)processXCA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+{
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:@"processXCA (Extended Changeover Acknowledgement signal)"];
+        [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+        [self logDebug:[NSString stringWithFormat:@" lastFSN: %d",fsn]];
+        [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+        [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+        [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
+    }
+}
+
 
 - (void)processCBD:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
@@ -2915,6 +2975,72 @@
        ackRequest:NULL
           options:NULL];
 }
+
+- (void)sendXCO:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+{
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:@"sendXCO (Extended Change Over)"];
+        [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+        [self logDebug:[NSString stringWithFormat:@" lastFSN: %d",fsn]];
+        [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+        [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
+        [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+        [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
+    }
+    NSMutableData *pdu = [[NSMutableData alloc]init];
+    int fsn1 = (fsn >> 16) & 0xFF;
+    int fsn2 = (fsn >> 8) & 0xFF;
+    int fsn3 = (fsn >> 0) & 0xFF;
+    [pdu appendByte:fsn1];
+    [pdu appendByte:fsn2];
+    [pdu appendByte:fsn3];
+    [self sendPdu:pdu
+            label:label
+          heading:MTP3_MGMT_XCO
+             link:link
+              slc:slc
+               ni:ni
+               mp:mp
+               si:MTP3_SERVICE_INDICATOR_MGMT
+       ackRequest:NULL
+          options:NULL];
+}
+
+- (void)sendXCA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+{
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:@"sendXCO (Extended Change Over Acknowledgment)"];
+        [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+        [self logDebug:[NSString stringWithFormat:@" lastFSN: %d",fsn]];
+        [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+        [self logDebug:[NSString stringWithFormat:@" mp: %d",mp]];
+        [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+        [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
+    }
+    NSMutableData *pdu = [[NSMutableData alloc]init];
+    int fsn1 = (fsn >> 16) & 0xFF;
+    int fsn2 = (fsn >> 8) & 0xFF;
+    int fsn3 = (fsn >> 0) & 0xFF;
+    [pdu appendByte:fsn1];
+    [pdu appendByte:fsn2];
+    [pdu appendByte:fsn3];
+    [self sendPdu:pdu
+            label:label
+          heading:MTP3_MGMT_XCA
+             link:link
+              slc:slc
+               ni:ni
+               mp:mp
+               si:MTP3_SERVICE_INDICATOR_MGMT
+       ackRequest:NULL
+          options:NULL];
+}
+
+
 
 - (void)sendCBD:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
