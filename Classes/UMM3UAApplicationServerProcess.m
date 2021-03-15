@@ -1667,7 +1667,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             }
             const uint8_t *d = (const uint8_t *)incomingStream.bytes;
             NSData *pdu = [NSData dataWithBytes:&d[8] length:packlen-8];
-
             [self processPdu:pversion class:pclass type:ptype pdu:pdu];
             [incomingStream replaceBytesInRange:NSMakeRange(0,packlen)
                                       withBytes:NULL
@@ -1817,7 +1816,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                        data:(NSData *)data
 {
     @autoreleasepool
-        {
+    {
 
         [_incomingStreamLock lock];
         if(self.logLevel <= UMLOG_DEBUG)
