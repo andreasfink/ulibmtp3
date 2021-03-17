@@ -1447,15 +1447,14 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     _aspup_received = 0;
     self.status = M3UA_STATUS_OFF;
     
-    [_sctpLink openFor:self sendAbortFirst:NO];
-    /* as we are in point to multipoint mode, we can just send (we dont call connectx anymore) so if we initiate the connection we need to send data to establish it */
-    
+    if(_forcedOutOfService==NO)
+    {
+        [_sctpLink openFor:self sendAbortFirst:NO];
+    }
     NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
     _aspup_received=0;
-
-
     if(_beatTime >= 1.0)
     {
         if(_beatTimer==NULL)
@@ -1475,7 +1474,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [_beatTimer stop];
         [_beatTimer start];
     }
-    // we send ASPUP when COMM_UP notification appears [self sendASPUP:pl];
 }
 
 - (void)stop
@@ -1608,9 +1606,26 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [_submission_speed clear];
             _speed_within_limit = YES;
             [_reopen_timer1 stop];
-            [_reopen_timer1 start];
             [_sctpLink closeFor:self];
             self.status = M3UA_STATUS_OFF;
+            usleep(0.1);
+            if(_forcedOutOfService == NO)
+            {
+                if(_sctpLink.isPassive)
+                {
+                    /* we have to restart the listener */
+                    [_sctpLink openFor:self];
+                }
+                else
+                {
+                    /* if we are connecting outbound, we let the reopen timer restart the connection*/
+                    [_reopen_timer1 start];
+                }
+            }
+            else
+            {
+                [_reopen_timer1 start];
+            }
         }
     }
     @finally
@@ -2115,7 +2130,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     [_reopen_timer1 stop];
                     [_reopen_timer2 stop];
                     [_linktest_timer stop];
-                    [_sctpLink openFor:self sendAbortFirst:NO];
+                    [self start];
                     [_reopen_timer2 start];
                     break;
             }
