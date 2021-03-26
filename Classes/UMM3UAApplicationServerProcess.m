@@ -1021,6 +1021,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [_linktest_timer start];
         }
         self.status =  M3UA_STATUS_IS;
+        
         [_as aspActive:self];
     }
     else
