@@ -1487,7 +1487,7 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    
+    [self sendCBA:[label reverseLabel] changeBackCode:cbc ni:ni mp:mp slc:slc link:link];
 }
 
 - (void)processCBA:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
