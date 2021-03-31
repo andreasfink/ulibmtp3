@@ -1676,4 +1676,14 @@
     }
 }
 
+- (void)updateRoutingTableLinksetUnavailabe:(NSString *)linksetName
+{
+    [_routingTable updateLinksetUnavailable:linksetName];
+}
+
+- (void)updateRoutingTableLinksetAvailabe:(NSString *)linksetName
+{
+    [_routingTable updateLinksetAvailable:linksetName];
+}
+
 @end

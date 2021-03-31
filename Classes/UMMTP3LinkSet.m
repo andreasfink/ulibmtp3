@@ -4010,10 +4010,10 @@
             case M2PA_STATUS_IS:
                 if(link.m2pa.remote_processor_outage)
                 {
-                        [self updateRouteUnavailable:_adjacentPointCode
-                                                mask:_adjacentPointCode.maxmask
-                                            priority:UMMTP3RoutePriority_1];
-                        processorOutage++;
+                    [self updateRouteUnavailable:_adjacentPointCode
+                                            mask:_adjacentPointCode.maxmask
+                                        priority:UMMTP3RoutePriority_1];
+                    processorOutage++;
                 }
                 else
                 {
@@ -4046,10 +4046,12 @@
     if(_activeLinks > 0)
     {
         _mtp3.ready = YES;
+        [_mtp3 updateRoutingTableLinksetAvailabe:_name];
     }
     else
     {
         [self forgetAdvertizedPointcodes];
+        [_mtp3 updateRoutingTableLinksetUnavailabe:_name];
     }
 }
 
