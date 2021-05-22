@@ -2854,44 +2854,58 @@
         }
     }
     
-    
-    if(cfg[@"routing-advertisement-allow"])
+    id a = cfg[@"routing-advertisement-allow"];
+    if([a isKindOfClass:[NSString class]])
     {
-        NSString *pcstr = [cfg[@"routing-advertisement-allow"] stringValue];
-        if([pcstr isEqual:@"*"])
+        a = @[a];
+    }
+    if([a isKindOfClass:[NSArray class]])
+    {
+        for(NSString *pcstr in a)
         {
-            _dontAdvertizeRoutes = NO;
-        }
-        else
-        {
-            UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
-            if(_allowedAdvertizedPointcodes == NULL)
+            if([pcstr isEqual:@"*"])
             {
-                _allowedAdvertizedPointcodes = @[pc];
+                _dontAdvertizeRoutes = NO;
             }
             else
             {
-                _allowedAdvertizedPointcodes = [_allowedAdvertizedPointcodes  arrayByAddingObject:pc];
+                UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
+                if(_allowedAdvertizedPointcodes == NULL)
+                {
+                    _allowedAdvertizedPointcodes = @[pc];
+                }
+                else
+                {
+                    _allowedAdvertizedPointcodes = [_allowedAdvertizedPointcodes  arrayByAddingObject:pc];
+                }
             }
         }
     }
-    if(cfg[@"routing-advertisement-deny"])
+
+    a = cfg[@"routing-advertisement-deny"];
+    if([a isKindOfClass:[NSString class]])
     {
-        NSString *pcstr = [cfg[@"routing-advertisement-deny"] stringValue];
-        if([pcstr isEqual:@"*"])
+        a = @[a];
+    }
+    if([a isKindOfClass:[NSArray class]])
+    {
+        for(NSString *pcstr in a)
         {
-            _dontAdvertizeRoutes = YES;
-        }
-        else
-        {
-            UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
-            if(_deniedAdvertizedPointcodes == NULL)
+            if([pcstr isEqual:@"*"])
             {
-                _deniedAdvertizedPointcodes = @[pc];
+                _dontAdvertizeRoutes = YES;
             }
             else
             {
-                _deniedAdvertizedPointcodes = [_deniedAdvertizedPointcodes arrayByAddingObject:pc];
+                UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithString:pcstr variant:_variant];
+                if(_deniedAdvertizedPointcodes == NULL)
+                {
+                    _deniedAdvertizedPointcodes = @[pc];
+                }
+                else
+                {
+                    _deniedAdvertizedPointcodes = [_deniedAdvertizedPointcodes arrayByAddingObject:pc];
+                }
             }
         }
     }
