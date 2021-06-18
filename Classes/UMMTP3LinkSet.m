@@ -1430,7 +1430,12 @@
     [self sendCOA:[label reverseLabel] lastFSN:fsn ni:ni mp:mp slc:slc link:link];
 }
 
-- (void)processXCO:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+- (void)processXCO:(UMMTP3Label *)label
+           lastFSN:(int)fsn
+                ni:(int)ni
+                mp:(int)mp
+               slc:(int)slc
+              link:(UMMTP3Link *)link
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -3022,7 +3027,12 @@
           options:NULL];
 }
 
-- (void)sendXCA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
+- (void)sendXCA:(UMMTP3Label *)label
+        lastFSN:(int)fsn
+             ni:(int)ni
+             mp:(int)mp
+            slc:(int)slc
+           link:(UMMTP3Link *)link
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
