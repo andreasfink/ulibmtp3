@@ -844,7 +844,7 @@
                 {
                     case MTP3_MGMT_COO:
                     {
-                        int fsn;
+                        int fsn = 0;
                         if(_variant == UMMTP3Variant_ANSI)
                         {
                             int byte0;
@@ -865,7 +865,7 @@
                         break;
                     case MTP3_MGMT_XCO:
                     {
-                        int fsn;
+                        int fsn = 0;
                         slc = label.sls;
                         int fsn1;
                         int fsn2;
@@ -873,7 +873,7 @@
                         GRAB_BYTE(fsn1,data,idx,maxlen);
                         GRAB_BYTE(fsn2,data,idx,maxlen);
                         GRAB_BYTE(fsn3,data,idx,maxlen);
-                        fsn = (fsn1 << 16 | fsn2 <<8 | fsn3);
+                        fsn = ((fsn3 << 16) | (fsn2 <<8) | (fsn1));
                         [self processXCO:label lastFSN:fsn ni:ni mp:mp slc:slc link:link];
                     }
                         break;
@@ -1280,7 +1280,29 @@
     {
         //NSDictionary *d = e.userInfo;
         //NSString *desc = d[@"sysmsg"];
-        [self.logFeed majorErrorText:[NSString stringWithFormat:@"Exception %@",e]];
+        NSMutableString *s1 = [[NSMutableString alloc]init];
+        [s1 appendFormat:@"Exception: %@\n",e];
+        [s1 appendFormat:@"     Link: %@\n",link.name];
+        [s1 appendFormat:@"      PDU: %@\n",pdu.hexString];
+        [s1 appendFormat:@"    Label: %@\n",label];
+        [s1 appendFormat:@"       SI: %d\n",si];
+        [s1 appendFormat:@"       NI: %d\n",ni];
+        [s1 appendFormat:@"       MP: %d\n",mp];
+        [s1 appendFormat:@"      SLC: %d\n",slc];
+        if(network_appearance > 0)
+        {
+            [s1 appendFormat:@"      network_appearance: %@\n",network_appearance.hexString];
+        }
+        if(correlation_id.length > 0)
+        {
+            [s1 appendFormat:@"      correlation_id: %@\n",correlation_id.hexString];
+        }
+        if(routing_context.length > 0)
+        {
+            [s1 appendFormat:@"      routing_context: %@\n",routing_context.hexString];
+        }
+        NSLog(@"%@",s1);
+        [self.logFeed majorErrorText:s1];
         return;
     }
 }
@@ -1448,7 +1470,9 @@
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
     /* maybe we should do something else here as well */
-    [self sendXCA:[label reverseLabel] lastFSN:fsn ni:ni mp:mp slc:slc link:link];
+    UMMTP3Label *reverse_label;
+    reverse_label = [label reverseLabel];
+    [self sendXCA:reverse_label lastFSN:fsn ni:ni mp:mp slc:slc link:link];
 }
 
 - (void)processCOA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -3046,9 +3070,9 @@
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
     }
     NSMutableData *pdu = [[NSMutableData alloc]init];
-    int fsn1 = (fsn >> 16) & 0xFF;
+    int fsn1 = (fsn >> 0) & 0xFF;
     int fsn2 = (fsn >> 8) & 0xFF;
-    int fsn3 = (fsn >> 0) & 0xFF;
+    int fsn3 = (fsn >> 16) & 0xFF;
     [pdu appendByte:fsn1];
     [pdu appendByte:fsn2];
     [pdu appendByte:fsn3];
@@ -3063,8 +3087,6 @@
        ackRequest:NULL
           options:NULL];
 }
-
-
 
 - (void)sendCBD:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
