@@ -400,6 +400,8 @@
                                          userInfo:@{
                                                     @"sysmsg" : @"too-short-packet",
                                                     @"func": @(__func__),
+                                                    @"line": @(__LINE__),
+                                                    @"file": @(__FILE__),
                                                     @"obj":self,
                                                     @"backtrace": UMBacktrace(NULL,0)
                                                     }
@@ -419,6 +421,8 @@
                 userInfo:@{ \
                            @"sysmsg" : [NSString stringWithFormat:@"too-short-packet %s:%d",__FILE__,__LINE__],\
                            @"func": @(__func__),\
+                           @"line": @(__LINE__),\
+                           @"file": @(__FILE__),\
                            @"obj":self,\
                            @"backtrace": UMBacktrace(NULL,0)\
                            }\
@@ -555,6 +559,8 @@
                                              userInfo:@{
                                                         @"sysmsg" : @"screening failed",
                                                         @"func": @(__func__),
+                                                        @"line": @(__LINE__),
+                                                        @"file": @(__FILE__),
                                                         @"obj":self,
                                                         @"err":e,
                                                         @"backtrace": UMBacktrace(NULL,0)
@@ -639,6 +645,8 @@
                                                          userInfo:@{
                                                                     @"sysmsg" : @"too-short-packet in SLTM",
                                                                     @"func": @(__func__),
+                                                                    @"line": @(__LINE__),
+                                                                    @"file": @(__FILE__),
                                                                     @"obj":self,
                                                                     @"backtrace": UMBacktrace(NULL,0)
                                                                     }
@@ -683,6 +691,8 @@
                                                          userInfo:@{
                                                                     @"sysmsg" : @"too-short-packet in SLTA",
                                                                     @"func": @(__func__),
+                                                                    @"line": @(__LINE__),
+                                                                    @"file": @(__FILE__),
                                                                     @"obj":self
                                                                     }
                                     ]);
@@ -706,6 +716,8 @@
                                                      userInfo:@{
                                                                 @"sysmsg" : @"unknown-heading received",
                                                                 @"func": @(__func__),
+                                                                @"line": @(__LINE__),
+                                                                @"file": @(__FILE__),
                                                                 @"obj":self
                                                                 }
                                 ]);
@@ -753,6 +765,8 @@
                                                          userInfo:@{
                                                                     @"sysmsg" : @"too-short-packet in SLTM",
                                                                     @"func": @(__func__),
+                                                                    @"line": @(__LINE__),
+                                                                    @"file": @(__FILE__),
                                                                     @"obj":self
                                                                     }
                                     ]);
@@ -798,6 +812,8 @@
                                                          userInfo:@{
                                                                     @"sysmsg" : @"too-short-packet in SLTA",
                                                                     @"func": @(__func__),
+                                                                    @"line": @(__LINE__),
+                                                                    @"file": @(__FILE__),
                                                                     @"obj":self
                                                                     }
                                     ]);
@@ -822,6 +838,8 @@
                                                      userInfo:@{
                                                                 @"sysmsg" : @"unknown-heading received",
                                                                 @"func": @(__func__),
+                                                                @"line": @(__LINE__),
+                                                                @"file": @(__FILE__),
                                                                 @"obj":self
                                                                 }
                                 ]);
@@ -1278,10 +1296,10 @@
     }
     @catch(NSException *e)
     {
-        //NSDictionary *d = e.userInfo;
-        //NSString *desc = d[@"sysmsg"];
+        NSDictionary *d = e.userInfo;
+        NSString *desc = d[@"sysmsg"];
         NSMutableString *s1 = [[NSMutableString alloc]init];
-        [s1 appendFormat:@"Exception: %@\n",e];
+        [s1 appendFormat:@"Exception: %@\n",desc];
         [s1 appendFormat:@"     Link: %@\n",link.name];
         [s1 appendFormat:@"      PDU: %@\n",pdu.hexString];
         [s1 appendFormat:@"    Label: %@\n",label];
@@ -2691,7 +2709,13 @@
             [self logMajorError:s];
             @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
                                            reason:s
-                                         userInfo:NULL]);
+                                          userInfo:@{
+                                                        @"sysmsg" : @"configuration error",
+                                                        @"func": @(__func__),
+                                                        @"line": @(__LINE__),
+                                                        @"file": @(__FILE__),
+                                                        @"obj":self
+                                          }]);
         }
         else
         {
@@ -2730,7 +2754,12 @@
     {
         @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
                                        reason:@"Can not figure out mtp3 variant"
-                                     userInfo:NULL]);
+                                     userInfo:
+                                        @{
+                                            @"func": @(__func__),
+                                            @"line": @(__LINE__),
+                                            @"file": @(__FILE__),
+                                     }]);
     }
 
     _adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:_variant];
