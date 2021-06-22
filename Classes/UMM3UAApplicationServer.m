@@ -15,7 +15,7 @@
 #import "UMM3UAApplicationServerProcess.h"
 #import "UMMTP3HeadingCode.h"
 #import "UMMTP3RouteStatus.h"
-
+#import "UMMTP3LinkSetPrometheusData.h"
 /* for arc4random */
 #if defined(__APPLE__) || defined(FREEBSD)
 #include <stdlib.h>
@@ -717,6 +717,8 @@ static const char *m3ua_param_name(uint16_t param_type)
     self.logLevel = UMLOG_MAJOR;
 
     [super setConfig:cfg applicationContext:appContext];
+    [_prometheusMetrics unregisterMetrics];
+    _prometheusMetrics = NULL;
 
     _routingContext = NULL;
     if(cfg[@"routing-key"])
@@ -867,7 +869,11 @@ static const char *m3ua_param_name(uint16_t param_type)
         _send_aspup = [cfg[@"send-aspac"] boolValue];
     }
 
-
+    _prometheusMetrics = [[UMMTP3LinkSetPrometheusData alloc]initWithPrometheus:_mtp3.prometheus
+                                                                    linksetName:_name
+                                                                         isM3UA:YES];
+    [_prometheusMetrics setSubname1:@"linkset" value:_name];
+    [_prometheusMetrics registerMetrics];
 }
 
 - (void)m3uaCongestion:(UMM3UAApplicationServerProcess *)asp

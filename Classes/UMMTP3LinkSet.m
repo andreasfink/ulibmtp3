@@ -3091,6 +3091,9 @@
         }
     }
     [self removeAllLinks];
+    _prometheusMetrics = [[UMMTP3LinkSetPrometheusData alloc]initWithPrometheus:_mtp3.prometheus
+                                                                    linksetName:_name
+                                                                         isM3UA:NO];
     [_prometheusMetrics setSubname1:@"linkset" value:_name];
     [_prometheusMetrics registerMetrics];
 }
