@@ -1129,6 +1129,8 @@
     [_m3ua_aspiaRxCount setSubname1:a value:b];
     [_m3ua_aspacackTxCount setSubname1:a value:b];
     [_m3ua_aspacackRxCount setSubname1:a value:b];
+    [_m3ua_aspiaackTxCount setSubname1:a value:b];
+    [_m3ua_aspiaackRxCount setSubname1:a value:b];
     [_m3ua_regreqTxCount setSubname1:a value:b];
     [_m3ua_regreqRxCount setSubname1:a value:b];
     [_m3ua_regrspTxCount setSubname1:a value:b];
@@ -1292,6 +1294,10 @@
     [_prometheus addObject:_m3ua_aspiaRxCount forKey:_m3ua_aspiaRxCount.key];
     [_prometheus addObject:_m3ua_aspacackTxCount forKey:_m3ua_aspacackTxCount.key];
     [_prometheus addObject:_m3ua_aspacackRxCount forKey:_m3ua_aspacackRxCount.key];
+    [_prometheus addObject:_m3ua_aspacackTxCount forKey:_m3ua_aspiaackTxCount.key];
+    [_prometheus addObject:_m3ua_aspacackRxCount forKey:_m3ua_aspiaackRxCount.key];
+    [_prometheus addObject:_m3ua_aspiaackTxCount forKey:_m3ua_aspiaackTxCount.key];
+    [_prometheus addObject:_m3ua_aspiaackRxCount forKey:_m3ua_aspiaackRxCount.key];
     [_prometheus addObject:_m3ua_regreqTxCount forKey:_m3ua_regreqTxCount.key];
     [_prometheus addObject:_m3ua_regreqRxCount forKey:_m3ua_regreqRxCount.key];
     [_prometheus addObject:_m3ua_regrspTxCount forKey:_m3ua_regrspTxCount.key];
@@ -1455,6 +1461,8 @@
     [_prometheus removeObjectForKey:_m3ua_aspiaRxCount.key];
     [_prometheus removeObjectForKey:_m3ua_aspacackTxCount.key];
     [_prometheus removeObjectForKey:_m3ua_aspacackRxCount.key];
+    [_prometheus removeObjectForKey:_m3ua_aspiaackTxCount.key];
+    [_prometheus removeObjectForKey:_m3ua_aspiaackRxCount.key];
     [_prometheus removeObjectForKey:_m3ua_regreqTxCount.key];
     [_prometheus removeObjectForKey:_m3ua_regreqRxCount.key];
     [_prometheus removeObjectForKey:_m3ua_regrspTxCount.key];

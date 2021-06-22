@@ -168,6 +168,8 @@
     UMPrometheusMetric  *_m3ua_aspiaRxCount;
     UMPrometheusMetric  *_m3ua_aspacackTxCount;
     UMPrometheusMetric  *_m3ua_aspacackRxCount;
+    UMPrometheusMetric  *_m3ua_aspiaackTxCount;
+    UMPrometheusMetric  *_m3ua_aspiaackRxCount;
     UMPrometheusMetric  *_m3ua_regreqTxCount;
     UMPrometheusMetric  *_m3ua_regreqRxCount;
     UMPrometheusMetric  *_m3ua_regrspTxCount;
@@ -317,8 +319,8 @@
 @property(readwrite,strong)     UMPrometheusMetric  *m3uadrstRxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaaspupTxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaaspupRxCount;
-@property(readwrite,strong)     UMPrometheusMetric  *m3uaapsdnTxCount;
-@property(readwrite,strong)     UMPrometheusMetric  *m3uaapsdnRxCount;
+@property(readwrite,strong)     UMPrometheusMetric  *m3uaaspdnTxCount;
+@property(readwrite,strong)     UMPrometheusMetric  *m3uaaspdnRxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uabeatTxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uabeatRxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaaspupackTxCount;
@@ -333,6 +335,8 @@
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaaspiaRxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaaspacackTxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaaspacackRxCount;
+@property(readwrite,strong)     UMPrometheusMetric  *m3uaaspiaackTxCount;
+@property(readwrite,strong)     UMPrometheusMetric  *m3uaaspiaackRxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaregreqTxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaregreqRxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaregrspTxCount;

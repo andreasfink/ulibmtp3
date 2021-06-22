@@ -14,6 +14,7 @@
 #import "ulibmtp3_version.h"
 #import "UMM3UATrafficMode.h"
 #import "UMLayerMTP3.h"
+#import "UMMTP3LinkSetPrometheusData.h"
 
 #define	M3UA_CLASS_TYPE_ERR			0x0000
 #define M3UA_CLASS_TYPE_NTFY		0x0001
@@ -1255,6 +1256,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_ASPUP pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uaaspupTxCount increaseBy:1];
 }
 
 -(void)sendASPUP_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1265,6 +1267,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_ASPUP_ACK pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uaaspupackTxCount increaseBy:1];
+
 }
 
 -(void)sendASPIA:(UMSynchronizedSortedDictionary *)params
@@ -1275,6 +1279,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_ASPIA pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uaaspiaTxCount increaseBy:1];
+
 }
 
 -(void)sendASPAC:(UMSynchronizedSortedDictionary *)params
@@ -1285,6 +1291,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_ASPAC pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uaaspacTxCount increaseBy:1];
+
 }
 
 -(void)sendASPAC_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1295,6 +1303,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_ASPAC_ACK pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uaaspacackTxCount increaseBy:1];
+
 }
 
 -(void)sendASPIA_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1305,6 +1315,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_ASPIA_ACK pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uaaspiaackTxCount increaseBy:1];
+
 }
 
 -(void)sendASPDN:(UMSynchronizedSortedDictionary *)params
@@ -1315,6 +1327,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_ASPDN pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uaaspdnTxCount increaseBy:1];
+
 }
 
 -(void)sendASPDN_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1325,6 +1339,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_ASPDN_ACK pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uaaspdnackTxCount increaseBy:1];
+
 }
 
 
@@ -1336,6 +1352,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_DAUD pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uadaudTxCount increaseBy:1];
+
 }
 
 
@@ -1347,6 +1365,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_DAVA pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uadavaTxCount increaseBy:1];
 }
 
 -(void)sendDUNA:(UMSynchronizedSortedDictionary *)params
@@ -1357,6 +1376,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_DUNA pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uadunaTxCount increaseBy:1];
+
 }
 
 -(void)sendDATA:(UMSynchronizedSortedDictionary *)params
@@ -1367,6 +1388,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_DATA pdu:paramsPdu stream:1];
+    [_as.prometheusMetrics.m3uadataTxCount increaseBy:1];
+    [_as.prometheusMetrics.msuTxThroughput increaseBy:1];
+    [_as.prometheusMetrics.msuTxCount increaseBy:1];
 }
 
 -(void)sendBEAT:(UMSynchronizedSortedDictionary *)params
@@ -1378,6 +1402,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_BEAT pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uabeatTxCount increaseBy:1];
+
 }
 
 -(void)sendBEAT_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1389,6 +1415,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSData *paramsPdu = [self paramsList:params];
     [self sendPduCT:M3UA_CLASS_TYPE_BEAT_ACK pdu:paramsPdu stream:0];
+    [_as.prometheusMetrics.m3uabeatackTxCount increaseBy:1];
 }
 
 
@@ -1751,75 +1778,99 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             case M3UA_CLASS_TYPE_BEAT:
                 [self processBEAT:params];
+                [_as.prometheusMetrics.m3uabeatRxCount increaseBy:1];
                 return;
             case M3UA_CLASS_TYPE_BEAT_ACK:
                 [self processBEAT_ACK:params];
+                [_as.prometheusMetrics.m3uabeatackRxCount increaseBy:1];
                 return;
-
             case M3UA_CLASS_TYPE_ERR: /* management */
                 [self processERR:params];
+                [_as.prometheusMetrics.m3uaerrRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_NTFY:
                 [self processNTFY:params];
+                [_as.prometheusMetrics.m3uantfyRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_DATA:
                 [_as.speedometerRx increase];
                 [_as.speedometerRxBytes increaseBy:(uint32_t)pdu.length];
                 [self processDATA:params];
+                [_as.prometheusMetrics.m3uadataRxCount increaseBy:1];
+                [_as.prometheusMetrics.msuRxThroughput increaseBy:1];
+                [_as.prometheusMetrics.msuRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_DUNA:
                 [self processDUNA:params];
+                [_as.prometheusMetrics.m3uadunaRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_DAVA:
                 [self processDAVA:params];
+                [_as.prometheusMetrics.m3uadavaRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_DAUD:
                 [self processDAUD:params];
+                [_as.prometheusMetrics.m3uadaudRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_SCON:
                 [self processSCON:params];
+                [_as.prometheusMetrics.m3uasconRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_DUPU:
                 [self processDUPU:params];
+                [_as.prometheusMetrics.m3uadupuRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_DRST:
                 [self processDRST:params];
+                [_as.prometheusMetrics.m3uadrstRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_ASPUP:
                 [self processASPUP:params];
+                [_as.prometheusMetrics.m3uaaspupRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_ASPDN:
                 [self processASPDN:params];
+                [_as.prometheusMetrics.m3uaaspdnRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_ASPUP_ACK:
                 [self processASPUP_ACK:params];
+                [_as.prometheusMetrics.m3uaaspupackRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_ASPDN_ACK:
                 [self processASPDN_ACK:params];
+                [_as.prometheusMetrics.m3uaaspdnackRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_ASPAC:
                 [self processASPAC:params];
+                [_as.prometheusMetrics.m3uaaspacRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_ASPIA:
                 [self processASPIA:params];
+                [_as.prometheusMetrics.m3uaaspiaRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_ASPAC_ACK:
                 [self processASPAC_ACK:params];
+                [_as.prometheusMetrics.m3uaaspacackRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_ASPIA_ACK:
                 [self processASPIA_ACK:params];
+                [_as.prometheusMetrics.m3uaaspiaackRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_REG_REQ:
                 [self processREG_REQ:params];
+                [_as.prometheusMetrics.m3uaregreqRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_REG_RSP:
                 [self processREG_RSP:params];
+                [_as.prometheusMetrics.m3uaregrspRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_DEREG_REQ:
                 [self processDEREG_REQ:params];
+                [_as.prometheusMetrics.m3uaderegreqRxCount increaseBy:1];
                 break;
             case M3UA_CLASS_TYPE_DEREG_RSP:
                 [self processDEREG_RSP:params];
+                [_as.prometheusMetrics.m3uaderegrspRxCount increaseBy:1];
                 break;
         }
     }
