@@ -15,6 +15,7 @@
 #import "UMMTP3TransitPermission.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 #import "UMMTP3RoutePriority.h"
+#import "UMMTP3LinkSetPrometheusData.h"
 
 @class UMMTP3Link;
 @class UMLayerMTP3;
@@ -124,6 +125,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     
     UMMTP3ScreeningTraceLevel _sccpScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
     UMMTP3ScreeningTraceLevel _mtp3ScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
+    UMMTP3LinkSetPrometheusData *_prometheusMetrics;
 }
 
 /*
@@ -199,6 +201,7 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,assign,atomic) BOOL                        dontAdvertizeRoutes;
 @property(readwrite,assign,atomic) UMMTP3ScreeningTraceLevel    sccpScreeningTraceLevel;
 @property(readwrite,assign,atomic) UMMTP3ScreeningTraceLevel    mtp3ScreeningTraceLevel;
+@property(readwrite,strong,atomic) UMMTP3LinkSetPrometheusData *prometheusMetrics;
 
 - (void)addLink:(UMMTP3Link *)lnk;
 - (void)removeLink:(UMMTP3Link *)lnk;
