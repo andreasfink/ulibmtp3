@@ -2740,6 +2740,7 @@
     {
         NSString *mtp3_name = [cfg[@"mtp3"] stringValue];
         _mtp3 = [appContext getMTP3:mtp3_name];
+        _prometheusMetrics.prometheus = _mtp3.prometheus;
     }
 
     if(cfg[@"apc"])
@@ -3090,6 +3091,8 @@
         }
     }
     [self removeAllLinks];
+    [_prometheusMetrics setSubname1:@"linkset" value:_name];
+    [_prometheusMetrics registerMetrics];
 }
 
 #pragma mark -

@@ -66,13 +66,13 @@ typedef enum UMMTP3_Error
     BOOL                            _stpMode;
     BOOL                            _isStarted;
     id<UMLayerMTP3ApplicationContextProtocol>   _appContext;
-    NSString                    *_statisticDbPool;
-    NSString                    *_statisticDbTable;
-    NSNumber                    *_statisticDbAutoCreate;
-    NSString                    *_statisticDbInstance;
-    UMMTP3StatisticDb           *_statisticDb;
-    UMTimer                     *_housekeepingTimer;
-
+    NSString                        *_statisticDbPool;
+    NSString                        *_statisticDbTable;
+    NSNumber                        *_statisticDbAutoCreate;
+    NSString                        *_statisticDbInstance;
+    UMMTP3StatisticDb               *_statisticDb;
+    UMTimer                         *_housekeepingTimer;
+    UMPrometheus                    *_prometheus;
 }
 @property (readwrite,assign,atomic) int                 networkIndicator;
 @property (readwrite,assign,atomic) UMMTP3Variant       variant;
@@ -89,6 +89,7 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) UMMTP3InstanceRoutingTable  *routingTable;
 @property (readwrite,assign,atomic) BOOL                isStarted;
 @property (readwrite,strong,atomic) UMSynchronizedSortedDictionary *linksets;
+@property(readwrite,strong,atomic)  UMPrometheus            *prometheus;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
 

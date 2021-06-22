@@ -244,6 +244,9 @@
 @property(readwrite,strong) UMPrometheusMetric            *sparefRxCount;
 @property(readwrite,strong) UMPrometheusMetric            *sparefTxCount;
 
+- (void)setSubname1:(NSString *)a value:(NSString *)b;
+- (void)registerMetrics;
+- (void)unregisterMetrics;
 
 @end
 
