@@ -89,7 +89,7 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) UMMTP3InstanceRoutingTable  *routingTable;
 @property (readwrite,assign,atomic) BOOL                isStarted;
 @property (readwrite,strong,atomic) UMSynchronizedSortedDictionary *linksets;
-@property(readwrite,strong,atomic)  UMPrometheus            *prometheus;
+@property (readwrite,strong,atomic) UMPrometheus            *prometheus;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
 
