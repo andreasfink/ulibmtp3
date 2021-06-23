@@ -10,7 +10,9 @@
 
 @implementation UMMTP3LinkSetPrometheusData
 
-- (UMMTP3LinkSetPrometheusData *)initWithPrometheus:(UMPrometheus *)p linksetName:(NSString *)name isM3UA:(BOOL)isM3UA
+- (UMMTP3LinkSetPrometheusData *)initWithPrometheus:(UMPrometheus *)p
+                                        linksetName:(NSString *)name
+                                             isM3UA:(BOOL)isM3UA
 {
     self = [super init];
     if(self)
