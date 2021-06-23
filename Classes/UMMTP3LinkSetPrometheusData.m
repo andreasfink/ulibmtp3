@@ -27,11 +27,13 @@
                                                            subvalue1:_linksetName
                                                                 type:UMPrometheusMetricType_counter];
         _linkUpCount.help = @"counter of linkset up events";
+        
         _linkDownCount = [[UMPrometheusMetric alloc]initWithMetricName:@"mtp3-linkset-down-count"
                                                               subname1:@"linkset"
                                                              subvalue1:_linksetName
                                                                   type:UMPrometheusMetricType_counter];
         _linkDownCount.help = @"counter of linkset down events";
+        
         _linksAvailableGauge = [[UMPrometheusMetric alloc]initWithMetricName:@"mtp3-linkset-links-available-count"
                                                                     subname1:@"linkset"
                                                                    subvalue1:_linksetName
@@ -40,7 +42,7 @@
 
         _msuRxThroughput = [[UMPrometheusThroughputMetric alloc]initWithResolutionInSeconds:10.0
                                                                          reportDuration:10.0
-                                                                                   name:@"mtp3-linkset-msu-Rx-throughput"
+                                                                                   name:@"mtp3-linkset-msu-rx-throughput"
                                                                                subname1:@"linkset"
                                                                               subvalue1:_linksetName];
         _msuRxThroughput.help = @"throughput of received MSU";

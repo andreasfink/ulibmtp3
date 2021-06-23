@@ -499,7 +499,404 @@
     }
 }
 
+- (void)updateTxStatisticSi:(int)si headingCode:(int)heading
+{
+    int msuCount=1;
+    switch(si & 0x0F)
+    {
+        case MTP3_SERVICE_INDICATOR_SCCP:
+            [_prometheusMetrics.sccpTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_TUP:
+            [_prometheusMetrics.tupTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_ISUP:
+            [_prometheusMetrics.isupTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_DUP_C:
+            [_prometheusMetrics.dupcTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_DUP_F:
+            [_prometheusMetrics.dupfTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_RES_TESTING:
+            [_prometheusMetrics.resTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_BROADBAND_ISUP:
+            [_prometheusMetrics.bisupTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SAT_ISUP:
+            [_prometheusMetrics.sisupTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_B:
+            [_prometheusMetrics.sparebTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_C:
+            [_prometheusMetrics.sparecTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_D:
+            [_prometheusMetrics.sparedTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_E:
+            [_prometheusMetrics.spareeTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_F:
+            [_prometheusMetrics.sparefTxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_MGMT:
+        {
+            msuCount=0;
+            switch(heading)
+            {
+                case MTP3_MGMT_COO:      /* signalling link test message */
+                    [_prometheusMetrics.cooTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_COA:      /* signalling link test message */
+                    [_prometheusMetrics.coaTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_XCO:      /* extended changeover order */
+                    [_prometheusMetrics.xcoTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_XCA:      /* extended changeover acknowledgmenbt  */
+                    [_prometheusMetrics.xcaTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CBD:      /* Changeback Declaration */
+                    [_prometheusMetrics.cbdTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CBA:      /* Changeback acknowledgement */
+                    [_prometheusMetrics.cbaTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_ECO:      /* Emergency Changeover Order */
+                    [_prometheusMetrics.ecoTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_ECA:      /* Emergency Changeover Acknowledgement */
+                    [_prometheusMetrics.ecaTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RCT:      /* Signalling route set congesting test signal */
+                    [_prometheusMetrics.rctTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TFC:      /* Transfer Controlled Signal */
+                    [_prometheusMetrics.tfcTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TFP:      /* Transfer Prohibited Signal */
+                    [_prometheusMetrics.tfpTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TFR:      /* Transfer Restricted (national option) */
+                    [_prometheusMetrics.tfrTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TFA:      /* Transfer Allowed */
+                    [_prometheusMetrics.tfaTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RST:      /* Signalling-route-set-test signal for prohibited destination */
+                    [_prometheusMetrics.rstTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RSR:      /* Signalling-route-set-test signal for restricted destination (national option) */
+                    [_prometheusMetrics.rsrTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LIN:      /* Link inhibit signal */
+                    [_prometheusMetrics.linTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LUN:      /* Link uninhibit signal */
+                    [_prometheusMetrics.lunTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LIA:      /* Link inhibit acknowledgement signal */
+                    [_prometheusMetrics.liaTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LUA:      /* Link uninhibit acknowledgement signal */
+                    [_prometheusMetrics.luaTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LID:      /* Link inhibit denied signal */
+                    [_prometheusMetrics.lidTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LFU:      /* Link forced uninhibit signal */
+                    [_prometheusMetrics.lfuTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LLT:      /* Link local inhibit test signal */
+                    [_prometheusMetrics.lltTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LRT:      /* Link remote inhibit test signal */
+                    [_prometheusMetrics.lrtTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TRA:      /* Traffic-restart-allowed signal */
+                    [_prometheusMetrics.traTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_DLC:      /* Signalling-data-link-connection-order signal */
+                    [_prometheusMetrics.dlcTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CSS:      /* Connection-successful signal */
+                    [_prometheusMetrics.cssTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CNS:      /* Connection-not-successful signal */
+                    [_prometheusMetrics.cnsTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CNP:      /* Connection-not-possible signal */
+                    [_prometheusMetrics.cnpTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_UPU:      /* User Part Unavailable */
+                    [_prometheusMetrics.upuTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TCP:      /* ANSI */
+                    [_prometheusMetrics.tcpTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TRW:      /* ANSI */
+                    [_prometheusMetrics.trwTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TCR:      /* ANSI */
+                    [_prometheusMetrics.tcrTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TCA:      /* ANSI */
+                    [_prometheusMetrics.tcaTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RCP:      /* ANSI */
+                    [_prometheusMetrics.rcpTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RCR:      /* ANSI */
+                    [_prometheusMetrics.rcrTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_UPA:      /* ANSI 91 only */
+                    [_prometheusMetrics.upaTxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_UPT:      /*ANSI 91 only */
+                    [_prometheusMetrics.uptTxCount increaseBy:1];
+                    break;
+            }
+            break;
+        }
+        case MTP3_SERVICE_INDICATOR_TEST:
+        {
+            msuCount=0;
+            switch(heading)
+            {
+                case MTP3_TESTING_SLTM:
+                    [_prometheusMetrics.sltmTxCount increaseBy:1];
+                    break;
+                case MTP3_TESTING_SLTA:
+                    [_prometheusMetrics.sltaTxCount increaseBy:1];
+                    break;
+            }
+            break;
+        }
+        case MTP3_SERVICE_INDICATOR_MAINTENANCE_SPECIAL_MESSAGE:
+        {
+            msuCount = 0;
+            switch(heading)
+            {
+                case MTP3_ANSI_TESTING_SSLTM:
+                    [_prometheusMetrics.ssltmTxCount increaseBy:1];
+                    break;
+                case MTP3_ANSI_TESTING_SSLTA:
+                    [_prometheusMetrics.ssltaTxCount increaseBy:1];
+                    break;
+            }
+            break;
+        }
+    }
+    if(msuCount)
+    {
+        [_prometheusMetrics.msuTxCount increaseBy:1];
+        [_prometheusMetrics.msuTxThroughput increaseBy:1];
+    }
+}
 
+- (void)updateRxStatisticSi:(int)si headingCode:(int)heading
+{
+    int msuCount = 1;
+    switch(si & 0x0F)
+    {
+        case MTP3_SERVICE_INDICATOR_SCCP:
+            [_prometheusMetrics.sccpRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_TUP:
+            [_prometheusMetrics.tupRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_ISUP:
+            [_prometheusMetrics.isupRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_DUP_C:
+            [_prometheusMetrics.dupcRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_DUP_F:
+            [_prometheusMetrics.dupfRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_RES_TESTING:
+            [_prometheusMetrics.resRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_BROADBAND_ISUP:
+            [_prometheusMetrics.bisupRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SAT_ISUP:
+            [_prometheusMetrics.sisupRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_B:
+            [_prometheusMetrics.sparebRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_C:
+            [_prometheusMetrics.sparecRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_D:
+            [_prometheusMetrics.sparedRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_E:
+            [_prometheusMetrics.spareeRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_SPARE_F:
+            [_prometheusMetrics.sparefRxCount increaseBy:1];
+            break;
+        case MTP3_SERVICE_INDICATOR_MGMT:
+        {
+            msuCount = 0;
+            switch(heading)
+            {
+                case MTP3_MGMT_COO:      /* signalling link test message */
+                    [_prometheusMetrics.cooRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_COA:      /* signalling link test message */
+                    [_prometheusMetrics.coaRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_XCO:      /* extended changeover order */
+                    [_prometheusMetrics.xcoRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_XCA:      /* extended changeover acknowledgmenbt  */
+                    [_prometheusMetrics.xcaRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CBD:      /* Changeback Declaration */
+                    [_prometheusMetrics.cbdRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CBA:      /* Changeback acknowledgement */
+                    [_prometheusMetrics.cbaRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_ECO:      /* Emergency Changeover Order */
+                    [_prometheusMetrics.ecoRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_ECA:      /* Emergency Changeover Acknowledgement */
+                    [_prometheusMetrics.ecaRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RCT:      /* Signalling route set congesting test signal */
+                    [_prometheusMetrics.rctRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TFC:      /* Transfer Controlled Signal */
+                    [_prometheusMetrics.tfcRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TFP:      /* Transfer Prohibited Signal */
+                    [_prometheusMetrics.tfpRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TFR:      /* Transfer Restricted (national option) */
+                    [_prometheusMetrics.tfrRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TFA:      /* Transfer Allowed */
+                    [_prometheusMetrics.tfaRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RST:      /* Signalling-route-set-test signal for prohibited destination */
+                    [_prometheusMetrics.rstRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RSR:      /* Signalling-route-set-test signal for restricted destination (national option) */
+                    [_prometheusMetrics.rsrRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LIN:      /* Link inhibit signal */
+                    [_prometheusMetrics.linRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LUN:      /* Link uninhibit signal */
+                    [_prometheusMetrics.lunRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LIA:      /* Link inhibit acknowledgement signal */
+                    [_prometheusMetrics.liaRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LUA:      /* Link uninhibit acknowledgement signal */
+                    [_prometheusMetrics.luaRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LID:      /* Link inhibit denied signal */
+                    [_prometheusMetrics.lidRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LFU:      /* Link forced uninhibit signal */
+                    [_prometheusMetrics.lfuRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LLT:      /* Link local inhibit test signal */
+                    [_prometheusMetrics.lltRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_LRT:      /* Link remote inhibit test signal */
+                    [_prometheusMetrics.lrtRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TRA:      /* Traffic-restart-allowed signal */
+                    [_prometheusMetrics.traRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_DLC:      /* Signalling-data-link-connection-order signal */
+                    [_prometheusMetrics.dlcRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CSS:      /* Connection-successful signal */
+                    [_prometheusMetrics.cssRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CNS:      /* Connection-not-successful signal */
+                    [_prometheusMetrics.cnsRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_CNP:      /* Connection-not-possible signal */
+                    [_prometheusMetrics.cnpRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_UPU:      /* User Part Unavailable */
+                    [_prometheusMetrics.upuRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TCP:      /* ANSI */
+                    [_prometheusMetrics.tcpRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TRW:      /* ANSI */
+                    [_prometheusMetrics.trwRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TCR:      /* ANSI */
+                    [_prometheusMetrics.tcrRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_TCA:      /* ANSI */
+                    [_prometheusMetrics.tcaRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RCP:      /* ANSI */
+                    [_prometheusMetrics.rcpRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_RCR:      /* ANSI */
+                    [_prometheusMetrics.rcrRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_UPA:      /* ANSI 91 only */
+                    [_prometheusMetrics.upaRxCount increaseBy:1];
+                    break;
+                case MTP3_MGMT_UPT:      /*ANSI 91 only */
+                    [_prometheusMetrics.uptRxCount increaseBy:1];
+                    break;
+            }
+            break;
+        }
+        case MTP3_SERVICE_INDICATOR_TEST:
+        {
+            msuCount = 0;
+            switch(heading)
+            {
+                case MTP3_TESTING_SLTM:
+                    [_prometheusMetrics.sltmRxCount increaseBy:1];
+                    break;
+                case MTP3_TESTING_SLTA:
+                    [_prometheusMetrics.sltaRxCount increaseBy:1];
+                    break;
+            }
+            break;
+        }
+        case MTP3_SERVICE_INDICATOR_MAINTENANCE_SPECIAL_MESSAGE:
+        {
+            msuCount = 0;
+            switch(heading)
+            {
+                case MTP3_ANSI_TESTING_SSLTM:
+                    [_prometheusMetrics.ssltmRxCount increaseBy:1];
+                    break;
+                case MTP3_ANSI_TESTING_SSLTA:
+                    [_prometheusMetrics.ssltaRxCount increaseBy:1];
+                    break;
+            }
+            break;
+        }
+    }
+    if(msuCount)
+    {
+        [_prometheusMetrics.msuRxCount increaseBy:1];
+        [_prometheusMetrics.msuRxThroughput increaseBy:1];
+    }
+
+}
 - (void)msuIndication2:(NSData *)pdu
                  label:(UMMTP3Label *)label
                     si:(int)si
@@ -614,11 +1011,11 @@
                 }
                 int heading;
                 GRAB_BYTE(heading,data,idx,maxlen);
+                [self updateRxStatisticSi:si headingCode:heading];
                 switch(heading)
                 {
                     case MTP3_ANSI_TESTING_SSLTM:
                     {
-                        [_prometheusMetrics.ssltmRxCount increaseBy:1];
                         int byte;
                         int slc2;
                         int len;
@@ -666,7 +1063,6 @@
                         break;
                     case MTP3_ANSI_TESTING_SSLTA:
                     {
-                        [_prometheusMetrics.ssltaRxCount increaseBy:1];
 
                         int byte;
                         int slc2;
@@ -738,11 +1134,11 @@
                 }
                 int heading;
                 GRAB_BYTE(heading,data,idx,maxlen);
+                [self updateRxStatisticSi:si headingCode:heading];
                 switch(heading)
                 {
                     case MTP3_TESTING_SLTM:
                     {
-                        [_prometheusMetrics.sltmRxCount increaseBy:1];
                         int byte;
                         int slc2;
                         int len;
@@ -790,8 +1186,6 @@
                         break;
                     case MTP3_TESTING_SLTA:
                     {
-                        [_prometheusMetrics.sltaRxCount increaseBy:1];
-
                         int byte;
                         int slc2;
                         int len;
@@ -865,12 +1259,11 @@
                 }
                 int heading;
                 GRAB_BYTE(heading,data,idx,maxlen);
+                [self updateRxStatisticSi:si headingCode:heading];
                 switch(heading)
                 {
                     case MTP3_MGMT_COO:
                     {
-                        [_prometheusMetrics.cooRxCount increaseBy:1];
-
                         int fsn = 0;
                         if(_variant == UMMTP3Variant_ANSI)
                         {
@@ -892,8 +1285,6 @@
                         break;
                     case MTP3_MGMT_XCO:
                     {
-                        [_prometheusMetrics.xcoRxCount increaseBy:1];
-
                         int fsn = 0;
                         slc = label.sls;
                         int fsn1;
@@ -908,8 +1299,6 @@
                         break;
                     case MTP3_MGMT_XCA:
                     {
-                        [_prometheusMetrics.xcaRxCount increaseBy:1];
-
                         int fsn;
                         slc = label.sls;
                         int fsn1;
@@ -925,8 +1314,6 @@
 
                     case MTP3_MGMT_COA:
                     {
-                        [_prometheusMetrics.coaRxCount increaseBy:1];
-
                         int fsn;
                         if(_variant == UMMTP3Variant_ANSI)
                         {
@@ -949,8 +1336,6 @@
 
                     case MTP3_MGMT_CBD:
                     {
-                        [_prometheusMetrics.cbdRxCount increaseBy:1];
-
                         int cbc;
                         if(_variant == UMMTP3Variant_ANSI)
                         {
@@ -971,8 +1356,6 @@
                         break;
                     case MTP3_MGMT_CBA:
                     {
-                        [_prometheusMetrics.cbaRxCount increaseBy:1];
-
                         int cbc;
                         if(_variant == UMMTP3Variant_ANSI)
                         {
@@ -993,21 +1376,16 @@
                     }
                         break;
                     case MTP3_MGMT_ECO:
-                        [_prometheusMetrics.ecoRxCount increaseBy:1];
                         [self processECO:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_ECA:
-                        [_prometheusMetrics.ecaRxCount increaseBy:1];
                         [self processECA:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_RCT:
-                        [_prometheusMetrics.rctRxCount increaseBy:1];
                         [self processRCT:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_TFC: /* Transfer controlled */
                     {
-                        [_prometheusMetrics.tfcRxCount increaseBy:1];
-
                         int status;
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant status:&status maxlen:maxlen];
                         [self processTFC:label destination:pc status:status ni:ni mp:mp slc:slc link:link];
@@ -1015,30 +1393,24 @@
                         break;
                     case MTP3_MGMT_TFP: /* Transfer Prohibited */
                     {
-                        [_prometheusMetrics.tfpRxCount increaseBy:1];
-
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTFP:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TFR: /* Transfer Restricted */
                     {
-                        [_prometheusMetrics.tfrRxCount increaseBy:1];
-
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTFR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TFA: /* Transfer Allowed */
                     {
-                        [_prometheusMetrics.tfaRxCount increaseBy:1];
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTFA:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_RST:
                     {
-                        [_prometheusMetrics.rstRxCount increaseBy:1];
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant];
                         if(_logLevel < UMLOG_DEBUG)
                         {
@@ -1049,50 +1421,39 @@
                         break;
                     case MTP3_MGMT_RSR:
                     {
-                        [_prometheusMetrics.rsrRxCount increaseBy:1];
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant];
                         [self processRSR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_LIN:
-                        [_prometheusMetrics.linRxCount increaseBy:1];
                         [self processLIN:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_LUN:
-                        [_prometheusMetrics.lunRxCount increaseBy:1];
                         [self processLUN:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_LIA:
-                        [_prometheusMetrics.liaRxCount increaseBy:1];
                         [self processLIA:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_LUA:
-                        [_prometheusMetrics.luaRxCount increaseBy:1];
                         [self processLUA:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_LID:
-                        [_prometheusMetrics.lidRxCount increaseBy:1];
                         [self processLID:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_LFU:
-                        [_prometheusMetrics.lfuRxCount increaseBy:1];
                         [self processLFU:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_LLT:
-                        [_prometheusMetrics.lltRxCount increaseBy:1];
                         [self processLLT:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_LRT:
-                        [_prometheusMetrics.lrtRxCount increaseBy:1];
                         [self processLRT:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_TRA:
-                        [_prometheusMetrics.traRxCount increaseBy:1];
                         [self processTRA:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_DLC:
                     {
-                        [_prometheusMetrics.dlcRxCount increaseBy:1];
                         int cic;
                         int slc2 = slc;
                         if(_variant == UMMTP3Variant_ANSI)
@@ -1120,20 +1481,16 @@
                         break;
                     }
                     case MTP3_MGMT_CSS:
-                        [_prometheusMetrics.cssRxCount increaseBy:1];
                         [self processCSS:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_CNS:
-                        [_prometheusMetrics.cnsRxCount increaseBy:1];
                         [self processCNS:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_CNP:
-                        [_prometheusMetrics.cnpRxCount increaseBy:1];
                         [self processCNP:label ni:ni mp:mp slc:slc link:link];
                         break;
                     case MTP3_MGMT_UPU:
                     {
-                        [_prometheusMetrics.upuRxCount increaseBy:1];
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant];
                         int field = data[idx++];
                         int upid = field & 0x0F;
@@ -1152,27 +1509,23 @@
 
                         /* ansi cases */
                     case MTP3_MGMT_TRW:
-                        [_prometheusMetrics.trwRxCount increaseBy:1];
                         [self processTRW:label ni:ni mp:mp slc:slc link:link];
                         break;
 
                     case MTP3_MGMT_TCP:
                     {
-                        [_prometheusMetrics.tcpRxCount increaseBy:1];
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTCP:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TCR:
                     {
-                        [_prometheusMetrics.tcrRxCount increaseBy:1];
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTCR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_TCA:
                     {
-                        [_prometheusMetrics.tcaRxCount increaseBy:1];
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processTCA:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
@@ -1180,7 +1533,6 @@
 
                     case MTP3_MGMT_RCP:
                     {
-                        [_prometheusMetrics.rcpRxCount increaseBy:1];
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processRCP:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
@@ -1188,23 +1540,20 @@
 
                     case MTP3_MGMT_RCR:
                     {
-                        [_prometheusMetrics.rcrRxCount increaseBy:1];
                         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithBytes:data pos:&idx variant:_variant maxlen:maxlen];
                         [self processRCR:label destination:pc ni:ni mp:mp slc:slc link:link];
                     }
                         break;
                     case MTP3_MGMT_UPA:
-                        [_prometheusMetrics.upaRxCount increaseBy:1];
                         break;
                     case MTP3_MGMT_UPT:
-                        [_prometheusMetrics.uptRxCount increaseBy:1];
                         break;
                 }
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SCCP:
             {
-                [_prometheusMetrics.sccpRxCount increaseBy:1];
+                [self updateRxStatisticSi:si headingCode:0];
                 NSData *pdu2 = [NSData dataWithBytes:&data[idx] length:(maxlen-idx)];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
@@ -1217,8 +1566,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_TUP:
             {
-                [_prometheusMetrics.tupRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
@@ -1230,8 +1578,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_ISUP:
             {
-                [_prometheusMetrics.isupRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
@@ -1243,8 +1590,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_DUP_C:
             {
-                [_prometheusMetrics.dupcRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
@@ -1256,8 +1602,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_DUP_F:
             {
-                [_prometheusMetrics.dupfRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
@@ -1269,8 +1614,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_RES_TESTING:
             {
-                [_prometheusMetrics.resRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
@@ -1282,8 +1626,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_BROADBAND_ISUP:
             {
-                [_prometheusMetrics.bisupRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
@@ -1295,8 +1638,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SAT_ISUP:
             {
-                [_prometheusMetrics.sisupRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
@@ -1308,8 +1650,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_B:
             {
-                [_prometheusMetrics.sparebRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
@@ -1321,8 +1662,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_C:
             {
-                [_prometheusMetrics.sparecRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
@@ -1334,8 +1674,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_D:
             {
-                [_prometheusMetrics.sparedRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
@@ -1347,8 +1686,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_E:
             {
-                [_prometheusMetrics.spareeRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
@@ -1360,8 +1698,7 @@
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_F:
             {
-                [_prometheusMetrics.sparefRxCount increaseBy:1];
-
+                [self updateRxStatisticSi:si headingCode:0];
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
@@ -2411,6 +2748,7 @@
                si:MTP3_SERVICE_INDICATOR_TEST
        ackRequest:NULL
           options:NULL];
+    
 }
 
 - (void)sendSSLTA:(UMMTP3Label *)label
@@ -2459,6 +2797,7 @@
                si:MTP3_ANSI_SERVICE_INDICATOR_TEST
        ackRequest:NULL
           options:NULL];
+
 }
 
 - (void)sendSSLTM:(UMMTP3Label *)label
@@ -2538,8 +2877,7 @@
     {
         [self logMajorError:@"sendPdu: No link found in Linkset!"];
     }
-
-
+    
     NSMutableData *pdu = [[NSMutableData alloc]init];
     uint8_t len;
     
@@ -2604,6 +2942,7 @@
     [_speedometerTx increase];
     [_speedometerTxBytes increaseBy:(uint32_t)pdu.length];
     [link.m2pa dataFor:_mtp3 data:pdu ackRequest:ackRequest];
+    [self updateTxStatisticSi:si headingCode:heading];
 }
 
 -(void)sendPdu:(NSData *)data
@@ -2621,49 +2960,6 @@
         ni = _overrideNetworkIndicator.intValue;
     }
 
-    switch(si)
-    {
-
-        case MTP3_SERVICE_INDICATOR_SCCP:
-            [_prometheusMetrics.sccpTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_TUP:
-            [_prometheusMetrics.tupTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_ISUP:
-            [_prometheusMetrics.isupTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_DUP_C:
-            [_prometheusMetrics.dupcTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_DUP_F:
-            [_prometheusMetrics.dupfTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_RES_TESTING:
-            [_prometheusMetrics.resTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_BROADBAND_ISUP:
-            [_prometheusMetrics.bisupTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_SAT_ISUP:
-            [_prometheusMetrics.sisupTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_SPARE_B:
-            [_prometheusMetrics.sparebTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_SPARE_C:
-            [_prometheusMetrics.sparecTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_SPARE_D:
-            [_prometheusMetrics.sparedTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_SPARE_E:
-            [_prometheusMetrics.spareeTxCount increaseBy:1];
-            break;
-        case MTP3_SERVICE_INDICATOR_SPARE_F:
-            [_prometheusMetrics.sparefTxCount increaseBy:1];
-            break;
-    }
     NSMutableDictionary *options2=NULL;
     if((self.sendExtendedAttributes) && (options!=NULL))
     {
@@ -3103,8 +3399,6 @@
 /* Group CHM */
 - (void)sendCOO:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.cooTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCOO (Changeover-order signal)"];
@@ -3143,8 +3437,6 @@
 
 - (void)sendCOA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.coaTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCOA (Changeover-acknowledgement signal)"];
@@ -3178,12 +3470,11 @@
                si:MTP3_SERVICE_INDICATOR_MGMT
        ackRequest:NULL
           options:NULL];
+
 }
 
 - (void)sendXCO:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.xcoTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendXCO (Extended Change Over)"];
@@ -3221,8 +3512,6 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.xcaTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendXCO (Extended Change Over Acknowledgment)"];
@@ -3255,8 +3544,6 @@
 
 - (void)sendCBD:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.cbdTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCBD (Changeback-declaration signal)"];
@@ -3294,8 +3581,6 @@
 
 - (void)sendCBA:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.cbaTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCBA (Changeback-acknowledgement signal)"];
@@ -3334,8 +3619,6 @@
 /* Group ECM */
 - (void)sendECO:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.ecoTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendECO (Emergency-changeover-order signal)"];
@@ -3360,8 +3643,6 @@
 
 - (void)sendECA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.ecaTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendECA (Emergency-changeover-acknowledgement signal)"];
@@ -3387,8 +3668,6 @@
 /* Group FCM */
 - (void)sendRCT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.rctTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendRCT (Signalling-route-set-congestion-test signal)"];
@@ -3419,8 +3698,6 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.tfcTxCount increaseBy:1];
-
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -3453,8 +3730,6 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.tfpTxCount increaseBy:1];
-
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
 
     if(_logLevel <=UMLOG_DEBUG)
@@ -3487,8 +3762,6 @@
 
 - (void)sendTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.tfrTxCount increaseBy:1];
-
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
 
     if(_logLevel <=UMLOG_DEBUG)
@@ -3520,8 +3793,6 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.tfaTxCount increaseBy:1];
-
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
 
     if(_logLevel <=UMLOG_DEBUG)
@@ -3550,8 +3821,6 @@
 /* Group RSM */
 - (void)sendRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.rstTxCount increaseBy:1];
-
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
 
     if(_logLevel <=UMLOG_DEBUG)
@@ -3578,8 +3847,6 @@
 }
 - (void)sendRSR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.rsrTxCount increaseBy:1];
-
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
 
     if(_logLevel <=UMLOG_DEBUG)
@@ -3608,8 +3875,6 @@
 /* Group MIM */
 - (void)sendLIN:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.linTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLIN (Link inhibit signal)"];
@@ -3634,8 +3899,6 @@
 
 - (void)sendLUN:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.lunTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLUN (Link uninhibit signal)"];
@@ -3660,8 +3923,6 @@
 
 - (void)sendLIA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.liaTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLIA (Link inhibit acknowledgement signal)"];
@@ -3686,8 +3947,6 @@
 
 - (void)sendLUA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.luaTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLUA (Link uninhibit acknowledgement signal)"];
@@ -3712,8 +3971,6 @@
 
 - (void)sendLID:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.lidTxCount increaseBy:1];
-    
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLID (Link inhibit denied signal)"];
@@ -3738,8 +3995,6 @@
 
 - (void)sendLFU:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.lfuTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLFU (Link forced uninhibit signal)"];
@@ -3764,8 +4019,6 @@
 
 - (void)sendLLT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.lltTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLLT (Link local inhibit test signal)"];
@@ -3790,8 +4043,6 @@
 
 - (void)sendLRT:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.lrtTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendLRT (Link remote inhibit test signal)"];
@@ -3816,8 +4067,6 @@
 
 - (void)sendTRA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.traTxCount increaseBy:1];
-
     _tra_sent++;
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -3845,8 +4094,6 @@
 /* group DLM */
 - (void)sendDLC:(UMMTP3Label *)label cic:(int)cic ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.dlcTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendDLC (Signalling-data-link-connection-order signal)"];
@@ -3892,8 +4139,6 @@
 
 - (void)sendCSS:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.cssTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCSS (Connection-successful signal)"];
@@ -3918,8 +4163,6 @@
 
 - (void)sendCNS:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.cnsTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCNS (Connection-not-successful signal)"];
@@ -3944,8 +4187,6 @@
 
 - (void)sendCNP:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.cnpTxCount increaseBy:1];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendCNP (Connection-not-possible signal)"];
@@ -3970,8 +4211,6 @@
 /* group UFC */
 - (void)sendUPU:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc userpartId:(int)upid cause:(int)cause ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.upuTxCount increaseBy:1];
-
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
 
     if(_logLevel <=UMLOG_DEBUG)
@@ -4010,8 +4249,6 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.upaTxCount increaseBy:1];
-
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
 
     if(_logLevel <=UMLOG_DEBUG)
@@ -4050,8 +4287,6 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
-    [link.linkset.prometheusMetrics.uptTxCount increaseBy:1];
-
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
 
     if(_logLevel <=UMLOG_DEBUG)
