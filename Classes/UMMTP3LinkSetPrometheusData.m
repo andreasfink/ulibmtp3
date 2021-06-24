@@ -1445,7 +1445,7 @@
     [_prometheus removeObjectForKey:_sparefTxCount.key];
     [_prometheus removeObjectForKey:_msuRxThroughput.key];
     [_prometheus removeObjectForKey:_msuTxThroughput.key];
-    
+
     [_prometheus removeObjectForKey:_m3ua_errTxCount.key];
     [_prometheus removeObjectForKey:_m3ua_errRxCount.key];
     [_prometheus removeObjectForKey:_m3ua_ntfyRxCount.key];
