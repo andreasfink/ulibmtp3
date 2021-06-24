@@ -40,13 +40,13 @@
                                                                         type:UMPrometheusMetricType_gauge];
         _linksAvailableGauge.help = @"count of available links in a  linkset";
 
-        _msuRxThroughput = [[UMPrometheusThroughputMetric alloc]initWithResolutionInSeconds:10.0
+        _msuRxThroughput = [[UMPrometheusThroughputMetric alloc]initWithResolutionInSeconds:0.1
                                                                          reportDuration:10.0
                                                                                    name:@"mtp3-linkset-msu-rx-throughput"
                                                                                subname1:@"linkset"
                                                                               subvalue1:_linksetName];
         _msuRxThroughput.help = @"throughput of received MSU";
-        _msuTxThroughput = [[UMPrometheusThroughputMetric alloc]initWithResolutionInSeconds:10.0
+        _msuTxThroughput = [[UMPrometheusThroughputMetric alloc]initWithResolutionInSeconds:0.1
                                                                              reportDuration:10.0
                                                                                        name:@"mtp3-linkset-msu-tx-throughput"
                                                                                    subname1:@"linkset"
@@ -211,7 +211,18 @@
                                                                   type:UMPrometheusMetricType_counter];
         _sparefTxCount.help = @"count of sent Spare-F MTP3 payload";
 
-        
+        _localRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"mtp3-linkset-local-rx"
+                                                             subname1:@"linkset"
+                                                            subvalue1:_linksetName
+                                                                 type:UMPrometheusMetricType_counter];
+        _localRxCount.help = @"count of received MTP3 packets which are processed locally";
+
+        _forwardRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"mtp3-linkset-forward-rx"
+                                                               subname1:@"linkset"
+                                                              subvalue1:_linksetName
+                                                                   type:UMPrometheusMetricType_counter];
+        _forwardRxCount.help = @"count of received MTP3 packets which are forwarded (MTP3 Transit)";
+
         /* M2PA */
         if(!_isM3UA)
         {
@@ -1144,6 +1155,9 @@
     [_m3ua_deregrspTxCount setSubname1:a value:b];
     [_m3ua_deregrspRxCount setSubname1:a value:b];
 
+    [_localRxCount setSubname1:a value:b];
+    [_forwardRxCount setSubname1:a value:b];
+
 }
 
 - (void)registerMetrics
@@ -1311,6 +1325,9 @@
     [_prometheus addObject:_m3ua_deregrspTxCount forKey:_m3ua_deregrspTxCount.key];
     [_prometheus addObject:_m3ua_deregrspRxCount forKey:_m3ua_deregrspRxCount.key];
 
+    [_prometheus addObject:_localRxCount forKey:_localRxCount.key];
+    [_prometheus addObject:_forwardRxCount forKey:_forwardRxCount.key];
+
 }
 
 - (void)unregisterMetrics
@@ -1475,5 +1492,8 @@
     [_prometheus removeObjectForKey:_m3ua_deregreqRxCount.key];
     [_prometheus removeObjectForKey:_m3ua_deregrspTxCount.key];
     [_prometheus removeObjectForKey:_m3ua_deregrspRxCount.key];
+
+    [_prometheus removeObjectForKey:_localRxCount.key];
+    [_prometheus removeObjectForKey:_forwardRxCount.key];
 }
 @end

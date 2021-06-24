@@ -178,6 +178,9 @@
     UMPrometheusMetric  *_m3ua_deregreqRxCount;
     UMPrometheusMetric  *_m3ua_deregrspTxCount;
     UMPrometheusMetric  *_m3ua_deregrspRxCount;
+    UMPrometheusMetric  *_localRxCount;
+    UMPrometheusMetric  *_forwardRxCount;
+
 
 }
 
@@ -345,6 +348,8 @@
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaderegreqRxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaderegrspTxCount;
 @property(readwrite,strong)     UMPrometheusMetric  *m3uaderegrspRxCount;
+@property(readwrite,strong)     UMPrometheusMetric  *localRxCount;
+@property(readwrite,strong)     UMPrometheusMetric  *forwardRxCount;
 
 
 - (UMMTP3LinkSetPrometheusData *)initWithPrometheus:(UMPrometheus *)p linksetName:(NSString *)name isM3UA:(BOOL)isM3UA;

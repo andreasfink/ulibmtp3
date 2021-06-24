@@ -1197,6 +1197,7 @@
                                    opc:label.opc.pc
                                    dpc:label.dpc.pc
                                     si:si];
+            [linkset.prometheusMetrics.localRxCount increaseBy:1];
         }
         else
         {
@@ -1209,6 +1210,7 @@
                                              mp:mp
                                     linksetName:linksetName
                                         linkset:linkset];
+                [linkset.prometheusMetrics.forwardRxCount increaseBy:1];
             }
             else
             {
