@@ -4681,6 +4681,12 @@
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
     }
+    if(pc.pc == _adjacentPointCode.pc)
+    {
+        /* dont advertize pointcode unavailable to the very same pointcode.*/
+        NSLog(@"not advertizing pointcode available %d to APC %d",pc.pc, _adjacentPointCode.pc);
+        return;
+    }
     NSNumber *n = _advertizedPointcodes[@(pc.pc)];
     if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_ALLOWED))
     {
@@ -4707,6 +4713,12 @@
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
+    }
+    if(pc.pc == _adjacentPointCode.pc)
+    {
+        /* dont advertize pointcode unavailable to the very same pointcode.*/
+        NSLog(@"not advertizing pointcode restricted %d to APC %d",pc.pc, _adjacentPointCode.pc);
+        return;
     }
     NSNumber *n = _advertizedPointcodes[@(pc.pc)];
     if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_RESTRICTED))
@@ -4739,6 +4751,12 @@
     if(pc==NULL)
     {
         NSLog(@"advertizePointcodeUnavailable: pointcode==NULL");
+        return;
+    }
+    if(pc.pc == _adjacentPointCode.pc)
+    {
+        /* dont advertize pointcode unavailable to the very same pointcode.*/
+        NSLog(@"not advertizing pointcode unavailable %d to APC %d",pc.pc, _adjacentPointCode.pc);
         return;
     }
     NSNumber *n = _advertizedPointcodes[@(pc.pc)];
