@@ -2061,6 +2061,10 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
+    if(translatedPc.pc == _mtp3.opc.pc)
+    {
+        [self logDebug:@"ignoring TFP for own pointcode"];
+    }
     if(translatedPc.pc == _adjacentPointCode.pc)
     {
         [self updateRouteUnavailable:translatedPc
@@ -2095,17 +2099,21 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    if(translatedPc.pc == _adjacentPointCode.pc)
+    if(translatedPc.pc == _mtp3.opc.pc)
     {
-    [self updateRouteRestricted:translatedPc
-                           mask:translatedPc.maxmask
-                       priority:UMMTP3RoutePriority_1];
+        [self logDebug:@"ignoring TFP for own pointcode"];
+    }
+    else if(translatedPc.pc == _adjacentPointCode.pc)
+    {
+        [self updateRouteRestricted:translatedPc
+                               mask:translatedPc.maxmask
+                           priority:UMMTP3RoutePriority_1];
     }
     else
     {
         [self updateRouteRestricted:translatedPc
-                           mask:translatedPc.maxmask
-                       priority:UMMTP3RoutePriority_5];
+                               mask:translatedPc.maxmask
+                           priority:UMMTP3RoutePriority_5];
     }
 }
 
@@ -2141,7 +2149,11 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    if(translatedPc.pc == _adjacentPointCode.pc)
+    if(translatedPc.pc == _mtp3.opc.pc)
+    {
+        [self logDebug:@"ignoring TFP for own pointcode"];
+    }
+    else if(translatedPc.pc == _adjacentPointCode.pc)
     {
         [self updateRouteAvailable:translatedPc
                               mask:translatedPc.maxmask
