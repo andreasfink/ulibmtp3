@@ -91,7 +91,7 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) UMSynchronizedSortedDictionary *linksets;
 @property (readwrite,strong,atomic) UMPrometheus            *prometheus;
 
-- (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq;
+- (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq name:(NSString *)name;
 
 
 #pragma mark -

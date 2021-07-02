@@ -43,25 +43,10 @@
 #pragma mark -
 #pragma mark Initializer
 
-- (UMLayerMTP3 *)init
-{
-    self = [super init];
-    if(self)
-    {
-        [self genericInitialisation];
-    }
-    return self;
-}
-
-
-- (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq
-{
-    return [self initWithTaskQueueMulti:tq name:@""];
-}
-
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq name:(NSString *)name
 {
-    self = [super initWithTaskQueueMulti:tq name:name];
+    NSString *s = [NSString stringWithFormat:@"mtp3/%@",name];
+    self = [super initWithTaskQueueMulti:tq name:s];
     if(self)
     {
         [self genericInitialisation];

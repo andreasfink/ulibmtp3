@@ -287,14 +287,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 }
 
-- (UMM3UAApplicationServerProcess *)init
+- (UMLayer *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq name:(NSString *)name
 {
-    return [self initWithTaskQueueMulti:NULL];
-}
-
-- (UMLayer *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq
-{
-    self = [super initWithTaskQueueMulti:tq];
+    NSString *s = [NSString stringWithFormat:@"m3ua-as/%@",name];
+    self = [super initWithTaskQueueMulti:tq name:s];
     if(self)
     {
         _incomingStream0 = [[NSMutableData alloc]init];
