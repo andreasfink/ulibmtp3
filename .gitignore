@@ -6,12 +6,15 @@
 Makefile
 Makefile.linux
 Makefile.osx
+Makefile.freebsd
 config.h
 config.log
 config.status
 stamp-h1
 autom4te.cache
 Classes/ulibmtp3_version.h
+BUILDNR
+make_buildnr.sh
 
 #########################
 # .gitignore file for Xcode4 and Xcode5 Source projects
