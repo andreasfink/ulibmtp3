@@ -236,7 +236,7 @@
         [self queueFromLowerWithPriority:task];
     #else
         [task main];
-        #endif
+    #endif
     }
 }
 
