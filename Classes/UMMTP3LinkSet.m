@@ -1763,7 +1763,7 @@
 {
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
-        NSLog(@"Warning: SLTM while in status %d",link.current_m2pa_status);
+        [self logWarning:[NSString stringWithFormat:@"Warning: SLTM while in status %d",link.current_m2pa_status]];
     }
     if(self.logLevel <= UMLOG_DEBUG)
     {
@@ -1799,7 +1799,7 @@
 {
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
-        NSLog(@"Warning: SLTA while in status %d",link.current_m2pa_status);
+        [self logWarning:[NSString stringWithFormat:"Warning: SLTA while in status %d",link.current_m2pa_status]];
     }
 
     if(self.logLevel <= UMLOG_DEBUG)
@@ -2332,7 +2332,7 @@
 {
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
-        NSLog(@"Warning: TRA while in status %d",link.current_m2pa_status);
+        [self logWarning:[NSString stringWithFormat:"Warning: TRA while in status %d",link.current_m2pa_status]];
     }
 
     [self updateLinkSetStatus];
@@ -3248,7 +3248,7 @@
                 _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_everything;
                 break;
             default:
-                NSLog(@"Invalid value for screening-mtp3-plugin-trace-level. Should be 0...2");
+                [self logMajorError:[NSString stringWithFormat:@"Invalid value for screening-mtp3-plugin-trace-level. Should be 0...2"];
         }
     }
 
@@ -3284,7 +3284,7 @@
                 _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_everything;
                 break;
             default:
-                NSLog(@"Invalid value for screening-sccp-plugin-trace-level. Should be 0...2");
+                [self logMajorError:@"Invalid value for screening-sccp-plugin-trace-level. Should be 0...2"];
         }
     }
 
@@ -4407,16 +4407,13 @@
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc
 {
 
-    NSLog(@"m2paStatusUpdate:%d,slc:%d",status,slc);
     UMMTP3Link *link = [self getLinkBySlc:slc];
-    if(link==0)
+    if(link==NULL)
     {
-        NSLog(@"link not found for slc:%d",slc);
+        return;
     }
     M2PA_Status old_status = link.current_m2pa_status;
     link.current_m2pa_status = status;
-
-    NSLog(@"status %d->%d",old_status,status);
 
     link.last_m2pa_status = status;
 
@@ -4425,9 +4422,7 @@
     if((status == M2PA_STATUS_IS) && (_activeLinks==0))
     {
         _activeLinks++;
-        NSLog(@"assuming active due to M2PA_STATUS_IS");
     }
-    NSLog(@"activeLinks: %d",_activeLinks);
 
     if(_activeLinks==0)
     {
@@ -4447,14 +4442,12 @@
     switch(status)
     {
         case M2PA_STATUS_FOOS:
-            NSLog(@"M2PA_STATUS_FOOS");
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link stopReopenTimer2];
             [link powerOff];
             break;
         case M2PA_STATUS_DISCONNECTED:
-            NSLog(@"M2PA_STATUS_DISCONNECTED");
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link stopReopenTimer2];
@@ -4462,27 +4455,21 @@
             [link startReopenTimer1]; /* this will power on in few sec */
             break;
         case M2PA_STATUS_OFF:
-            NSLog(@"M2PA_STATUS_OFF");
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             break;
         case M2PA_STATUS_OOS:
-            NSLog(@"M2PA_STATUS_OOS");
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link start];
             break;
         case M2PA_STATUS_INITIAL_ALIGNMENT:
-            NSLog(@"M2PA_STATUS_INITIAL_ALIGNMENT");
             break;
         case M2PA_STATUS_ALIGNED_NOT_READY:
-            NSLog(@"M2PA_STATUS_ALIGNED_NOT_READY");
             break;
         case M2PA_STATUS_ALIGNED_READY:
-            NSLog(@"M2PA_STATUS_ALIGNED_READY");
             break;
         case M2PA_STATUS_IS:
-            NSLog(@"M2PA_STATUS_IS");
             _sendTRA = YES;
             _awaitFirstSLTA = YES;
             [link stopLinkTestTimer];
@@ -4539,56 +4526,47 @@
     int processorOutage = 0;
 
     oldActiveLinks = _activeLinks;
-    NSLog(@"updateLinkSetStatus");
     
     NSArray *keys = [_linksByName allKeys];
     for (NSString *key in keys)
     {
-        NSLog(@".. processing %@",key);
         UMMTP3Link *link = _linksByName[key];
         switch(link.current_m2pa_status)
         {
             default:
             case M2PA_STATUS_OFF:
-                NSLog(@"M2PA_STATUS_OFF");
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 inactive++;
                 break;
             case M2PA_STATUS_OOS:
-                NSLog(@"M2PA_STATUS_OOS");
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 inactive++;
                 break;
             case M2PA_STATUS_INITIAL_ALIGNMENT:
-                NSLog(@"M2PA_STATUS_INITIAL_ALIGNMENT");
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 inactive++;
                 break;
             case M2PA_STATUS_ALIGNED_NOT_READY:
-                NSLog(@"M2PA_STATUS_ALIGNED_NOT_READY");
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 inactive++;
                 break;
             case M2PA_STATUS_ALIGNED_READY:
-                NSLog(@"M2PA_STATUS_ALIGNED_READY");
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 ready++;
                 break;
             case M2PA_STATUS_IS:
-                NSLog(@"M2PA_STATUS_ALIGNED_READY");
                 if(link.m2pa.remote_processor_outage)
                 {
-                    NSLog(@" processorOutage");
                     [self updateRouteUnavailable:_adjacentPointCode
                                             mask:_adjacentPointCode.maxmask
                                         priority:UMMTP3RoutePriority_1];
@@ -4596,7 +4574,6 @@
                 }
                 else
                 {
-                    NSLog(@" active");
                     [self updateRouteAvailable:_adjacentPointCode
                                           mask:_adjacentPointCode.maxmask
                                       priority:UMMTP3RoutePriority_1];
@@ -4614,7 +4591,6 @@
         UMMTP3Label *label = [[UMMTP3Label alloc]init];
         label.opc = self.localPointCode;
         label.dpc = self.adjacentPointCode;
-        NSLog(@" _sendTRA=YES, _awaitFirstSLTA=YES");
         _sendTRA = YES;
         _awaitFirstSLTA = YES;
         /* [self sendTRA:label
@@ -4761,12 +4737,12 @@
 
     if(mask != pc.maxmask)
     {
-        NSLog(@"We dont support advertizements with mask other than maxmask");
+        [self logWarning:@"We dont support advertizements with mask other than maxmask"];
     }
     if(pc.pc == _adjacentPointCode.pc)
     {
         /* dont advertize pointcode unavailable to the very same pointcode.*/
-        NSLog(@"not advertizing pointcode available %d to APC %d",pc.pc, _adjacentPointCode.pc);
+        [self logWarning:[NSString stringWithFormat:@"not advertizing pointcode available %d to APC %d",pc.pc, _adjacentPointCode.pc]];
         return;
     }
     NSNumber *n = _advertizedPointcodes[@(pc.pc)];
