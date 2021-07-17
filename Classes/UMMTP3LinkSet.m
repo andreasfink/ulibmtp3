@@ -4510,39 +4510,63 @@
 
 - (void)updateLinkSetStatus
 {
-    int oldActiveLinks;
+    int oldActiveLinks =0;
     int active = 0 ;
     int inactive = 0;
     int ready = 0;
     int processorOutage = 0;
 
     oldActiveLinks = _activeLinks;
-
+    NSLog(@"updateLinkSetStatus");
+    
     NSArray *keys = [_linksByName allKeys];
     for (NSString *key in keys)
     {
+        NSLog(@".. processing %@",key);
         UMMTP3Link *link = _linksByName[key];
         switch(link.m2pa.m2pa_status)
         {
             default:
             case M2PA_STATUS_OFF:
+                NSLog(@"M2PA_STATUS_OFF");
+                [self updateRouteUnavailable:_adjacentPointCode
+                                        mask:_adjacentPointCode.maxmask
+                                    priority:UMMTP3RoutePriority_1];
+                inactive++;
+                break;
             case M2PA_STATUS_OOS:
+                NSLog(@"M2PA_STATUS_OOS");
+                [self updateRouteUnavailable:_adjacentPointCode
+                                        mask:_adjacentPointCode.maxmask
+                                    priority:UMMTP3RoutePriority_1];
+                inactive++;
+                break;
             case M2PA_STATUS_INITIAL_ALIGNMENT:
+                NSLog(@"M2PA_STATUS_INITIAL_ALIGNMENT");
+                [self updateRouteUnavailable:_adjacentPointCode
+                                        mask:_adjacentPointCode.maxmask
+                                    priority:UMMTP3RoutePriority_1];
+                inactive++;
+                break;
             case M2PA_STATUS_ALIGNED_NOT_READY:
+                NSLog(@"M2PA_STATUS_ALIGNED_NOT_READY");
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 inactive++;
                 break;
             case M2PA_STATUS_ALIGNED_READY:
+                NSLog(@"M2PA_STATUS_ALIGNED_READY");
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 ready++;
                 break;
             case M2PA_STATUS_IS:
+                NSLog(@"M2PA_STATUS_ALIGNED_READY");
                 if(link.m2pa.remote_processor_outage)
                 {
+                    NSLog(@" processorOutage");
                     [self updateRouteUnavailable:_adjacentPointCode
                                             mask:_adjacentPointCode.maxmask
                                         priority:UMMTP3RoutePriority_1];
@@ -4550,6 +4574,7 @@
                 }
                 else
                 {
+                    NSLog(@" active");
                     [self updateRouteAvailable:_adjacentPointCode
                                           mask:_adjacentPointCode.maxmask
                                       priority:UMMTP3RoutePriority_1];
@@ -4560,6 +4585,8 @@
     }
     /* if we now have our first active link, we should send a first SLTM before sending TRA */
 
+    NSLog(@" oldActiveLinks %d",oldActiveLinks);
+    NSLog(@" active %d",active);
     if((oldActiveLinks == 0) && (active > 0))
     {
         [_prometheusMetrics.linkUpCount increaseBy:1];
@@ -4567,6 +4594,7 @@
         UMMTP3Label *label = [[UMMTP3Label alloc]init];
         label.opc = self.localPointCode;
         label.dpc = self.adjacentPointCode;
+        NSLog(@" _sendTRA=YES, _awaitFirstSLTA=YES");
         _sendTRA = YES;
         _awaitFirstSLTA = YES;
         /* [self sendTRA:label
@@ -4583,6 +4611,10 @@
     _activeLinks = active;
     _inactiveLinks = inactive;
     _readyLinks = ready;
+
+    NSLog(@" _activeLinks   %d",_activeLinks);
+    NSLog(@" _inactiveLinks %d",_inactiveLinks);
+    NSLog(@" _readyLinks    %d",_readyLinks);
     if(_activeLinks > 0)
     {
         _mtp3.ready = YES;
