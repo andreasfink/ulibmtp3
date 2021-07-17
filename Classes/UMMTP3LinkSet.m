@@ -143,7 +143,7 @@
     for(NSString *key in linkKeys)
     {
         UMMTP3Link *link = _linksByName[key];
-        if(link.m2pa.m2pa_status == M2PA_STATUS_IS)
+        if(link.current_m2pa_status == M2PA_STATUS_IS)
         {
             [activeLinkKeys addObject:key];
         }
@@ -169,7 +169,7 @@
             UMMTP3Link *link2 = _linksByName[key];
             [s appendFormat:@"\t%@",link.name];
             [s appendFormat:@" SLC %d",link.slc];
-            [s appendFormat:@" %@",[UMLayerM2PA m2paStatusString:link2.m2pa.m2pa_status]];
+            [s appendFormat:@" %@",[UMLayerM2PA m2paStatusString:link2.current_m2pa_status]];
             [s appendString:@"\n"];
         }
         [self.logFeed debugText:s];
@@ -934,7 +934,7 @@
             [self protocolViolation];
             return;
         }
-        if(link && (link.m2pa.m2pa_status != M2PA_STATUS_IS))
+        if(link && (link.current_m2pa_status != M2PA_STATUS_IS))
         {
             /* All messages to another destination received at a signalling point whose MTP is restarting are discarded.*/
             if(![label.dpc isEqualToPointCode:_localPointCode])
@@ -1761,9 +1761,9 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
-    if(link.m2pa.m2pa_status != M2PA_STATUS_IS)
+    if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
-        NSLog(@"Warning: SLTM while in status %d",link.m2pa.m2pa_status);
+        NSLog(@"Warning: SLTM while in status %d",link.current_m2pa_status);
     }
     if(self.logLevel <= UMLOG_DEBUG)
     {
@@ -1797,9 +1797,9 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
-    if(link.m2pa.m2pa_status != M2PA_STATUS_IS)
+    if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
-        NSLog(@"Warning: SLTA while in status %d",link.m2pa.m2pa_status);
+        NSLog(@"Warning: SLTA while in status %d",link.current_m2pa_status);
     }
 
     if(self.logLevel <= UMLOG_DEBUG)
@@ -2330,9 +2330,9 @@
                slc:(int)slc
               link:(UMMTP3Link *)link
 {
-    if(link.m2pa.m2pa_status != M2PA_STATUS_IS)
+    if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
-        NSLog(@"Warning: TRA while in status %d",link.m2pa.m2pa_status);
+        NSLog(@"Warning: TRA while in status %d",link.current_m2pa_status);
     }
 
     [self updateLinkSetStatus];
@@ -4873,7 +4873,7 @@
         UMMTP3Link *link = _linksByName[key];
         [s appendFormat:@"\t%@",link.name];
         [s appendFormat:@" SLC %d",link.slc];
-        [s appendFormat:@" M2PA-Status: %@",[UMLayerM2PA m2paStatusString:link.m2pa.m2pa_status]];
+        [s appendFormat:@" M2PA-Status: %@",[UMLayerM2PA m2paStatusString:link.current_m2pa_status]];
         [s appendString:@"\n"];
 
     }
