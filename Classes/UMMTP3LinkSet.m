@@ -4392,11 +4392,24 @@
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc
 {
 
+    NSLog(@"m2paStatusUpdate:%d,slc:%d",status,slc);
     UMMTP3Link *link = [self getLinkBySlc:slc];
+    if(link==0)
+    {
+        NSLog(@"link not found for slc:%d",slc);
+    }
     M2PA_Status old_status = link.last_m2pa_status;
+    
+    NSLog(@"status %d->%d",old_status,status);
+
     link.last_m2pa_status = status;
 
     [self updateLinkSetStatus];
+    
+    NSLog(@"activeLinks: %d",_activeLinks);
+
+    M2PA_Status old_status = link.last_m2pa_status;
+
     if(_activeLinks==0)
     {
         link.emergency = YES;
@@ -4414,12 +4427,14 @@
     switch(status)
     {
         case M2PA_STATUS_FOOS:
+            NSLog(@"M2PA_STATUS_FOOS");
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link stopReopenTimer2];
             [link powerOff];
             break;
         case M2PA_STATUS_DISCONNECTED:
+            NSLog(@"M2PA_STATUS_DISCONNECTED");
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link stopReopenTimer2];
@@ -4427,19 +4442,27 @@
             [link startReopenTimer1]; /* this will power on in few sec */
             break;
         case M2PA_STATUS_OFF:
+            NSLog(@"M2PA_STATUS_OFF");
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             break;
         case M2PA_STATUS_OOS:
+            NSLog(@"M2PA_STATUS_OOS");
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link start];
             break;
         case M2PA_STATUS_INITIAL_ALIGNMENT:
+            NSLog(@"M2PA_STATUS_INITIAL_ALIGNMENT");
+            break;
         case M2PA_STATUS_ALIGNED_NOT_READY:
+            NSLog(@"M2PA_STATUS_ALIGNED_NOT_READY");
+            break;
         case M2PA_STATUS_ALIGNED_READY:
+            NSLog(@"M2PA_STATUS_ALIGNED_READY");
             break;
         case M2PA_STATUS_IS:
+            NSLog(@"M2PA_STATUS_IS");
             _sendTRA = YES;
             _awaitFirstSLTA = YES;
             [link stopLinkTestTimer];
