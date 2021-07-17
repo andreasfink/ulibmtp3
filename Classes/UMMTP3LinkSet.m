@@ -4607,8 +4607,6 @@
     }
     /* if we now have our first active link, we should send a first SLTM before sending TRA */
 
-    NSLog(@" oldActiveLinks %d",oldActiveLinks);
-    NSLog(@" active %d",active);
     if((oldActiveLinks == 0) && (active > 0))
     {
         [_prometheusMetrics.linkUpCount increaseBy:1];
@@ -4634,9 +4632,6 @@
     _inactiveLinks = inactive;
     _readyLinks = ready;
 
-    NSLog(@" _activeLinks   %d",_activeLinks);
-    NSLog(@" _inactiveLinks %d",_inactiveLinks);
-    NSLog(@" _readyLinks    %d",_readyLinks);
     if(_activeLinks > 0)
     {
         _mtp3.ready = YES;
