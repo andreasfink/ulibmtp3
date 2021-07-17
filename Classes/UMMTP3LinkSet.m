@@ -4422,6 +4422,7 @@
         return;
     }
 
+    
     switch(status)
     {
         case M2PA_STATUS_FOOS:
