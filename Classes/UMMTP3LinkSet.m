@@ -4408,8 +4408,6 @@
     
     NSLog(@"activeLinks: %d",_activeLinks);
 
-    M2PA_Status old_status = link.last_m2pa_status;
-
     if(_activeLinks==0)
     {
         link.emergency = YES;
