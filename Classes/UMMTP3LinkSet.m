@@ -4413,8 +4413,9 @@
     {
         NSLog(@"link not found for slc:%d",slc);
     }
-    M2PA_Status old_status = link.last_m2pa_status;
-    
+    M2PA_Status old_status = link.current_m2pa_status;
+    link.current_m2pa_status = status;
+
     NSLog(@"status %d->%d",old_status,status);
 
     link.last_m2pa_status = status;
@@ -4545,7 +4546,7 @@
     {
         NSLog(@".. processing %@",key);
         UMMTP3Link *link = _linksByName[key];
-        switch(link.m2pa.m2pa_status)
+        switch(link.current_m2pa_status)
         {
             default:
             case M2PA_STATUS_OFF:

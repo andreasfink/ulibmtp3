@@ -26,6 +26,7 @@
     {
         _logLevel = UMLOG_MAJOR;
         _last_m2pa_status = M2PA_STATUS_OFF;
+        _current_m2pa_status = M2PA_STATUS_OFF;
         _linkTestTime = 30.0;
         _linkTestMaxOutStanding = 3;
         _reopenTime1 = MTP3_LINK_REOPEN_TIME1_DEFAULT;
