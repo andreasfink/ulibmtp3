@@ -1799,7 +1799,7 @@
 {
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
-        [self logWarning:[NSString stringWithFormat:"Warning: SLTA while in status %d",link.current_m2pa_status]];
+        [self logWarning:[NSString stringWithFormat:@"Warning: SLTA while in status %d",link.current_m2pa_status]];
     }
 
     if(self.logLevel <= UMLOG_DEBUG)
@@ -2332,7 +2332,7 @@
 {
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
-        [self logWarning:[NSString stringWithFormat:"Warning: TRA while in status %d",link.current_m2pa_status]];
+        [self logWarning:[NSString stringWithFormat:@"Warning: TRA while in status %d",link.current_m2pa_status]];
     }
 
     [self updateLinkSetStatus];
@@ -3248,7 +3248,7 @@
                 _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_everything;
                 break;
             default:
-                [self logMajorError:[NSString stringWithFormat:@"Invalid value for screening-mtp3-plugin-trace-level. Should be 0...2"];
+                [self logMajorError:@"Invalid value for screening-mtp3-plugin-trace-level. Should be 0...2"];
         }
     }
 
