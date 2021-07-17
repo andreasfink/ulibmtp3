@@ -1761,6 +1761,10 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
+    if(link.m2pa.m2pa_status != M2PA_STATUS_IS)
+    {
+        NSLog(@"Warning: SLTM while in status %d",link.m2pa.m2pa_status);
+    }
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processSLTM"];
@@ -1782,6 +1786,7 @@
     {
         [self sendSLTA:reverse_label pattern:pattern ni:ni mp:mp slc:slc link:link];
     }
+    
     [self updateLinkSetStatus];
 }
 
@@ -1792,6 +1797,11 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
+    if(link.m2pa.m2pa_status != M2PA_STATUS_IS)
+    {
+        NSLog(@"Warning: SLTA while in status %d",link.m2pa.m2pa_status);
+    }
+
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processSLTA"];
@@ -2320,6 +2330,11 @@
                slc:(int)slc
               link:(UMMTP3Link *)link
 {
+    if(link.m2pa.m2pa_status != M2PA_STATUS_IS)
+    {
+        NSLog(@"Warning: TRA while in status %d",link.m2pa.m2pa_status);
+    }
+
     [self updateLinkSetStatus];
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -4406,6 +4421,11 @@
 
     [self updateLinkSetStatus];
     
+    if((status == M2PA_STATUS_IS) && (_activeLinks==0))
+    {
+        _activeLinks++;
+        NSLog(@"assuming active due to M2PA_STATUS_IS");
+    }
     NSLog(@"activeLinks: %d",_activeLinks);
 
     if(_activeLinks==0)
