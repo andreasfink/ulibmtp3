@@ -137,6 +137,9 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,assign) int congestionLevel;
 //@property(readwrite,strong) UMLogFeed   *log;
 @property(readwrite,assign) UMLogLevel logLevel;
+
+@property(readwrite,strong) UMMutex *linksLock;
+@property(readwrite,strong) UMMutex *slsLock;
 @property(readwrite,strong) NSString *name;
 @property(readwrite,strong) UMSynchronizedSortedDictionary *linksByName;
 @property(readwrite,strong) UMSynchronizedSortedDictionary *linksBySlc;

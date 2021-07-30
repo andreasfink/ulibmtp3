@@ -2968,7 +2968,7 @@
     }
     [_speedometerTx increase];
     [_speedometerTxBytes increaseBy:(uint32_t)pdu.length];
-    [link.m2pa dataFor:_mtp3 data:pdu ackRequest:ackRequest];
+    [link.m2pa dataFor:_mtp3 data:pdu ackRequest:ackRequest async:NO dpc:label.dpc.pc];
     [self updateTxStatisticSi:si headingCode:heading];
 }
 
