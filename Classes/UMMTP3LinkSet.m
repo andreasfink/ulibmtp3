@@ -4842,7 +4842,7 @@
     for(NSString *key in linkKeys)
     {
         UMMTP3Link *link = _linksByName[key];
-        [s appendFormat:@"\t%@",link.name];
+        [s appendFormat:@"    %@",link.name];
         [s appendFormat:@" SLC %d",link.slc];
         [s appendFormat:@" M2PA-Status: %@",[UMLayerM2PA m2paStatusString:link.current_m2pa_status]];
         [s appendString:@"\n"];
