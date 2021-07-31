@@ -264,7 +264,7 @@
     }
 }
 
-- (void)dataIndication:(NSData *)dataIn slc:(int)slc
+- (void) dataIndication:(NSData *)dataIn slc:(int)slc
 {
     const unsigned char *data = dataIn.bytes;
     size_t maxlen = dataIn.length;
@@ -375,7 +375,7 @@
     return UMMTP3TransitPermission_implicitlyDenied;
 }
 
-- (void)msuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc
+- (void) msuIndication:(const unsigned char *)data maxlen:(size_t)maxlen slc:(int)slc
 {
     UMMTP3Link *link = [self getLinkBySlc:slc];
     @try
@@ -1764,6 +1764,7 @@
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTM while in status %d",link.current_m2pa_status]];
+        link.current_m2pa_status = M2PA_STATUS_IS;
     }
     if(self.logLevel <= UMLOG_DEBUG)
     {
@@ -1800,6 +1801,7 @@
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTA while in status %d",link.current_m2pa_status]];
+        link.current_m2pa_status = M2PA_STATUS_IS;
     }
 
     if(self.logLevel <= UMLOG_DEBUG)
