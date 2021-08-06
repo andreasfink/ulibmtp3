@@ -426,7 +426,63 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processERR:(UMSynchronizedSortedDictionary *)params
 {
-    NSLog(@"M3UA-ERR: %@",params);
+    NSMutableString *msg = [[NSMutableString alloc]init];
+    [msg appendString:@"M3UA-ERR:\n" ];
+    for(NSNumber *key in [params allKeys])
+    {
+
+        int   code = [key intValue];
+        const char *param_name = m3ua_param_name(code);
+        NSData *d = [self getParam:params identifier:code];
+        NSString *s;
+        switch(code)
+        {
+            case M3UA_PARAM_ERROR_CODE:
+            {
+                const uint8_t *bytes = d.bytes;
+                if(d.length == 4)
+                {
+                    int err = (bytes[3] << 0) || (bytes[2] << 8) || (bytes[1] << 16) || (bytes[0] << 24);
+                    switch(err)
+                    {
+                        case 0x01:
+                            s = @"Unsupported Version";
+                            break;
+                        case 0x02:
+                            s = @"Not Used in M3UA";
+                            break;
+                        case 0x03:
+                            s = @"Unsupported Message Class";
+                            break;
+                        case 0x04:
+                            s = @"Unsupported Message Type";
+                            break;
+                        case 0x05:
+                            s = @"Unsupported Traffic Mode Type";
+                            break;
+                        case 0x06:
+                            s = @"Unexpected Message";
+                            break;
+                        default:
+                            s = @"unknown error code";
+                            break;
+                    }
+                    [msg appendFormat:@"\t%s: %d (%@)\n" ,param_name,err,s];
+                }
+                else
+                {
+                    [msg appendFormat:@"\t%s: %@\n" ,param_name,[d hexString]];
+                }
+            }
+                break;
+            default:
+            {
+                [msg appendFormat:@"\t%s: %@\n" ,param_name,d];
+            }
+        }
+    }
+    NSLog(@"%@",msg);
+    self.lastError = msg;
 }
 
 - (void)processNTFY:(UMSynchronizedSortedDictionary *)params

@@ -73,7 +73,8 @@
     UMThroughputCounter *_outboundThroughputPackets;
     UMThroughputCounter *_inboundThroughputBytes;
     UMThroughputCounter *_outboundThroughputBytes;
-    BOOL _forcedOutOfService;
+    NSString            *_lastError;
+    BOOL                _forcedOutOfService;
 }
 
 
@@ -90,6 +91,7 @@
 @property(readwrite,strong,atomic)  NSDate *lastBeatAckReceived;
 @property(readwrite,strong,atomic)  NSDate *lastBeatSent;
 @property(readwrite,strong,atomic)  NSDate *lastBeatAckSent;
+@property(readwrite,strong,atomic)  NSString *lastError;
 @property(readwrite,assign,atomic)  NSTimeInterval beatTime;
 @property(readwrite,assign,atomic)  int beatMaxOutstanding;
 @property(readwrite,strong,atomic)  UMThroughputCounter *inboundThroughputPackets;
