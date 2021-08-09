@@ -1787,7 +1787,6 @@
     {
         [self sendSLTA:reverse_label pattern:pattern ni:ni mp:mp slc:slc link:link];
     }
-    
     [self updateLinkSetStatus];
 }
 
@@ -2429,7 +2428,6 @@
         [self protocolViolation];
         return;
     }
-
     [self sendTRA:label.reverseLabel ni:ni mp:mp slc:slc link:link];
 }
 
@@ -2738,7 +2736,6 @@
             link:(UMMTP3Link *)link
 {
     _outstandingSLTA++;
- 
     link.outstandingLinkTests++;
     if(_overrideNetworkIndicator)
     {
@@ -4097,6 +4094,8 @@
 - (void)sendTRA:(UMMTP3Label *)label ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
     _tra_sent++;
+    _sendTRA = NO;
+    _awaitFirstSLTA = NO;
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTRA (Traffic-restart-allowed signal)"];
@@ -4408,7 +4407,6 @@
 
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc
 {
-
     UMMTP3Link *link = [self getLinkBySlc:slc];
     if(link==NULL)
     {
@@ -4529,6 +4527,8 @@
 
     oldActiveLinks = _activeLinks;
     
+    UMMTP3Link *last_active_link = NULL;
+    UMMTP3Link *last_ready_link = NULL;
     NSArray *keys = [_linksByName allKeys];
     for (NSString *key in keys)
     {
@@ -4565,8 +4565,10 @@
                                         mask:_adjacentPointCode.maxmask
                                     priority:UMMTP3RoutePriority_1];
                 ready++;
+                last_ready_link = link;
                 break;
             case M2PA_STATUS_IS:
+                last_active_link = link;
                 if(link.m2pa.remote_processor_outage)
                 {
                     [self updateRouteUnavailable:_adjacentPointCode
@@ -4585,7 +4587,6 @@
         }
     }
     /* if we now have our first active link, we should send a first SLTM before sending TRA */
-
     if((oldActiveLinks == 0) && (active > 0))
     {
         [_prometheusMetrics.linkUpCount increaseBy:1];
@@ -4595,11 +4596,10 @@
         label.dpc = self.adjacentPointCode;
         _sendTRA = YES;
         _awaitFirstSLTA = YES;
-        /* [self sendTRA:label
-                   ni:self.networkIndicator
-                   mp:0
-                  slc:0
-                 link:NULL];*/
+        if(last_active_link)
+        {
+            [self linktestTimeEventForLink:last_active_link];
+        }
     }
     if((oldActiveLinks > 0) && (active == 0))
     {
