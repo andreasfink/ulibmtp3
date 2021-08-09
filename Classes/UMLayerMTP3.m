@@ -1471,8 +1471,7 @@
     @autoreleasepool
     {
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
-        UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
-        [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
+        [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
         return YES;
     }
 }
@@ -1485,8 +1484,7 @@
     @autoreleasepool
     {
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
-        UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
-        [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
+        [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
         return YES;
     }
 }
@@ -1503,13 +1501,14 @@
                                                 mask:mask
                                          linksetName:name
                                             priority:prio];
-        UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
-        [self updateUpperLevelPointCode:pc mask:mask status:ir.status  excludeLinkSetName:name];
+        [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
         return YES;
     }
 }
 
-- (void)updateUpperLevelPointCode:(UMMTP3PointCode *)pc mask:(int)mask status:(UMMTP3RouteStatus)status excludeLinkSetName:(NSString *)name
+- (void)updateUpperLevelPointCode:(UMMTP3PointCode *)pc
+                             mask:(int)mask
+               excludeLinkSetName:(NSString *)name
 {
     UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
     if(ir.status == UMMTP3_ROUTE_PROHIBITED)
@@ -1577,7 +1576,9 @@
 }
 
 
-- (void)updateOtherLinksetsPointCodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask excludeLinkSetName:(NSString *)name
+- (void)updateOtherLinksetsPointCodeUnavailable:(UMMTP3PointCode *)pc
+                                           mask:(int)mask
+                             excludeLinkSetName:(NSString *)name
 {
     NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
     for(NSString *linksetName in linksetNames)
@@ -1587,7 +1588,9 @@
     }
 }
 
-- (void)updateOtherLinksetsPointCodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask excludeLinkSetName:(NSString *)name
+- (void)updateOtherLinksetsPointCodeRestricted:(UMMTP3PointCode *)pc
+                                          mask:(int)mask
+                            excludeLinkSetName:(NSString *)name
 {
     NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
     for(NSString *linksetName in linksetNames)
@@ -1598,7 +1601,9 @@
 
 }
 
-- (void)updateOtherLinksetsPointCodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask excludeLinkSetName:(NSString *)name
+- (void)updateOtherLinksetsPointCodeAvailable:(UMMTP3PointCode *)pc
+                                         mask:(int)mask
+                           excludeLinkSetName:(NSString *)name
 {
     NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
     for(NSString *linksetName in linksetNames)

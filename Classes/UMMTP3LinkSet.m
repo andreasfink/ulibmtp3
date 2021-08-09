@@ -41,10 +41,10 @@
         _linksLock = [[UMMutex alloc]initWithName:@"mtp3linkset-links-mutex"];
         _slsLock = [[UMMutex alloc]initWithName:@"mtp3-sls-lock"];
         _name = @"untitled";
-        _activeLinks = -1;
-        _inactiveLinks = -1;
-        _readyLinks = -1;
-        _totalLinks = -1;
+        _activeLinks = 0;
+        _inactiveLinks = 0;
+        _readyLinks = 0;
+        _totalLinks = 0;
         _congestionLevel = 0;
         _logLevel = UMLOG_MAJOR;
         _advertizedPointcodes = [[UMSynchronizedSortedDictionary alloc]init];
@@ -4414,14 +4414,20 @@
     }
     M2PA_Status old_status = link.current_m2pa_status;
     link.current_m2pa_status = status;
-
     link.last_m2pa_status = status;
-
+    BOOL newUp = NO;;
+    BOOL newDown = NO;
     [self updateLinkSetStatus];
     
-    if((status == M2PA_STATUS_IS) && (_activeLinks==0))
+    if((status == M2PA_STATUS_IS) && (old_status != M2PA_STATUS_IS))
     {
         _activeLinks++;
+        newUp = YES;
+    }
+    else if((status != M2PA_STATUS_IS) && (old_status == M2PA_STATUS_IS))
+    {
+        _activeLinks--;
+        newDown = YES;
     }
 
     if(_activeLinks==0)
@@ -4470,12 +4476,15 @@
         case M2PA_STATUS_ALIGNED_READY:
             break;
         case M2PA_STATUS_IS:
-            _sendTRA = YES;
-            _awaitFirstSLTA = YES;
-            [link stopLinkTestTimer];
-            [self linktestTimeEventForLink:link];
-            [link startLinkTestTimer];
-            [link stopReopenTimer2];
+            if(newUp)
+            {
+                _sendTRA = YES;
+                _awaitFirstSLTA = YES;
+                [link stopLinkTestTimer];
+                [self linktestTimeEventForLink:link];
+                [link startLinkTestTimer];
+                [link stopReopenTimer2];
+            }
             break;
     }
 }
