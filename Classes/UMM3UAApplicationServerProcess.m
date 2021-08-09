@@ -2036,14 +2036,14 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
     @autoreleasepool
-        {
+    {
 
         _reopen_timer1_value  = M3UA_DEFAULT_REOPEN1_TIMER;
         _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
         _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
         _speed = M3UA_DEFAULT_SPEED;
 
-        self.logLevel = UMLOG_DEBUG;
+        self.logLevel = UMLOG_MAJOR;
         
         if(cfg[@"beat-time"])
         {
