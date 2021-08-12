@@ -442,7 +442,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 const uint8_t *bytes = d.bytes;
                 if(d.length == 4)
                 {
-                    int err = (bytes[3] << 0) || (bytes[2] << 8) || (bytes[1] << 16) || (bytes[0] << 24);
+                    int err = (bytes[3] << 0) | (bytes[2] << 8) | (bytes[1] << 16) | (bytes[0] << 24);
                     switch(err)
                     {
                         case 0x01:
