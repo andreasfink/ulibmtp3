@@ -1100,11 +1100,12 @@ static const char *m3ua_param_name(uint16_t param_type)
                 break;
         }
     }
-    _activeLinks = active;
-    _inactiveLinks = inactive;
-    _readyLinks = ready;
-    _totalLinks = (int)keys.count;
-    if(_activeLinks > 0)
+    _activeLinksCount = active;
+    _inactiveLinksCount = inactive;
+    _readyLinksCount = ready;
+    _processorOutageLinksCount = 0;
+    _totalLinksCount = (int)keys.count;
+    if(_activeLinksCount > 0)
     {
         _mtp3.ready = YES;
     }
@@ -1124,7 +1125,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         _m3ua_status = M3UA_STATUS_BUSY;
     }
-    else if(_totalLinks > 0)
+    else if(_totalLinksCount > 0)
     {
         _m3ua_status = M3UA_STATUS_OOS;
     }

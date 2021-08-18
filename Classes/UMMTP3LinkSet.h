@@ -70,13 +70,17 @@ typedef enum UMMTP3ScreeningTraceLevel
     UMMTP3BlackList             *_incomingBlackList;
     int                         _tra_sent;
     int                         _trw_received;
-    BOOL                        _sendTRA;
-    BOOL                        _awaitFirstSLTA;
-    int                         _outstandingSLTA;
-    int                         _activeLinks;
-    int                         _inactiveLinks;
-    int                         _readyLinks;
-    int                         _totalLinks;
+    NSUInteger                  _activeLinksCount;
+    NSUInteger                  _inactiveLinksCount;
+    NSUInteger                  _readyLinksCount;
+    NSUInteger                  _processorOutageLinksCount;
+    NSUInteger                  _totalLinksCount;
+    
+    NSMutableArray *_currentInactiveLinks;
+    NSMutableArray *_currentActiveLinks;
+    NSMutableArray *_currentReadyLinks;
+    NSMutableArray *_currentProcessorOutageLinks;
+
     int                         _congestionLevel;
     double                      _speed;
     int                         _last_sls;

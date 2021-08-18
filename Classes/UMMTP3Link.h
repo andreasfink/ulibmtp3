@@ -48,6 +48,10 @@ typedef enum UMMTP3Link_attachmentStatus
     int                         _outstandingLinkTests;
     UMLogLevel                  _logLevel;
     BOOL                        _forcedOutOfService;
+    
+    BOOL                        _awaitFirstSLTA;
+    BOOL                        _firstSLTMSent;
+    int                         _outstandingSLTA;
 }
 
 - (NSString *)name;
@@ -74,6 +78,10 @@ typedef enum UMMTP3Link_attachmentStatus
 @property (readwrite,strong)    UMTimer *reopenTimer2;
 @property (readwrite,assign)    UMLogLevel  logLevel;
 @property (readwrite,assign,atomic)    int outstandingLinkTests;
+
+@property (readwrite,assign,atomic) BOOL awaitFirstSLTA;
+@property (readwrite,assign,atomic) BOOL firstSLTMSent;
+@property (readwrite,assign,atomic) int  outstandingSLTA;
 
 - (void)attachmentConfirmed;
 - (void)attachmentFailed:(NSString *)reason;
