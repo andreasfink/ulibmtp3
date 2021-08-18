@@ -4628,7 +4628,6 @@
         [self forgetAdvertizedPointcodes];
         [_mtp3 updateRoutingTableLinksetUnavailabe:_name];
     }
-    
     _currentInactiveLinks = inactiveLinks;
     _currentActiveLinks = activeLinks;
     _currentReadyLinks  = readyLinks;
