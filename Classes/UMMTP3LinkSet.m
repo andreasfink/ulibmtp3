@@ -1819,7 +1819,6 @@
         [self protocolViolation];
         return;
     }
-    _outstandingSLTA--;
     link.outstandingLinkTests--;
 
     if(link.awaitFirstSLTA)
@@ -2732,7 +2731,6 @@
             link:(UMMTP3Link *)link
 {
     link.firstSLTMSent = YES;
-    link.outstandingSLTA++;
     link.outstandingLinkTests++;
     if(_overrideNetworkIndicator)
     {
@@ -4662,6 +4660,12 @@
     }
     else
     {
+        if((link.outstandingLinkTests >= 2) && (link.m2pa.stateCode == M2PA_STATUS_IS))
+        {
+            /* this is the 3rd timeframe where we have unacked linktests. Somethings really bad */
+            /* we go out of service now */
+            [link.m2pa linktestTimerReportsFailure];
+        }
         [self sendSLTM:label
                pattern:pattern
                     ni:_mtp3.networkIndicator

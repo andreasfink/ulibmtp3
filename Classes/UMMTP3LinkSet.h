@@ -194,9 +194,6 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong) NSString                                *sccp_screeningPluginTraceFileName;
 
 @property(readwrite,strong) UMMutex                                 *traceLock;
-
-
-@property(readwrite,assign) int outstandingSLTA;
 @property(readwrite,strong,atomic) UMSynchronizedSortedDictionary *advertizedPointcodes;
 
 @property(readwrite,strong,atomic) NSArray                     *permittedPointcodesInRoutingUpdates;

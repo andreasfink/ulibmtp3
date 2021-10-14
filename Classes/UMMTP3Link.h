@@ -73,15 +73,13 @@ typedef enum UMMTP3Link_attachmentStatus
 @property (readwrite,assign)    BOOL forcedOutOfService;
 @property (readwrite,assign)    NSTimeInterval linkTestTime;
 @property (readwrite,assign)    NSTimeInterval reopenTime1;
-@property (readwrite,strong)    UMTimer *reopenTimer1;
-@property (readwrite,assign)    NSTimeInterval reopenTime2;
-@property (readwrite,strong)    UMTimer *reopenTimer2;
-@property (readwrite,assign)    UMLogLevel  logLevel;
-@property (readwrite,assign,atomic)    int outstandingLinkTests;
-
-@property (readwrite,assign,atomic) BOOL awaitFirstSLTA;
-@property (readwrite,assign,atomic) BOOL firstSLTMSent;
-@property (readwrite,assign,atomic) int  outstandingSLTA;
+@property (readwrite,strong)    UMTimer         *reopenTimer1;
+@property (readwrite,assign)    NSTimeInterval  reopenTime2;
+@property (readwrite,strong)    UMTimer         *reopenTimer2;
+@property (readwrite,assign)    UMLogLevel      logLevel;
+@property (readwrite,assign,atomic)     int outstandingLinkTests;
+@property (readwrite,assign,atomic)     BOOL awaitFirstSLTA;
+@property (readwrite,assign,atomic)     BOOL firstSLTMSent;
 
 - (void)attachmentConfirmed;
 - (void)attachmentFailed:(NSString *)reason;
