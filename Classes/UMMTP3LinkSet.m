@@ -1808,18 +1808,13 @@
         [self logDebug:@"processSLTA"];
     }
 
-    if(self.logLevel <= UMLOG_DEBUG)
-    {
-        [self logDebug:@"processSLTA"];
-    }
-
     if(![self isFromAdjacentToLocal:label])
     {
         [self logMajorError:[NSString stringWithFormat:@"unexpected SLTA transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
         return;
     }
-    link.outstandingLinkTests--;
+    link.outstandingLinkTests=0;
 
     if(link.awaitFirstSLTA)
     {
@@ -4660,19 +4655,23 @@
     }
     else
     {
-        if((link.outstandingLinkTests >= 2) && (link.m2pa.stateCode == M2PA_STATUS_IS))
+        if((link.outstandingLinkTests >= 3) && (link.m2pa.stateCode == M2PA_STATUS_IS))
         {
             /* this is the 3rd timeframe where we have unacked linktests. Somethings really bad */
             /* we go out of service now */
             [link.m2pa linktestTimerReportsFailure];
         }
-        [self sendSLTM:label
-               pattern:pattern
-                    ni:_mtp3.networkIndicator
-                    mp:0
-                   slc:link.slc
-                  link:link];
+	else
+	{
+	    [self sendSLTM:label
+               	   pattern:pattern
+                        ni:_mtp3.networkIndicator
+                        mp:0
+                       slc:link.slc
+                      link:link];
+	 }
     }
+
 }
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc
