@@ -1799,6 +1799,7 @@
                link:(UMMTP3Link *)link
 {
   	[link stopLinkTestAckTimer];
+  	link.outstandingSLTA = 0;
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTA while in status %d",link.current_m2pa_status]];
@@ -4676,11 +4677,12 @@
 - (void)linktestAckTimeEventForLink:(UMMTP3Link *)link
 {
 	/* we have sent SLTM but not got SLTA yet  and the timer expired since */
-	_outstandingSLTA++;
-	if(_outstandingSLTA > 2)
+	link.outstandingSLTA++;
+	if(link.outstandingSLTA >= 2)
 	{
 		/* restarting of link */
-		link.linkRestartDueToMissingSLTA++;
+		link.linkRestartsDueToFailedLinktest++;
+		[link linktestTimerReportsFailure];
 	}
 	else
 	{

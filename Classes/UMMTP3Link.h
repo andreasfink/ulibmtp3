@@ -57,6 +57,10 @@ typedef enum UMMTP3Link_attachmentStatus
     int							_receivedSLTA;
     int							_receivedSLTM;
 	int							_sentSLTA;
+    int							_sentSSLTM;
+    int							_receivedSSLTA;
+    int							_receivedSSLTM;
+	int							_sentSSLTA;
     int                         _outstandingSLTA;
 	int							_receivedInvalidSLTA;
 	int							_receivedInvalidSLTM;
@@ -93,6 +97,10 @@ typedef enum UMMTP3Link_attachmentStatus
 @property (readwrite,assign,atomic)     int	receivedSLTA;
 @property (readwrite,assign,atomic)     int	receivedSLTM;
 @property (readwrite,assign,atomic)     int	sentSLTA;
+@property (readwrite,assign,atomic)     int	sentSSLTM;
+@property (readwrite,assign,atomic)     int	receivedSSLTA;
+@property (readwrite,assign,atomic)     int	receivedSSLTM;
+@property (readwrite,assign,atomic)     int	sentSSLTA;
 @property (readwrite,assign,atomic)     int outstandingSLTA;
 @property (readwrite,assign,atomic)     int	receivedInvalidSLTA;
 @property (readwrite,assign,atomic)     int	receivedInvalidSLTM;
