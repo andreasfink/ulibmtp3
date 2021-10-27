@@ -4682,7 +4682,7 @@
 	{
 		/* restarting of link */
 		link.linkRestartsDueToFailedLinktest++;
-		[link linktestTimerReportsFailure];
+		[link.m2pa linktestTimerReportsFailure];
 	}
 	else
 	{
