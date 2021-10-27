@@ -1761,6 +1761,7 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
+   	link.receivedSLTM++;    
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTM while in status %d",link.current_m2pa_status]];
@@ -1797,6 +1798,7 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
+  	[link stopLinkTestAckTimer];
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTA while in status %d",link.current_m2pa_status]];
@@ -1812,10 +1814,12 @@
     {
         [self logMajorError:[NSString stringWithFormat:@"unexpected SLTA transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
+        link.receivedInvalidSLTA++;
         return;
     }
-    link.outstandingLinkTests=0;
-
+    link.receivedSLTA++;
+    link.outstandingSLTA--;
+	[link stopLinkTestAckTimer];
     if(link.awaitFirstSLTA)
     {
         link.awaitFirstSLTA=NO;
@@ -2676,7 +2680,6 @@
              slc:(int)slc
             link:(UMMTP3Link *)link
 {
-
     if(_overrideNetworkIndicator)
     {
         ni = _overrideNetworkIndicator.intValue;
@@ -2704,6 +2707,7 @@
            [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
            [self logDebug:[NSString stringWithFormat:@" pattern: %@",pattern]];
     }
+    link.sentSLTA++;
     [self sendPdu:pdu
             label:label
           heading:MTP3_TESTING_SLTA
@@ -2726,7 +2730,8 @@
             link:(UMMTP3Link *)link
 {
     link.firstSLTMSent = YES;
-    link.outstandingLinkTests++;
+	link.outstandingSLTA++;
+	[link startLinkTestAckTimer];
     if(_overrideNetworkIndicator)
     {
         ni = _overrideNetworkIndicator.intValue;
@@ -2754,6 +2759,7 @@
         [self logDebug:[NSString stringWithFormat:@" pattern: %@",pattern]];
     }
     label.sls = slc;
+    link.sentSLTM++;
     [self sendPdu:pdu
             label:label
           heading:MTP3_TESTING_SLTM
@@ -2803,6 +2809,7 @@
            [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
            [self logDebug:[NSString stringWithFormat:@" pattern: %@",pattern]];
     }
+    link.sentSSLTA++;
     [self sendPdu:pdu
             label:label
           heading:MTP3_ANSI_TESTING_SSLTA
@@ -2850,6 +2857,7 @@
            [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
            [self logDebug:[NSString stringWithFormat:@" pattern: %@",pattern]];
     }
+	link.sentSSLTM++;
     [self sendPdu:pdu
             label:label
           heading:MTP3_ANSI_TESTING_SSLTM
@@ -4655,23 +4663,29 @@
     }
     else
     {
-        if((link.outstandingLinkTests >= 3) && (link.m2pa.stateCode == M2PA_STATUS_IS))
-        {
-            /* this is the 3rd timeframe where we have unacked linktests. Somethings really bad */
-            /* we go out of service now */
-            [link.m2pa linktestTimerReportsFailure];
-        }
+		[self sendSLTM:label
+			   pattern:pattern
+                    ni:_mtp3.networkIndicator
+                    mp:0
+                   slc:link.slc
+                  link:link];
+    	[link startLinkTestAckTimer];
+	}
+}
+
+- (void)linktestAckTimeEventForLink:(UMMTP3Link *)link
+{
+	/* we have sent SLTM but not got SLTA yet  and the timer expired since */
+	_outstandingSLTA++;
+	if(_outstandingSLTA > 2)
+	{
+		/* restarting of link */
+		link.linkRestartDueToMissingSLTA++;
+	}
 	else
 	{
-	    [self sendSLTM:label
-               	   pattern:pattern
-                        ni:_mtp3.networkIndicator
-                        mp:0
-                       slc:link.slc
-                      link:link];
-	 }
-    }
-
+		[self linktestTimeEventForLink:link];
+	}
 }
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc

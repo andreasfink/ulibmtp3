@@ -16,7 +16,8 @@
 
 #define MTP3_LINK_REOPEN_TIME1_DEFAULT   6.0 /* if link goes down, we restart it in 6 seconds */
 #define MTP3_LINK_REOPEN_TIME2_DEFAULT   180 /* if link doesnt come up within 3 minutes, we kill it and after restarttimer1 restart it */
-
+#define	MTP3_LINK_TEST_TIMER_DEFAULT		30.0	/* T2 of MTP2 30...90 sec*/
+#define	MTP3_LINK_TEST_ACK_TIMER_DEFAULT	6.0		/* T1 of MTP2 . 4...12 sec*/
 @implementation UMMTP3Link
 
 - (UMMTP3Link *) init
@@ -27,8 +28,8 @@
         _logLevel = UMLOG_MAJOR;
         _last_m2pa_status = M2PA_STATUS_OFF;
         _current_m2pa_status = M2PA_STATUS_OFF;
-        _linkTestTime = 30.0;
-        _linkTestMaxOutStanding = 3;
+        _linkTestAckTime = MTP3_LINK_TEST_ACK_TIMER_DEFAULT; 
+        _linkTestTime = MTP3_LINK_TEST_TIMER_DEFAULT; 
         _reopenTime1 = MTP3_LINK_REOPEN_TIME1_DEFAULT;
         _reopenTime2 = MTP3_LINK_REOPEN_TIME2_DEFAULT;
         _reopenTimer1 = [[UMTimer alloc]initWithTarget:self
@@ -126,7 +127,16 @@
     }
     else
     {
-        _linkTestTime = 30.0;
+        _linkTestTime = MTP3_LINK_TEST_TIMER_DEFAULT;
+    }
+
+    if(cfg[@"link-test-ack-time"])
+    {
+        _linkTestAckTime  = (NSTimeInterval)[cfg[@"link-test-ack-time"] doubleValue];
+    }
+    else
+    {
+        _linkTestAckTime = MTP3_LINK_TEST_ACK_TIMER_DEFAULT;
     }
 
     if(cfg[@"link-test-max-outstanding"])
@@ -289,6 +299,11 @@
     [_linkset linktestTimeEventForLink:self];
 }
 
+- (void)linkTestAckTimerEvent:(id)parameter
+{
+    [_linkset linktestAckTimeEventForLink:self];
+}
+
 
 - (void)startLinkTestTimer
 {
@@ -311,6 +326,30 @@
 - (void)stopLinkTestTimer
 {
     [_linkTestTimer stop];
+}
+
+
+- (void)startLinkTestAckTimer
+{
+    if(_linkTestAckTime > 0)
+    {
+        if(_linkTestAckTimer==NULL)
+        {
+            _linkTestAckTimer = [[UMTimer alloc]initWithTarget:self
+                                                   	  selector:@selector(linkTestAckTimerEvent:)
+                                                        object:NULL
+                                                       seconds:_linkTestAckTime
+                                                          name:@"linktestAckTimer"
+                                                       repeats:NO
+                                               runInForeground:YES];
+        }
+        [_linkTestAckTimer start];
+    }
+}
+
+- (void)stopLinkTestAckTimer
+{
+    [_linkTestAckTimer stop];
 }
 
 - (void)startReopenTimer1
