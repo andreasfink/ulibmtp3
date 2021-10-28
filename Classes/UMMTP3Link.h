@@ -65,6 +65,7 @@ typedef enum UMMTP3Link_attachmentStatus
 	int							_receivedInvalidSLTA;
 	int							_receivedInvalidSLTM;
 	int							_linkRestartsDueToFailedLinktest;
+    NSDate                      *_linkRestartTime;
 }
 
 - (NSString *)name;
@@ -105,7 +106,7 @@ typedef enum UMMTP3Link_attachmentStatus
 @property (readwrite,assign,atomic)     int	receivedInvalidSLTA;
 @property (readwrite,assign,atomic)     int	receivedInvalidSLTM;
 @property (readwrite,assign,atomic)     int	linkRestartsDueToFailedLinktest;
-
+@property (readwrite,strong,atomic)     NSDate *linkRestartTime;
 
 - (void)attachmentConfirmed;
 - (void)attachmentFailed:(NSString *)reason;

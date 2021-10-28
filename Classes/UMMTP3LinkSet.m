@@ -2739,7 +2739,7 @@
     if(_variant==UMMTP3Variant_ANSI)
     {
         [pdu appendByte:([pattern length]<<4) | (slc & 0x0F)];
-    
+
     }
     else
     {
@@ -4679,7 +4679,8 @@
 	if(link.outstandingSLTA >= 2)
 	{
 		/* restarting of link */
-		link.linkRestartsDueToFailedLinktest++;
+        link.linkRestartsDueToFailedLinktest++;
+        link.linkRestartTime = [NSDate date];
 		[link.m2pa linktestTimerReportsFailure];
 	}
 	else
