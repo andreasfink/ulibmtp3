@@ -304,7 +304,6 @@
     [_linkset linktestAckTimeEventForLink:self];
 }
 
-
 - (void)startLinkTestTimer
 {
     if(_linkTestTime > 0)
