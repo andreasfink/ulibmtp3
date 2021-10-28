@@ -1819,7 +1819,6 @@
         return;
     }
     link.receivedSLTA++;
-    link.outstandingSLTA--;
 	[link stopLinkTestAckTimer];
     if(link.awaitFirstSLTA)
     {
@@ -2731,7 +2730,6 @@
             link:(UMMTP3Link *)link
 {
     link.firstSLTMSent = YES;
-	link.outstandingSLTA++;
 	[link startLinkTestAckTimer];
     if(_overrideNetworkIndicator)
     {
