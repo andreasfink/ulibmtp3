@@ -2730,6 +2730,7 @@
             link:(UMMTP3Link *)link
 {
     link.firstSLTMSent = YES;
+    link.outstandingSLTA++;
 	[link startLinkTestAckTimer];
     if(_overrideNetworkIndicator)
     {
@@ -4668,24 +4669,6 @@
                     mp:0
                    slc:link.slc
                   link:link];
-    	[link startLinkTestAckTimer];
-	}
-}
-
-- (void)linktestAckTimeEventForLink:(UMMTP3Link *)link
-{
-	/* we have sent SLTM but not got SLTA yet  and the timer expired since */
-	link.outstandingSLTA++;
-	if(link.outstandingSLTA >= 2)
-	{
-		/* restarting of link */
-        link.linkRestartsDueToFailedLinktest++;
-        link.linkRestartTime = [NSDate date];
-		[link.m2pa linktestTimerReportsFailure];
-	}
-	else
-	{
-		[self linktestTimeEventForLink:link];
 	}
 }
 

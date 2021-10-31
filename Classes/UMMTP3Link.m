@@ -301,7 +301,19 @@
 
 - (void)linkTestAckTimerEvent:(id)parameter
 {
-    [_linkset linktestAckTimeEventForLink:self];
+    [_linkTestAckTimer stop];
+    if(_outstandingSLTA < 2)
+    {
+        [_linkset linktestTimeEventForLink:self];
+    }
+    else
+    {
+        /* we already have */
+        /* restarting of link */
+        _linkRestartsDueToFailedLinktest++;
+        _linkRestartTime = [NSDate date];
+        [_m2pa linktestTimerReportsFailure];
+    }
 }
 
 - (void)startLinkTestTimer

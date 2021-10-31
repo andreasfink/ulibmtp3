@@ -476,7 +476,6 @@ options:(NSDictionary *)options;
 - (void)sctpStatusUpdate:(UMSocketStatus)status slc:(int)slc;
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc;
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link;
-- (void)linktestAckTimeEventForLink:(UMMTP3Link *)link;
 - (void)updateLinkSetStatus;
 
 - (void)forgetAdvertizedPointcodes; /* call this to let the outbound cache forget which pointcodes it has already advertized */
