@@ -62,8 +62,10 @@ typedef enum UMMTP3Link_attachmentStatus
     int							_receivedSSLTM;
 	int							_sentSSLTA;
     int                         _outstandingSLTA;
-	int							_receivedInvalidSLTA;
-	int							_receivedInvalidSLTM;
+    int                         _receivedInvalidSLTA;
+    int                         _receivedInvalidSLTM;
+    int                         _receivedInvalidSSLTA;
+    int                         _receivedInvalidSSLTM;
 	int							_linkRestartsDueToFailedLinktest;
     NSDate                      *_linkRestartTime;
 }
@@ -103,8 +105,11 @@ typedef enum UMMTP3Link_attachmentStatus
 @property (readwrite,assign,atomic)     int	receivedSSLTM;
 @property (readwrite,assign,atomic)     int	sentSSLTA;
 @property (readwrite,assign,atomic)     int outstandingSLTA;
+@property (readwrite,assign,atomic)     int outstandingSSLTA;
 @property (readwrite,assign,atomic)     int	receivedInvalidSLTA;
 @property (readwrite,assign,atomic)     int	receivedInvalidSLTM;
+@property (readwrite,assign,atomic)     int receivedInvalidSSLTA;
+@property (readwrite,assign,atomic)     int receivedInvalidSSLTM;
 @property (readwrite,assign,atomic)     int	linkRestartsDueToFailedLinktest;
 @property (readwrite,strong,atomic)     NSDate *linkRestartTime;
 

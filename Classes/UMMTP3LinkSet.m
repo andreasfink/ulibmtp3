@@ -1761,7 +1761,6 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
-   	link.receivedSLTM++;    
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTM while in status %d",link.current_m2pa_status]];
@@ -1776,9 +1775,10 @@
         self.lastError = [NSString stringWithFormat:@"unexpected SLTM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription];
         [self logMajorError:self.lastError];
         [self protocolViolation];
+        link.receivedInvalidSLTM++;
         return;
     }
-
+    link.receivedSLTM++;
     UMMTP3Label *reverse_label = [label reverseLabel];
     if(_overrideNetworkIndicator)
     {
@@ -1839,6 +1839,14 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
+    [link stopLinkTestAckTimer];
+    link.outstandingSSLTA = 0;
+    if(link.current_m2pa_status != M2PA_STATUS_IS)
+    {
+        [self logWarning:[NSString stringWithFormat:@"Warning: SSLTM while in status %d",link.current_m2pa_status]];
+        link.current_m2pa_status = M2PA_STATUS_IS;
+    }
+
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processSSLTM"];
@@ -1847,13 +1855,15 @@
     if(![self isFromAdjacentToLocal:label])
     {
         [self logMajorError:[NSString stringWithFormat:@"unexpected SSTLM transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
+        link.receivedInvalidSSLTM--;
         [self protocolViolation];
         return;
     }
+    link.receivedSSLTM++;
     UMMTP3Label *reverse_label = [label reverseLabel];
     [self sendSSLTA:reverse_label pattern:pattern ni:ni mp:mp slc:slc link:link];
 }
-
+    
 
 - (void)processSSLTA:(UMMTP3Label *)label
              pattern:(NSData *)pattern
@@ -1862,17 +1872,40 @@
                  slc:(int)slc
                 link:(UMMTP3Link *)link
 {
+    [link stopLinkTestAckTimer];
+    link.outstandingSSLTA = 0;
+
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processSSLTA"];
     }
+    if(link.current_m2pa_status != M2PA_STATUS_IS)
+    {
+        [self logWarning:[NSString stringWithFormat:@"Warning: SSLTA while in status %d",link.current_m2pa_status]];
+        link.current_m2pa_status = M2PA_STATUS_IS;
+    }
+
     if(![self isFromAdjacentToLocal:label])
     {
         [self logMajorError:[NSString stringWithFormat:@"unexpected SSLTA transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
         [self protocolViolation];
+        link.receivedInvalidSSLTA--;
         return;
     }
+    link.receivedSSLTA++;
+    [link stopLinkTestAckTimer];
+    if(link.awaitFirstSLTA)
+    {
+        link.awaitFirstSLTA=NO;
+        UMMTP3Label *reverse_label = [label reverseLabel];
+        [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
+        [self updateRouteAvailable:_adjacentPointCode
+                              mask:_adjacentPointCode.maxmask
+                          priority:UMMTP3RoutePriority_1];
+    }
+    [self updateLinkSetStatus];
 }
+
 
 /* Group CHM */
 - (void)processCOO:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
