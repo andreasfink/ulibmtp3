@@ -918,6 +918,8 @@
                 options:(NSDictionary *)options
         routedToLinkset:(NSString **)routedToLinkset
 {
+    NSString *rtl;
+    UMMTP3_Error err;
     @autoreleasepool
     {
         if(fopc==NULL)
@@ -925,7 +927,7 @@
             fopc = _opc;
         }
         UMMTP3InstanceRoute *route = [self findRouteForDestination:fdpc];
-        return [self forwardPDU:pdu
+        err= [self forwardPDU:pdu
                             opc:fopc
                             dpc:fdpc
                              si:si
@@ -933,8 +935,10 @@
                           route:route
                         options:options
                   sourceLinkset:@"local"
-                routedToLinkset:routedToLinkset];
+                routedToLinkset:&rtl];
     }
+    *routedToLinkset = rtl;
+    return err;
 }
 
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
@@ -954,7 +958,6 @@
                     options:options
               sourceLinkset:@"local"
             routedToLinkset:NULL];
-
 }
 
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
