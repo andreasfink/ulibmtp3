@@ -4519,6 +4519,14 @@
             }
             break;
     }
+    if(newUp)
+    {
+        link.lastLinkUp = [NSDate date];
+    }
+    if(newDown)
+    {
+        link.lastLinkDown = [NSDate date];
+    }
 }
 
 /* reopen Timer Event 1 happens when a link got closed. We wait a small amount of time and restart the link */

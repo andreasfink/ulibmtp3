@@ -45,6 +45,7 @@ typedef enum UMMTP3_Error
     UMMTP3_error_pdu_too_big = 1,
     UMMTP3_error_no_route_to_destination = 2,
     UMMTP3_error_invalid_variant = 3,
+    UMMTP3_error_internal_error = -1,
 } UMMTP3_Error;
 
 @interface UMLayerMTP3 : UMLayer<UMLayerM2PAUserProtocol>

@@ -937,7 +937,10 @@
                   sourceLinkset:@"local"
                 routedToLinkset:&rtl];
     }
-    *routedToLinkset = rtl;
+    if(routedToLinkset != NULL)
+    {
+        *routedToLinkset = rtl;
+    }
     return err;
 }
 
@@ -970,6 +973,9 @@
              sourceLinkset:(NSString *)sourceLinkset
            routedToLinkset:(NSString **)routedToLinkset
 {
+    NSString *rtls = NULL;
+    UMMTP3_Error err = UMMTP3_error_internal_error;
+    
     @autoreleasepool
     {
         if(self.logLevel <= UMLOG_DEBUG)
@@ -981,99 +987,103 @@
         if(route==NULL)
         {
             [self.logFeed majorErrorText:@"no route to destination (route==null)"];
-            return UMMTP3_error_no_route_to_destination;
-        }
-        NSString *linksetName = route.linksetName;
-        if(routedToLinkset)
-        {
-            *routedToLinkset = linksetName;
-        }
-        UMMTP3LinkSet *linkset = _linksets[linksetName];
-        if(linkset==NULL)
-        {
-            [self.logFeed majorErrorText:[NSString stringWithFormat:@"linkset named '%@' not found",linksetName]];
-            if(routedToLinkset)
-            {
-                *routedToLinkset = @"no-route-to-destination";
-            }
-            return UMMTP3_error_no_route_to_destination;
-        }
-
-        UMMTP3Label *label = [[UMMTP3Label alloc]init];
-        label.opc = fopc;
-        label.dpc = fdpc;
-        NSString *s = options[@"mtp3-sls"];
-        if(s.length > 0)
-        {
-            label.sls = [s intValue] % 16;
+            err =  UMMTP3_error_no_route_to_destination;
         }
         else
         {
-            label.sls = [UMUtil random:16];
-        }
-        int ni;
-        if(linkset.overrideNetworkIndicator)
-        {
-            ni = [linkset.overrideNetworkIndicator intValue];
-        }
-        else
-        {
-            ni = _networkIndicator;
-        }
-        if([linkset isKindOfClass:[UMM3UAApplicationServer class]])
-        {
-            if(self.logLevel <= UMLOG_DEBUG)
+            NSString *linksetName = route.linksetName;
+            rtls = linksetName;
+            UMMTP3LinkSet *linkset = _linksets[linksetName];
+            if(linkset==NULL)
             {
-                [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to application server %@",linkset.name]];
-                [self.logFeed debugText:[NSString stringWithFormat:@" label: %@",label]];
-                [self.logFeed debugText:[NSString stringWithFormat:@" ni: %d",ni]];
-                [self.logFeed debugText:[NSString stringWithFormat:@" mp: %d",mp]];
-                [self.logFeed debugText:[NSString stringWithFormat:@" pdu: %@",pdu]];
+                [self.logFeed majorErrorText:[NSString stringWithFormat:@"linkset named '%@' not found",linksetName]];
+                rtls = @"no-route-to-destination";
+                err = UMMTP3_error_no_route_to_destination;
             }
-            [linkset sendPdu:pdu
-                       label:label
-                     heading:-1
-                          ni:ni
-                          mp:mp
-                          si:si
-                  ackRequest:NULL
-               correlationId:0
-                     options:options];
-            [_statisticDb addByteCount:(int)pdu.length
-                       incomingLinkset:sourceLinkset
-                       outgoingLinkset:linkset.name
-                                   opc:label.opc.pc
-                                   dpc:label.dpc.pc
-                                    si:si];
-        }
-        else
-        {
-            if(self.logLevel <= UMLOG_DEBUG)
+            else
             {
-                [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to m2pa linkset %@",linkset.name]];
-                [self.logFeed debugText:[NSString stringWithFormat:@" label: %@",label]];
-                [self.logFeed debugText:[NSString stringWithFormat:@" ni: %d",ni]];
-                [self.logFeed debugText:[NSString stringWithFormat:@" mp: %d",mp]];
-                [self.logFeed debugText:[NSString stringWithFormat:@" pdu: %@",pdu]];
+                UMMTP3Label *label = [[UMMTP3Label alloc]init];
+                label.opc = fopc;
+                label.dpc = fdpc;
+                NSString *s = options[@"mtp3-sls"];
+                if(s.length > 0)
+                {
+                    label.sls = [s intValue] % 16;
+                }
+                else
+                {
+                    label.sls = [UMUtil random:16];
+                }
+                int ni;
+                if(linkset.overrideNetworkIndicator)
+                {
+                    ni = [linkset.overrideNetworkIndicator intValue];
+                }
+                else
+                {
+                    ni = _networkIndicator;
+                }
+                if([linkset isKindOfClass:[UMM3UAApplicationServer class]])
+                {
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to application server %@",linkset.name]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" label: %@",label]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" ni: %d",ni]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" mp: %d",mp]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" pdu: %@",pdu]];
+                    }
+                    [linkset sendPdu:pdu
+                               label:label
+                             heading:-1
+                                  ni:ni
+                                  mp:mp
+                                  si:si
+                          ackRequest:NULL
+                       correlationId:0
+                             options:options];
+                    [_statisticDb addByteCount:(int)pdu.length
+                               incomingLinkset:sourceLinkset
+                               outgoingLinkset:linkset.name
+                                           opc:label.opc.pc
+                                           dpc:label.dpc.pc
+                                            si:si];
+                }
+                else
+                {
+                    if(self.logLevel <= UMLOG_DEBUG)
+                    {
+                        [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to m2pa linkset %@",linkset.name]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" label: %@",label]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" ni: %d",ni]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" mp: %d",mp]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" pdu: %@",pdu]];
+                    }
+                    [linkset sendPdu:pdu
+                               label:label
+                             heading:-1
+                                  ni:ni
+                                  mp:mp
+                                  si:si
+                          ackRequest:NULL
+                       correlationId:0
+                             options:options];
+                    [_statisticDb addByteCount:(int)pdu.length
+                               incomingLinkset:sourceLinkset
+                               outgoingLinkset:linkset.name
+                                           opc:label.opc.pc
+                                           dpc:label.dpc.pc
+                                            si:si];
+                }
+                err = UMMTP3_no_error;
             }
-            [linkset sendPdu:pdu
-                       label:label
-                     heading:-1
-                          ni:ni
-                          mp:mp
-                          si:si
-                  ackRequest:NULL
-               correlationId:0
-                     options:options];
-            [_statisticDb addByteCount:(int)pdu.length
-                       incomingLinkset:sourceLinkset
-                       outgoingLinkset:linkset.name
-                                   opc:label.opc.pc
-                                   dpc:label.dpc.pc
-                                    si:si];
         }
-        return UMMTP3_no_error;
     }
+    if(routedToLinkset)
+    {
+        *routedToLinkset = rtls;
+    }
+    return err;
 }
 
 - (void)start
