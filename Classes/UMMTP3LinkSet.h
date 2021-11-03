@@ -130,6 +130,8 @@ typedef enum UMMTP3ScreeningTraceLevel
     UMMTP3ScreeningTraceLevel _sccpScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
     UMMTP3ScreeningTraceLevel _mtp3ScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
     UMMTP3LinkSetPrometheusData *_prometheusMetrics;
+    NSDate                      *_lastLinksetUp;
+    NSDate                      *_lastLinksetDown;
 }
 
 /*
@@ -206,6 +208,8 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,assign,atomic) UMMTP3ScreeningTraceLevel    sccpScreeningTraceLevel;
 @property(readwrite,assign,atomic) UMMTP3ScreeningTraceLevel    mtp3ScreeningTraceLevel;
 @property(readwrite,strong,atomic) UMMTP3LinkSetPrometheusData *prometheusMetrics;
+@property(readwrite,strong,atomic) NSDate                      *lastLinksetUp;
+@property(readwrite,strong,atomic) NSDate                      *lastLinksetDown;
 
 - (void)addLink:(UMMTP3Link *)lnk;
 - (void)removeLink:(UMMTP3Link *)lnk;

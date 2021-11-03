@@ -359,6 +359,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)aspUp:(UMM3UAApplicationServerProcess *)asp
 {
     upCount++;
+    asp.lastLinkUp = [NSDate date];
     [self updateLinkSetStatus];
 
 }
@@ -367,6 +368,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     upCount--;
     [self updateLinkSetStatus];
+    asp.lastLinkDown = [NSDate date];
     [self updateRouteUnavailable:_adjacentPointCode
                             mask:_adjacentPointCode.maxmask
                         priority:UMMTP3RoutePriority_1];
@@ -376,6 +378,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp
 {
     activeCount++;
+    asp.lastLinkActive = [NSDate date];
     [self updateRouteAvailable:_adjacentPointCode
                           mask:_adjacentPointCode.maxmask
                       priority:UMMTP3RoutePriority_1];
@@ -403,6 +406,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     @autoreleasepool
     {
+        asp.lastLinkInactive = [NSDate date];
         activeCount--;
         BOOL somethingsActive = NO;
         NSArray *keys = [_applicationServerProcesses allKeys];

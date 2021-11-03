@@ -75,6 +75,11 @@
     UMThroughputCounter *_outboundThroughputBytes;
     NSString            *_lastError;
     BOOL                _forcedOutOfService;
+    
+    NSDate  *_lastLinkUp;
+    NSDate  *_lastLinkDown;
+    NSDate  *_lastLinkActive;
+    NSDate  *_lastLinkInactive;
 }
 
 
@@ -98,12 +103,14 @@
 @property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputPackets;
 @property(readwrite,strong,atomic)  UMThroughputCounter *inboundThroughputBytes;
 @property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputBytes;
-
+@property(readwrite,strong,atomic)  NSDate  *lastLinkUp;
+@property(readwrite,strong,atomic)  NSDate  *lastLinkDown;
+@property(readwrite,strong,atomic)  NSDate  *lastLinkActive;
+@property(readwrite,strong,atomic)  NSDate  *lastLinkInactive;
 
 @property (readonly)                BOOL congested;
 @property (readonly)                UMThroughputCounter  *speedometer;
 @property (readonly)                BOOL                 standby_mode;
-
 
 - (void)start;
 - (void)stop;

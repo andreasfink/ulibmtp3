@@ -4568,10 +4568,6 @@
 
 - (void)updateLinkSetStatus
 {
-    int oldActiveLinks =0;
-
-    oldActiveLinks = _activeLinks;
-    
     NSMutableArray *inactiveLinks = [[NSMutableArray alloc]init];
     NSMutableArray *activeLinks = [[NSMutableArray alloc]init];
     NSMutableArray *readyLinks  = [[NSMutableArray alloc]init];
@@ -4654,6 +4650,7 @@
     }
     /* if we now have our first active link, we should send a first SLTM before sending TRA */
     /* we do this */
+
     _prometheusMetrics.linksAvailableGauge.value = @(_activeLinks);
     _activeLinksCount = activeLinks.count;
     _inactiveLinksCount = inactiveLinks.count;
@@ -4664,11 +4661,13 @@
     {
         _mtp3.ready = YES;
         [_mtp3 updateRoutingTableLinksetAvailabe:_name];
+        _lastLinksetUp = [NSDate date];
     }
     else if(_activeLinksCount == 0)
     {
         [self forgetAdvertizedPointcodes];
         [_mtp3 updateRoutingTableLinksetUnavailabe:_name];
+        _lastLinksetDown = [NSDate date];
     }
     _currentInactiveLinks = inactiveLinks;
     _currentActiveLinks = activeLinks;

@@ -70,7 +70,6 @@ typedef enum UMMTP3Link_attachmentStatus
     NSDate                      *_linkRestartTime;
     NSDate                      *_lastLinkUp;
     NSDate                      *_lastLinkDown;
-
 }
 
 - (NSString *)name;
