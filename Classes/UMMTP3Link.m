@@ -339,7 +339,6 @@
     [_linkTestTimer stop];
 }
 
-
 - (void)startLinkTestAckTimer
 {
     if(_linkTestAckTime > 0)
