@@ -268,7 +268,8 @@
                                                                                                  slc:xslc
                                                                                         mtp3linkName:linkName
                                                                                                 data:d];
-        [self queueFromLower:task];
+        [task main];
+//        [self queueFromLower:task];
     }
 }
 
