@@ -191,6 +191,12 @@ typedef enum UMMTP3_Error
                        userId:(id)uid
                        status:(M2PA_Status)s;
 
+- (void) m2paStatusIndication:(UMLayer *)caller
+                          slc:(int)xslc
+                       userId:(id)uid
+                       status:(M2PA_Status)s
+                        async:(BOOL)async;
+
 - (void) m2paSctpStatusIndication:(UMLayer *)caller
                               slc:(int)xslc
                            userId:(id)uid

@@ -225,6 +225,15 @@
                        userId:(id)uid
                        status:(M2PA_Status)s
 {
+    return [self m2paStatusIndication:caller slc:xuid userId:uid status:status async:NO];
+}
+
+- (void) m2paStatusIndication:(UMLayer *)caller
+                          slc:(int)xslc
+                       userId:(id)uid
+                       status:(M2PA_Status)s
+                        async:(BOOL)async
+{
     @autoreleasepool
     {
         UMMTP3Task_m2paStatusIndication *task = [[UMMTP3Task_m2paStatusIndication alloc]initWithReceiver:self
@@ -232,13 +241,16 @@
                                                                                                      slc:xslc
                                                                                                   userId:uid
                                                                                                   status:s];
-    #if 0
+   if(async)
+   {
         [self queueFromLowerWithPriority:task];
-    #else
+   }
+   else
+    {
         [task main];
-    #endif
     }
 }
+
 
 - (void) m2paSctpStatusIndication:(UMLayer *)caller
                               slc:(int)xslc
