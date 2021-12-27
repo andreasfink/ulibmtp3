@@ -225,7 +225,11 @@
                        userId:(id)uid
                        status:(M2PA_Status)s
 {
-    return [self m2paStatusIndication:caller slc:xuid userId:uid status:status async:NO];
+    return [self m2paStatusIndication:caller
+                                  slc:xslc
+                               userId:uid
+                               status:s
+                                async:NO];
 }
 
 - (void) m2paStatusIndication:(UMLayer *)caller
@@ -241,13 +245,14 @@
                                                                                                      slc:xslc
                                                                                                   userId:uid
                                                                                                   status:s];
-   if(async)
-   {
-        [self queueFromLowerWithPriority:task];
-   }
-   else
-    {
-        [task main];
+        if(async)
+        {
+           [self queueFromLowerWithPriority:task];
+        }
+        else
+        {
+            [task main];
+        }
     }
 }
 
