@@ -23,7 +23,6 @@
 #import "UMMTP3InstanceRoutingTable.h"
 #import "UMMTP3PointCodeTranslationTable.h"
 
-
 @implementation UMMTP3LinkSet
 
 - (int)networkIndicator
@@ -4532,7 +4531,7 @@
 /* reopen Timer Event 1 happens when a link got closed. We wait a small amount of time and restart the link */
 - (void)reopenTimer1EventFor:(UMMTP3Link *)link
 {
-    [link.m2pa.stateMachineLogFeed debugText:@"reopenTimer1Event"];
+    [link.m2pa.state logStatemachineEventString:@"reopenTimer1Event"];
     [link powerOn];
     [link stopLinkTestTimer];
     [link startReopenTimer2];
