@@ -13,39 +13,46 @@
 
 @implementation UMMTP3RouteMetrics
 
-@synthesize weight;
-@synthesize local_preference;
-@synthesize aggregate;
-@synthesize as_path_legnth;
-@synthesize origin_type;
-@synthesize origin;
-@synthesize multi_exit_discrimators;
-
 - (UMMTP3RouteMetrics *)init
 {
     self = [super init];
     if(self)
     {
-        local_preference = 50;
-        weight = 100;
+        _local_preference = 50;
+        _weight = 100;
     }
     return self;
 }
 - (int)combinedMetricsValue
 {
-    return weight * local_preference;
+    return _weight * _local_preference;
 }
 
 - (UMSynchronizedSortedDictionary *)objectValue
 {
     UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc] init];
-    dict[@"weight"] = @(weight);
-    dict[@"local-preference"] = @(local_preference);
-    dict[@"aggregate"] = @(aggregate);
-    dict[@"as-path-length"] = @(as_path_legnth);
-    dict[@"origin-type"] = @(origin_type);
-    dict[@"multi-exit-discrimators"] = @(multi_exit_discrimators);
+    dict[@"weight"] = @(_weight);
+    dict[@"local-preference"] = @(_local_preference);
+    dict[@"aggregate"] = @(_aggregate);
+    dict[@"as-path-length"] = @(_as_path_legnth);
+    dict[@"origin-type"] = @(_origin_type);
+    dict[@"multi-exit-discrimators"] = @(_multi_exit_discrimators);
     return dict;
 }
+
+
+- (UMMTP3RouteMetrics *)copyWithZone:(NSZone *)zone
+{
+    UMMTP3RouteMetrics *r = [[UMMTP3RouteMetrics allocWithZone:zone]init];
+    r.weight = _weight;
+    r.local_preference = _local_preference;
+    r.aggregate = _aggregate;
+    r.as_path_legnth = _as_path_legnth;
+    r.origin_type = _origin_type;
+    r.origin = _origin;
+    r.multi_exit_discrimators = _multi_exit_discrimators;
+}
+
+
 
 @end

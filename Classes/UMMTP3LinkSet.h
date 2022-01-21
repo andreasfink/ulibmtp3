@@ -17,6 +17,7 @@
 #import "UMMTP3RoutePriority.h"
 #import "UMMTP3LinkSetPrometheusData.h"
 
+
 @class UMMTP3Link;
 @class UMLayerMTP3;
 @class UMMTP3Label;
@@ -132,6 +133,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     UMMTP3LinkSetPrometheusData *_prometheusMetrics;
     NSDate                      *_lastLinksetUp;
     NSDate                      *_lastLinksetDown;
+    UMTimer                     *_routeRetestTimer; /* timer T10 */
 }
 
 /*

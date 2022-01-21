@@ -54,7 +54,6 @@
     return self;
 }
 
-
 - (void)genericInitialisation
 {
 	_linksets        = [[UMSynchronizedSortedDictionary alloc]init];
@@ -68,8 +67,15 @@
                                                    name:@"housekeeping"
                                                 repeats:YES
                                         runInForeground:YES];
+    _routeRetestTime = MTP3_ROUTE_RETEST_TIMER_DEFAULT;
+    _routeRetestTimer = [[UMTimer alloc]initWithTarget:self
+                                         selector:@selector(routeRetestTimerEvent)
+                                           object:NULL
+                                          seconds:_routeRetestTime
+                                             name:@"routeRetestTimer"
+                                          repeats:YES
+                                  runInForeground:NO];
 }
-
 
 #pragma mark -
 #pragma mark LinkSet Handling
@@ -1713,6 +1719,41 @@
 - (void)updateRoutingTableLinksetAvailabe:(NSString *)linksetName
 {
     [_routingTable updateLinksetAvailable:linksetName];
+}
+
+- (void) routeRetestTimerEvent
+{
+    NSArray<UMMTP3InstanceRoute *>*) *routes = [_routingTable prohibitedOrRestrictedRoutes];
+    for(UMMTP3InstanceRoute *route in routes)
+    {
+        if(route.type
+        NSString *linksetName = route.linksetName;
+        UMMTP3LinkSet *linkset = _linksets[linksetName];
+        if(linkset)
+        {
+            /* we only test routes where we have a static route configured or
+             which are directly attached (these are priority 1 routes) */
+            if((route.staticRoute) || (route.priority==UMMTP3RoutePriority_1))
+            {
+                UMMTP3Label *label = [[UMMTP3Label alloc]init];
+                label.opc = _opc;
+                if(linkset.localPointCode)
+                {
+                    label.opc = linkset.localPointCode;
+                }
+                label.dpc = linkset.adjacentPointCode;
+                label.sls = [UMUtil random:16];
+                if((route.status == UMMTP3_ROUTE_PROHIBITED) || (route.status == UMMTP3_ROUTE_RESTRICTED))
+                {
+                    [linkset sendRST:label
+                         destination:route.pointcode
+                                  ni:_networkIndicator
+                                  mp:0
+                                 slc:-1
+                                link:NULL];
+            }
+        }
+    }
 }
 
 @end

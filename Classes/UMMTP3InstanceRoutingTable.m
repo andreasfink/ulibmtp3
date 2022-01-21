@@ -367,6 +367,26 @@
     [_lock unlock];
 }
 
+- (NSArray<UMMTP3InstanceRoute *>*)prohibitedOrRestrictedRoutes
+{
+    [_lock lock];
+    NSMutableArray *r = [[NSMutableArray alloc]init];
+    NSArray *pointcodes = [_routesByPointCode allKeys];
+    for(id pointcode in pointcodes)
+    {
+        NSArray<UMMTP3InstanceRoute *>*routes = _routesByPointCode[pointcode];
+        for(UMMTP3InstanceRoute *route in routes)
+        {
+            if((route.status == UMMTP3_ROUTE_PROHIBITED) || (route.status == UMMTP3_ROUTE_RESTRICTED))
+            {
+                [r addObject:route];
+            }
+        }
+    }
+    [_lock unlock];
+    return r;
+}
+
 - (UMSynchronizedSortedDictionary *)routeStatus
 {
     return self.objectValue;

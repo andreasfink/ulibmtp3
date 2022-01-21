@@ -13,6 +13,8 @@
 #import <ulibsctp/ulibsctp.h>
 #import <ulibm2pa/ulibm2pa.h>
 
+#define    MTP3_ROUTE_RETEST_TIMER_DEFAULT    40        /* T10 30..60 sec*/
+
 #import "UMMTP3Variant.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 #import "UMMTP3RoutePriority.h"
@@ -74,7 +76,9 @@ typedef enum UMMTP3_Error
     UMMTP3StatisticDb               *_statisticDb;
     UMTimer                         *_housekeepingTimer;
     UMPrometheus                    *_prometheus;
+    UMTimer                         *_routeRetestTimer;
 }
+
 @property (readwrite,assign,atomic) int                 networkIndicator;
 @property (readwrite,assign,atomic) UMMTP3Variant       variant;
 @property (readwrite,strong,atomic) UMMTP3PointCode     *opc;
@@ -93,7 +97,6 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) UMPrometheus            *prometheus;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq name:(NSString *)name;
-
 
 #pragma mark -
 #pragma mark Sending from Layer 3

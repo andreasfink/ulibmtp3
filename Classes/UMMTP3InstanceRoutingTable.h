@@ -66,7 +66,7 @@
 - (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls;
 - (UMSynchronizedSortedDictionary *)routeStatus;
 - (UMSynchronizedSortedDictionary *)objectValue;
-
+- (NSArray<UMMTP3InstanceRoute *>*)prohibitedOrRestrictedRoutes;
 @end
 
 

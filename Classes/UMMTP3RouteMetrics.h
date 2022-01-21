@@ -13,13 +13,13 @@
 
 @interface UMMTP3RouteMetrics : UMObject
 {
-    int weight;
-    int local_preference;
-    int aggregate;
-    int as_path_legnth;
-    int origin_type;
-    int origin;
-    int multi_exit_discrimators;
+    int _weight;
+    int _local_preference;
+    int _aggregate;
+    int _as_path_legnth;
+    int _origin_type;
+    int _origin;
+    int _multi_exit_discrimators;
 }
 
 
@@ -33,4 +33,6 @@
 
 - (int)combinedMetricsValue;
 - (UMSynchronizedSortedDictionary *)objectValue;
+- (UMMTP3RouteMetrics *)copyWithZone:(NSZone *)zone;
+
 @end
