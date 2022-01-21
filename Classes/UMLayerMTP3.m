@@ -1560,6 +1560,12 @@
     }
 }
 
+- (UMMTP3RouteStatus)getRouteStatus:(UMMTP3PointCode *)pc
+{
+    UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
+    return ir.status;
+}
+
 - (void)updateUpperLevelPointCodeUnavailable:(UMMTP3PointCode *)pc
 {
     NSArray *userKeys = [_userPart allKeys];

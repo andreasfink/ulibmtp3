@@ -329,6 +329,9 @@ typedef enum UMMTP3_Error
                    linksetName:(NSString *)name
                       priority:(UMMTP3RoutePriority)prio;
 
+- (UMMTP3RouteStatus)getRouteStatus:(UMMTP3PointCode *)pc;
+
+
 - (NSDictionary *)apiStatus;
 - (UMSynchronizedSortedDictionary *)routeStatus;
 

@@ -2210,7 +2210,6 @@
 - (void)processRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processRST (Signalling-route-set-test signal for prohibited destination)"];
@@ -2220,6 +2219,37 @@
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
+    }
+    /* TODO: check if route is available and send TFA/TFP/TFR back accordingly */
+    
+    UMMTP3Label *reverse_label = [label reverseLabel];
+    UMMTP3RouteStatus routeStatus = [_mtp3 getRouteStatus:pc];
+    switch(routeStatus)
+    {
+        case UMMTP3_ROUTE_PROHIBITED:
+            [self sendTFP:reverseLabel
+              destination:pc
+                       ni:ni
+                       mp:mp
+                      slc:slc
+                     link:link];
+            break;
+        case UMMTP3_ROUTE_RESTRICTED:
+            [self sendTFR:reverseLabel
+              destination:pc
+                       ni:ni
+                       mp:mp
+                      slc:slc
+                     link:link];
+            break;
+        case UMMTP3_ROUTE_ALLOWED:
+            [self sendTFA:reverseLabel
+              destination:pc
+                       ni:ni
+                       mp:mp
+                      slc:slc
+                     link:link];
+            break;
     }
 }
 
@@ -2237,7 +2267,35 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    
+    UMMTP3Label *reverse_label = [label reverseLabel];
+    UMMTP3RouteStatus routeStatus = [_mtp3 getRouteStatus:pc];
+    switch(routeStatus)
+    {
+        case UMMTP3_ROUTE_PROHIBITED:
+            [self sendTFP:reverseLabel
+              destination:pc
+                       ni:ni
+                       mp:mp
+                      slc:slc
+                     link:link];
+            break;
+        case UMMTP3_ROUTE_RESTRICTED:
+            [self sendTFR:reverseLabel
+              destination:pc
+                       ni:ni
+                       mp:mp
+                      slc:slc
+                     link:link];
+            break;
+        case UMMTP3_ROUTE_ALLOWED:
+            [self sendTFA:reverseLabel
+              destination:pc
+                       ni:ni
+                       mp:mp
+                      slc:slc
+                     link:link];
+            break;
+    }
 }
 
 /* Group MIM */
