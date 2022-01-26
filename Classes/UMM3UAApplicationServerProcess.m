@@ -2420,7 +2420,12 @@ static const char *get_sctp_status_string(UMSocketStatus status)
          */
         
         [self logInfo:@"sctpReportsUp"];
+        UMM3UA_Status oldStatus = self.status;
         self.status = M3UA_STATUS_BUSY;
+        if(oldStatus == M3UA_STATUS_OFF)
+        {
+            _lastLinkUp = [NSDate date];
+        }
         _aspup_received = 0;
         [self powerOn];
     }
@@ -2431,7 +2436,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     @autoreleasepool
     {
         UMM3UA_Status oldStatus = self.status;
-
         [self logInfo:@"sctpReportsDown"];
         [ _as updateRouteUnavailable:_as.adjacentPointCode
                                 mask:_as.adjacentPointCode.maxmask
@@ -2439,6 +2443,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                             priority:UMMTP3RoutePriority_1];
         if(oldStatus!= M3UA_STATUS_OFF)
         {
+            _lastLinkDown = [NSDate date];
             self.status = M3UA_STATUS_OFF;
             if([_reopen_timer1 isRunning]==NO)
             {
