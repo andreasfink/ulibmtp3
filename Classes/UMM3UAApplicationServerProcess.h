@@ -78,6 +78,8 @@
     
     NSDate  *_lastLinkUp;
     NSDate  *_lastLinkDown;
+    NSDate  *_lastUp;
+    NSDate  *_lastDown;
     NSDate  *_lastLinkActive;
     NSDate  *_lastLinkInactive;
 }
@@ -105,8 +107,10 @@
 @property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputBytes;
 @property(readwrite,strong,atomic)  NSDate  *lastLinkUp;
 @property(readwrite,strong,atomic)  NSDate  *lastLinkDown;
-@property(readwrite,strong,atomic)  NSDate  *lastLinkActive;
-@property(readwrite,strong,atomic)  NSDate  *lastLinkInactive;
+@property(readwrite,strong,atomic)  NSDate  *lastUp;
+@property(readwrite,strong,atomic)  NSDate  *lastDown;
+@property(readwrite,strong,atomic)  NSDate  *lastActive;
+@property(readwrite,strong,atomic)  NSDate  *lastInactive;
 
 @property (readonly)                BOOL congested;
 @property (readonly)                UMThroughputCounter  *speedometer;
