@@ -51,6 +51,7 @@
     r.origin_type = _origin_type;
     r.origin = _origin;
     r.multi_exit_discrimators = _multi_exit_discrimators;
+    return r;
 }
 
 

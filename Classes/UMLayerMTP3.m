@@ -1568,6 +1568,7 @@
 
 - (UMMTP3RouteStatus)getRouteStatus:(UMMTP3PointCode *)pc
 {
+    int mask = 0;
     UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
     return ir.status;
 }
@@ -1723,10 +1724,9 @@
 
 - (void) routeRetestTimerEvent
 {
-    NSArray<UMMTP3InstanceRoute *>*) *routes = [_routingTable prohibitedOrRestrictedRoutes];
+    NSArray<UMMTP3InstanceRoute *> *routes = [_routingTable prohibitedOrRestrictedRoutes];
     for(UMMTP3InstanceRoute *route in routes)
     {
-        if(route.type
         NSString *linksetName = route.linksetName;
         UMMTP3LinkSet *linkset = _linksets[linksetName];
         if(linkset)
@@ -1751,6 +1751,7 @@
                                   mp:0
                                  slc:-1
                                 link:NULL];
+                }
             }
         }
     }

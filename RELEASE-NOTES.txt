@@ -1,0 +1,6 @@
+
+Release 1.16.2
+    Implementation of RST and RSR
+        - answering test requests
+        - send regular RST in case DPC is unavailable until it becomes available
+            IF there is a static route to that destination or if its directly attached.

@@ -76,6 +76,7 @@ typedef enum UMMTP3_Error
     UMMTP3StatisticDb               *_statisticDb;
     UMTimer                         *_housekeepingTimer;
     UMPrometheus                    *_prometheus;
+    NSTimeInterval                  _routeRetestTime;
     UMTimer                         *_routeRetestTimer;
 }
 
@@ -95,6 +96,8 @@ typedef enum UMMTP3_Error
 @property (readwrite,assign,atomic) BOOL                isStarted;
 @property (readwrite,strong,atomic) UMSynchronizedSortedDictionary *linksets;
 @property (readwrite,strong,atomic) UMPrometheus            *prometheus;
+@property (readwrite,assign,atomic) NSTimeInterval      routeRetestTime;
+@property (readwrite,strong,atomic) UMTimer             *routeRetestTimer;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq name:(NSString *)name;
 

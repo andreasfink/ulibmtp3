@@ -180,6 +180,7 @@
 		A628513F1A46E4010090FC94 /* UMMTP3BlackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3BlackList.h; sourceTree = "<group>"; };
 		A62851401A46E4010090FC94 /* UMMTP3BlackList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3BlackList.m; sourceTree = "<group>"; };
 		A629F27C25B86C2E00C209E5 /* File */ = {isa = PBXFileReference; lastKnownFileType = text; path = File; sourceTree = "<group>"; };
+		A643580A27AFD7D500540A2D /* RELEASE-NOTES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "RELEASE-NOTES.txt"; sourceTree = "<group>"; };
 		A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM3UAApplicationServerMode.h; sourceTree = "<group>"; };
 		A666EF681E89C4AF004804CB /* UMSyntaxToken_Pointcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMSyntaxToken_Pointcode.h; sourceTree = "<group>"; };
 		A666EF691E89C4AF004804CB /* UMSyntaxToken_Pointcode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMSyntaxToken_Pointcode.m; sourceTree = "<group>"; };
@@ -293,6 +294,7 @@
 				A6F693F81B4E83E30090FC94 /* configure.in */,
 				A6F693F91B4E83E30090FC94 /* VERSION */,
 				A6BD07661DC2B63C0048E807 /* LICENSE */,
+				A643580A27AFD7D500540A2D /* RELEASE-NOTES.txt */,
 				A6F694301B4E86390090FC94 /* Makefile.linux.in */,
 				A6F694311B4E86390090FC94 /* Makefile.osx.in */,
 				A6F694321B4E86390090FC94 /* ulibmtp3.pc.in */,

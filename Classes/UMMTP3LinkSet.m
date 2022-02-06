@@ -2227,7 +2227,7 @@
     switch(routeStatus)
     {
         case UMMTP3_ROUTE_PROHIBITED:
-            [self sendTFP:reverseLabel
+            [self sendTFP:reverse_label
               destination:pc
                        ni:ni
                        mp:mp
@@ -2235,15 +2235,17 @@
                      link:link];
             break;
         case UMMTP3_ROUTE_RESTRICTED:
-            [self sendTFR:reverseLabel
+            [self sendTFR:reverse_label
               destination:pc
                        ni:ni
                        mp:mp
                       slc:slc
                      link:link];
             break;
+        case UMMTP3_ROUTE_UNUSED:
+        case UMMTP3_ROUTE_UNKNOWN:
         case UMMTP3_ROUTE_ALLOWED:
-            [self sendTFA:reverseLabel
+            [self sendTFA:reverse_label
               destination:pc
                        ni:ni
                        mp:mp
@@ -2272,7 +2274,7 @@
     switch(routeStatus)
     {
         case UMMTP3_ROUTE_PROHIBITED:
-            [self sendTFP:reverseLabel
+            [self sendTFP:reverse_label
               destination:pc
                        ni:ni
                        mp:mp
@@ -2280,15 +2282,18 @@
                      link:link];
             break;
         case UMMTP3_ROUTE_RESTRICTED:
-            [self sendTFR:reverseLabel
+            [self sendTFR:reverse_label
               destination:pc
                        ni:ni
                        mp:mp
                       slc:slc
                      link:link];
             break;
+        case UMMTP3_ROUTE_UNUSED:
+        case UMMTP3_ROUTE_UNKNOWN:
+
         case UMMTP3_ROUTE_ALLOWED:
-            [self sendTFA:reverseLabel
+            [self sendTFA:reverse_label
               destination:pc
                        ni:ni
                        mp:mp
