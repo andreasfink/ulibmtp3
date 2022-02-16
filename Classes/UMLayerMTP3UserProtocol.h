@@ -24,6 +24,7 @@
                 dpc:(UMMTP3PointCode *)dpc
                  si:(int)si
                  ni:(int)ni
+                sls:(int)sls
         linksetName:(NSString *)linksetName
             options:(NSDictionary *)options
               ttmap:(UMMTP3TranslationTableMap *)map;
@@ -33,6 +34,7 @@
       affectedPc:(UMMTP3PointCode *)opc
               si:(int)si
               ni:(int)ni
+             sls:(int)sls
          options:(NSDictionary *)options;
 
 - (void)mtpResume:(NSData *)data
@@ -40,6 +42,7 @@
        affectedPc:(UMMTP3PointCode *)opc
                si:(int)si
                ni:(int)ni
+              sls:(int)sls
           options:(NSDictionary *)options;
 
 
@@ -48,6 +51,7 @@
        affectedPc:(UMMTP3PointCode *)affPC
                si:(int)si
                ni:(int)ni
+              sls:(int)sls
            status:(int)status
           options:(NSDictionary *)options;
 

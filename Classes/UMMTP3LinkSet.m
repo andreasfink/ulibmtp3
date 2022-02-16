@@ -911,6 +911,7 @@
     int idx=0;
     const uint8_t *data = pdu.bytes;
     NSUInteger maxlen   = pdu.length;
+    int sls = label.sls;
     @try
     {
         if(_logLevel <= UMLOG_DEBUG)
@@ -919,6 +920,7 @@
             [self.logFeed debugText:[NSString stringWithFormat:@" maxlen: [%d]",(int)maxlen]];
             [self.logFeed debugText:[NSString stringWithFormat:@"     si: [%d]",si]];
             [self.logFeed debugText:[NSString stringWithFormat:@"     ni: [%d]",ni]];
+            [self.logFeed debugText:[NSString stringWithFormat:@"    sls: [%d]",sls]];
             [self.logFeed debugText:[NSString stringWithFormat:@"     mp: [%d]",mp]];
             [self.logFeed debugText:[NSString stringWithFormat:@"    opc: %@",label.opc.description]];
             [self.logFeed debugText:[NSString stringWithFormat:@"    dpc: %@",label.dpc.description]];
@@ -1560,7 +1562,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu2]];
                     [self.logFeed debugText:[NSString stringWithFormat:@"  idx=: %d ",idx]];
                 }
-                [_mtp3 processIncomingPdu:label data:pdu2 userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu2 userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_TUP:
@@ -1571,7 +1573,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
 
             }
                 break;
@@ -1583,7 +1585,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
 
             }
                 break;
@@ -1595,7 +1597,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
 
             }
                 break;
@@ -1607,7 +1609,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
 
             }
                 break;
@@ -1619,7 +1621,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
 
             }
                 break;
@@ -1631,7 +1633,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
 
             }
                 break;
@@ -1643,7 +1645,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
 
             }
                 break;
@@ -1655,7 +1657,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name  linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name  linkset:self];
 
             }
                 break;
@@ -1667,7 +1669,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name  linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name  linkset:self];
 
             }
                 break;
@@ -1679,7 +1681,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
 
             }
                 break;
@@ -1691,7 +1693,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
 
             }
                 break;
@@ -1703,7 +1705,7 @@
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
-                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni mp:mp linksetName:_name  linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name  linkset:self];
 
             }
                 break;

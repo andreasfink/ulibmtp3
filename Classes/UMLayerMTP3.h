@@ -109,32 +109,15 @@ typedef enum UMMTP3_Error
 
 /* Layer3 access methods */
 
-/*
-- (UMMTP3_Error)sendPDU:(NSData *)pdu
-                    opc:(UMMTP3PointCode *)fopc
-                    dpc:(UMMTP3PointCode *)fdpc
-                     si:(int)si
-                     mp:(int)mp
-                options:(NSDictionary *)options;
-*/
 - (UMMTP3_Error)sendPDU:(NSData *)pdu
                     opc:(UMMTP3PointCode *)fopc
                     dpc:(UMMTP3PointCode *)fdpc
                      si:(int)si
                      mp:(int)mp
                 options:(NSDictionary *)options
-        routedToLinkset:(NSString **)routedToLinkset;
+        routedToLinkset:(NSString **)routedToLinkset
+                    sls:(int)sls;
 
-
-/*
-- (UMMTP3_Error)forwardPDU:(NSData *)pdu
-                       opc:(UMMTP3PointCode *)fopc
-                       dpc:(UMMTP3PointCode *)fdpc
-                        si:(int)si
-                        mp:(int)mp
-                     route:(UMMTP3InstanceRoute *)route
-                   options:(NSDictionary *)options;
-*/
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
                        opc:(UMMTP3PointCode *)fopc
                        dpc:(UMMTP3PointCode *)fdpc
@@ -143,8 +126,8 @@ typedef enum UMMTP3_Error
                      route:(UMMTP3InstanceRoute *)route
                    options:(NSDictionary *)options
              sourceLinkset:(NSString *)sourceLinkset
-           routedToLinkset:(NSString **)routedToLinkset;
-
+           routedToLinkset:(NSString **)routedToLinkset
+                       sls:(int)sls;
 
 #pragma mark -
 #pragma mark LinkSet Handling
@@ -272,6 +255,7 @@ typedef enum UMMTP3_Error
                       data:(NSData *)data
                 userpartId:(int)upid
                         ni:(int)ni
+                       sls:(int)sls
                         mp:(int)mp
                linksetName:(NSString *)linksetName
                    linkset:(UMMTP3LinkSet *)linkset;
@@ -281,6 +265,7 @@ typedef enum UMMTP3_Error
                              data:(NSData *)data
                        userpartId:(int)upid
                                ni:(int)ni
+                              sls:(int)sls
                                mp:(int)mp
                       linksetName:(NSString *)linksetName
                           linkset:(UMMTP3LinkSet *)linkset;
@@ -291,6 +276,7 @@ typedef enum UMMTP3_Error
                            data:(NSData *)data
                      userpartId:(int)upid
                              ni:(int)ni
+                            sls:(int)sls
                              mp:(int)mp
                     linksetName:(NSString *)linksetName
                         linkset:(UMMTP3LinkSet *)linkset;
@@ -299,6 +285,7 @@ typedef enum UMMTP3_Error
                    data:(NSData *)data
              userpartId:(int)upid
                      ni:(int)ni
+                    sls:(int)sls
                      mp:(int)mp
             linksetName:(NSString *)linksetName
                 linkset:(UMMTP3LinkSet *)linkset;

@@ -918,20 +918,22 @@
     return re;
 }
 
+
 - (UMMTP3_Error)sendPDU:(NSData *)pdu
-            opc:(UMMTP3PointCode *)fopc
-            dpc:(UMMTP3PointCode *)fdpc
-             si:(int)si
-             mp:(int)mp
-        options:(NSDictionary *)options
+                    opc:(UMMTP3PointCode *)fopc
+                    dpc:(UMMTP3PointCode *)fdpc
+                     si:(int)si
+                     mp:(int)mp
+                options:(NSDictionary *)options
 {
     return [self sendPDU:pdu
-                opc:fopc
-                dpc:fdpc
-                 si:si
-                 mp:mp
-            options:options
-    routedToLinkset:NULL];
+                     opc:fopc
+                     dpc:fdpc
+                      si:si
+                      mp:mp
+                 options:options
+         routedToLinkset:NULL
+                     sls:-1];
 }
 
 - (UMMTP3_Error)sendPDU:(NSData *)pdu
@@ -941,6 +943,7 @@
                      mp:(int)mp
                 options:(NSDictionary *)options
         routedToLinkset:(NSString **)routedToLinkset
+                    sls:(int)sls
 {
     NSString *rtl;
     UMMTP3_Error err;
@@ -959,32 +962,14 @@
                           route:route
                         options:options
                   sourceLinkset:@"local"
-                routedToLinkset:&rtl];
+                routedToLinkset:&rtl
+                          sls:sls];
     }
     if(routedToLinkset != NULL)
     {
         *routedToLinkset = rtl;
     }
     return err;
-}
-
-- (UMMTP3_Error)forwardPDU:(NSData *)pdu
-                        opc:(UMMTP3PointCode *)fopc
-                        dpc:(UMMTP3PointCode *)fdpc
-                         si:(int)si
-                         mp:(int)mp
-                      route:(UMMTP3InstanceRoute *)route
-                    options:(NSDictionary *)options
-{
-    return [self forwardPDU:pdu
-                        opc:fopc
-                        dpc:fdpc
-                         si:si
-                         mp:mp
-                      route:route
-                    options:options
-              sourceLinkset:@"local"
-            routedToLinkset:NULL];
 }
 
 - (UMMTP3_Error)forwardPDU:(NSData *)pdu
@@ -996,6 +981,7 @@
                    options:(NSDictionary *)options
              sourceLinkset:(NSString *)sourceLinkset
            routedToLinkset:(NSString **)routedToLinkset
+                       sls:(int)sls
 {
     NSString *rtls = NULL;
     UMMTP3_Error err = UMMTP3_error_internal_error;
@@ -1029,14 +1015,21 @@
                 UMMTP3Label *label = [[UMMTP3Label alloc]init];
                 label.opc = fopc;
                 label.dpc = fdpc;
-                NSString *s = options[@"mtp3-sls"];
-                if(s.length > 0)
+                if(sls != -1)
                 {
-                    label.sls = [s intValue] % 16;
+                    NSString *s = options[@"mtp3-sls"];
+                    if(s.length > 0)
+                    {
+                        label.sls = [s intValue] % 16;
+                    }
+                    else
+                    {
+                        label.sls = [UMUtil random:16];
+                    }
                 }
                 else
                 {
-                    label.sls = [UMUtil random:16];
+                    label.sls = sls;
                 }
                 int ni;
                 if(linkset.overrideNetworkIndicator)
@@ -1054,6 +1047,7 @@
                         [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to application server %@",linkset.name]];
                         [self.logFeed debugText:[NSString stringWithFormat:@" label: %@",label]];
                         [self.logFeed debugText:[NSString stringWithFormat:@" ni: %d",ni]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" sls: %d",sls]];
                         [self.logFeed debugText:[NSString stringWithFormat:@" mp: %d",mp]];
                         [self.logFeed debugText:[NSString stringWithFormat:@" pdu: %@",pdu]];
                     }
@@ -1080,6 +1074,7 @@
                         [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU to m2pa linkset %@",linkset.name]];
                         [self.logFeed debugText:[NSString stringWithFormat:@" label: %@",label]];
                         [self.logFeed debugText:[NSString stringWithFormat:@" ni: %d",ni]];
+                        [self.logFeed debugText:[NSString stringWithFormat:@" sls: %d",sls]];
                         [self.logFeed debugText:[NSString stringWithFormat:@" mp: %d",mp]];
                         [self.logFeed debugText:[NSString stringWithFormat:@" pdu: %@",pdu]];
                     }
@@ -1195,6 +1190,7 @@
                       data:(NSData *)data
                 userpartId:(int)si
                         ni:(int)ni
+                       sls:(int)sls
                         mp:(int)mp
                linksetName:(NSString *)linksetName
                    linkset:(UMMTP3LinkSet *)linkset
@@ -1210,6 +1206,7 @@
                                      data:data
                                userpartId:si
                                        ni:ni
+                                      sls:sls
                                        mp:mp
                               linksetName:linksetName
                                   linkset:linkset];
@@ -1229,6 +1226,7 @@
                                            data:data
                                      userpartId:si
                                              ni:ni
+                                            sls:sls
                                              mp:mp
                                     linksetName:linksetName
                                         linkset:linkset];
@@ -1247,9 +1245,10 @@
                                 data:(NSData *)data
                           userpartId:(int)si
                                   ni:(int)ni
+                                 sls:(int)sls
                                   mp:(int)mp
                          linksetName:(NSString *)linksetName
-                          linkset:(UMMTP3LinkSet *)linkset
+                            linkset:(UMMTP3LinkSet *)linkset
 {
     @autoreleasepool
     {
@@ -1270,7 +1269,8 @@
                        route:route
                      options:options
                sourceLinkset:linksetName
-             routedToLinkset:NULL];
+             routedToLinkset:NULL
+                         sls:sls];
         }
         else
         {
@@ -1299,6 +1299,7 @@
                                 data:(NSData *)data
                           userpartId:(int)si
                                   ni:(int)ni
+                                 sls:(int)sls
                                   mp:(int)mp
                          linksetName:(NSString *)linksetName
                              linkset:(UMMTP3LinkSet *)linkset
@@ -1320,7 +1321,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset ];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_TUP:
@@ -1329,7 +1330,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1339,7 +1340,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1349,7 +1350,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1359,7 +1360,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1369,7 +1370,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1379,7 +1380,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1389,7 +1390,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1399,7 +1400,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1409,7 +1410,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1419,7 +1420,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1429,7 +1430,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1439,7 +1440,7 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
 
             }
                 break;
@@ -1451,6 +1452,7 @@
                    data:(NSData *)data
              userpartId:(int)si
                      ni:(int)ni
+                    sls:(int)sls
                      mp:(int)mp
             linksetName:(NSString *)linksetName
                 linkset:(UMMTP3LinkSet *)linkset
@@ -1476,6 +1478,7 @@
                           dpc:label.dpc
                            si:si
                            ni:ni
+                          sls:sls
                   linksetName:linksetName
                       options:options
                         ttmap:linkset.ttmap_in];
@@ -1584,6 +1587,7 @@
          affectedPc:pc
                  si:(int)[userKey integerValue]
                  ni:_networkIndicator
+                sls:-1
             options:@{}];
     }
 }
@@ -1599,6 +1603,7 @@
          affectedPc:pc
                  si:(int)[userKey integerValue]
                  ni:_networkIndicator
+                 sls:-1
              status:1 /* FIXME: we could use congestion levels here but its national specific */
             options:@{}];
     }
@@ -1615,6 +1620,7 @@
          affectedPc:pc
                  si:(int)[userKey integerValue]
                  ni:_networkIndicator
+                 sls:-1
             options:@{}];
     }
 }
