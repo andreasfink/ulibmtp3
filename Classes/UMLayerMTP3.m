@@ -1459,7 +1459,6 @@
 {
     @autoreleasepool
     {
-
         NSMutableDictionary *options;
         NSDate *ts = [NSDate new];
         options[@"mtp3-timestamp"] = ts;
