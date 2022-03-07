@@ -1634,7 +1634,6 @@
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
-
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SAT_ISUP:
@@ -1646,7 +1645,6 @@
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
-
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_B:
@@ -1658,7 +1656,6 @@
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name  linkset:self];
-
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_C:
@@ -1670,7 +1667,6 @@
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name  linkset:self];
-
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_D:
@@ -1682,7 +1678,6 @@
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
-
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_E:
@@ -1694,7 +1689,6 @@
                 }
                 NSData *pdu = [NSData dataWithBytes:data+idx length:maxlen-idx];
                 [_mtp3 processIncomingPdu:label data:pdu userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
-
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_F:
@@ -1722,6 +1716,7 @@
         [s1 appendFormat:@"    Label: %@\n",label];
         [s1 appendFormat:@"       SI: %d\n",si];
         [s1 appendFormat:@"       NI: %d\n",ni];
+        [s1 appendFormat:@"       SLS: %d\n",sls];
         [s1 appendFormat:@"       MP: %d\n",mp];
         [s1 appendFormat:@"      SLC: %d\n",slc];
         if(network_appearance > 0)
