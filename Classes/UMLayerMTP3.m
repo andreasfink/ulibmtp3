@@ -911,10 +911,6 @@
                                                                 mask:search_dpc.maxmask
                                                   excludeLinkSetName:NULL
                                                                exact:NO];
-    if(re==NULL)
-    {
-        return _defaultRoute;
-    }
     return re;
 }
 
