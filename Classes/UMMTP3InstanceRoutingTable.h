@@ -17,6 +17,7 @@
     UMLogLevel                          _logLevel;
     NSMutableDictionary                 *_routesByPointCode;
     UMMutex                             *_lock;
+    UMMTP3InstanceRoute                 *_defaultRoute;
 }
 
 @property(readwrite,assign) UMLogLevel logLevel;

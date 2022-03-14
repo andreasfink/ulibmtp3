@@ -54,7 +54,7 @@
     NSArray<UMMTP3InstanceRoute *> *a = [self findRoutesForDestination:pc mask:mask excludeLinkSetName:linksetName exact:exact];
     if(a.count<1)
     {
-        return NULL;
+        return _defaultRoute;
     }
     else if(a.count==1)
     {
@@ -86,6 +86,14 @@
         }
     }
     [_lock unlock];
+    if(r.count == 0)
+    {
+        if(![_defaultRoute.linksetName isEqualToString:linksetName])
+        {
+            r = [[NSMutableArray alloc]init];
+            [r addObject:_defaultRoute];
+        }
+    }
     return r;
 }
 
@@ -111,6 +119,14 @@
     else
     {
         r = [[NSMutableArray alloc]init];
+    }
+    if(r.count == 0)
+    {
+        if([_defaultRoute.linksetName isEqualToString:linksetName])
+        {
+            r = [[NSMutableArray alloc]init];
+            [r addObject:_defaultRoute];
+        }
     }
     [_lock unlock];
     return r;
@@ -253,33 +269,48 @@
             linksetName:(NSString *)linkset
                priority:(UMMTP3RoutePriority)prio
 {
-    [_lock lock];
-    NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
-
-    NSInteger n = r.count;
     BOOL found=NO;
-    for(NSInteger i=0;i<n;i++)
-    {
-        UMMTP3InstanceRoute *route = r[i];
-        if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio) && (route.staticRoute==YES))
-        {
-            found = YES;
-            route.status = UMMTP3_ROUTE_ALLOWED;
-            route.tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
-            break;
-        }
-    }
-    if(found==NO)
+
+    [_lock lock];
+    if((pc.pc == 0) && (mask == 0))
     {
         UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc]init];
         route.linksetName = linkset;
-        route.pointcode = pc;
-        route.mask = mask;
+        route.pointcode = 0;
+        route.mask = 0;
         route.priority = prio;
         route.staticRoute = YES;
         route.status = UMMTP3_ROUTE_ALLOWED;
         route.tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
-        [r addObject:route];
+        _defaultRoute = route;
+    }
+    else
+    {
+        NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
+        NSInteger n = r.count;
+        for(NSInteger i=0;i<n;i++)
+        {
+            UMMTP3InstanceRoute *route = r[i];
+            if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio) && (route.staticRoute==YES))
+            {
+                found = YES;
+                route.status = UMMTP3_ROUTE_ALLOWED;
+                route.tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
+                break;
+            }
+        }
+        if(found==NO)
+        {
+            UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc]init];
+            route.linksetName = linkset;
+            route.pointcode = pc;
+            route.mask = mask;
+            route.priority = prio;
+            route.staticRoute = YES;
+            route.status = UMMTP3_ROUTE_ALLOWED;
+            route.tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
+            [r addObject:route];
+        }
     }
     [_lock unlock];
     return found;
