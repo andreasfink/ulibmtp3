@@ -63,7 +63,6 @@ typedef enum UMMTP3_Error
     UMMTP3PointCode                 *_japanOpc;
     UMMTP3InstanceRoutingTable      *_routingTable;
     UMSynchronizedSortedDictionary  *_userPart;
-    UMMTP3InstanceRoute             *_defaultRoute;
     BOOL                            _ready; /* currently a quick & dirty flag to wait for at startup. set by TRA */
     UMMTP3SyslogClient              *_problematicPacketDumper;
     BOOL                            _stpMode;
@@ -88,7 +87,6 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) UMMTP3PointCode     *chinaOpc;
 @property (readwrite,strong,atomic) UMMTP3PointCode     *japanOpc;
 
-@property (readwrite,strong,atomic) UMMTP3InstanceRoute *defaultRoute;
 @property (readwrite,assign,atomic) BOOL                ready;
 @property (readwrite,strong,atomic) UMMTP3SyslogClient  *problematicPacketDumper;
 @property (readwrite,assign,atomic) BOOL                stpMode;
