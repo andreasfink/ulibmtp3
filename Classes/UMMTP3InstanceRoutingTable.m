@@ -51,8 +51,11 @@
                                            exact:(BOOL)exact
 
 {
-    NSArray<UMMTP3InstanceRoute *> *a = [self findRoutesForDestination:pc mask:mask excludeLinkSetName:linksetName exact:exact];
-    if(a.count<1)
+    NSArray<UMMTP3InstanceRoute *> *a = [self findRoutesForDestination:pc
+                                                                  mask:mask
+                                                    excludeLinkSetName:linksetName
+                                                                 exact:exact];
+    if(a.count < 1)
     {
         return _defaultRoute;
     }
