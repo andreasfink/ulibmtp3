@@ -1760,7 +1760,7 @@
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTM while in status %d",link.current_m2pa_status]];
-        link.current_m2pa_status = M2PA_STATUS_IS;
+        [self m2paStatusUpdate:M2PA_STATUS_IS slc:slc];
     }
     if(self.logLevel <= UMLOG_DEBUG)
     {
@@ -1799,7 +1799,7 @@
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTA while in status %d",link.current_m2pa_status]];
-        link.current_m2pa_status = M2PA_STATUS_IS;
+        [self m2paStatusUpdate:M2PA_STATUS_IS slc:slc];
     }
 
     if(self.logLevel <= UMLOG_DEBUG)
@@ -1840,7 +1840,7 @@
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SSLTM while in status %d",link.current_m2pa_status]];
-        link.current_m2pa_status = M2PA_STATUS_IS;
+        [self m2paStatusUpdate:M2PA_STATUS_IS slc:slc];
     }
 
     if(self.logLevel <= UMLOG_DEBUG)
@@ -1878,7 +1878,8 @@
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SSLTA while in status %d",link.current_m2pa_status]];
-        link.current_m2pa_status = M2PA_STATUS_IS;
+        [self update]
+        [self m2paStatusUpdate:M2PA_STATUS_IS slc:slc];
     }
 
     if(![self isFromAdjacentToLocal:label])
@@ -4501,11 +4502,13 @@
     {
         return;
     }
+    [self _linksLock];
     M2PA_Status old_status = link.current_m2pa_status;
     link.current_m2pa_status = status;
     link.last_m2pa_status = status;
-    BOOL newUp = NO;;
+    BOOL newUp = NO;
     BOOL newDown = NO;
+
     [self updateLinkSetStatus];
     
     if((status == M2PA_STATUS_IS) && (old_status != M2PA_STATUS_IS))
@@ -4528,64 +4531,62 @@
         link.emergency = NO;
     }
 
-    if(old_status == status)
+    if(old_status != status)
     {
-        return;
-    }
-
-    
-    switch(status)
-    {
-        case M2PA_STATUS_FOOS:
-            [link stopLinkTestTimer];
-            [link stopReopenTimer1];
-            [link stopReopenTimer2];
-            [link powerOff];
-            break;
-        case M2PA_STATUS_DISCONNECTED:
-            [link stopLinkTestTimer];
-            [link stopReopenTimer1];
-            [link stopReopenTimer2];
-            [link powerOff];
-            [link startReopenTimer1]; /* this will power on in few sec */
-            break;
-        case M2PA_STATUS_OFF:
-            [link stopLinkTestTimer];
-            [link stopReopenTimer1];
-            break;
-        case M2PA_STATUS_OOS:
-            [link stopLinkTestTimer];
-            [link stopReopenTimer1];
-            [link start];
-            break;
-        case M2PA_STATUS_INITIAL_ALIGNMENT:
-            break;
-        case M2PA_STATUS_ALIGNED_NOT_READY:
-            break;
-        case M2PA_STATUS_ALIGNED_READY:
-            break;
-        case M2PA_STATUS_IS:
-            if(newUp)
-            {
-                link.awaitFirstSLTA = YES;
-                link.firstSLTMSent= NO;
+        switch(status)
+        {
+            case M2PA_STATUS_FOOS:
                 [link stopLinkTestTimer];
-                if(link.firstSLTMSent == NO)
-                [self linktestTimeEventForLink:link];
-                link.firstSLTMSent = YES;
-                [link startLinkTestTimer];
+                [link stopReopenTimer1];
                 [link stopReopenTimer2];
-            }
-            break;
+                [link powerOff];
+                break;
+            case M2PA_STATUS_DISCONNECTED:
+                [link stopLinkTestTimer];
+                [link stopReopenTimer1];
+                [link stopReopenTimer2];
+                [link powerOff];
+                [link startReopenTimer1]; /* this will power on in few sec */
+                break;
+            case M2PA_STATUS_OFF:
+                [link stopLinkTestTimer];
+                [link stopReopenTimer1];
+                break;
+            case M2PA_STATUS_OOS:
+                [link stopLinkTestTimer];
+                [link stopReopenTimer1];
+                [link start];
+                break;
+            case M2PA_STATUS_INITIAL_ALIGNMENT:
+                break;
+            case M2PA_STATUS_ALIGNED_NOT_READY:
+                break;
+            case M2PA_STATUS_ALIGNED_READY:
+                break;
+            case M2PA_STATUS_IS:
+                if(newUp)
+                {
+                    link.awaitFirstSLTA = YES;
+                    link.firstSLTMSent = NO;
+                    [link stopLinkTestTimer];
+                    if(link.firstSLTMSent == NO)
+                    [self linktestTimeEventForLink:link];
+                    link.firstSLTMSent = YES;
+                    [link startLinkTestTimer];
+                    [link stopReopenTimer2];
+                }
+                break;
+        }
+        if(newUp)
+        {
+            link.lastLinkUp = [NSDate date];
+        }
+        if(newDown)
+        {
+            link.lastLinkDown = [NSDate date];
+        }
     }
-    if(newUp)
-    {
-        link.lastLinkUp = [NSDate date];
-    }
-    if(newDown)
-    {
-        link.lastLinkDown = [NSDate date];
-    }
+    [_linksLock unlock];
 }
 
 /* reopen Timer Event 1 happens when a link got closed. We wait a small amount of time and restart the link */
