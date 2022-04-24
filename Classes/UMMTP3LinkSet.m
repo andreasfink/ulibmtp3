@@ -1870,7 +1870,6 @@
 {
     [link stopLinkTestAckTimer];
     link.outstandingSSLTA = 0;
-
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processSSLTA"];
@@ -1878,7 +1877,7 @@
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SSLTA while in status %d",link.current_m2pa_status]];
-        [self update]
+        [self updateLinkSetStatus];
         [self m2paStatusUpdate:M2PA_STATUS_IS slc:slc];
     }
 
@@ -4502,7 +4501,7 @@
     {
         return;
     }
-    [self _linksLock];
+    [_linksLock lock];
     M2PA_Status old_status = link.current_m2pa_status;
     link.current_m2pa_status = status;
     link.last_m2pa_status = status;
