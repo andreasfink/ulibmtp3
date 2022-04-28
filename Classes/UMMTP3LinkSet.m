@@ -118,7 +118,7 @@
 {
     [_linksLock lock];
     UMMTP3Link *lnk = _linksByName[n];
-
+    [_linksLock unlock];
     return lnk;
 }
 
