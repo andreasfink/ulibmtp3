@@ -77,6 +77,9 @@ typedef enum UMMTP3_Error
     UMPrometheus                    *_prometheus;
     NSTimeInterval                  _routeRetestTime;
     UMTimer                         *_routeRetestTimer;
+    NSString                        *_routingUpdateLogFileName;
+    FILE                            *_routingUpdateLogFile;
+    UMMutex                         *_lock;
 }
 
 @property (readwrite,assign,atomic) int                 networkIndicator;
@@ -96,6 +99,8 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) UMPrometheus            *prometheus;
 @property (readwrite,assign,atomic) NSTimeInterval      routeRetestTime;
 @property (readwrite,strong,atomic) UMTimer             *routeRetestTimer;
+@property (readwrite,strong,atomic) NSString            *routingUpdateLogFileName;
+@property (readwrite,strong,atomic) UMMutex             *lock;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq name:(NSString *)name;
 

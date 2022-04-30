@@ -902,6 +902,17 @@
         {
             _statisticDbAutoCreate=@(YES);
         }
+        if(cfg[@"routing-update-log"])
+        {
+            _routingUpdateLogFileName = [cfg[@"routing-update-log"] stringValue];
+            _routingUpdateLogFile = fopen(_routingUpdateLogFileName.UTF8String,"w+");
+            if(_routingUpdateLogFile)
+            {
+                NSString *s = [[NSDate date]stringValue];
+                fprintf(_routingUpdateLogFile,"--ROUTING-UPDATE-LOG-FILE started %s--\n",s.UTF8String);
+                fflush(_routingUpdateLogFile);
+            }
+        }
     }
 }
 
@@ -1505,8 +1516,21 @@
 {
     @autoreleasepool
     {
+        if(_routingUpdateLogFile)
+        {
+            NSDate *now = [NSDate date];
+            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: AVAILABLE PRIO: %d", now.stringValue,name,pc,prio];
+            [_lock lock];
+            fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+            fflush(_routingUpdateLogFile);
+            [_lock unlock];
+        }
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
         [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
+        if(_routingUpdateLogFile)
+        {
+            [self writeRouteStatusToLog:pc];
+        }
         return YES;
     }
 }
@@ -1518,10 +1542,58 @@
 {
     @autoreleasepool
     {
+        if(_routingUpdateLogFile)
+        {
+            NSDate *now = [NSDate date];
+            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: AVAILABLE RESTRICTED: %d", now.stringValue,name,pc,prio];
+
+            [_lock lock];
+            fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+            fflush(_routingUpdateLogFile);
+            [_lock unlock];
+        }
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
         [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
+        if(_routingUpdateLogFile)
+        {
+            [self writeRouteStatusToLog:pc];
+        }
         return YES;
     }
+}
+
+- (void)writeRouteStatusToLog:(UMMTP3PointCode *)pc
+{
+    if(_routingUpdateLogFile==NULL)
+    {
+        return;
+    }
+    UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:-1 excludeLinkSetName:NULL exact:YES];
+    NSString *status = @"undefined";
+    switch(ir.status)
+    {
+        case UMMTP3_ROUTE_UNUSED:
+            status = @"UNUSED";
+            break;
+        case UMMTP3_ROUTE_UNKNOWN:
+            status = @"UNKNOWN";
+            break;
+        case UMMTP3_ROUTE_PROHIBITED:
+            status = @"PROHIBITED";
+            break;
+        case UMMTP3_ROUTE_RESTRICTED:
+            status = @"RESTRICTED";
+            break;
+        case UMMTP3_ROUTE_ALLOWED:
+            status = @"ALLOWED ";
+            break;
+    }
+    NSDate *now = [NSDate date];
+    NSString *s = [NSString stringWithFormat:@"%@ PC: %@ STATUS: %@", now.stringValue,pc.stringValue,status];
+    [_lock lock];
+    fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+    fflush(_routingUpdateLogFile);
+    [_lock unlock];
 }
 
 - (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
@@ -1532,11 +1604,24 @@
     @autoreleasepool
     {
 
+        if(_routingUpdateLogFile)
+        {
+            NSDate *now = [NSDate date];
+            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: UNAVAILABLE PRIO: %d", now.stringValue,name,pc,prio];
+            [_lock lock];
+            fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+            fflush(_routingUpdateLogFile);
+            [_lock unlock];
+        }
         [_routingTable updateDynamicRouteUnavailable:pc
                                                 mask:mask
                                          linksetName:name
                                             priority:prio];
         [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
+        if(_routingUpdateLogFile)
+        {
+            [self writeRouteStatusToLog:pc];
+        }
         return YES;
     }
 }
@@ -1573,6 +1658,15 @@
 
 - (void)updateUpperLevelPointCodeUnavailable:(UMMTP3PointCode *)pc
 {
+    if(_routingUpdateLogFile)
+    {
+        NSDate *now = [NSDate date];
+        NSString *s = [NSString stringWithFormat:@"%@ MTP-USER UNAVAILABLE PC %@", now.stringValue,pc.stringValue];
+        [_lock lock];
+        fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+        fflush(_routingUpdateLogFile);
+        [_lock unlock];
+    }
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
     {
@@ -1589,6 +1683,15 @@
 
 - (void)updateUpperLevelPointCodeRestricted:(UMMTP3PointCode *)pc
 {
+    if(_routingUpdateLogFile)
+    {
+        NSDate *now = [NSDate date];
+        NSString *s = [NSString stringWithFormat:@"%@ MTP-USER RESTRICTED PC %@", now.stringValue,pc.stringValue];
+        [_lock lock];
+        fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+        fflush(_routingUpdateLogFile);
+        [_lock unlock];
+    }
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
     {
@@ -1606,6 +1709,16 @@
 
 - (void)updateUpperLevelPointCodeAvailable:(UMMTP3PointCode *)pc
 {
+    if(_routingUpdateLogFile)
+    {
+        NSDate *now = [NSDate date];
+        NSString *s = [NSString stringWithFormat:@"%@ MTP-USER AVAIL PC %@", now.stringValue,pc.stringValue];
+        [_lock lock];
+        fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+        fflush(_routingUpdateLogFile);
+        [_lock unlock];
+    }
+
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
     {
@@ -1630,6 +1743,15 @@
     {
         UMMTP3LinkSet *linkset = _linksets[linksetName];
         [linkset advertizePointcodeUnavailable:pc mask:mask];
+        if(_routingUpdateLogFile)
+        {
+            NSDate *now = [NSDate date];
+            NSString *s = [NSString stringWithFormat:@"%@ ADVERTIZE PC %@ UNAVAIL to linkset %@", now.stringValue,pc.stringValue,linksetName];
+            [_lock lock];
+            fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+            fflush(_routingUpdateLogFile);
+            [_lock unlock];
+        }
     }
 }
 
@@ -1641,6 +1763,15 @@
     for(NSString *linksetName in linksetNames)
     {
         UMMTP3LinkSet *linkset = _linksets[linksetName];
+        if(_routingUpdateLogFile)
+        {
+            NSDate *now = [NSDate date];
+            NSString *s = [NSString stringWithFormat:@"%@ ADVERTIZE PC %@ RESTRICTED to linkset %@", now.stringValue,pc.stringValue,linksetName];
+            [_lock lock];
+            fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+            fflush(_routingUpdateLogFile);
+            [_lock unlock];
+        }
         [linkset advertizePointcodeRestricted:pc mask:mask];
     }
 
@@ -1654,6 +1785,15 @@
     for(NSString *linksetName in linksetNames)
     {
         UMMTP3LinkSet *linkset = _linksets[linksetName];
+        if(_routingUpdateLogFile)
+        {
+            NSDate *now = [NSDate date];
+            NSString *s = [NSString stringWithFormat:@"%@ ADVERTIZE PC %@ AVAIL to linkset %@", now.stringValue,pc.stringValue,linksetName];
+            [_lock lock];
+            fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+            fflush(_routingUpdateLogFile);
+            [_lock unlock];
+        }
         [linkset advertizePointcodeAvailable:pc mask:mask];
     }
 }
