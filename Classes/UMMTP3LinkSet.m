@@ -36,7 +36,6 @@
     if(self)
     {
         _linksBySlc = [[UMSynchronizedSortedDictionary alloc]init];
-        _linksLock = [[UMMutex alloc]initWithName:@"mtp3linkset-links-mutex"];
         _slsLock = [[UMMutex alloc]initWithName:@"mtp3-sls-lock"];
         _name = @"untitled";
         _activeLinks = 0;
@@ -70,14 +69,12 @@
     lnk.linkset = self;
     _totalLinks++;
     [_mtp3 addLink:lnk];
-    [_linksLock unlock];
 }
 
 - (void)removeAllLinks
 {
    // [self.logFeed infoText:[NSString stringWithFormat:@"removing All Links from linkSet:'%@'",self.name]];
 
-    [_linksLock lock];
     NSArray *keys = [_linksBySlc allKeys];
     for(NSString *key in keys)
     {
@@ -92,8 +89,6 @@
     _activeLinks = 0;
     _inactiveLinks = 0;
     _readyLinks = 0;
-
-    [_linksLock unlock];
 }
 
 - (UMMTP3Link *)getLinkBySlc:(int)slc
@@ -145,7 +140,6 @@
         }
         [self.logFeed debugText:s];
     }
-    [_linksLock unlock];
     return link;
 }
 

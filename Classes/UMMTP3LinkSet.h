@@ -57,7 +57,6 @@ typedef enum UMMTP3ScreeningTraceLevel
     UMLayerMTP3                 *_mtp3;
     NSString                    *_name;
     UMSynchronizedSortedDictionary *_linksBySlc;
-    UMMutex                     *_linksLock;
     UMMutex                     *_slsLock;
     UMLogLevel                  _logLevel;
     UMMTP3Variant               _variant;
@@ -145,7 +144,6 @@ typedef enum UMMTP3ScreeningTraceLevel
 //@property(readwrite,strong) UMLogFeed   *log;
 @property(readwrite,assign) UMLogLevel logLevel;
 
-@property(readwrite,strong) UMMutex *linksLock;
 @property(readwrite,strong) UMMutex *slsLock;
 @property(readwrite,strong) NSString *name;
 @property(readwrite,strong) UMSynchronizedSortedDictionary *linksByName;
