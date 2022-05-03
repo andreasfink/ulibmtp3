@@ -56,7 +56,6 @@ typedef enum UMMTP3ScreeningTraceLevel
 {
     UMLayerMTP3                 *_mtp3;
     NSString                    *_name;
-    UMSynchronizedSortedDictionary *_linksByName;
     UMSynchronizedSortedDictionary *_linksBySlc;
     UMMutex                     *_linksLock;
     UMMutex                     *_slsLock;
@@ -214,9 +213,7 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong,atomic) NSDate                      *lastLinksetDown;
 
 - (void)addLink:(UMMTP3Link *)lnk;
-- (void)removeLink:(UMMTP3Link *)lnk;
 - (void)removeAllLinks;
-- (UMMTP3Link *)getLinkByName:(NSString *)n;
 - (UMMTP3Link *)getLinkBySlc:(int)slc;
 - (UMMTP3Link *)getAnyLink;
 

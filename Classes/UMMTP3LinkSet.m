@@ -35,7 +35,6 @@
     self = [super init];
     if(self)
     {
-        _linksByName = [[UMSynchronizedSortedDictionary alloc]init];
         _linksBySlc = [[UMSynchronizedSortedDictionary alloc]init];
         _linksLock = [[UMMutex alloc]initWithName:@"mtp3linkset-links-mutex"];
         _slsLock = [[UMMutex alloc]initWithName:@"mtp3-sls-lock"];
@@ -67,28 +66,10 @@
         lnk.name = [NSString stringWithFormat:@"%@:%d",self.name,lnk.slc];
     }
     [self.logFeed infoText:[NSString stringWithFormat:@"adding Link:'%@' to linkSet:'%@' with SLC:%d",lnk.name, self.name,lnk.slc]];
-    [_linksLock lock];
-    _linksByName[lnk.name]=lnk;
     _linksBySlc[@(lnk.slc)]= lnk;
     lnk.linkset = self;
     _totalLinks++;
     [_mtp3 addLink:lnk];
-    [_linksLock unlock];
-}
-
-- (void)removeLink:(UMMTP3Link *)lnk
-{
-
-    [self.logFeed infoText:[NSString stringWithFormat:@"removing Link:'%@' from linkSet:'%@' with SLC:%d",lnk.name, self.name,lnk.slc]];
-
-    [_linksLock lock];
-
-    lnk.linkset = NULL;
-    [_linksByName removeObjectForKey:lnk.name];
-    [_linksBySlc removeObjectForKey:@(lnk.slc)];
-    _totalLinks--;
-	[_mtp3 removeLink:lnk];
-
     [_linksLock unlock];
 }
 
@@ -97,29 +78,22 @@
    // [self.logFeed infoText:[NSString stringWithFormat:@"removing All Links from linkSet:'%@'",self.name]];
 
     [_linksLock lock];
-
-    NSArray *keys = [_linksByName allKeys];
+    NSArray *keys = [_linksBySlc allKeys];
     for(NSString *key in keys)
     {
-        UMMTP3Link *link = _linksByName[key];
+        UMMTP3Link *link = _linksBySlc[key];
         if(link)
         {
-            [self removeLink:link];
+            [_mtp3 removeLink:link];
         }
     }
-    _linksByName = [[UMSynchronizedSortedDictionary alloc]init];
     _linksBySlc = [[UMSynchronizedSortedDictionary alloc]init];
-    _totalLinks=0;
-    [_linksLock unlock];
-}
+    _totalLinks = 0;
+    _activeLinks = 0;
+    _inactiveLinks = 0;
+    _readyLinks = 0;
 
-
-- (UMMTP3Link *)getLinkByName:(NSString *)n
-{
-    [_linksLock lock];
-    UMMTP3Link *lnk = _linksByName[n];
     [_linksLock unlock];
-    return lnk;
 }
 
 - (UMMTP3Link *)getLinkBySlc:(int)slc
@@ -130,18 +104,17 @@
 
 - (UMMTP3Link *)getAnyLink
 {
-    if(_linksByName.count==0)
+    if(_linksBySlc.count==0)
     {
         [self.logFeed debugText:@"linkset has zero links attached"];
         return NULL;
     }
 
-    [_linksLock lock];
-    NSArray *linkKeys = [_linksByName allKeys];
+    NSArray *linkKeys = [_linksBySlc allKeys];
     NSMutableArray *activeLinkKeys = [[NSMutableArray alloc]init];
-    for(NSString *key in linkKeys)
+    for(NSNumber *key in linkKeys)
     {
-        UMMTP3Link *link = _linksByName[key];
+        UMMTP3Link *link = _linksBySlc[key];
         if(link.current_m2pa_status == M2PA_STATUS_IS)
         {
             [activeLinkKeys addObject:key];
@@ -153,19 +126,18 @@
     {
         _linkSelector = _linkSelector + 1;
         _linkSelector = _linkSelector % n;
-        NSString *key = activeLinkKeys[_linkSelector];
-        link = _linksByName[key];
+        NSNumber *key = activeLinkKeys[_linkSelector];
+        link = _linksBySlc[key];
     }
     else
     {
         [self.logFeed debugText:@"linkset has zero links in the IS state"];
-        [self.logFeed debugText:[NSString stringWithFormat:@"_linksByName: %@",_linksByName.description]];
         [self.logFeed debugText:[NSString stringWithFormat:@"_linksBySlc: %@",_linksBySlc.description]];
         NSMutableString *s = [[NSMutableString alloc]init];
-        NSArray *linkKeys = [_linksByName allKeys];
-        for(NSString *key in linkKeys)
+        NSArray *linkKeys = [_linksBySlc allKeys];
+        for(NSNumber *key in linkKeys)
         {
-            UMMTP3Link *link2 = _linksByName[key];
+            UMMTP3Link *link2 = _linksBySlc[key];
             [s appendFormat:@"\t%@",link.name];
             [s appendFormat:@" SLC %d",link.slc];
             [s appendFormat:@" %@",[UMLayerM2PA m2paStatusString:link2.current_m2pa_status]];
@@ -3114,11 +3086,11 @@
 - (NSDictionary *)config
 {
     NSMutableDictionary *config = [[NSMutableDictionary alloc]init];
-    NSArray *allkeys = [_linksByName allKeys];
+    NSArray *allkeys = [_linksBySlc allKeys];
 
-    for(id key in allkeys)
+    for(NSNumber *key in allkeys)
     {
-        UMMTP3Link *link = _linksByName[key];
+        UMMTP3Link *link = _linksBySlc[key];
         config[[NSString stringWithFormat:@"attach-slc%d",link.slc]] = link.name;
     }
     config[@"dpc"] = [_adjacentPointCode stringValue];
@@ -4435,40 +4407,40 @@
 
 - (void)powerOn
 {
-    NSArray *linkKeys = [_linksByName allKeys];
-    for(NSString *key in linkKeys)
+    NSArray *linkKeys = [_linksBySlc allKeys];
+    for(NSNumber *key in linkKeys)
     {
-        UMMTP3Link *link = _linksByName[key];
+        UMMTP3Link *link = _linksBySlc[key];
         [link powerOn];
     }
 }
 
 - (void)powerOff
 {
-    NSArray *linkKeys = [_linksByName allKeys];
-    for(NSString *key in linkKeys)
+    NSArray *linkKeys = [_linksBySlc allKeys];
+    for(NSNumber *key in linkKeys)
     {
-        UMMTP3Link *link = _linksByName[key];
+        UMMTP3Link *link = _linksBySlc[key];
         [link powerOff];
     }
 }
 
 - (void)forcedPowerOff
 {
-    NSArray *linkKeys = [_linksByName allKeys];
-    for(NSString *key in linkKeys)
+    NSArray *linkKeys = [_linksBySlc allKeys];
+    for(NSNumber *key in linkKeys)
     {
-        UMMTP3Link *link = _linksByName[key];
+        UMMTP3Link *link = _linksBySlc[key];
         [link forcedPowerOff];
     }
 }
 
 - (void)forcedPowerOn
 {
-    NSArray *linkKeys = [_linksByName allKeys];
-    for(NSString *key in linkKeys)
+    NSArray *linkKeys = [_linksBySlc allKeys];
+    for(NSNumber *key in linkKeys)
     {
-        UMMTP3Link *link = _linksByName[key];
+        UMMTP3Link *link = _linksBySlc[key];
         [link forcedPowerOn];
     }
 }
@@ -4501,7 +4473,6 @@
     {
         return;
     }
-    [_linksLock lock];
     M2PA_Status old_status = link.current_m2pa_status;
     link.current_m2pa_status = status;
     link.last_m2pa_status = status;
@@ -4585,7 +4556,6 @@
             link.lastLinkDown = [NSDate date];
         }
     }
-    [_linksLock unlock];
 }
 
 /* reopen Timer Event 1 happens when a link got closed. We wait a small amount of time and restart the link */
@@ -4632,10 +4602,10 @@
     NSMutableArray *readyLinks  = [[NSMutableArray alloc]init];
     NSMutableArray *processorOutageLinks  = [[NSMutableArray alloc]init];
     
-    NSArray *keys = [_linksByName allKeys];
-    for (NSString *key in keys)
+    NSArray *keys = [_linksBySlc allKeys];
+    for (NSNumber *key in keys)
     {
-        UMMTP3Link *link = _linksByName[key];
+        UMMTP3Link *link = _linksBySlc[key];
         switch(link.current_m2pa_status)
         {
             default:
@@ -4949,21 +4919,21 @@
 }
 
 - (NSString *)webStatus
-    {
+{
     NSMutableString *s = [[NSMutableString alloc]init];
 
-    [_linksLock lock];
-    NSArray *linkKeys = [_linksByName allKeys];
-    for(NSString *key in linkKeys)
+    NSArray *linkKeys = [_linksBySlc allKeys];
+    for(NSNumber *key in linkKeys)
     {
-        UMMTP3Link *link = _linksByName[key];
-        [s appendFormat:@"    %@",link.name];
-        [s appendFormat:@" SLC %d",link.slc];
-        [s appendFormat:@" M2PA-Status: %@",[UMLayerM2PA m2paStatusString:link.current_m2pa_status]];
-        [s appendString:@"\n"];
-
+        UMMTP3Link *link = _linksBySlc[key];
+        if(link)
+        {
+            [s appendFormat:@"    %@",link.name];
+            [s appendFormat:@" SLC %d",link.slc];
+            [s appendFormat:@" M2PA-Status: %@",[UMLayerM2PA m2paStatusString:link.current_m2pa_status]];
+            [s appendString:@"\n"];
+        }
     }
-    [_linksLock unlock];
     return s;
 }
 
