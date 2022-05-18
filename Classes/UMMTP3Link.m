@@ -311,9 +311,30 @@
         /* we already have */
         /* restarting of link */
         _linkRestartsDueToFailedLinktest++;
-        _linkRestartTime = [NSDate date];
+        _linkRestartTime[7] = _linkRestartTime[6];
+        _linkRestartTime[6] = _linkRestartTime[5];
+        _linkRestartTime[5] = _linkRestartTime[4];
+        _linkRestartTime[4] = _linkRestartTime[3];
+        _linkRestartTime[3] = _linkRestartTime[2];
+        _linkRestartTime[2] = _linkRestartTime[1];
+        _linkRestartTime[1] = _linkRestartTime[0];
+        _linkRestartTime[0] = [NSDate date];
         [_m2pa linktestTimerReportsFailure];
     }
+}
+
+- (NSArray<NSDate *>*)linkRestartTimes
+{
+    NSMutableArray *a = [[NSMutableArray alloc]init];
+    for(int i=0;i<8;i++)
+    {
+        NSDate *d = _linkRestartTime[i];
+        if(d)
+        {
+            [a addObject:d];
+        }
+    }
+    return a;
 }
 
 - (void)startLinkTestTimer
