@@ -50,6 +50,7 @@
                              priority:(UMMTP3RoutePriority)prio;
 
 - (NSArray *)linksetNamesWhichHaveStaticRoutesForPointcode:(UMMTP3PointCode *)pc mask:(int)mask excluding:(NSString *)excluded;
+- (NSArray *)linksetNamesWhoNeedsAdvertizementsForPointcode:(UMMTP3PointCode *)pc mask:(int)mask excluding:(NSString *)excluded;
 
 - (BOOL) addStaticRoute:(UMMTP3PointCode *)pc   /* returns YES if found in table */
                    mask:(int)mask

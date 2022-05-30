@@ -962,14 +962,14 @@
         }
         UMMTP3InstanceRoute *route = [self findRouteForDestination:fdpc];
         err= [self forwardPDU:pdu
-                            opc:fopc
-                            dpc:fdpc
-                             si:si
-                             mp:mp
-                          route:route
-                        options:options
-                  sourceLinkset:@"local"
-                routedToLinkset:&rtl
+                          opc:fopc
+                          dpc:fdpc
+                           si:si
+                           mp:mp
+                        route:route
+                      options:options
+                sourceLinkset:@"local"
+              routedToLinkset:&rtl
                           sls:sls];
     }
     if(routedToLinkset != NULL)
@@ -1738,7 +1738,7 @@
                                            mask:(int)mask
                              excludeLinkSetName:(NSString *)name
 {
-    NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
+    NSArray *linksetNames = [_routingTable linksetNamesWhoNeedsAdvertizementsForPointcode:pc mask:mask excluding:name];
     for(NSString *linksetName in linksetNames)
     {
         UMMTP3LinkSet *linkset = _linksets[linksetName];
@@ -1759,7 +1759,7 @@
                                           mask:(int)mask
                             excludeLinkSetName:(NSString *)name
 {
-    NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
+    NSArray *linksetNames = [_routingTable linksetNamesWhoNeedsAdvertizementsForPointcode:pc mask:mask excluding:name];
     for(NSString *linksetName in linksetNames)
     {
         UMMTP3LinkSet *linkset = _linksets[linksetName];
@@ -1774,14 +1774,13 @@
         }
         [linkset advertizePointcodeRestricted:pc mask:mask];
     }
-
 }
 
 - (void)updateOtherLinksetsPointCodeAvailable:(UMMTP3PointCode *)pc
                                          mask:(int)mask
                            excludeLinkSetName:(NSString *)name
 {
-    NSArray *linksetNames = [_routingTable linksetNamesWhichHaveStaticRoutesForPointcode:pc mask:mask excluding:name];
+    NSArray *linksetNames = [_routingTable linksetNamesWhoNeedsAdvertizementsForPointcode:pc mask:mask excluding:name];
     for(NSString *linksetName in linksetNames)
     {
         UMMTP3LinkSet *linkset = _linksets[linksetName];

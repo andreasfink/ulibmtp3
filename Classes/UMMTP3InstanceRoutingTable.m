@@ -227,6 +227,24 @@
     return arr;
 }
 
+- (NSArray *)linksetNamesWhoNeedsAdvertizementsForPointcode:(UMMTP3PointCode *)pc mask:(int)mask excluding:(NSString *)excluded
+{
+    NSMutableArray *arr = [[NSMutableArray alloc]init];
+    [_lock lock];
+    NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
+    NSInteger n = r.count;
+    for(NSInteger i=0;i<n;i++)
+    {
+        UMMTP3InstanceRoute *route = r[i];
+        if ([route.linksetName isEqualToString:excluded])
+        {
+            [arr addObject:route.linksetName];
+        }
+    }
+    [_lock unlock];
+    return arr;
+}
+
 - (BOOL)updateDynamicRouteUnavailable:(UMMTP3PointCode *)pc
                                  mask:(int)mask
                           linksetName:(NSString *)linkset
