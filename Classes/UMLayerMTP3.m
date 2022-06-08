@@ -557,7 +557,8 @@
         [self updateRouteRestricted:linkset.adjacentPointCode
                                mask:linkset.adjacentPointCode.maxmask
                         linksetName:linkset.name
-                           priority:UMMTP3RoutePriority_5];
+                           priority:UMMTP3RoutePriority_5
+                             reason:@"congestion"];
         [link congestionIndication];
     }
 }
@@ -578,7 +579,8 @@
         [self updateRouteAvailable:linkset.adjacentPointCode
                               mask:linkset.adjacentPointCode.maxmask
                        linksetName:linkset.name
-                          priority:UMMTP3RoutePriority_1];
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"congestion-cleared"];
         [link congestionClearedIndication];
     }
 }
@@ -599,7 +601,9 @@
         [self updateRouteUnavailable:linkset.adjacentPointCode
                                 mask:linkset.adjacentPointCode.maxmask
                          linksetName:linkset.name
-          priority:UMMTP3RoutePriority_1];
+                            priority:UMMTP3RoutePriority_1
+                              reason:@"processor-outage"];
+
         [link processorOutageIndication];
     }
 }
@@ -619,7 +623,8 @@
         [self updateRouteAvailable:linkset.adjacentPointCode
                               mask:linkset.adjacentPointCode.maxmask
                        linksetName:linkset.name
-          priority:UMMTP3RoutePriority_1];
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"processor-restored"];
         [link processorRestoredIndication];
     }
 }
@@ -640,7 +645,8 @@
         [self updateRouteRestricted:linkset.adjacentPointCode
                                mask:linkset.adjacentPointCode.maxmask
                         linksetName:linkset.name
-                           priority:UMMTP3RoutePriority_1];
+                           priority:UMMTP3RoutePriority_1
+                             reason:@"speed-limit-reached"];
         /* inform upper layers */
         [link speedLimitReachedIndication];
     }
@@ -660,7 +666,8 @@
         [self updateRouteAvailable:linkset.adjacentPointCode
                               mask:linkset.adjacentPointCode.maxmask
                        linksetName:linkset.name
-                          priority:UMMTP3RoutePriority_1];
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"speed-limit-cleared"];
         [link speedLimitReachedClearedIndication];
     }
 }
@@ -681,7 +688,8 @@
         [self updateRouteRestricted:as.adjacentPointCode
                                mask:mask
                         linksetName:as.name
-                           priority:UMMTP3RoutePriority_1];
+                           priority:UMMTP3RoutePriority_1
+                             reason:@"m3ua-congestion"];
         as.congestionLevel = 1;
     }
 }
@@ -702,7 +710,8 @@
         [self updateRouteAvailable:as.adjacentPointCode
                               mask:mask
                        linksetName:as.name
-                          priority:UMMTP3RoutePriority_1];
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"m3ua-congestion-cleared"];
         as.congestionLevel = 0;
     }
 }
@@ -1513,13 +1522,14 @@
                         mask:(int)mask
                  linksetName:(NSString *)name
                     priority:(UMMTP3RoutePriority)prio /* returns true if status changed */
+                      reason:(NSString *)reason
 {
     @autoreleasepool
     {
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];
-            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: AVAILABLE PRIO: %d", now.stringValue,name,pc,prio];
+            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: AVAILABLE PRIO: %d REASON=%@", now.stringValue,name,pc,prio,reason];
             [_lock lock];
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
@@ -1539,13 +1549,14 @@
                          mask:(int)mask
                   linksetName:(NSString *)name
                      priority:(UMMTP3RoutePriority)prio
+                       reason:(NSString *)reason
 {
     @autoreleasepool
     {
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];
-            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: AVAILABLE RESTRICTED: %d", now.stringValue,name,pc,prio];
+            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: AVAILABLE RESTRICTED: %d REASON=%@", now.stringValue,name,pc,prio,reason];
 
             [_lock lock];
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
@@ -1600,6 +1611,7 @@
                           mask:(int)mask
                    linksetName:(NSString *)name
                       priority:(UMMTP3RoutePriority)prio
+                        reason:(NSString *)reason
 {
     @autoreleasepool
     {
@@ -1607,7 +1619,7 @@
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];
-            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: UNAVAILABLE PRIO: %d", now.stringValue,name,pc,prio];
+            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: UNAVAILABLE PRIO: %d REASON:%@", now.stringValue,name,pc,prio,reason];
             [_lock lock];
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);

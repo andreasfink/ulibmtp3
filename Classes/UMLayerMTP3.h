@@ -313,17 +313,20 @@ typedef enum UMMTP3_Error
 - (BOOL)updateRouteAvailable:(UMMTP3PointCode *)pc
                         mask:(int)mask
                  linksetName:(NSString *)name
-                    priority:(UMMTP3RoutePriority)prio;
+                    priority:(UMMTP3RoutePriority)prio
+                      reason:(NSString *)reason;
 
 - (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
                   linksetName:(NSString *)name
-                     priority:(UMMTP3RoutePriority)prio;
+                     priority:(UMMTP3RoutePriority)prio
+                       reason:(NSString *)reason;
 
 - (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
                    linksetName:(NSString *)name
-                      priority:(UMMTP3RoutePriority)prio;
+                      priority:(UMMTP3RoutePriority)prio
+                        reason:(NSString *)reason;
 
 - (UMMTP3RouteStatus)getRouteStatus:(UMMTP3PointCode *)pc;
 

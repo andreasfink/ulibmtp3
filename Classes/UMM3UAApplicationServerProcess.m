@@ -776,7 +776,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [_as updateRouteUnavailable:pc
                                mask:mask
                              forAsp:self
-                           priority:p];
+                           priority:p
+                             reason:@"DUNA"];
     }
 }
 
@@ -2440,7 +2441,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [ _as updateRouteUnavailable:_as.adjacentPointCode
                                 mask:_as.adjacentPointCode.maxmask
                               forAsp:self
-                            priority:UMMTP3RoutePriority_1];
+                            priority:UMMTP3RoutePriority_1
+                              reason:@"SCTP-DOWN"];
         if(oldStatus!= M3UA_STATUS_OFF)
         {
             _lastLinkDown = [NSDate date];
