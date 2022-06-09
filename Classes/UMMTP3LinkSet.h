@@ -488,15 +488,21 @@ options:(NSDictionary *)options;
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
-                      priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
+                      priority:(UMMTP3RoutePriority)prio
+                        reason:(NSString *)reason;
+/* returns YES if status has changed */
 
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc
                         mask:(int)mask
-                    priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
+                    priority:(UMMTP3RoutePriority)prio
+                      reason:(NSString *)reason;
+    /* returns YES if status has changed */
 
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
-                     priority:(UMMTP3RoutePriority)prio; /* returns YES if status has changed */
+                     priority:(UMMTP3RoutePriority)prio
+                       reason:(NSString *)reason;
+/* returns YES if status has changed */
 
 - (UMMTP3PointCode *)remoteToLocalPointcode:(UMMTP3PointCode *)pc;
 - (UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc;

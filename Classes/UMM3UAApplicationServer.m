@@ -371,8 +371,8 @@ static const char *m3ua_param_name(uint16_t param_type)
     asp.lastDown = [NSDate date];
     [self updateRouteUnavailable:_adjacentPointCode
                             mask:_adjacentPointCode.maxmask
-                        priority:UMMTP3RoutePriority_1];
-
+                        priority:UMMTP3RoutePriority_1
+                          reason:@"ASP_DOWN"];
 }
 
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp
@@ -381,7 +381,9 @@ static const char *m3ua_param_name(uint16_t param_type)
     asp.lastActive = [NSDate date];
     [self updateRouteAvailable:_adjacentPointCode
                           mask:_adjacentPointCode.maxmask
-                      priority:UMMTP3RoutePriority_1];
+                      priority:UMMTP3RoutePriority_1,
+                        reason:@"ASP_ACTIVE"];
+
     if(_trafficMode == UMM3UATrafficMode_override)
     {
         NSArray *keys = [_applicationServerProcesses allKeys];
@@ -427,7 +429,8 @@ static const char *m3ua_param_name(uint16_t param_type)
         {
             [self updateRouteUnavailable:_adjacentPointCode
                                     mask:_adjacentPointCode.maxmask
-                                priority:UMMTP3RoutePriority_1];
+                                priority:UMMTP3RoutePriority_1
+                                  reason:@"ASP_INACTIVE"];
         }
         [self updateLinkSetStatus];
     }
@@ -455,7 +458,8 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         [self updateRouteUnavailable:_adjacentPointCode
                                 mask:_adjacentPointCode.maxmask
-                            priority:UMMTP3RoutePriority_1];
+                            priority:UMMTP3RoutePriority_1
+                              reason:@"ASP_PENDING];
     }
     [self updateLinkSetStatus];
 }
@@ -495,6 +499,7 @@ static const char *m3ua_param_name(uint16_t param_type)
                         mask:(int)mask
                       forAsp:(UMM3UAApplicationServerProcess *)asp
                     priority:(UMMTP3RoutePriority)prio
+                      reason:(NSString *)reason
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -506,13 +511,15 @@ static const char *m3ua_param_name(uint16_t param_type)
         [_mtp3 updateRouteAvailable:pc
                                mask:mask
                         linksetName:_name
-                           priority:prio];
+                           priority:prio
+                             reason:reason];
     }
 }
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
                         forAsp:(UMM3UAApplicationServerProcess *)asp
                       priority:(UMMTP3RoutePriority)prio
+                        reason:(NSString *)reason
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -528,7 +535,8 @@ static const char *m3ua_param_name(uint16_t param_type)
         [_mtp3 updateRouteUnavailable:pc
                                  mask:mask
                           linksetName:_name
-                             priority:prio];
+                             priority:prio
+                               reason:reason];
     }
 }
 
@@ -536,6 +544,7 @@ static const char *m3ua_param_name(uint16_t param_type)
                          mask:(int)mask
                        forAsp:(UMM3UAApplicationServerProcess *)asp
                      priority:(UMMTP3RoutePriority)prio
+                       reason:(NSString *)reason
 {
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -552,7 +561,8 @@ static const char *m3ua_param_name(uint16_t param_type)
         [_mtp3 updateRouteRestricted:pc
                                 mask:mask
                          linksetName:_name
-                            priority:prio];
+                            priority:prio
+                              reason:reason];
     }
 }
 

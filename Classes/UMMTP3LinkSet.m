@@ -1789,7 +1789,8 @@
         [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
         [self updateRouteAvailable:_adjacentPointCode
                               mask:_adjacentPointCode.maxmask
-                          priority:UMMTP3RoutePriority_1];
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"first SLTA"];
     }
     [self updateLinkSetStatus];
 }
@@ -1863,7 +1864,8 @@
         [self sendTRA:reverse_label ni:ni mp:mp slc:slc link:link];
         [self updateRouteAvailable:_adjacentPointCode
                               mask:_adjacentPointCode.maxmask
-                          priority:UMMTP3RoutePriority_1];
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"first STLA"];
     }
     [self updateLinkSetStatus];
 }
@@ -1950,7 +1952,28 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
+    
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:label.opc];
+    if(translatedPc.pc == _mtp3.opc.pc)
+    {
+        [self logDebug:@"ignoring CBD for own pointcode"];
+    }
+    else if(translatedPc.pc == _adjacentPointCode.pc)
+    {
+        [self updateRouteAvailable:translatedPc
+                              mask:translatedPc.maxmask
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"CBD from adjacent"];
+    }
+    else
+    {
+        [self updateRouteAvailable:translatedPc
+                              mask:translatedPc.maxmask
+                          priority:UMMTP3RoutePriority_5
+                            reason:@"CBD from non-adjacent"];
+    }
     [self sendCBA:[label reverseLabel] changeBackCode:cbc ni:ni mp:mp slc:slc link:link];
+    
 }
 
 - (void)processCBA:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
@@ -2022,6 +2045,26 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
+    
+    if(translatedPc.pc == _mtp3.opc.pc)
+    {
+        [self logDebug:@"ignoring TFC for own pointcode"];
+    }
+    else if(translatedPc.pc == _adjacentPointCode.pc)
+    {
+        [self logDebug:@"TFC for adjacent pointcode"];
+        [self updateRouteRestricted:translatedPc
+                               mask:translatedPc.maxmask
+                           priority:UMMTP3RoutePriority_1
+                             reason:@"TFC from adjacent"];
+    }
+    else
+    {
+        [self updateRouteRestricted:translatedPc
+                              mask:translatedPc.maxmask
+                          priority:UMMTP3RoutePriority_5
+                            reason:@"TFC from non-adjacent"];
+    }
 }
 
 /* Group TFM */
@@ -2069,13 +2112,15 @@
     {
         [self updateRouteUnavailable:translatedPc
                                 mask:translatedPc.maxmask
-                            priority:UMMTP3RoutePriority_1];
+                            priority:UMMTP3RoutePriority_1
+                              reason:@"TFP"];
     }
     else
     {
         [self updateRouteUnavailable:translatedPc
                                 mask:translatedPc.maxmask
-                            priority:UMMTP3RoutePriority_5];
+                            priority:UMMTP3RoutePriority_5
+                              reason:@"TFP"];
     }
 }
 
@@ -2101,19 +2146,21 @@
     }
     if(translatedPc.pc == _mtp3.opc.pc)
     {
-        [self logDebug:@"ignoring TFP for own pointcode"];
+        [self logDebug:@"ignoring TFR for own pointcode"];
     }
     else if(translatedPc.pc == _adjacentPointCode.pc)
     {
         [self updateRouteRestricted:translatedPc
                                mask:translatedPc.maxmask
-                           priority:UMMTP3RoutePriority_1];
+                           priority:UMMTP3RoutePriority_1
+                             reason:@"TFR from adjacent"];
     }
     else
     {
         [self updateRouteRestricted:translatedPc
                                mask:translatedPc.maxmask
-                           priority:UMMTP3RoutePriority_5];
+                           priority:UMMTP3RoutePriority_5
+                             reason:@"TFR from non adjacent"];
     }
 }
 
@@ -2151,19 +2198,21 @@
     }
     if(translatedPc.pc == _mtp3.opc.pc)
     {
-        [self logDebug:@"ignoring TFP for own pointcode"];
+        [self logDebug:@"ignoring TFA for own pointcode"];
     }
     else if(translatedPc.pc == _adjacentPointCode.pc)
     {
         [self updateRouteAvailable:translatedPc
                               mask:translatedPc.maxmask
-                          priority:UMMTP3RoutePriority_1];
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"TFA from adjacent"];
     }
     else
     {
         [self updateRouteAvailable:translatedPc
                               mask:translatedPc.maxmask
-                          priority:UMMTP3RoutePriority_5];
+                          priority:UMMTP3RoutePriority_5
+                            reason:@"TFA from non-adjacent"];
     }
 }
 
@@ -2400,7 +2449,8 @@
     }
     [self updateRouteAvailable:_adjacentPointCode
                           mask:_adjacentPointCode.maxmask
-                      priority:UMMTP3RoutePriority_1];
+                      priority:UMMTP3RoutePriority_1
+                        reason:@"TRA"];
     _mtp3.ready=YES;
 }
 
@@ -4610,7 +4660,8 @@
                 }
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1];
+                                    priority:UMMTP3RoutePriority_1
+                                      reason:@"M2PA-OFF"];
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_OOS:
@@ -4620,7 +4671,8 @@
                 }
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1];
+                                    priority:UMMTP3RoutePriority_1
+                                      reason:@"M2PA-OOS"];
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_INITIAL_ALIGNMENT:
@@ -4630,7 +4682,8 @@
                 }
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1];
+                                    priority:UMMTP3RoutePriority_1
+                                      reason:@"M2PA-INITIAL-ALIGNMENT"];
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_ALIGNED_NOT_READY:
@@ -4640,13 +4693,15 @@
                 }
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1];
+                                    priority:UMMTP3RoutePriority_1
+                                      reason:@"M2PA-ALIGNED-NOT-READY"];
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_ALIGNED_READY:
                 [self updateRouteUnavailable:_adjacentPointCode
                                         mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1];
+                                    priority:UMMTP3RoutePriority_1
+                                      reason:@"M2PA-ALIGNED-READY"];
                 [readyLinks addObject:link];
                 break;
             case M2PA_STATUS_IS:
@@ -4658,14 +4713,16 @@
                 {
                     [self updateRouteUnavailable:_adjacentPointCode
                                             mask:_adjacentPointCode.maxmask
-                                        priority:UMMTP3RoutePriority_1];
+                                        priority:UMMTP3RoutePriority_1
+                                         reason:@"M2PA-IN-SERVICE (remote processor outage)"];
                     [processorOutageLinks addObject:link];
                 }
                 else
                 {
                     [self updateRouteAvailable:_adjacentPointCode
                                           mask:_adjacentPointCode.maxmask
-                                      priority:UMMTP3RoutePriority_1];
+                                      priority:UMMTP3RoutePriority_1
+                                        reason:@"M2PA-IN-SERVICE"];
                     [activeLinks addObject:link];
                 }
                 break;
@@ -4738,6 +4795,7 @@
 - (void)updateRouteAvailable:(UMMTP3PointCode *)pc
                         mask:(int)mask
                     priority:(UMMTP3RoutePriority)prio
+                      reason:(NSString *)reason
 {
     if([self allowRoutingUpdateForPointcode:pc mask:mask] == NO)
     {
@@ -4753,12 +4811,14 @@
     [_mtp3 updateRouteAvailable:pc
                            mask:mask
                     linksetName:_name
-                       priority:prio];
+                       priority:prio
+                         reason:reason];
 }
 
 - (void)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
                      priority:(UMMTP3RoutePriority)prio
+                       reason:(NSString *)reason
 {
     if([self allowRoutingUpdateForPointcode:pc mask:mask] == NO)
     {
@@ -4774,13 +4834,14 @@
     [_mtp3 updateRouteRestricted:pc
                             mask:mask
                      linksetName:_name
-                        priority:prio];
+                        priority:prio
+                          reason:reason];
 }
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
                       priority:(UMMTP3RoutePriority)prio
-
+                        reason:(NSString *)reason
 {
     if([self allowRoutingUpdateForPointcode:pc mask:mask] == NO)
     {
@@ -4794,7 +4855,8 @@
     [_mtp3 updateRouteUnavailable:pc
                              mask:mask
                       linksetName:_name
-                         priority:prio];
+                         priority:prio
+                           reason:reason];
 }
 
 - (void)forgetAdvertizedPointcodes
