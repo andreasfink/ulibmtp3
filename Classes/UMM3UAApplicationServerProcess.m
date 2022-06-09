@@ -1184,8 +1184,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         pl[@(M3UA_PARAM_ROUTING_CONTEXT)] = _as.routingContext;
     }
     pl[@(M3UA_PARAM_PROTOCOL_DATA)] = pdu;
-    pl[@(M3UA_PARAM_CORRELATION_ID)] = @(correlation_id);
-    
+    if(correlation_id!=0)
+    {
+    	pl[@(M3UA_PARAM_CORRELATION_ID)] = @(correlation_id);
+    }
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self.logFeed debugText:[NSString stringWithFormat:@"sending PDU %@",pdu]];
