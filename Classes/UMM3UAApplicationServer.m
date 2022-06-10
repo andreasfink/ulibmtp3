@@ -381,7 +381,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     asp.lastActive = [NSDate date];
     [self updateRouteAvailable:_adjacentPointCode
                           mask:_adjacentPointCode.maxmask
-                      priority:UMMTP3RoutePriority_1,
+                      priority:UMMTP3RoutePriority_1
                         reason:@"ASP_ACTIVE"];
 
     if(_trafficMode == UMM3UATrafficMode_override)
