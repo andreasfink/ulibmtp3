@@ -1884,32 +1884,29 @@
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
-    /* should we do something here ? */
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:label.opc];
+    if(translatedPc.pc == _mtp3.opc.pc)
+    {
+        [self logDebug:@"ignoring COO from own pointcode"];
+    }
+    else if(translatedPc.pc == _adjacentPointCode.pc)
+    {
+        [self updateRouteUnavailable:translatedPc
+                                mask:translatedPc.maxmask
+                            priority:UMMTP3RoutePriority_1
+                              reason:@"COO"];
+    }
+    else
+    {
+        [self updateRouteUnavailable:translatedPc
+                                mask:translatedPc.maxmask
+                            priority:UMMTP3RoutePriority_5
+                              reason:@"COO"];
+    }
+
     [self sendCOA:[label reverseLabel] lastFSN:fsn ni:ni mp:mp slc:slc link:link];
 }
 
-- (void)processXCO:(UMMTP3Label *)label
-           lastFSN:(int)fsn
-                ni:(int)ni
-                mp:(int)mp
-               slc:(int)slc
-              link:(UMMTP3Link *)link
-{
-    if(_logLevel <=UMLOG_DEBUG)
-    {
-        [self logDebug:@"processXCO (Extended Changeover)"];
-        [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
-        [self logDebug:[NSString stringWithFormat:@" lastFSN: %d",fsn]];
-        [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
-        [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
-        [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
-        [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
-    }
-    /* maybe we should do something else here as well */
-    UMMTP3Label *reverse_label;
-    reverse_label = [label reverseLabel];
-    [self sendXCA:reverse_label lastFSN:fsn ni:ni mp:mp slc:slc link:link];
-}
 
 - (void)processCOA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
@@ -1925,6 +1922,50 @@
     }
 }
 
+- (void)processXCO:(UMMTP3Label *)label
+           lastFSN:(int)fsn
+                ni:(int)ni
+                mp:(int)mp
+               slc:(int)slc
+              link:(UMMTP3Link *)link
+{
+
+    if(_logLevel <=UMLOG_DEBUG)
+    {
+        [self logDebug:@"processXCO (Extended Changeover)"];
+        [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
+        [self logDebug:[NSString stringWithFormat:@" lastFSN: %d",fsn]];
+        [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
+        [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
+        [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
+        [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
+    }
+    
+    UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:label.opc];
+    if(translatedPc.pc == _mtp3.opc.pc)
+    {
+        [self logDebug:@"ignoring XCO from own pointcode"];
+    }
+    else if(translatedPc.pc == _adjacentPointCode.pc)
+    {
+        [self updateRouteUnavailable:translatedPc
+                                mask:translatedPc.maxmask
+                            priority:UMMTP3RoutePriority_1
+                              reason:@"XCO"];
+    }
+    else
+    {
+        [self updateRouteUnavailable:translatedPc
+                                mask:translatedPc.maxmask
+                            priority:UMMTP3RoutePriority_5
+                              reason:@"XCO"];
+    }
+    
+    UMMTP3Label *reverse_label;
+    reverse_label = [label reverseLabel];
+    [self sendXCA:reverse_label lastFSN:fsn ni:ni mp:mp slc:slc link:link];
+}
+
 - (void)processXCA:(UMMTP3Label *)label lastFSN:(int)fsn ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
     if(_logLevel <=UMLOG_DEBUG)
@@ -1938,7 +1979,6 @@
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",self.name]];
     }
 }
-
 
 - (void)processCBD:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
@@ -1973,7 +2013,6 @@
                             reason:@"CBD from non-adjacent"];
     }
     [self sendCBA:[label reverseLabel] changeBackCode:cbc ni:ni mp:mp slc:slc link:link];
-    
 }
 
 - (void)processCBA:(UMMTP3Label *)label changeBackCode:(int)cbc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link

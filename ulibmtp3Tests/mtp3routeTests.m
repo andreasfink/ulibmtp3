@@ -66,7 +66,7 @@
 - (void)testSingleRoute
 {
     
-    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5];
+    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5 reason:@"test"];
 
     UMMTP3RouteStatus s = [_mtp3.routingTable isRouteAvailable:_pc101 mask:14 linksetName:@"linkset101"];
     XCTAssert(UMMTP3_ROUTE_ALLOWED == s,@"route is not UMMTP3_ROUTE_ALLOWED but should be");
@@ -75,15 +75,15 @@
     s = [_mtp3.routingTable isRouteAvailable:_pc101 mask:14 linksetName:@"linkset101"];
     XCTAssert(UMMTP3_ROUTE_PROHIBITED == s,@"route is not UMMTP3_ROUTE_PROHIBITED but should be");
 
-    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5];
+    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5 reason:@"test"];
     s = [_mtp3.routingTable isRouteAvailable:_pc101 mask:14 linksetName:@"linkset101"];
     XCTAssert(UMMTP3_ROUTE_ALLOWED == s,@"route is not UMMTP3_ROUTE_ALLOWED but should be");
 
-    [_mtp3 updateRouteRestricted:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5];
+    [_mtp3 updateRouteRestricted:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5 reason:@"test"];
     s = [_mtp3.routingTable isRouteAvailable:_pc101 mask:14 linksetName:@"linkset101"];
     XCTAssert(UMMTP3_ROUTE_RESTRICTED == s,@"route is not UMMTP3_ROUTE_RESTRICTED but should be");
 
-    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5];
+    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5 reason:@"test"];
     s = [_mtp3.routingTable isRouteAvailable:_pc101 mask:14 linksetName:@"linkset101"];
     XCTAssert(UMMTP3_ROUTE_ALLOWED == s,@"route is not UMMTP3_ROUTE_ALLOWED but should be");
 
@@ -92,9 +92,9 @@
 - (void)testDirectAndIndirectRoute
 {
     
-    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5];
-    [_mtp3 updateRouteAvailable:_pc102 mask:14 linksetName:@"linkset102" priority:UMMTP3RoutePriority_5];
-    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset102" priority:UMMTP3RoutePriority_7];
+    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset101" priority:UMMTP3RoutePriority_5 reason:@"test"];
+    [_mtp3 updateRouteAvailable:_pc102 mask:14 linksetName:@"linkset102" priority:UMMTP3RoutePriority_5 reason:@"test"];
+    [_mtp3 updateRouteAvailable:_pc101 mask:14 linksetName:@"linkset102" priority:UMMTP3RoutePriority_7 reason:@"test"];
 
     UMMTP3RouteStatus s = [_mtp3.routingTable isRouteAvailable:_pc101 mask:14 linksetName:@"linkset102"];
     XCTAssert(UMMTP3_ROUTE_ALLOWED == s,@"route is not UMMTP3_ROUTE_ALLOWED but should be");

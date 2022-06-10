@@ -805,7 +805,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [_as updateRouteAvailable:pc
                              mask:mask
                            forAsp:self
-                         priority:p];
+                         priority:p
+                           reason:@"DAVA"];
     }
 }
 
