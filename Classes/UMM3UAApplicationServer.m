@@ -459,7 +459,7 @@ static const char *m3ua_param_name(uint16_t param_type)
         [self updateRouteUnavailable:_adjacentPointCode
                                 mask:_adjacentPointCode.maxmask
                             priority:UMMTP3RoutePriority_1
-                              reason:@"ASP_PENDING];
+                              reason:@"ASP_PENDING"];
     }
     [self updateLinkSetStatus];
 }
