@@ -1775,13 +1775,14 @@
 
     if(![self isFromAdjacentToLocal:label])
     {
-        [self logMajorError:[NSString stringWithFormat:@"unexpected SLTA transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription]];
+        NSString *s = [NSString stringWithFormat:@"unexpected SLTA transiting Label = %@. Should be %@->%@", label.logDescription,_adjacentPointCode.logDescription,_localPointCode.logDescription];
+        [self logMajorError:s];
+        [link.m2pa.stateMachineLogFeed debugText:s];
         [self protocolViolation];
         link.receivedInvalidSLTA++;
         return;
     }
     link.receivedSLTA++;
-	[link stopLinkTestAckTimer];
     if(link.awaitFirstSLTA)
     {
         link.awaitFirstSLTA=NO;
@@ -1856,7 +1857,6 @@
         return;
     }
     link.receivedSSLTA++;
-    [link stopLinkTestAckTimer];
     if(link.awaitFirstSLTA)
     {
         link.awaitFirstSLTA=NO;
