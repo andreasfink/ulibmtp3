@@ -296,11 +296,13 @@
 
 - (void)linkTestTimerEvent:(id)parameter
 {
+    [_m2pa.stateMachineLogFeed debugText:@"linktest-timer-event"];
     [_linkset linktestTimeEventForLink:self];
 }
 
 - (void)linkTestAckTimerEvent:(id)parameter
 {
+    [_m2pa.stateMachineLogFeed debugText:@"linktest-ack-timer-event"];
     [_linkTestAckTimer stop];
     if(_outstandingSLTA < 2)
     {
@@ -320,6 +322,7 @@
         _linkRestartTime[1] = _linkRestartTime[0];
         _linkRestartTime[0] = [NSDate date];
         [_m2pa linktestTimerReportsFailure];
+        [_m2pa.stateMachineLogFeed debugText:@"linktest-failure"];
     }
 }
 
@@ -339,6 +342,7 @@
 
 - (void)startLinkTestTimer
 {
+    [_m2pa.stateMachineLogFeed debugText:@"start-linktest-timer"];
     if(_linkTestTime > 0)
     {
         if(_linkTestTimer==NULL)
@@ -357,11 +361,13 @@
 
 - (void)stopLinkTestTimer
 {
+    [_m2pa.stateMachineLogFeed debugText:@"stop-linktest-timer"];
     [_linkTestTimer stop];
 }
 
 - (void)startLinkTestAckTimer
 {
+    [_m2pa.stateMachineLogFeed debugText:@"start-linktest-ack.timer"];
     if(_linkTestAckTime > 0)
     {
         if(_linkTestAckTimer==NULL)
@@ -380,11 +386,13 @@
 
 - (void)stopLinkTestAckTimer
 {
+    [_m2pa.stateMachineLogFeed debugText:@"stop-linktest-ack-timer"];
     [_linkTestAckTimer stop];
 }
 
 - (void)startReopenTimer1
 {
+    [_m2pa.stateMachineLogFeed debugText:@"start-reopen-timer1"];
     if(_reopenTime1 > 0)
     {
         if(_reopenTimer1==NULL)
@@ -403,6 +411,7 @@
 
 - (void)startReopenTimer2
 {
+    [_m2pa.stateMachineLogFeed debugText:@"start-reopen-timer2"];
     if(_reopenTime2 > 0)
     {
         if(_reopenTimer2==NULL)
@@ -421,26 +430,28 @@
 
 - (void)stopReopenTimer1
 {
+    [_m2pa.stateMachineLogFeed debugText:@"stop-reopen-timer1"];
     [_reopenTimer1 stop];
 }
 
 - (void)stopReopenTimer2
 {
+    [_m2pa.stateMachineLogFeed debugText:@"stop-reopen-timer2"];
     [_reopenTimer2 stop];
 }
 
 
 - (void)reopenTimer1Event:(id)parameter
 {
+    [_m2pa.stateMachineLogFeed debugText:@"reopen-timer1-event"];
     [_linkset reopenTimer1EventFor:self];
 }
 
 - (void)reopenTimer2Event:(id)parameter
 {
+    [_m2pa.stateMachineLogFeed debugText:@"reopen-timer2-event"];
     [_linkset reopenTimer2EventFor:self];
 }
-
-
 
 - (void)stopDetachAndDestroy
 {
