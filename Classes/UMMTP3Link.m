@@ -14,8 +14,8 @@
 #import "UMLayerMTP3.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 
-#define MTP3_LINK_REOPEN_TIME1_DEFAULT   6.0 /* if link goes down, we restart it in 6 seconds */
-#define MTP3_LINK_REOPEN_TIME2_DEFAULT   180 /* if link doesnt come up within 3 minutes, we kill it and after restarttimer1 restart it */
+#define MTP3_LINK_REOPEN_TIMER1_DEFAULT   6.0 /* if link goes down, we restart it in 6 seconds */
+#define MTP3_LINK_REOPEN_TIMER2_DEFAULT   180 /* if link doesnt come up within 3 minutes, we kill it and after restarttimer1 restart it */
 #define	MTP3_LINK_TEST_TIMER_DEFAULT		30.0	/* T2 of MTP2 30...90 sec*/
 #define	MTP3_LINK_TEST_ACK_TIMER_DEFAULT	6.0		/* T1 of MTP2 . 4...12 sec*/
 @implementation UMMTP3Link
@@ -30,8 +30,8 @@
         _current_m2pa_status = M2PA_STATUS_OFF;
         _linkTestAckTime = MTP3_LINK_TEST_ACK_TIMER_DEFAULT; 
         _linkTestTime = MTP3_LINK_TEST_TIMER_DEFAULT; 
-        _reopenTime1 = MTP3_LINK_REOPEN_TIME1_DEFAULT;
-        _reopenTime2 = MTP3_LINK_REOPEN_TIME2_DEFAULT;
+        _reopenTime1 = MTP3_LINK_REOPEN_TIMER1_DEFAULT;
+        _reopenTime2 = MTP3_LINK_REOPEN_TIMER2_DEFAULT;
         _reopenTimer1 = [[UMTimer alloc]initWithTarget:self
                                              selector:@selector(reopenTimer1Event:)
                                                object:NULL
@@ -174,7 +174,7 @@
     }
     else
     {
-        _reopenTime1 = MTP3_LINK_REOPEN_TIME1_DEFAULT;
+        _reopenTime1 = MTP3_LINK_REOPEN_TIMER1_DEFAULT;
     }
     _reopenTimer1.seconds = _reopenTime1;
 
@@ -184,7 +184,7 @@
     }
     else
     {
-        _reopenTime2 = MTP3_LINK_REOPEN_TIME2_DEFAULT;
+        _reopenTime2 = MTP3_LINK_REOPEN_TIMER2_DEFAULT;
     }
     _reopenTimer2.seconds = _reopenTime2;
 

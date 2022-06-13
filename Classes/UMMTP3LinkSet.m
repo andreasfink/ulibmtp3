@@ -4644,12 +4644,23 @@
 /* reopen Timer Event 1 happens when a link got closed. We wait a small amount of time and restart the link */
 - (void)reopenTimer1EventFor:(UMMTP3Link *)link
 {
-    [link.m2pa.state logStatemachineEventString:@"reopenTimer1Event"];
-    [link powerOn];
-    [link stopLinkTestTimer];
-    [link startReopenTimer2];
+    if(link.last_m2pa_status != M2PA_STATUS_DISCONNECTED)
+    {
+        /* link is establishing already (from other side for example). lets not mess with it but check again in 6 seconds again.*/
+        [link stopReopenTimer1];
+        [link startReopenTimer1];
+        [link stopReopenTimer2];
+    }
+    else
+    {
+        /* link stayed off. so lets kick it and restart it */
+        [link.m2pa.state logStatemachineEventString:@"reopenTimer1Event"];
+        [link stopLinkTestTimer];
+        [link stopReopenTimer1];
+        [link startReopenTimer2];
+        [link powerOn];
+    }
 }
-
 
 /* reopen Timer Event 2 happens when a link got started but doesnt come up after a while.
  we tear everythign down after reopen timer 2 and restart the link */
