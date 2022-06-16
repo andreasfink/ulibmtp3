@@ -463,6 +463,48 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                         case 0x06:
                             s = @"Unexpected Message";
                             break;
+                        case 0x07:
+                            s = @"Protocol Error";
+                            break;
+                        case 0x08:
+                            s = @"Not Used in M3UA";
+                            break;
+                        case 0x09:
+                            s = @"Invalid Stream Identifier";
+                            break;
+                        case 0x10:
+                            s = @"Not Used in M3UA";
+                            break;
+                        case 0x11:
+                            s = @"Invalid Parameter Value";
+                            break;
+                        case 0x12:
+                            s = @"Parameter Field Error";
+                            break;
+                         case 0x13:
+                            s = @"Unexpected Parameter";
+                            break;
+                        case 0x14:
+                            s = @"Destination Status Unknown";
+                            break;
+                        case 0x15:
+                            s = @"Invalid Network Appearance";
+                            break;
+                        case 0x16:
+                            s = @"Missing Parameter";
+                            break;
+                        case 0x17:
+                            s = @"Not Used in M3UA";
+                            break;
+                        case 0x18:
+                            s = @"Not Used in M3UA";
+                            break;
+                        case 0x19:
+                            s = @"Invalid Routing Context";
+                            break;
+                        case 0x1a:
+                            s = @"No Configured AS for ASP";
+                            break;
                         default:
                             s = @"unknown error code";
                             break;
