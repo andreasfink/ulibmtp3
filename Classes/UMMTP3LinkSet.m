@@ -3576,7 +3576,6 @@
         [self logDebug:[NSString stringWithFormat:@" label: %@",label.description]];
         [self logDebug:[NSString stringWithFormat:@" lastFSN: %d",fsn]];
         [self logDebug:[NSString stringWithFormat:@" ni: %d",ni]];
-        
         [self logDebug:[NSString stringWithFormat:@" slc: %d",slc]];
         [self logDebug:[NSString stringWithFormat:@" link: %@",link.name]];
         [self logDebug:[NSString stringWithFormat:@" linkset: %@",_name]];
