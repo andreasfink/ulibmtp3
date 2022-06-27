@@ -1642,19 +1642,25 @@
                              mask:(int)mask
                excludeLinkSetName:(NSString *)name
 {
-    UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
-    if(ir.status == UMMTP3_ROUTE_PROHIBITED)
+    
+    UMMTP3RouteStatus status = [_routingTable statusOfRoute:pc];
+    if(status == UMMTP3_ROUTE_PROHIBITED)
     {
         [self updateOtherLinksetsPointCodeUnavailable:pc mask:mask excludeLinkSetName:name];
         [self updateUpperLevelPointCodeUnavailable:pc];
     }
-    else if(ir.status == UMMTP3_ROUTE_RESTRICTED)
+    else if(status == UMMTP3_ROUTE_RESTRICTED)
     {
         [self updateOtherLinksetsPointCodeRestricted:pc mask:mask excludeLinkSetName:name];
         [self updateUpperLevelPointCodeRestricted:pc];
 
     }
-    else if(ir.status == UMMTP3_ROUTE_ALLOWED)
+    else if(status == UMMTP3_ROUTE_ALLOWED)
+    {
+        [self updateOtherLinksetsPointCodeAvailable:pc mask:mask excludeLinkSetName:name];
+        [self updateUpperLevelPointCodeAvailable:pc];
+    }
+    else if(status == UMMTP3_ROUTE_UNKNOWN)
     {
         [self updateOtherLinksetsPointCodeAvailable:pc mask:mask excludeLinkSetName:name];
         [self updateUpperLevelPointCodeAvailable:pc];
@@ -1673,7 +1679,7 @@
     if(_routingUpdateLogFile)
     {
         NSDate *now = [NSDate date];
-        NSString *s = [NSString stringWithFormat:@"%@ MTP-USER UNAVAILABLE PC %@", now.stringValue,pc.stringValue];
+        NSString *s = [NSString stringWithFormat:@"%@ MTP-USER UNAVAILABLE PC %@ (%d)", now.stringValue,pc.stringValue,(int)pc.pc];
         [_lock lock];
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
@@ -1698,7 +1704,7 @@
     if(_routingUpdateLogFile)
     {
         NSDate *now = [NSDate date];
-        NSString *s = [NSString stringWithFormat:@"%@ MTP-USER RESTRICTED PC %@", now.stringValue,pc.stringValue];
+        NSString *s = [NSString stringWithFormat:@"%@ MTP-USER RESTRICTED PC %@ (%d)", now.stringValue,pc.stringValue,pc.pc];
         [_lock lock];
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);

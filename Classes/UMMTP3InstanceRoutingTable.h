@@ -65,6 +65,8 @@
 - (void)updateLinksetUnavailable:(NSString *)linkset;
 - (void)updateLinksetRestricted:(NSString *)linkset;
 - (void)updateLinksetAvailable:(NSString *)linkset;
+
+- (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc;
 - (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls;
 - (UMSynchronizedSortedDictionary *)routeStatus;
 - (UMSynchronizedSortedDictionary *)objectValue;

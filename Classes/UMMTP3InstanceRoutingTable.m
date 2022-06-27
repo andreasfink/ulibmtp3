@@ -444,6 +444,51 @@
     return self.objectValue;
 }
 
+
+- (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc
+{
+    NSArray<UMMTP3InstanceRoute *> *routes = [self findRoutesForDestination:pc
+                                                                      mask:14
+                                                            onlyLinksetName:NULL];
+    if(routes.count == 0)
+    {
+        return UMMTP3_ROUTE_UNKNOWN;
+    }
+    
+    UMMTP3RouteStatus status = UMMTP3_ROUTE_UNKNOWN;
+    
+    for(UMMTP3InstanceRoute *route in routes)
+    {
+        switch(route.status)
+        {
+            case UMMTP3_ROUTE_ALLOWED:
+            {
+                status =UMMTP3_ROUTE_ALLOWED;
+                break;
+            }
+            case UMMTP3_ROUTE_RESTRICTED:
+            {
+                if((status == UMMTP3_ROUTE_UNKNOWN) || (status==UMMTP3_ROUTE_PROHIBITED) || (status == UMMTP3_ROUTE_UNUSED))
+                {
+                    status = UMMTP3_ROUTE_RESTRICTED;
+                }
+                break;
+            }
+            case UMMTP3_ROUTE_UNKNOWN:
+            case UMMTP3_ROUTE_UNUSED:
+            case UMMTP3_ROUTE_PROHIBITED:
+            {
+                if((status == UMMTP3_ROUTE_UNKNOWN) || (status == UMMTP3_ROUTE_UNUSED))
+                {
+                    status = UMMTP3_ROUTE_PROHIBITED;
+                }
+                break;
+            }
+        }
+    }
+    return status;
+}
+
 - (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls
 {
     NSArray<UMMTP3InstanceRoute *> *routes = [self findRoutesForDestination:pc
