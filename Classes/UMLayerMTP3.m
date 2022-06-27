@@ -1756,9 +1756,13 @@
                                            mask:(int)mask
                              excludeLinkSetName:(NSString *)name
 {
-    NSArray *linksetNames = [_routingTable linksetNamesWhoNeedsAdvertizementsForPointcode:pc mask:mask excluding:name];
+    NSArray *linksetNames = [_linksets allKeys];
     for(NSString *linksetName in linksetNames)
     {
+        if([linksetName isEqualToString:name])
+        {
+            continue;
+        }
         UMMTP3LinkSet *linkset = _linksets[linksetName];
         [linkset advertizePointcodeUnavailable:pc mask:mask];
         if(_routingUpdateLogFile)
@@ -1777,9 +1781,13 @@
                                           mask:(int)mask
                             excludeLinkSetName:(NSString *)name
 {
-    NSArray *linksetNames = [_routingTable linksetNamesWhoNeedsAdvertizementsForPointcode:pc mask:mask excluding:name];
+    NSArray *linksetNames = [_linksets allKeys];
     for(NSString *linksetName in linksetNames)
     {
+        if([linksetName isEqualToString:name])
+        {
+            continue;
+        }
         UMMTP3LinkSet *linkset = _linksets[linksetName];
         if(_routingUpdateLogFile)
         {
@@ -1798,9 +1806,13 @@
                                          mask:(int)mask
                            excludeLinkSetName:(NSString *)name
 {
-    NSArray *linksetNames = [_routingTable linksetNamesWhoNeedsAdvertizementsForPointcode:pc mask:mask excluding:name];
+    NSArray *linksetNames = [_linksets allKeys];
     for(NSString *linksetName in linksetNames)
     {
+        if([linksetName isEqualToString:name])
+        {
+            continue;
+        }
         UMMTP3LinkSet *linkset = _linksets[linksetName];
         if(_routingUpdateLogFile)
         {
