@@ -1821,7 +1821,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void) processPdu:(int)version
               class:(int)pclass
-               type:(int)ptype pdu:(NSData *)pdu
+               type:(int)ptype
+                pdu:(NSData *)pdu
 {
     @autoreleasepool
         {
@@ -1974,6 +1975,16 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
 }
 
+-(void) protocolViolation: (NSString *)reason
+{
+    @autoreleasepool
+    {
+        NSString *e = [NSString stringWithFormat:@"PROTOCOL VIOLATION: %@",reason];
+        [self logMajorError:e];
+        [self powerOff];
+    }
+}
+
 - (void) sctpDataIndication:(UMLayer *)caller
                      userId:(id)uid
                    streamId:(uint16_t)streamID
@@ -1982,7 +1993,19 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     @autoreleasepool
     {
-
+        if(pid != SCTP_PROTOCOL_IDENTIFIER_M3UA)
+        {
+            NSMutableString *s = [[NSMutableString alloc]init];
+            [s appendString:@"----PROTOCOL IDENTIFIER IS NOT M3UA----"];
+            [s appendString:@"\n  in sctpDataIndication:"];
+            [s appendFormat:@"\n    data: %@",data.description];
+            [s appendFormat:@"\n    streamId: %d",streamID];
+            [s appendFormat:@"\n    protocolId: %d",pid];
+            [s appendFormat:@"\n    userId: %@",caller  ? caller: @"(null)"];
+            [self protocolViolation:s];
+            return;
+        }
+        
         [_incomingStreamLock lock];
         if(self.logLevel <= UMLOG_DEBUG)
         {
