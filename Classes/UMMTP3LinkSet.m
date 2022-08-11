@@ -1767,7 +1767,6 @@
 {
   	[link stopLinkTestAckTimer];
   	link.outstandingSLTA = 0;
-    link.m2pa.outstandingSLTA = link.outstandingSLTA;
     [link.m2pa.stateMachineLogFeed debugText:[NSString stringWithFormat:@"SLTA received (outstanding SLTA=%d on SLC=%d)",link.outstandingSLTA,link.slc]];
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
@@ -2892,7 +2891,6 @@
     {
         link.outstandingSLTA++;
     }
-    link.m2pa.outstandingSLTA = link.outstandingSLTA;
 	[link startLinkTestAckTimer];
     if(_overrideNetworkIndicator)
     {
