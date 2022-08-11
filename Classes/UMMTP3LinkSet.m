@@ -4603,6 +4603,7 @@
             case M2PA_STATUS_OFF:
                 [link stopLinkTestTimer];
                 [link stopReopenTimer1];
+                [link powerOff];
                 break;
             case M2PA_STATUS_OOS:
                 [link stopLinkTestTimer];
