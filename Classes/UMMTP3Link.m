@@ -233,6 +233,7 @@
 - (void)forcedPowerOff
 {
     _forcedOutOfService = YES;
+    [_m2pa.stateMachineLogFeed debugText:@"forcedPowerOff"];
     [_m2pa powerOffFor:_linkset.mtp3 forced:YES];
 }
 
@@ -245,6 +246,7 @@
 }
 - (void)powerOff
 {
+    [_m2pa.stateMachineLogFeed debugText:@"powerOff requested in MTP3Link"];
     [_m2pa powerOffFor:_linkset.mtp3 forced:NO];
 }
 
@@ -277,6 +279,7 @@
     _forcedOutOfService = foos;
     if(foos==YES)
     {
+        [_m2pa.stateMachineLogFeed debugText:@"setForcedOutOfService"];
         [_m2pa powerOffFor:_linkset.mtp3];
     }
     else
@@ -289,6 +292,7 @@
 {
     if(!_forcedOutOfService)
     {
+        [_m2pa.stateMachineLogFeed debugText:@"mtp3link: start"];
         [_m2pa startFor:_linkset.mtp3];
     }
     

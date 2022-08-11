@@ -4516,6 +4516,7 @@
     for(NSNumber *key in linkKeys)
     {
         UMMTP3Link *link = _linksBySlc[key];
+        [link.m2pa.stateMachineLogFeed debugText:@"PowerOff requested from linkset PowerOff"];
         [link powerOff];
     }
 }
@@ -4604,19 +4605,22 @@
                 [link stopLinkTestTimer];
                 [link stopReopenTimer1];
                 [link stopReopenTimer2];
+                [link.m2pa.stateMachineLogFeed debugText:@"PowerOff requested due to status M2PA_STATUS_FOOS"];
                 [link powerOff];
                 break;
             case M2PA_STATUS_DISCONNECTED:
                 [link stopLinkTestTimer];
                 [link stopReopenTimer1];
                 [link stopReopenTimer2];
+                [link.m2pa.stateMachineLogFeed debugText:@"PowerOff requested due to status M2PA_STATUS_DISCONNECTED"];
                 [link powerOff];
                 [link startReopenTimer1]; /* this will power on in few sec */
                 break;
-            case M2PA_STATUS_OFF:
+            case M2PA_STATUS_OFF: /* connection requested but SCTP is not yet up */
                 [link stopLinkTestTimer];
                 [link stopReopenTimer1];
-                [link powerOff];
+                [link.m2pa.stateMachineLogFeed debugText:@"PowerOff NOT requested due to status M2PA_STATUS_OFF"];
+                //[link powerOff];
                 break;
             case M2PA_STATUS_OOS:
                 [link stopLinkTestTimer];
@@ -4684,7 +4688,7 @@
         [link stopLinkTestTimer];
         [link stopReopenTimer1];
         [link stopReopenTimer2];
-        [link.m2pa.stateMachineLogFeed debugText:@"reopenTimer2Event"];
+        [link.m2pa.stateMachineLogFeed debugText:@"reopenTimer2Event: not in service after reopen timer 2 expired. "];
         [link powerOff];
         [link startReopenTimer1];
     }
