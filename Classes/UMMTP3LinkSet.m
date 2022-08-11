@@ -51,6 +51,7 @@
         _speedometerTxBytes = [[UMThroughputCounter alloc]init];
         _sccp_traceLock = [[UMMutex alloc]initWithName:@"sccp-trace-lock"];
         _mtp3_traceLock = [[UMMutex alloc]initWithName:@"mtp3-trace-lock"];
+        _currentLinksMutex = [[UMMutex alloc]initWithName:@"current-links-mutex"];
     }
     return self;
 }
@@ -4691,11 +4692,13 @@
 
 - (void)updateLinkSetStatus
 {
+    [_currentLinksMutex lock];
+    
     NSMutableArray *inactiveLinks = [[NSMutableArray alloc]init];
     NSMutableArray *activeLinks = [[NSMutableArray alloc]init];
     NSMutableArray *readyLinks  = [[NSMutableArray alloc]init];
     NSMutableArray *processorOutageLinks  = [[NSMutableArray alloc]init];
-    
+
     NSArray *keys = [_linksBySlc allKeys];
     for (NSNumber *key in keys)
     {
@@ -4803,7 +4806,7 @@
     _currentActiveLinks = activeLinks;
     _currentReadyLinks  = readyLinks;
     _currentProcessorOutageLinks  = processorOutageLinks;
-
+    [_currentLinksMutex unlock];
 }
 
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link

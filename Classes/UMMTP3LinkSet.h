@@ -75,6 +75,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     NSUInteger                  _processorOutageLinksCount;
     NSUInteger                  _totalLinksCount;
     
+    UMMutex         *_currentLinksMutex;
     NSMutableArray *_currentInactiveLinks;
     NSMutableArray *_currentActiveLinks;
     NSMutableArray *_currentReadyLinks;
