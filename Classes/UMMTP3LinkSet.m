@@ -1724,7 +1724,11 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
-    if(link.current_m2pa_status != M2PA_STATUS_IS)
+    if(link.current_m2pa_status != M2PA_STATUS_ALIGNED_READY)
+    {
+        [self m2paStatusUpdate:M2PA_STATUS_IS slc:slc];
+    }
+    else if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTM while in status %d",link.current_m2pa_status]];
         [self m2paStatusUpdate:M2PA_STATUS_IS slc:slc];
