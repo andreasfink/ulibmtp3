@@ -1767,6 +1767,8 @@
 {
   	[link stopLinkTestAckTimer];
   	link.outstandingSLTA = 0;
+    link.m2pa.outstandingSLTA = link.outstandingSLTA;
+    [link.m2pa.stateMachineLogFeed debugText:[NSString stringWithFormat:@"SLTA received (outstanding SLTA=%d on SLC=%d)",link.outstandingSLTA,link.slc]];
     if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [self logWarning:[NSString stringWithFormat:@"Warning: SLTA while in status %d",link.current_m2pa_status]];
@@ -2881,8 +2883,16 @@
              slc:(int)slc
             link:(UMMTP3Link *)link
 {
-    link.firstSLTMSent = YES;
-    link.outstandingSLTA++;
+    if(link.firstSLTMSent == NO)
+    {
+        link.firstSLTMSent = YES;
+        link.outstandingSLTA = 0;
+    }
+    else
+    {
+        link.outstandingSLTA++;
+    }
+    link.m2pa.outstandingSLTA = link.outstandingSLTA;
 	[link startLinkTestAckTimer];
     if(_overrideNetworkIndicator)
     {

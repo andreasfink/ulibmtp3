@@ -309,9 +309,10 @@
 {
     [_m2pa.stateMachineLogFeed debugText:@"linktest-ack-timer-event"];
     [_linkTestAckTimer stop];
-    if(_outstandingSLTA < 2)
+    if(_outstandingSLTA < 3)
     {
         [_linkset linktestTimeEventForLink:self];
+        [_m2pa.stateMachineLogFeed debugText:[NSString stringWithFormat:@"sending SLTM (outstanding SLTA=%d)",_outstandingSLTA] ];
     }
     else
     {
@@ -327,7 +328,7 @@
         _linkRestartTime[1] = _linkRestartTime[0];
         _linkRestartTime[0] = [NSDate date];
         [_m2pa linktestTimerReportsFailure];
-        [_m2pa.stateMachineLogFeed debugText:@"linktest-failure"];
+        [_m2pa.stateMachineLogFeed debugText:[NSString stringWithFormat:@"linktest-failure (outstanding SLTA=%d)",_outstandingSLTA]];
     }
 }
 
