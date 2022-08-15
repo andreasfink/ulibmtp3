@@ -362,6 +362,8 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     upCount++;
     [asp.lastUps addEvent:reason];
+    [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-UP %@",asp.layerName,reason]];
+
     [self updateLinkSetStatus];
 }
 
@@ -370,6 +372,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     upCount--;
     [self updateLinkSetStatus];
     [asp.lastDowns addEvent:reason];
+    [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-DOWN %@",asp.layerName,reason]];
     [self updateRouteUnavailable:_adjacentPointCode
                             mask:_adjacentPointCode.maxmask
                         priority:UMMTP3RoutePriority_1
@@ -380,6 +383,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     activeCount++;
     [asp.lastActives addEvent:reason];
+    [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ AS-ACTIVE %@",asp.layerName,reason]];
     [self updateRouteAvailable:_adjacentPointCode
                           mask:_adjacentPointCode.maxmask
                       priority:UMMTP3RoutePriority_1
@@ -410,6 +414,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     @autoreleasepool
     {
         [asp.lastInactives addEvent:reason];
+        [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-INACTIVE %@",asp.layerName,reason]];
         activeCount--;
         BOOL somethingsActive = NO;
         NSArray *keys = [_applicationServerProcesses allKeys];
@@ -449,6 +454,8 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)aspPending:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
+    [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ AS-PENDING %@",self.layerName,reason]];
+
     activeCount--;
     BOOL somethingsActive = NO;
     NSArray *keys = [_applicationServerProcesses allKeys];

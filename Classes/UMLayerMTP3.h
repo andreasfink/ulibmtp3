@@ -329,6 +329,7 @@ typedef enum UMMTP3_Error
                         reason:(NSString *)reason;
 
 - (UMMTP3RouteStatus)getRouteStatus:(UMMTP3PointCode *)pc;
+- (void)writeRouteStatusEventToLog:(NSString *)event;
 
 
 - (NSDictionary *)apiStatus;

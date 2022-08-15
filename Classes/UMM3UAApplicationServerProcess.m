@@ -2493,6 +2493,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         if(oldStatus == M3UA_STATUS_OFF)
         {
             [_lastLinkUps addEvent:@"sctpReportsUp"];
+            [_as.mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ SCTP-UP",self.layerName]];
+
         }
         _aspup_received = 0;
         [self powerOn];
@@ -2505,6 +2507,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         UMM3UA_Status oldStatus = self.m3ua_asp_status;
         [self logInfo:@"sctpReportsDown"];
+        [_as.mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ SCTP-DOWN",self.layerName]];
         [ _as updateRouteUnavailable:_as.adjacentPointCode
                                 mask:_as.adjacentPointCode.maxmask
                               forAsp:self

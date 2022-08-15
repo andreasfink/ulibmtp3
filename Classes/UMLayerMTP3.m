@@ -1573,6 +1573,20 @@
     }
 }
 
+- (void)writeRouteStatusEventToLog:(NSString *)event
+{
+    if(_routingUpdateLogFile==NULL)
+    {
+        return;
+    }
+    NSDate *now = [NSDate date];
+    NSString *s = [NSString stringWithFormat:@"%@ INFO: %@", now.stringValue,event];
+    [_lock lock];
+    fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+    fflush(_routingUpdateLogFile);
+    [_lock unlock];
+}
+
 - (void)writeRouteStatusToLog:(UMMTP3PointCode *)pc
 {
     if(_routingUpdateLogFile==NULL)
