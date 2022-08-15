@@ -27,9 +27,11 @@
 {
     [_lock lock];
     UMM3UAApplicationServerStatusRecord *entry = [[UMM3UAApplicationServerStatusRecord alloc]initWithString:event];
-    for(int i=1;i<UMM3UAApplicationServerStatusRecord_max_entries;i++)
+    int i = UMM3UAApplicationServerStatusRecord_max_entries-1;
+    while(i>0)
     {
         _entries[i] = _entries[i-1];
+        i--;
     }
     _entries[0] = entry;
     [_lock unlock];
@@ -42,14 +44,14 @@
         return @"";
     }
     NSMutableString *s = [[NSMutableString alloc]init];
-    [s appendFormat:@"\t%@",[_entries[0] stringValue]];
+    [s appendFormat:@"\t%@\n",[_entries[0] stringValue]];
     for(int i=1;i<UMM3UAApplicationServerStatusRecord_max_entries;i++)
     {
         if(_entries[i] == NULL)
         {
             break;
         }
-        [s appendFormat:@"\t\t%@",[_entries[i] stringValue]];
+        [s appendFormat:@"\t\t%@\n",[_entries[i] stringValue]];
     }
     return s;
 }
