@@ -53,4 +53,5 @@
 #import "UMMTP3TranslationTableMap.h"
 #import "UMMTP3StatisticDb.h"
 #import "UMMTP3StatisticDbRecord.h"
-
+#import "UMM3UAApplicationServerStatusRecord.h"
+#import "UMM3UAApplicationServerStatusRecords.h"

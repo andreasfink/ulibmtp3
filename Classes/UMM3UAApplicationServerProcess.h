@@ -12,6 +12,8 @@
 #import "UMMTP3PointCode.h"
 #import "UMM3UAStatus.h"
 #import "UMMTP3Label.h"
+#import "UMM3UAApplicationServerStatusRecord.h"
+#import "UMM3UAApplicationServerStatusRecords.h"
 
 #define M3UA_DEFAULT_BEAT_TIMER                0
 #define M3UA_DEFAULT_MAX_BEAT_OUTSTANDING      3
@@ -24,7 +26,7 @@
     UMLayerSctp                 *_sctpLink;
     UMM3UAApplicationServer     *_as;
     BOOL                        _congested;
-    UMM3UA_Status               _status;
+    UMM3UA_Status               _m3ua_asp_status;
 
     BOOL                        _speedLimitReached;
     double                      _speedLimit;
@@ -76,12 +78,12 @@
     NSString            *_lastError;
     BOOL                _forcedOutOfService;
     
-    NSDate  *_lastLinkUp;
-    NSDate  *_lastLinkDown;
-    NSDate  *_lastUp;
-    NSDate  *_lastDown;
-    NSDate  *_lastLinkActive;
-    NSDate  *_lastLinkInactive;
+    UMM3UAApplicationServerStatusRecords *_lastLinkUps;
+    UMM3UAApplicationServerStatusRecords *_lastLinkDown;
+    UMM3UAApplicationServerStatusRecords *_lastUp;
+    UMM3UAApplicationServerStatusRecords *_lastDown;
+    UMM3UAApplicationServerStatusRecords *_lastLinkActive;
+    UMM3UAApplicationServerStatusRecords *_lastLinkInactive;
 }
 
 
@@ -92,7 +94,7 @@
 @property (readonly) BOOL up;
 @property (readonly) BOOL active;
 @property(readonly)    UMSocketStatus                 sctp_status;
-@property(readwrite,assign,atomic)   UMM3UA_Status status;
+@property(readwrite,assign,atomic)   UMM3UA_Status m3ua_asp_status;
 
 @property(readwrite,strong,atomic)  NSDate *lastBeatReceived;
 @property(readwrite,strong,atomic)  NSDate *lastBeatAckReceived;
@@ -105,12 +107,13 @@
 @property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputPackets;
 @property(readwrite,strong,atomic)  UMThroughputCounter *inboundThroughputBytes;
 @property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputBytes;
-@property(readwrite,strong,atomic)  NSDate  *lastLinkUp;
-@property(readwrite,strong,atomic)  NSDate  *lastLinkDown;
-@property(readwrite,strong,atomic)  NSDate  *lastUp;
-@property(readwrite,strong,atomic)  NSDate  *lastDown;
-@property(readwrite,strong,atomic)  NSDate  *lastActive;
-@property(readwrite,strong,atomic)  NSDate  *lastInactive;
+
+@property(readwrite,strong,atomic)  UMM3UAApplicationServerStatusRecords  *lastLinkUps;
+@property(readwrite,strong,atomic)  UMM3UAApplicationServerStatusRecords  *lastLinkDowns;
+@property(readwrite,strong,atomic)  UMM3UAApplicationServerStatusRecords  *lastUps;
+@property(readwrite,strong,atomic)  UMM3UAApplicationServerStatusRecords  *lastDowns;
+@property(readwrite,strong,atomic)  UMM3UAApplicationServerStatusRecords  *lastActives;
+@property(readwrite,strong,atomic)  UMM3UAApplicationServerStatusRecords  *lastInactives;
 
 @property (readonly)                BOOL congested;
 @property (readonly)                UMThroughputCounter  *speedometer;

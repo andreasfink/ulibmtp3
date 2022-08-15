@@ -106,11 +106,11 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
 
-- (void)aspUp:(UMM3UAApplicationServerProcess *)asp;
-- (void)aspDown:(UMM3UAApplicationServerProcess *)asp;
-- (void)aspActive:(UMM3UAApplicationServerProcess *)asp;
-- (void)aspInactive:(UMM3UAApplicationServerProcess *)asp;
-- (void)aspPending:(UMM3UAApplicationServerProcess *)asp;
+- (void)aspUp:(UMM3UAApplicationServerProcess *)asp  reason:(NSString *)reason;
+- (void)aspDown:(UMM3UAApplicationServerProcess *)asp  reason:(NSString *)reason;
+- (void)aspActive:(UMM3UAApplicationServerProcess *)asp  reason:(NSString *)reason;
+- (void)aspInactive:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason;
+- (void)aspPending:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason;
 - (void)powerOn;
 - (void)powerOff;
 

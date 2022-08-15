@@ -231,7 +231,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (BOOL)sctp_connecting
 {
-    if(_status == M3UA_STATUS_OOS)
+    if(_m3ua_asp_status == M3UA_STATUS_OOS)
     {
         return YES;
     }
@@ -240,7 +240,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (BOOL)sctp_up
 {
-    switch(_status)
+    switch(_m3ua_asp_status)
     {
         case M3UA_STATUS_UNUSED:
         case M3UA_STATUS_OFF:
@@ -256,7 +256,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (BOOL)up
 {
-    switch(_status)
+    switch(_m3ua_asp_status)
     {
         case M3UA_STATUS_UNUSED:
         case M3UA_STATUS_OFF:
@@ -272,7 +272,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (BOOL)active
 {
-    switch(_status)
+    switch(_m3ua_asp_status)
     {
         case M3UA_STATUS_UNUSED:
         case M3UA_STATUS_OFF:
@@ -301,7 +301,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         self.logLevel = UMLOG_MAJOR;
         _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
         _sctp_status = UMSOCKET_STATUS_OFF;
-        _status = M3UA_STATUS_OFF;
+        _m3ua_asp_status = M3UA_STATUS_OFF;
         _incomingStreamLock =  [[UMMutex alloc]initWithName:@"m3ua-incomingStreamLock"];
         _houseKeepingTimer = [[UMTimer alloc]initWithTarget:self
                                                    selector:@selector(housekeeping)
@@ -585,8 +585,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             if(statusInformation ==2)
             {
-                self.status =  M3UA_STATUS_INACTIVE;
-                [_as aspInactive:self];
+                self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
+                [_as aspInactive:self reason:@"NTFY(statusInformation=2)"];
             }
             else if (statusInformation==3)
             {
@@ -597,13 +597,13 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 {
                     [_linktest_timer start];
                 }
-                self.status =  M3UA_STATUS_IS;
-                [_as aspActive:self];
+                self.m3ua_asp_status =  M3UA_STATUS_IS;
+                [_as aspActive:self reason:@"NTFY(statusInformation=3)"];
             }
             else if(statusInformation==4)
             {
-                self.status =  M3UA_STATUS_INACTIVE;
-                [_as aspPending:self];
+                self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
+                [_as aspPending:self reason:@"NTFY(statusInformation=4)"];
             }
         }
     }
@@ -1008,16 +1008,16 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     /* ASP Up */
     [self sendASPUP_ACK:NULL];
-    self.status = M3UA_STATUS_INACTIVE;
-    [_as aspUp:self];
+    self.m3ua_asp_status = M3UA_STATUS_INACTIVE;
+    [_as aspUp:self reason:@"ASPUP received"];
 }
 
 - (void)processASPDN:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Down */
     [self sendASPDN_ACK:NULL];
-    self.status = M3UA_STATUS_BUSY;
-    [_as aspDown:self];
+    self.m3ua_asp_status = M3UA_STATUS_BUSY;
+    [_as aspDown:self reason:@"ASPDN received"];
 }
 
 - (void)processBEAT:(UMSynchronizedSortedDictionary *)params
@@ -1039,7 +1039,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         [self logDebug:@"processASPUP_ACK"];
     }
-    self.status = M3UA_STATUS_INACTIVE;
+    self.m3ua_asp_status = M3UA_STATUS_INACTIVE;
     _aspup_received++;
     if(_standby_mode)
     {
@@ -1063,7 +1063,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processASPDN_ACK:(UMSynchronizedSortedDictionary *)params
 {
-    self.status = M3UA_STATUS_BUSY;
+    self.m3ua_asp_status = M3UA_STATUS_BUSY;
     /* ASP Down acknlowledgment */
 }
 
@@ -1079,8 +1079,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self logDebug:@"processASPAC"];
     }
 
-    [_as aspActive:self];
-    self.status =  M3UA_STATUS_IS;
+    [_as aspActive:self reason:@"ASPAC received"];
+    self.m3ua_asp_status =  M3UA_STATUS_IS;
     [self sendASPAC_ACK:params];
 }
 
@@ -1092,8 +1092,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self logDebug:@"processASPIA"];
     }
 
-    [_as aspInactive:self];
-    self.status =  M3UA_STATUS_INACTIVE;
+    [_as aspInactive:self reason:@"ASPIA received"];
+    self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
     [self sendASPIA_ACK:params];
 }
 
@@ -1107,7 +1107,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self logDebug:@" stop reopen timer2"];
         [self logDebug:@" start linktest timer"];
     }
-    if((_status == M3UA_STATUS_INACTIVE) || (_status == M3UA_STATUS_IS))
+    if((_m3ua_asp_status == M3UA_STATUS_INACTIVE) || (_m3ua_asp_status == M3UA_STATUS_IS))
     {
         /* link just came up, why are we getting ASP_AC? */
         [_reopen_timer1 stop];
@@ -1117,9 +1117,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             [_linktest_timer start];
         }
-        self.status =  M3UA_STATUS_IS;
-        
-        [_as aspActive:self];
+        self.m3ua_asp_status =  M3UA_STATUS_IS;
+        [_as aspActive:self reason:@"ASPAC_ACK received"];
     }
     else
     {
@@ -1131,8 +1130,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)processASPIA_ACK:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Inactive acknowledgment */
-    self.status =  M3UA_STATUS_INACTIVE;
-    [_as aspInactive:self];
+    self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
+    [_as aspInactive:self reason:@"ASPIC_ACK received"];
 }
 
 #pragma mark -
@@ -1571,7 +1570,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)start
 {
     _aspup_received = 0;
-    self.status = M3UA_STATUS_OFF;
+    self.m3ua_asp_status = M3UA_STATUS_OFF;
     
     if(_forcedOutOfService==NO)
     {
@@ -1606,7 +1605,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     [_sctpLink closeFor:self];
     _aspup_received = 0;
-    self.status = M3UA_STATUS_OFF;
+    self.m3ua_asp_status = M3UA_STATUS_OFF;
 }
 
 
@@ -1680,7 +1679,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 [self sendASPUP:pl];
             }
         }
-        self.status = M3UA_STATUS_BUSY;
+        self.m3ua_asp_status = M3UA_STATUS_BUSY;
         [_speedometer clear];
         [_submission_speed clear];
         _speed_within_limit = YES;
@@ -1722,18 +1721,18 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         if(self.active)
         {
             [self sendASPIA:NULL];
-            self.status=M3UA_STATUS_INACTIVE; /* we dont await ASPIA_ACK */
+            self.m3ua_asp_status=M3UA_STATUS_INACTIVE; /* we dont await ASPIA_ACK */
         }
         if(self.up)
         {
             [self sendASPDN:NULL];
-            self.status = M3UA_STATUS_BUSY;
+            self.m3ua_asp_status = M3UA_STATUS_BUSY;
             [_speedometer clear];
             [_submission_speed clear];
             _speed_within_limit = YES;
             [_reopen_timer1 stop];
             [_sctpLink closeFor:self];
-            self.status = M3UA_STATUS_OFF;
+            self.m3ua_asp_status = M3UA_STATUS_OFF;
             usleep(0.1);
             if(_forcedOutOfService == NO)
             {
@@ -1825,7 +1824,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 pdu:(NSData *)pdu
 {
     @autoreleasepool
-        {
+    {
 
         int		pos = 0;
         uint16_t	param_len;	/* effective */
@@ -2256,7 +2255,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             {
                 [self logDebug:@"reopen_timer1_fires"];
             }
-            switch(self.status)
+            switch(self.m3ua_asp_status)
             {
                 case M3UA_STATUS_OOS:
                     if(self.logLevel <= UMLOG_DEBUG)
@@ -2327,7 +2326,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             {
                 [self logDebug:@"reopen_timer1_fires"];
             }
-            switch(self.status)
+            switch(self.m3ua_asp_status)
             {
                 case M3UA_STATUS_UNUSED:
                     if(self.logLevel <= UMLOG_DEBUG)
@@ -2349,7 +2348,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                         [self logDebug:@"Status is OFF/OOS or BUSY but still not in service state. Asking SCTP to power off/on the link"];
                     }
                     [_sctpLink closeFor:self];
-                    self.status = M3UA_STATUS_OFF;
+                    self.m3ua_asp_status = M3UA_STATUS_OFF;
                     [_reopen_timer1 stop];
                     [_reopen_timer2 stop];
                     [_reopen_timer1 start];
@@ -2392,7 +2391,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             {
                 [self logDebug:@"linktest_timer_fires"];
             }
-            switch(self.status)
+            switch(self.m3ua_asp_status)
             {
                 case M3UA_STATUS_UNUSED:    /* undefined state */
                     if(self.logLevel <= UMLOG_DEBUG)
@@ -2489,11 +2488,11 @@ static const char *get_sctp_status_string(UMSocketStatus status)
          */
         
         [self logInfo:@"sctpReportsUp"];
-        UMM3UA_Status oldStatus = self.status;
-        self.status = M3UA_STATUS_BUSY;
+        UMM3UA_Status oldStatus = self.m3ua_asp_status;
+        self.m3ua_asp_status = M3UA_STATUS_BUSY;
         if(oldStatus == M3UA_STATUS_OFF)
         {
-            _lastLinkUp = [NSDate date];
+            [_lastLinkUps addEvent:@"sctpReportsUp"];
         }
         _aspup_received = 0;
         [self powerOn];
@@ -2504,7 +2503,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     @autoreleasepool
     {
-        UMM3UA_Status oldStatus = self.status;
+        UMM3UA_Status oldStatus = self.m3ua_asp_status;
         [self logInfo:@"sctpReportsDown"];
         [ _as updateRouteUnavailable:_as.adjacentPointCode
                                 mask:_as.adjacentPointCode.maxmask
@@ -2513,8 +2512,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                               reason:@"SCTP-DOWN"];
         if(oldStatus!= M3UA_STATUS_OFF)
         {
-            _lastLinkDown = [NSDate date];
-            self.status = M3UA_STATUS_OFF;
+            [_lastLinkDown addEvent:@"sctpReportsDown"];
+            self.m3ua_asp_status = M3UA_STATUS_OFF;
             if([_reopen_timer1 isRunning]==NO)
             {
                 [_sctpLink closeFor:self];
@@ -2522,7 +2521,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 [_reopen_timer2 stop];
                 [_reopen_timer1 start];
             }
-            [_as aspDown:self];
+            [_as aspDown:self reason:@"sctpReportsDown"];
         }
     }
 }
@@ -2566,28 +2565,30 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     if(self.active==YES)
     {
-        if(_status == M3UA_STATUS_IS)
+        if(_m3ua_asp_status == M3UA_STATUS_IS)
         {
             [self sendASPIA:NULL];
         }
     }
-    self.status =  M3UA_STATUS_INACTIVE;
+    self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
+    [self.lastInactives addEvent:@"goInactive"];
 }
 
 - (void)goActive
 {
     if(self.active==NO)
     {
-        if(_status == M3UA_STATUS_INACTIVE)
+        if(_m3ua_asp_status == M3UA_STATUS_INACTIVE)
         {
             [self sendASPAC:NULL];
         }
     }
+    [self.lastActives addEvent:@"goActive-requested"];
 }
 
 - (NSString *)statusString
 {
-    switch(_status)
+    switch(_m3ua_asp_status)
     {
         case    M3UA_STATUS_OFF:
             return @"OFF";

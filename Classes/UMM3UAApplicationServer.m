@@ -22,6 +22,8 @@
 #else
 #include <bsd/stdlib.h>
 #endif
+#import "UMM3UAApplicationServerStatusRecord.h"
+#import "UMM3UAApplicationServerStatusRecords.h"
 
 
 #define	M3UA_CLASS_TYPE_ERR			0x0000
@@ -356,33 +358,32 @@ static const char *m3ua_param_name(uint16_t param_type)
 #pragma mark -
 #pragma mark Route Management
 
-- (void)aspUp:(UMM3UAApplicationServerProcess *)asp
+- (void)aspUp:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
     upCount++;
-    asp.lastUp = [NSDate date];
+    [asp.lastUps addEvent:reason];
     [self updateLinkSetStatus];
-
 }
 
-- (void)aspDown:(UMM3UAApplicationServerProcess *)asp
+- (void)aspDown:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
     upCount--;
     [self updateLinkSetStatus];
-    asp.lastDown = [NSDate date];
+    [asp.lastDowns addEvent:reason];
     [self updateRouteUnavailable:_adjacentPointCode
                             mask:_adjacentPointCode.maxmask
                         priority:UMMTP3RoutePriority_1
-                          reason:@"ASP_DOWN"];
+                          reason:reason];
 }
 
-- (void)aspActive:(UMM3UAApplicationServerProcess *)asp
+- (void)aspActive:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
     activeCount++;
-    asp.lastActive = [NSDate date];
+    [asp.lastActives addEvent:reason];
     [self updateRouteAvailable:_adjacentPointCode
                           mask:_adjacentPointCode.maxmask
                       priority:UMMTP3RoutePriority_1
-                        reason:@"ASP_ACTIVE"];
+                        reason:reason];
 
     if(_trafficMode == UMM3UATrafficMode_override)
     {
@@ -394,7 +395,7 @@ static const char *m3ua_param_name(uint16_t param_type)
             {
                 continue;
             }
-            if(asp2.active)
+            else if(asp2.active)
             {
                 [asp goInactive];
                 break;
@@ -404,14 +405,15 @@ static const char *m3ua_param_name(uint16_t param_type)
     [self updateLinkSetStatus];
 }
 
-- (void)aspInactive:(UMM3UAApplicationServerProcess *)asp
+- (void)aspInactive:(UMM3UAApplicationServerProcess *)asp  reason:(NSString *)reason
 {
     @autoreleasepool
     {
-        asp.lastInactive = [NSDate date];
+        [asp.lastInactives addEvent:reason];
         activeCount--;
         BOOL somethingsActive = NO;
         NSArray *keys = [_applicationServerProcesses allKeys];
+        int newActiveCount = 0;
         for(id key in keys)
         {
             UMM3UAApplicationServerProcess *asp2 = _applicationServerProcesses[key];
@@ -421,10 +423,12 @@ static const char *m3ua_param_name(uint16_t param_type)
             }
             if(asp2.active)
             {
+                newActiveCount++;
                 somethingsActive = YES;
                 break;
             }
         }
+        activeCount = newActiveCount;
         if(somethingsActive == NO)
         {
             [self updateRouteUnavailable:_adjacentPointCode
@@ -432,11 +436,18 @@ static const char *m3ua_param_name(uint16_t param_type)
                                 priority:UMMTP3RoutePriority_1
                                   reason:@"ASP_INACTIVE"];
         }
+        else
+        {
+            [self updateRouteAvailable:_adjacentPointCode
+                                    mask:_adjacentPointCode.maxmask
+                                priority:UMMTP3RoutePriority_1
+                                  reason:@"ASP_INACTIVE but still one active"];
+        }
         [self updateLinkSetStatus];
     }
 }
 
-- (void)aspPending:(UMM3UAApplicationServerProcess *)asp
+- (void)aspPending:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
     activeCount--;
     BOOL somethingsActive = NO;
@@ -459,7 +470,7 @@ static const char *m3ua_param_name(uint16_t param_type)
         [self updateRouteUnavailable:_adjacentPointCode
                                 mask:_adjacentPointCode.maxmask
                             priority:UMMTP3RoutePriority_1
-                              reason:@"ASP_PENDING"];
+                              reason:reason];
     }
     [self updateLinkSetStatus];
 }
@@ -1093,7 +1104,11 @@ static const char *m3ua_param_name(uint16_t param_type)
     for (NSString *key in keys)
     {
         UMM3UAApplicationServerProcess *link = _applicationServerProcesses[key];
-        switch(link.status)
+        if(link==NULL)
+        {
+            continue;
+        }
+        switch(link.m3ua_asp_status)
         {
             case M3UA_STATUS_UNUSED:
             case M3UA_STATUS_OFF:

@@ -15,6 +15,10 @@
 		A60A36EA1A305DDC0090FC94 /* UMMTP3Link.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36E71A305DDC0090FC94 /* UMMTP3Link.m */; };
 		A60A36F91A3063E60090FC94 /* UMMTP3PointCode.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36F61A3063E60090FC94 /* UMMTP3PointCode.m */; };
 		A60A36FE1A306B710090FC94 /* UMMTP3RouteMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A36FB1A306B710090FC94 /* UMMTP3RouteMetrics.m */; };
+		A618677828AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = A618677628AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A618677928AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = A618677728AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m */; };
+		A618677C28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h in Headers */ = {isa = PBXBuildFile; fileRef = A618677A28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A618677D28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.m in Sources */ = {isa = PBXBuildFile; fileRef = A618677B28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.m */; };
 		A65270F825C33580007CF832 /* UMM3UAApplicationServerMode.h in Headers */ = {isa = PBXBuildFile; fileRef = A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A691E59F237001A800589718 /* UMMTP3PointCodeTranslationTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A691E5A0237001A800589718 /* UMMTP3PointCodeTranslationTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A691E59E237001A800589718 /* UMMTP3PointCodeTranslationTable.m */; };
@@ -173,6 +177,10 @@
 		A60A36FA1A306B710090FC94 /* UMMTP3RouteMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3RouteMetrics.h; sourceTree = "<group>"; };
 		A60A36FB1A306B710090FC94 /* UMMTP3RouteMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3RouteMetrics.m; sourceTree = "<group>"; };
 		A615D90A1B4D5F2900854472 /* sctp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sctp.framework; path = /Library/Frameworks/sctp.framework; sourceTree = "<absolute>"; };
+		A618677628AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM3UAApplicationServerStatusRecord.h; sourceTree = "<group>"; };
+		A618677728AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM3UAApplicationServerStatusRecord.m; sourceTree = "<group>"; };
+		A618677A28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM3UAApplicationServerStatusRecords.h; sourceTree = "<group>"; };
+		A618677B28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM3UAApplicationServerStatusRecords.m; sourceTree = "<group>"; };
 		A62851371A46E32A0090FC94 /* UMMTP3TransitPermission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3TransitPermission.h; sourceTree = "<group>"; };
 		A62851381A46E32A0090FC94 /* UMMTP3TransitPermission.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3TransitPermission.m; sourceTree = "<group>"; };
 		A628513B1A46E3F40090FC94 /* UMMTP3WhiteList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3WhiteList.h; sourceTree = "<group>"; };
@@ -351,6 +359,10 @@
 				A6813F0B1DE8177C001FC87D /* UMLayerMTP3ProviderProtocol.h */,
 				A60A36D81A305B8A0090FC94 /* UMLayerMTP3UserProtocol.h */,
 				A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */,
+				A618677628AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.h */,
+				A618677728AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m */,
+				A618677A28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h */,
+				A618677B28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.m */,
 				A6813F121DE82266001FC87D /* UMM3UAApplicationServer.h */,
 				A6A2B8D01E389A0100E8F0AB /* UMM3UAApplicationServer.m */,
 				A6827E041E37DD0F00F3048B /* UMM3UAApplicationServerProcess.h */,
@@ -496,9 +508,11 @@
 				A6AA23C924854164008D5A57 /* UMMTP3StatisticDbRecord.h in Headers */,
 				A6F178DE21AF03B00084D972 /* UMMTP3RoutePriority.h in Headers */,
 				A6F178E921AF03B00084D972 /* UMMTP3Task_m2paSctpStatusIndication.h in Headers */,
+				A618677828AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.h in Headers */,
 				A6F178D121AF03B00084D972 /* UMMTP3HeadingCode.h in Headers */,
 				A6F178E021AF03B00084D972 /* UMMTP3SyslogClient.h in Headers */,
 				A6F178F121AF03B00084D972 /* UMMTP3WhiteList.h in Headers */,
+				A618677C28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h in Headers */,
 				A6F178EF21AF03B00084D972 /* UMMTP3TransitPermission.h in Headers */,
 				A6F178EB21AF03B00084D972 /* UMMTP3Task_m2paSpeedLimitReachedCleared.h in Headers */,
 				A6F178CD21AF03B00084D972 /* UMM3UAStatus.h in Headers */,
@@ -652,6 +666,7 @@
 				A6F1790621AF044B0084D972 /* UMMTP3Task_adminCreateLink.m in Sources */,
 				A6F178FF21AF044B0084D972 /* UMMTP3PointCode.m in Sources */,
 				A6F1791421AF044B0084D972 /* UMMTP3WhiteList.m in Sources */,
+				A618677928AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m in Sources */,
 				A6F178F321AF044B0084D972 /* UMLayerMTP3.m in Sources */,
 				A6F178F421AF044B0084D972 /* UMM3UAApplicationServer.m in Sources */,
 				A691E5A0237001A800589718 /* UMMTP3PointCodeTranslationTable.m in Sources */,
@@ -680,6 +695,7 @@
 				A6F178F621AF044B0084D972 /* UMMTP3BlackList.m in Sources */,
 				A6F1790A21AF044B0084D972 /* UMMTP3Task_m2paDataIndication.m in Sources */,
 				A6B3761323FA6525007F6F20 /* UMMTP3InstanceRoute.m in Sources */,
+				A618677D28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.m in Sources */,
 				A6F1790421AF044B0084D972 /* UMMTP3SyslogClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
