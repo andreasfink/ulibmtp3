@@ -314,6 +314,14 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         _outboundThroughputPackets  = [[UMThroughputCounter alloc]init];
         _inboundThroughputBytes     = [[UMThroughputCounter alloc]init];
         _outboundThroughputBytes    = [[UMThroughputCounter alloc]init];
+
+        _lastLinkUps        = [[UMM3UAApplicationServerStatusRecords alloc]init];
+        _lastLinkDown       = [[UMM3UAApplicationServerStatusRecords alloc]init];
+        _lastUp             = [[UMM3UAApplicationServerStatusRecords alloc]init];
+        _lastDown           = [[UMM3UAApplicationServerStatusRecords alloc]init];
+        _lastLinkActive     = [[UMM3UAApplicationServerStatusRecords alloc]init];
+        _lastLinkInactive   = [[UMM3UAApplicationServerStatusRecords alloc]init];
+
     }
     return self;
 }
