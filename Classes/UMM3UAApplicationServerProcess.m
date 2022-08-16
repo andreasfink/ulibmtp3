@@ -1131,7 +1131,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     else
     {
         [self logDebug:@"received ASPAC-ACK while in wrong state. Powering down to restart"];
-        [self powerOff];
+        [self powerOff:@"received ASPAC-ACK while in wrong state"];
+        [_reopen_timer1 start];
     }
 }
 
@@ -1582,7 +1583,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     
     if(_forcedOutOfService==NO)
     {
-        [_sctpLink openFor:self sendAbortFirst:NO];
+        [_sctpLink openFor:self sendAbortFirst:YES reason:@"start"];
     }
     NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
@@ -1611,7 +1612,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)stop
 {
-    [_sctpLink closeFor:self];
+    [_sctpLink closeFor:self reason:@"stop"];
     _aspup_received = 0;
     self.m3ua_asp_status = M3UA_STATUS_OFF;
 }
@@ -1626,7 +1627,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)forcedPowerOff
 {
     _forcedOutOfService = YES;
-    [self powerOff];
+    [self powerOff:@"forced-power-off"];
 }
 
 - (void)powerOn
@@ -1716,6 +1717,12 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)powerOff
 {
+    [self powerOff:NULL];
+}
+
+- (void)powerOff:(NSString *)reason
+
+{
     _aspup_received = 0;
     [_aspLock lock];
     @try
@@ -1739,7 +1746,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [_submission_speed clear];
             _speed_within_limit = YES;
             [_reopen_timer1 stop];
-            [_sctpLink closeFor:self];
+            [_sctpLink closeFor:self reason:reason];
             self.m3ua_asp_status = M3UA_STATUS_OFF;
             usleep(0.1);
             if(_forcedOutOfService == NO)
@@ -1747,7 +1754,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 if(_sctpLink.isPassive)
                 {
                     /* we have to restart the listener */
-                    [_sctpLink openFor:self];
+                    [_sctpLink openFor:self sendAbortFirst:NO reason:@"passive-reopen"];
                 }
                 else
                 {
@@ -1988,7 +1995,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         NSString *e = [NSString stringWithFormat:@"PROTOCOL VIOLATION: %@",reason];
         [self logMajorError:e];
-        [self powerOff];
+        [self powerOff:@"protocol-violation"];
     }
 }
 
@@ -2255,7 +2262,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     @autoreleasepool
     {
-
         [_aspLock lock];
         @try
         {
@@ -2355,7 +2361,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     {
                         [self logDebug:@"Status is OFF/OOS or BUSY but still not in service state. Asking SCTP to power off/on the link"];
                     }
-                    [_sctpLink closeFor:self];
+                    [_sctpLink closeFor:self reason:@"reopen-timer-2 expired"];
                     self.m3ua_asp_status = M3UA_STATUS_OFF;
                     [_reopen_timer1 stop];
                     [_reopen_timer2 stop];
@@ -2642,7 +2648,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 if(diff > (_beatMaxOutstanding * _beatTime))
                 {
                     [self logMinorError:@"powering off due to missing beat-ack messages"];
-                    [self powerOff];
+                    [self powerOff:@"outstanding BEAT messages"];
                 }
             }
         }
