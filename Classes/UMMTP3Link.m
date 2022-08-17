@@ -227,14 +227,14 @@
 - (void)forcedPowerOn
 {
     _forcedOutOfService = NO;
-    [_m2pa powerOnFor:_linkset.mtp3 forced:YES];
+    [_m2pa powerOnFor:_linkset.mtp3 forced:YES reason:@"forcedPowerOn"];
 }
 
 - (void)forcedPowerOff
 {
     _forcedOutOfService = YES;
     [_m2pa.stateMachineLogFeed debugText:@"forcedPowerOff"];
-    [_m2pa powerOffFor:_linkset.mtp3 forced:YES];
+    [_m2pa powerOffFor:_linkset.mtp3 forced:YES reason:@"forcedPowerOff"];
 }
 
 - (void)powerOn
@@ -291,11 +291,11 @@
     if(foos==YES)
     {
         [_m2pa.stateMachineLogFeed debugText:@"setForcedOutOfService"];
-        [_m2pa powerOffFor:_linkset.mtp3];
+        [_m2pa powerOffFor:_linkset.mtp3 forced:YES reason:@"setForcedOutOfService"];
     }
     else
     {
-        [_m2pa powerOnFor:_linkset.mtp3];
+        [_m2pa powerOnFor:_linkset.mtp3 forced:YES reason:@"setForcedOutOfService"];
     }
 }
 
@@ -304,14 +304,14 @@
     if(!_forcedOutOfService)
     {
         [_m2pa.stateMachineLogFeed debugText:@"mtp3link: start"];
-        [_m2pa startFor:_linkset.mtp3];
+        [_m2pa startFor:_linkset.mtp3 forced:NO reason:@"mtp3-start"];
     }
     
 }
 
 - (void)stop
 {
-    [_m2pa stopFor:_linkset.mtp3 forced:_forcedOutOfService];
+    [_m2pa stopFor:_linkset.mtp3 forced:_forcedOutOfService reason:@"mtp3-stop"];
 }
 
 - (void)linkTestTimerEvent:(id)parameter
