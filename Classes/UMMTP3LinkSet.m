@@ -4658,9 +4658,20 @@
     }
 }
 
-/* reopen Timer Event 1 happens when a link got closed. We wait a small amount of time and restart the link */
+/* reopen Timer Event 1 happens when a link got closed.
+   We wait a small amount of time and restart the link */
 - (void)reopenTimer1EventFor:(UMMTP3Link *)link
 {
+    
+    M2PA_STATUS_FOOS                 = 998,  /* configured to stay off. Forced out of service */
+    M2PA_STATUS_DISCONNECTED         = 999,  /* connection not yet requested */
+    M2PA_STATUS_OFF                  = 1000, /* connection requested but SCTP is not yet up */
+    M2PA_STATUS_OOS                     = 1001, /* sctp up. waiting for MTP3 to start it*/
+    M2PA_STATUS_INITIAL_ALIGNMENT     = 1002, /* alignment sent to remote. await alignment from remote */
+    M2PA_STATUS_ALIGNED_NOT_READY     = 1003, /* proving phase running. not enough proving received yet */
+    M2PA_STATUS_ALIGNED_READY         = 1004, /* proving phase running. enough proving received but remote is not yet happy */
+    M2PA_STATUS_IS                     = 1005, /* both sides where ready . live for traffic*/
+
     if(link.last_m2pa_status != M2PA_STATUS_DISCONNECTED)
     {
         /* link is establishing already (from other side for example). lets not mess with it but check again in 6 seconds again.*/

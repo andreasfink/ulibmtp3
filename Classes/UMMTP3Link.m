@@ -239,15 +239,26 @@
 
 - (void)powerOn
 {
+    [self powerOn:NULL];
+}
+
+- (void)powerOn:(NSString *)reason
+{
     if(_forcedOutOfService==NO)
     {
-        [_m2pa powerOnFor:_linkset.mtp3 forced:NO];
+        [_m2pa powerOnFor:_linkset.mtp3 forced:NO reason:reason];
     }
 }
+
 - (void)powerOff
 {
+    [self powerOff:NULL];
+}
+
+- (void)powerOff:(NSString *)reason
+{
     [_m2pa.stateMachineLogFeed debugText:@"powerOff requested in MTP3Link"];
-    [_m2pa powerOffFor:_linkset.mtp3 forced:NO];
+    [_m2pa powerOffFor:_linkset.mtp3 forced:NO reason:(NSString *)reason];
 }
 
 - (BOOL)emergency

@@ -132,7 +132,10 @@ typedef enum UMMTP3Link_attachmentStatus
 - (void)attach;
 
 - (void)powerOn;
+- (void)powerOn:(NSString *)reason;
 - (void)powerOff;
+- (void)powerOff:(NSString *)reason;
+
 - (void)forcedPowerOn;
 - (void)forcedPowerOff;
 
