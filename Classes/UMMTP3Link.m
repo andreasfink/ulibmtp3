@@ -47,9 +47,13 @@
                                                  name:@"reopenTimer1"
                                               repeats:NO
                                       runInForeground:YES];
-
+        _layerHistory = [[UMHistoryLog alloc]initWithMaxLines:100];
     }
     return self;
+}
+- (void)addToLayerHistoryLog:(NSString *)s
+{
+    [_layerHistory addLogEntry:s];
 }
 
 - (void)attach

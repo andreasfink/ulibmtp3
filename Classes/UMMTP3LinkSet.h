@@ -133,7 +133,10 @@ typedef enum UMMTP3ScreeningTraceLevel
     NSDate                      *_lastLinksetUp;
     NSDate                      *_lastLinksetDown;
     UMTimer                     *_routeRetestTimer; /* timer T10 */
+    UMHistoryLog                *_layerHistory;
 }
+
+- (void)addToLayerHistoryLog:(NSString *)s;
 
 /*
 @property(readwrite,assign,atomic)      int     tra_sent;

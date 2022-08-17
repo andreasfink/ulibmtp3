@@ -70,9 +70,12 @@ typedef enum UMMTP3Link_attachmentStatus
     NSDate                      *_linkRestartTime[8];
     NSDate                      *_lastLinkUp;
     NSDate                      *_lastLinkDown;
+    UMHistoryLog                *_layerHistory;
+
 }
 
 - (NSString *)name;
+- (void)addToLayerHistoryLog:(NSString *)s;
 
 @property (readwrite,strong)    NSString *name;
 @property (readwrite,assign)    int slc;

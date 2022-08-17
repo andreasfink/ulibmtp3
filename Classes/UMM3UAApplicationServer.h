@@ -134,5 +134,6 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 
 - (void)activate;
 - (void)deactivate;
++ (NSString *)statusString:(UMM3UA_Status)value;
 
 @end

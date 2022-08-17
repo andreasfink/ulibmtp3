@@ -362,6 +362,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     upCount++;
     [asp.lastUps addEvent:reason];
+    [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-up %@",reason]];
     [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-UP %@",asp.layerName,reason]];
 
     [self updateLinkSetStatus];
@@ -370,6 +371,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)aspDown:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
     upCount--;
+    [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-down %@",reason]];
     [self updateLinkSetStatus];
     [asp.lastDowns addEvent:reason];
     [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-DOWN %@",asp.layerName,reason]];
@@ -381,6 +383,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
+    [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-active %@",reason]];
     activeCount++;
     [asp.lastActives addEvent:reason];
     [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ AS-ACTIVE %@",asp.layerName,reason]];
@@ -411,6 +414,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)aspInactive:(UMM3UAApplicationServerProcess *)asp  reason:(NSString *)reason
 {
+    [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-inactive %@",reason]];
     @autoreleasepool
     {
         [asp.lastInactives addEvent:reason];
@@ -454,6 +458,8 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)aspPending:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
+    [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-pending %@",reason]];
+
     [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ AS-PENDING %@",self.layerName,reason]];
 
     activeCount--;
@@ -595,6 +601,8 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)activate
 {
+    [self addToLayerHistoryLog:@"activate"];
+
 	if (_trafficMode == UMM3UATrafficMode_loadshare || _trafficMode == UMM3UATrafficMode_broadcast)
 	{
 		if(self.logLevel <= UMLOG_DEBUG)
@@ -656,6 +664,8 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)deactivate
 {
+    [self addToLayerHistoryLog:@"deactivate"];
+
 	if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"deactivate"];
@@ -671,6 +681,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)powerOn
 {
+    [self addToLayerHistoryLog:@"powerOn"];
     _m3ua_status = M3UA_STATUS_OOS;
     if(self.logLevel <= UMLOG_DEBUG)
     {
@@ -686,6 +697,8 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)powerOff
 {
+    [self addToLayerHistoryLog:@"powerOff"];
+
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"stop"];
@@ -925,7 +938,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)protocolViolation
 {
-
+    [self addToLayerHistoryLog:@"protocolViolation"];
 }
 
 - (NSArray *)activeApplicationServerProcessesToUse
@@ -1101,6 +1114,8 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)updateLinkSetStatus
 {
+    int oldStatus = _m3ua_status;
+    
     int active = 0;
     int inactive = 0;
     int ready = 0;
@@ -1169,12 +1184,19 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         _m3ua_status = M3UA_STATUS_OFF;
     }
+    if(_m3ua_status != oldStatus)
+    {
+        NSString *s = [NSString stringWithFormat:@"M3UA_STATUS changed from %@ to %@",
+                       [UMM3UAApplicationServer statusString:oldStatus],
+                       [UMM3UAApplicationServer statusString:_m3ua_status]];
+        [self addToLayerHistoryLog:s];
+    }
 }
 
 
-- (NSString *)statusString
++ (NSString *)statusString:(UMM3UA_Status)value
 {
-    switch(_m3ua_status)
+    switch(value)
     {
         case    M3UA_STATUS_OFF:
             return @"OFF";
@@ -1196,6 +1218,13 @@ static const char *m3ua_param_name(uint16_t param_type)
 }
 
 
+
+- (NSString *)statusString
+{
+    return [UMM3UAApplicationServer statusString:_m3ua_status];
+}
+
+
 - (UMSynchronizedSortedDictionary *)m3uaStatusDict
 {
     UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc]init];
@@ -1210,6 +1239,7 @@ static const char *m3ua_param_name(uint16_t param_type)
         [array2 addObject:[asp m3uaStatusDict]];
     }
     dict[@"asp"] =array2;
+    dict[@"last-events"] = [_layerHistory getLogArrayWithDatesAndOrder:YES];
     return dict;
 }
 

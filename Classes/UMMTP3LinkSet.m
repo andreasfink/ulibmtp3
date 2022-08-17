@@ -52,8 +52,14 @@
         _sccp_traceLock = [[UMMutex alloc]initWithName:@"sccp-trace-lock"];
         _mtp3_traceLock = [[UMMutex alloc]initWithName:@"mtp3-trace-lock"];
         _currentLinksMutex = [[UMMutex alloc]initWithName:@"current-links-mutex"];
+        _layerHistory = [[UMHistoryLog alloc]initWithMaxLines:100];
     }
     return self;
+}
+
+- (void)addToLayerHistoryLog:(NSString *)s
+{
+    [_layerHistory addLogEntry:s];
 }
 
 - (void)addLink:(UMMTP3Link *)lnk

@@ -321,7 +321,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         _lastDown           = [[UMM3UAApplicationServerStatusRecords alloc]init];
         _lastLinkActive     = [[UMM3UAApplicationServerStatusRecords alloc]init];
         _lastLinkInactive   = [[UMM3UAApplicationServerStatusRecords alloc]init];
-
     }
     return self;
 }
@@ -532,6 +531,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         }
     }
     NSLog(@"%@",msg);
+    [self addToLayerHistoryLog:msg];
     self.lastError = msg;
 }
 
@@ -593,8 +593,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             if(statusInformation ==2)
             {
+                [self addToLayerHistoryLog:@"NTFY(statusInformation=2)"];
                 self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
                 [_as aspInactive:self reason:@"NTFY(statusInformation=2)"];
+
             }
             else if (statusInformation==3)
             {
@@ -606,7 +608,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     [_linktest_timer start];
                 }
                 self.m3ua_asp_status =  M3UA_STATUS_IS;
+                [self addToLayerHistoryLog:@"NTFY(statusInformation=3)"];
                 [_as aspActive:self reason:@"NTFY(statusInformation=3)"];
+
             }
             else if(statusInformation==4)
             {
@@ -1532,6 +1536,21 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 #pragma mark -
 #pragma mark SCTP callbacks
 
+-(UMM3UA_Status)m3ua_asp_status
+{
+    return _m3ua_asp_status;
+}
+
+-(void)setM3ua_asp_status:(UMM3UA_Status)status
+{
+    UMM3UA_Status oldStatus = _m3ua_asp_status;
+    _m3ua_asp_status = status;
+    if(oldStatus != status)
+    {
+        [NSString stringWithFormat:@"%@ -> %@",[UMM3UAApplicationServer statusString:oldStatus],
+         [UMM3UAApplicationServer statusString:status] ];
+    }
+}
 
 - (NSString *)name
 {
@@ -2683,6 +2702,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     dict[@"inbound-packets"] = [_inboundThroughputPackets getSpeedTripleJson];
     dict[@"outbound-bytes"] = [_outboundThroughputBytes getSpeedTripleJson];
     dict[@"outbound-packets"] = [_outboundThroughputPackets getSpeedTripleJson];
+    dict[@"last-events"] = [_layerHistory getLogArrayWithDatesAndOrder:YES];
     return dict;
 }
 
