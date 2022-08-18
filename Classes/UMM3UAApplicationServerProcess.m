@@ -1602,6 +1602,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 /* start is called if the SCTP link is confirmed to be up */
 - (void)start
 {
+    [_layerHistory addLogEntry:@"start"];
     _aspup_received = 0;
     self.m3ua_asp_status = M3UA_STATUS_BUSY;
 
@@ -1665,7 +1666,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)stop
 {
-    
+    [_layerHistory addLogEntry:@"stop"];
     [self stopBeatTimer];
     if(self.m3ua_asp_status==M3UA_STATUS_IS)
     {
@@ -2285,6 +2286,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)sctpReportsUp
 {
+
     @autoreleasepool
     {
         /***************************************************************************
@@ -2293,13 +2295,13 @@ static const char *get_sctp_status_string(UMSocketStatus status)
          */
         
         [self logInfo:@"sctpReportsUp"];
+        [_layerHistory addLogEntry:@"sctpReportsUp"];
         UMM3UA_Status oldStatus = self.m3ua_asp_status;
         self.m3ua_asp_status = M3UA_STATUS_BUSY;
         if(oldStatus == M3UA_STATUS_OFF)
         {
             [_lastLinkUps addEvent:@"sctpReportsUp"];
             [_as.mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ SCTP-UP",self.layerName]];
-
         }
         _aspup_received = 0;
         [self start];
@@ -2312,6 +2314,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         UMM3UA_Status oldStatus = self.m3ua_asp_status;
         [self logInfo:@"sctpReportsDown"];
+        [_layerHistory addLogEntry:@"sctpReportsDown"];
         [_as.mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ SCTP-DOWN",self.layerName]];
         [ _as updateRouteUnavailable:_as.adjacentPointCode
                                 mask:_as.adjacentPointCode.maxmask
@@ -2453,6 +2456,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     dict[@"linktest-timer-running"] = _linktest_timer.isRunning ? @"YES" : @"NO";
     dict[@"reopen-timer1-running"] = _reopen_timer1.isRunning ? @"YES" : @"NO";
     dict[@"reopen-timer2-running"] = _reopen_timer2.isRunning ? @"YES" : @"NO";
+    dict[@"as.send_aspup"] =  _as.send_aspup ? @"YES" : @"NO";
+    dict[@"as.send_aspac"] =  _as.send_aspac ? @"YES" : @"NO";
     dict[@"configured-speed"] = @(_speed);
     dict[@"current-speed"] = [_speedometer getSpeedTripleJson];
     dict[@"submission-speed"] = [_submission_speed getSpeedTripleJson];
