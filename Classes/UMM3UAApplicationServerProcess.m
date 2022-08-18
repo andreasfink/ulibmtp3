@@ -1658,15 +1658,15 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             _beatTimer.seconds = _beatTime;
         }
-        [_beatTimer stop];
-        [_beatTimer start];
+        [self stopBeatTimer];
+        [self startBeatTimer];
     }
 }
 
 - (void)stop
 {
     
-    [_beatTimer stop];
+    [self stopBeatTimer];
     if(self.m3ua_asp_status==M3UA_STATUS_IS)
     {
         [self sendASPIA:NULL];
@@ -1740,7 +1740,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [_aspLock lock];
     @try
     {
-        [_beatTimer stop];
+        [self stopBeatTimer];
         if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logDebug:@"powerOff"];
@@ -2642,6 +2642,19 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
 }
 
+- (void)startBeatTimer
+{
+    [_layerHistory addLogEntry:@"startBeatTimer"];
+    [_beatTimer start];
+}
+
+- (void)stopBeatTimer
+{
+    [_layerHistory addLogEntry:@"stopBeatTimer"];
+    [_beatTimer stop];
+}
+
+
 - (void)beatTimerEvent:(id)parameter
 {
     if(self.m3ua_asp_status == M3UA_STATUS_IS)
@@ -2653,6 +2666,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         }
         else
         {
+            [_layerHistory addLogEntry:@"sending BEAT"];
             NSString *str = [[NSDate date]stringValue];
             NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
             UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
