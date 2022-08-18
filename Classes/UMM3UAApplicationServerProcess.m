@@ -1587,8 +1587,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         case UMSOCKET_STATUS_FOOS:
         case UMSOCKET_STATUS_OFF:
-        case UMSOCKET_STATUS_OOS:
             [self sctpReportsDown];
+            break;
+        case UMSOCKET_STATUS_OOS:
             break;
         case UMSOCKET_STATUS_IS:
             [self sctpReportsUp];
