@@ -1112,6 +1112,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processASPAC_ACK:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:processASPAC_ACK];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processASPAC_ACK"];
@@ -1781,6 +1782,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             else
             {
                 /* if we are connecting outbound, we let the reopen timer restart the connection*/
+                [_layerHistory addLogEntry:@" we let the reopen timer restart the outbound connection"];
                 [self startReopenTimer1];
             }
         }
@@ -2563,6 +2565,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 [_submission_speed clear];
                 _speed_within_limit = YES;
                 self.m3ua_asp_status = M3UA_STATUS_OFF;
+                [_layerHistory addLogEntry:@" we let the reopen timer restart the dead connection"];
                 [self startReopenTimer1];
                 break;
         }
@@ -2662,81 +2665,4 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 @end
 
 
-#if 0
-
-- (void)reopen_timer1_fires:(id)param
-{
-    [_layerHistory addLogEntry:@"reopen_timer1_fires"];
-    @autoreleasepool
-    {
-        [_aspLock lock];
-        @try
-        {
-            if(self.logLevel <= UMLOG_DEBUG)
-            {
-                [self logDebug:@"reopen_timer1_fires"];
-            }
-            switch(self.m3ua_asp_status)
-            {
-                case M3UA_STATUS_OOS:
-                    if(self.logLevel <= UMLOG_DEBUG)
-                    {
-                        [self logDebug:@"OOS state. Ignoring Timer Event"];
-                    }
-                    [self stopReopenTimer1];
-                    [_linktest_timer stop];
-                    break;
-                case M3UA_STATUS_BUSY:
-                    if(self.logLevel <= UMLOG_DEBUG)
-                    {
-                        [self logDebug:@"BUSY state. Ignoring Timer Event"];
-                    }
-                    [self stopReopenTimer1];
-                    [_linktest_timer stop];
-                    break;
-                case M3UA_STATUS_INACTIVE:
-                    if(self.logLevel <= UMLOG_DEBUG)
-                    {
-                        [self logDebug:@"INACTIVE state. Ignoring Timer Event"];
-                    }
-                    [self stopReopenTimer1];
-                    [self stopReopenTimer2];
-                    [_linktest_timer stop];
-                    break;
-
-                case M3UA_STATUS_IS:
-                    if(self.logLevel <= UMLOG_DEBUG)
-                    {
-                        [self logDebug:@"IS state. Ignoring Timer Event"];
-                    }
-                    [self stopReopenTimer1];
-                    [self stopReopenTimer2];
-                    [_linktest_timer stop];
-                    break;
-                case M3UA_STATUS_OFF:
-                case M3UA_STATUS_UNUSED:
-                default:
-                    if(self.logLevel <= UMLOG_DEBUG)
-                    {
-                        [self logDebug:@"OFF state. Asking SCTP to power on the link"];
-                    }
-                    [self stopReopenTimer1];
-                    [self stopReopenTimer2];
-                    [_linktest_timer stop];
-                    [self start];
-                    [self startReopenTimer1];
-                    break;
-            }
-        }
-        @finally
-        {
-            [_aspLock unlock];
-        }
-    }
-}
-
-
-
-
-#endif
 
