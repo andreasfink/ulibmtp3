@@ -1362,6 +1362,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendASPUP:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"sending ASPUP"];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPUP"];
@@ -1373,6 +1374,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendASPUP_ACK:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"sending ASPUP_ACK"];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPUP_ACK"];
@@ -1385,6 +1387,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendASPIA:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"sending ASPIA"];
+
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPIA"];
@@ -1397,6 +1401,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendASPAC:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"sending ASPAC"];
+
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPAC"];
@@ -1409,6 +1415,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendASPAC_ACK:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"sending ASPAC_ACK"];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPAC_ACK"];
@@ -1421,6 +1428,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendASPIA_ACK:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"sending ASPIA_ACK"];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPIA_ACK"];
@@ -1433,6 +1441,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendASPDN:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"sending ASPDN"];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPDN"];
@@ -1445,6 +1454,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendASPDN_ACK:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"sending ASPDN_ACK"];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"sendASPDN_ACK"];
@@ -1641,6 +1651,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             pl[@(M3UA_PARAM_ASP_IDENTIFIER)] = _aspIdentifier;
         }
+        [self sendASPUP:pl];
     }
 
     if(_beatTime >= 1.0)
@@ -2456,6 +2467,23 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     dict[@"linktest-timer-running"] = _linktest_timer.isRunning ? @"YES" : @"NO";
     dict[@"reopen-timer1-running"] = _reopen_timer1.isRunning ? @"YES" : @"NO";
     dict[@"reopen-timer2-running"] = _reopen_timer2.isRunning ? @"YES" : @"NO";
+    switch(_as.mode)
+    {
+        case UMM3UAApplicationServerMode_server:
+            dict[@"as.mode"] = @"server";
+            break;
+
+        case UMM3UAApplicationServerMode_client:
+            dict[@"as.mode"] = @"client";
+            break;
+
+        case UMM3UAApplicationServerMode_peer:
+            dict[@"as.mode"] = @"peer";
+            break;
+        default:
+            dict[@"as.mode"] = @"undefined";
+            break;
+    }
     dict[@"as.send_aspup"] =  _as.send_aspup ? @"YES" : @"NO";
     dict[@"as.send_aspac"] =  _as.send_aspac ? @"YES" : @"NO";
     dict[@"configured-speed"] = @(_speed);
