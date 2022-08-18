@@ -4668,21 +4668,36 @@
    We wait a small amount of time and restart the link */
 - (void)reopenTimer1EventFor:(UMMTP3Link *)link
 {
-    if(link.last_m2pa_status != M2PA_STATUS_DISCONNECTED)
+    [link.m2pa.state logStatemachineEventString:@"reopenTimer1Event"];
+
+    switch(link.current_m2pa_status)
     {
-        /* link is establishing already (from other side for example). lets not mess with it but check again in 6 seconds again.*/
-        [link stopReopenTimer1];
-        [link startReopenTimer1];
-        [link stopReopenTimer2];
-    }
-    else
-    {
-        /* link stayed off. so lets kick it and restart it */
-        [link.m2pa.state logStatemachineEventString:@"reopenTimer1Event"];
-        [link stopLinkTestTimer];
-        [link stopReopenTimer1];
-        [link startReopenTimer2];
-        [link powerOn];
+        case M2PA_STATUS_FOOS:
+            /* human told us not to start. So we do nothing */
+            [link stopReopenTimer1];
+            [link stopReopenTimer2];
+            [link powerOff];
+            break;
+        case M2PA_STATUS_OFF:
+            /* link stayed off. so lets kick it and restart it */
+            [link stopLinkTestTimer];
+            [link stopReopenTimer1];
+            [link startReopenTimer2];
+            [link powerOn];
+            break;
+        case M2PA_STATUS_DISCONNECTED:
+            /* link is establishing already (from other side for example). lets not mess with it but check again in 6 seconds again.*/
+            [link stopReopenTimer1];
+            [link startReopenTimer1];
+            [link stopReopenTimer2];
+            break;
+        case M2PA_STATUS_OOS:
+        case M2PA_STATUS_INITIAL_ALIGNMENT:
+        case M2PA_STATUS_ALIGNED_NOT_READY:
+        case M2PA_STATUS_ALIGNED_READY:
+        case M2PA_STATUS_IS:
+            /* link is already coming up. so all is fine */
+            break;
     }
 }
 

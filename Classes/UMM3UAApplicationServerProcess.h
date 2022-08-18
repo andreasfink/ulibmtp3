@@ -42,7 +42,7 @@
     UMTimer             *_linktest_timer;
     UMTimer             *_reopen_timer1;
     UMTimer             *_reopen_timer2;
-    int                 sltm_serial;
+    //int                 sltm_serial;
 
 
     NSTimeInterval      _linktest_timer_value;
@@ -65,7 +65,8 @@
     NSDate *_lastBeatAckReceived;
     NSDate *_lastBeatSent;
     NSDate *_lastBeatAckSent;
-
+    NSString *_infoText; /* if set is used in ASPUP Info Text parameter */
+    NSNumber *_aspIdentifier; /* if set, is used in ASP Identifier field in ASP-UP */
     UMTimer                     *_beatTimer;
     NSTimeInterval              _beatTime;
     int                         _beatMaxOutstanding;
@@ -107,6 +108,8 @@
 @property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputPackets;
 @property(readwrite,strong,atomic)  UMThroughputCounter *inboundThroughputBytes;
 @property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputBytes;
+@property(readwrite,strong,atomic)  NSString *infoText; /* if set is used in ASPUP Info Text parameter */
+@property(readwrite,strong,atomic)  NSNumber *aspIdentifier; /* if set, is used in ASP Identifier field in ASP-UP */
 
 @property(readwrite,strong,atomic)  UMM3UAApplicationServerStatusRecords  *lastLinkUps;
 @property(readwrite,strong,atomic)  UMM3UAApplicationServerStatusRecords  *lastLinkDowns;
@@ -123,7 +126,9 @@
 - (void)stop;
 
 - (void)powerOn;
+- (void)powerOn:(NSString *)reason;
 - (void)powerOff;
+- (void)powerOff:(NSString *)reason;
 
 - (void)forcedPowerOn;
 - (void)forcedPowerOff;
@@ -183,4 +188,12 @@
 - (NSString *)statusString;
 
 - (UMSynchronizedSortedDictionary *)m3uaStatusDict;
+
+- (void)startReopenTimer1;
+- (void)startReopenTimer2;
+- (void)reopenTimer1Event:(id)parameter;
+- (void)reopenTimer2Event:(id)parameter;
+- (void)stopReopenTimer1;
+- (void)stopReopenTimer2;
+
 @end

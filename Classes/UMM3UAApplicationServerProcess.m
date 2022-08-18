@@ -1122,8 +1122,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     if((_m3ua_asp_status == M3UA_STATUS_INACTIVE) || (_m3ua_asp_status == M3UA_STATUS_IS))
     {
         /* link just came up, why are we getting ASP_AC? */
-        [_reopen_timer1 stop];
-        [_reopen_timer2 stop];
+        [self stopReopenTimer1];
+        [self stopReopenTimer2];
         [_linktest_timer stop];
         if(_linktest_timer_value > 0)
         {
@@ -1136,7 +1136,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         [self logDebug:@"received ASPAC-ACK while in wrong state. Powering down to restart"];
         [self powerOff:@"received ASPAC-ACK while in wrong state"];
-        [_reopen_timer1 start];
+        [self startReopenTimer1];
+
     }
 }
 
@@ -1547,8 +1548,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     _m3ua_asp_status = status;
     if(oldStatus != status)
     {
-        [NSString stringWithFormat:@"%@ -> %@",[UMM3UAApplicationServer statusString:oldStatus],
+        NSString *s = [NSString stringWithFormat:@"%@ -> %@",[UMM3UAApplicationServer statusString:oldStatus],
          [UMM3UAApplicationServer statusString:status] ];
+        [_layerHistory addLogEntry:s];
     }
 }
 
@@ -1595,19 +1597,49 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
 }
 
+/* start is called if the SCTP link is confirmed to be up */
 - (void)start
 {
     _aspup_received = 0;
-    self.m3ua_asp_status = M3UA_STATUS_OFF;
-    
-    if(_forcedOutOfService==NO)
+    self.m3ua_asp_status = M3UA_STATUS_BUSY;
+
+    /* INFO String: variable length¬
+     2190 ¬
+     2191 The optional INFO String parameter can carry any meaningful UTF-8¬
+     2192 [10] character string along with the message. Length of the INFO¬
+     2193 String parameter is from 0 to 255 octets. No procedures are¬
+     2194 presently identified for its use, but the INFO String MAY be used¬
+     2195 for debugging purposes. An INFO String with a zero-length¬
+     2196 parameter is not considered an error (a zero length parameter is¬
+     2197 one in which the Length field in the TLV will be set to 4).¬
+    */
+    if(_as.send_aspup) /* we send ASPUP when we are client or peer but not when we are server */
     {
-        [_sctpLink openFor:self sendAbortFirst:YES reason:@"start"];
+        UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init]; /* info like in DUNA */
+        if(_infoText)
+        {
+            pl[@(M3UA_PARAM_INFO_STRING)] = _infoText;
+        }
+        else
+        {
+            pl[@(M3UA_PARAM_INFO_STRING)] = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
+        }
+
+        /*
+         ASP Identifier: 32-bit unsigned integer¬
+         The optional ASP Identifier parameter contains a unique value that¬
+         is locally significant among the ASPs that support an AS.  The SGP¬
+         should save the ASP Identifier to be used, if necessary, with the¬
+         Notify message (see Section 3.8.2).¬
+         The format and description of the optional INFO String parameter¬
+         are the same as for the DUNA message (see Section 3.4.1).
+        */
+        if(_aspIdentifier)
+        {
+            pl[@(M3UA_PARAM_ASP_IDENTIFIER)] = _aspIdentifier;
+        }
     }
-    NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
-    UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-    pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
-    _aspup_received=0;
+
     if(_beatTime >= 1.0)
     {
         if(_beatTimer==NULL)
@@ -1631,11 +1663,19 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)stop
 {
-    [_sctpLink closeFor:self reason:@"stop"];
-    _aspup_received = 0;
-    self.m3ua_asp_status = M3UA_STATUS_OFF;
+    
+    [_beatTimer stop];
+    if(self.m3ua_asp_status==M3UA_STATUS_IS)
+    {
+        [self sendASPIA:NULL];
+        self.m3ua_asp_status=M3UA_STATUS_INACTIVE;
+    }
+    if(self.m3ua_asp_status==M3UA_STATUS_INACTIVE)
+    {
+        [self sendASPDN:NULL];
+        self.m3ua_asp_status = M3UA_STATUS_BUSY;
+    }
 }
-
 
 - (void)forcedPowerOn
 {
@@ -1651,9 +1691,15 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)powerOn
 {
+    [self powerOn:NULL];
+}
+
+- (void)powerOn:(NSString *)reason
+{
     if(_forcedOutOfService==YES)
     {
         [self logInfo:@"powerOn ignored due to forcedOutOfService"];
+        [_layerHistory addLogEntry:@"powerOn ignored due to forcedOutOfService"];
         return;
     }
     [_aspLock lock];
@@ -1662,71 +1708,16 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         if(self.logLevel <= UMLOG_DEBUG)
         {
             [self logInfo:@"powerOn"];
-        }
-        if(self.active)
-        {
-            [self logMinorError:@" already active"];
-            if(![_reopen_timer2 isRunning])
-            {
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@" starting reopen timer 2 which was not running"];
-                }
-                [_reopen_timer2 start];
-            }
-            if(![_linktest_timer isRunning])
-            {
-                if((_linktest_timer_value > 0) && (_linktest_timer))
-                {
-                    if(self.logLevel <= UMLOG_DEBUG)
-                    {
-                        [self logDebug:@" starting linktest_timer which was not running"];
-                    }
-                    [_linktest_timer start];
-                }
-            }
-            return;
-        }
-        if(self.logLevel <= UMLOG_DEBUG)
-        {
-            if(self.logLevel <= UMLOG_DEBUG)
-            {
-                [self logDebug:@" setting status OOS"];
-                [self logDebug:@" sending ASPUP"];
-            }
-        }
+            [_layerHistory addLogEntry:[NSString stringWithFormat:@"powerOn %@",(reason ? reason : @"")]];
 
-        if(_aspup_received==0)
-        {
-            NSString *infoString = [NSString stringWithFormat: @"ulibmtp3 %s",ULIBMTP3_VERSION];
-            UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
-            pl[@(M3UA_PARAM_INFO_STRING)] = infoString;
-            if(_as.send_aspup)
-            {
-                sleep(1);
-                [self sendASPUP:pl];
-            }
         }
-        self.m3ua_asp_status = M3UA_STATUS_BUSY;
+        [_sctpLink openFor:self sendAbortFirst:YES reason:(reason ? reason : @"m3ua-poweron")];
+        self.m3ua_asp_status = M3UA_STATUS_OOS;
         [_speedometer clear];
         [_submission_speed clear];
         _speed_within_limit = YES;
-
-        sltm_serial = 0;
-        if(self.logLevel <= UMLOG_DEBUG)
-        {
-            [self logDebug:[NSString stringWithFormat:@" starting reopen timer 2 (%lf s)",_reopen_timer2.seconds]];
-        }
-        [_reopen_timer2 start];
-        if((_linktest_timer_value > 0) && (_linktest_timer))
-        {
-            if(self.logLevel <= UMLOG_DEBUG)
-            {
-                [self logDebug:@" starting linktest_timer"];
-            }
-            [_linktest_timer stop];
-            [_linktest_timer start];
-        }
+        [self startReopenTimer1];
+        [self startReopenTimer2];
     }
     @finally
     {
@@ -1740,7 +1731,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 }
 
 - (void)powerOff:(NSString *)reason
-
 {
     _aspup_received = 0;
     [_aspLock lock];
@@ -1751,39 +1741,42 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             [self logDebug:@"powerOff"];
         }
-
-        if(self.active)
+        switch(self.m3ua_asp_status)
         {
-            [self sendASPIA:NULL];
-            self.m3ua_asp_status=M3UA_STATUS_INACTIVE; /* we dont await ASPIA_ACK */
+            case M3UA_STATUS_IS:    /* in service */
+                [self sendASPIA:NULL];
+                self.m3ua_asp_status=M3UA_STATUS_INACTIVE; /* we dont await ASPIA_ACK */
+                /* fallthrough */
+            case M3UA_STATUS_INACTIVE:  /* sctp is up, ASPUP received but not in active state */
+                [self sendASPDN:NULL];
+                self.m3ua_asp_status = M3UA_STATUS_BUSY;
+                /* fallthrough */
+                
+            case M3UA_STATUS_BUSY: /* sctp is up but ASPUP is not received */
+            case M3UA_STATUS_OOS:       /* sctp is down, but connection is requested */
+                [_sctpLink closeFor:self reason:reason];
+                self.m3ua_asp_status = M3UA_STATUS_OFF;
+                /* fallthrough */
+            case M3UA_STATUS_OFF:
+            case M3UA_STATUS_UNUSED:
+                [_speedometer clear];
+                [_submission_speed clear];
+                _speed_within_limit = YES;
+                self.m3ua_asp_status = M3UA_STATUS_OFF;
+                break;
         }
-        if(self.up)
+        usleep(0.1);
+        if(_forcedOutOfService == NO)
         {
-            [self sendASPDN:NULL];
-            self.m3ua_asp_status = M3UA_STATUS_BUSY;
-            [_speedometer clear];
-            [_submission_speed clear];
-            _speed_within_limit = YES;
-            [_reopen_timer1 stop];
-            [_sctpLink closeFor:self reason:reason];
-            self.m3ua_asp_status = M3UA_STATUS_OFF;
-            usleep(0.1);
-            if(_forcedOutOfService == NO)
+            if(_sctpLink.isPassive)
             {
-                if(_sctpLink.isPassive)
-                {
-                    /* we have to restart the listener */
-                    [_sctpLink openFor:self sendAbortFirst:NO reason:@"passive-reopen"];
-                }
-                else
-                {
-                    /* if we are connecting outbound, we let the reopen timer restart the connection*/
-                    [_reopen_timer1 start];
-                }
+                /* we have to restart the listener if its not running */
+                [_sctpLink openFor:self sendAbortFirst:NO reason:@"passive-reopen"];
             }
             else
             {
-                [_reopen_timer1 start];
+                /* if we are connecting outbound, we let the reopen timer restart the connection*/
+                [self startReopenTimer1];
             }
         }
     }
@@ -2530,7 +2523,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
         }
         _aspup_received = 0;
-        [self powerOn];
+        [self start];
     }
 }
 
@@ -2687,7 +2680,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     dict[@"linktest-timer-running"] = _linktest_timer.isRunning ? @"YES" : @"NO";
     dict[@"reopen-timer1-running"] = _reopen_timer1.isRunning ? @"YES" : @"NO";
     dict[@"reopen-timer2-running"] = _reopen_timer2.isRunning ? @"YES" : @"NO";
-    dict[@"sltm-serial"] = @(sltm_serial);
     dict[@"configured-speed"] = @(_speed);
     dict[@"current-speed"] = [_speedometer getSpeedTripleJson];
     dict[@"submission-speed"] = [_submission_speed getSpeedTripleJson];
@@ -2704,6 +2696,74 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     dict[@"outbound-packets"] = [_outboundThroughputPackets getSpeedTripleJson];
     dict[@"last-events"] = [_layerHistory getLogArrayWithDatesAndOrder:YES];
     return dict;
+}
+
+
+- (void)startReopenTimer1
+{
+    if(_reopen_timer1_value > 0)
+    {
+        [_layerHistory addLogEntry:@"start-reopen-timer1"];
+        if(_reopen_timer1==NULL)
+        {
+            _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
+                                                 selector:@selector(reopenTimer1Event:)
+                                                   object:NULL
+                                                  seconds:_reopen_timer1_value
+                                                     name:@"reopen_timer1"
+                                                  repeats:NO
+                                          runInForeground:YES];
+        }
+        [_reopen_timer1 startIfNotRunning];
+    }
+    else
+    {
+        [_layerHistory addLogEntry:@"start-reopen-timer1: timer value is 0"];
+    }
+}
+- (void)stopReopenTimer1
+{
+    [_layerHistory addLogEntry:@"stop-reopen-timer1"];
+    [_reopen_timer1 stop];
+}
+- (void)startReopenTimer2
+{
+    [_layerHistory addLogEntry:@"start-reopen-timer1"];
+    if(_reopen_timer2_value > 0)
+    {
+        if(_reopen_timer2==NULL)
+        {
+            _reopen_timer2 = [[UMTimer alloc]initWithTarget:self
+                                                 selector:@selector(reopenTimer2Event:)
+                                                   object:NULL
+                                                  seconds:_reopen_timer2_value
+                                                     name:@"reopen_timer2"
+                                                  repeats:NO
+                                          runInForeground:YES];
+        }
+        [_reopen_timer2 startIfNotRunning];
+    }
+    else
+    {
+        [_layerHistory addLogEntry:@"start-reopen-timer2: timer value is 0"];
+    }
+
+}
+
+- (void)stopReopenTimer2
+{
+    [_layerHistory addLogEntry:@"stop-reopen-timer2"];
+    [_reopen_timer2 stop];
+}
+
+- (void)reopenTimer1Event:(id)parameter
+{
+    [_layerHistory addLogEntry:@"reopen-timer1-event"];
+}
+
+- (void)reopenTimer2Event:(id)parameter
+{
+    [_layerHistory addLogEntry:@"reopen-timer2-event"];
 }
 
 @end

@@ -251,6 +251,8 @@
     if(_forcedOutOfService==NO)
     {
         [_m2pa powerOnFor:_linkset.mtp3 forced:NO reason:reason];
+        [self startReopenTimer1];
+        [self startReopenTimer2];
     }
 }
 
