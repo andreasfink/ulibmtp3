@@ -1120,11 +1120,21 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self logDebug:@" stop reopen timer2"];
         [self logDebug:@" start linktest timer"];
     }
-    if((_m3ua_asp_status == M3UA_STATUS_INACTIVE) || (_m3ua_asp_status == M3UA_STATUS_IS))
+    if((_m3ua_asp_status == M3UA_STATUS_INACTIVE)
     {
         /* link just came up, why are we getting ASP_AC? */
         [self stopReopenTimer1];
         [self stopReopenTimer2];
+        [_linktest_timer stop];
+        if(_linktest_timer_value > 0)
+        {
+            [_linktest_timer start];
+        }
+        self.m3ua_asp_status =  M3UA_STATUS_IS;
+        [_as aspActive:self reason:@"ASPAC_ACK received"];
+    }
+    else if(_m3ua_asp_status == M3UA_STATUS_IS)
+    {
         [_linktest_timer stop];
         if(_linktest_timer_value > 0)
         {
@@ -1138,7 +1148,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self logDebug:@"received ASPAC-ACK while in wrong state. Powering down to restart"];
         [self powerOff:@"received ASPAC-ACK while in wrong state"];
         [self startReopenTimer1];
-
     }
 }
 
@@ -2529,7 +2538,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 }
 - (void)stopReopenTimer1
 {
-    [_layerHistory addLogEntry:@"stop-reopen-timer1"];
+    [_layerHistory addLogEntry:@"m3ua-stop-reopen-timer1"];
     [_reopen_timer1 stop];
 }
 
