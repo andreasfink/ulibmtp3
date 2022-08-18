@@ -679,35 +679,46 @@ static const char *m3ua_param_name(uint16_t param_type)
     self.m3ua_status = M3UA_STATUS_INACTIVE;
 }
 
-- (void)powerOn
-{
-    [self addToLayerHistoryLog:@"powerOn"];
-    _m3ua_status = M3UA_STATUS_OOS;
-    if(self.logLevel <= UMLOG_DEBUG)
-    {
-        [self logDebug:@"start"];
-    }
-    id keys = [_applicationServerProcesses allKeys];
-    for(id key in keys)
-    {
-        UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
-        [asp start];
-    }
-}
 
 - (void)powerOff
 {
-    [self addToLayerHistoryLog:@"powerOff"];
+    [self powerOff:NULL];
+}
 
+- (void)powerOn
+{
+    [self powerOn:NULL];
+}
+
+- (void)powerOn:(NSString *)reason
+{
+    [self addToLayerHistoryLog:[NSString stringWithFormat:@"powerOn %@",reason ? reason : @""]];
+    _m3ua_status = M3UA_STATUS_OOS;
     if(self.logLevel <= UMLOG_DEBUG)
     {
-        [self logDebug:@"stop"];
+        [self logDebug:@"powerOn"];
     }
     id keys = [_applicationServerProcesses allKeys];
     for(id key in keys)
     {
         UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
-        [asp stop];
+        [asp powerOn:reason];
+    }
+}
+
+- (void)powerOff:(NSString *)reason
+{
+    [self addToLayerHistoryLog:[NSString stringWithFormat:@"powerOff %@",reason ? reason : @""]];
+
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
+        [self logDebug:@"powerOff"];
+    }
+    id keys = [_applicationServerProcesses allKeys];
+    for(id key in keys)
+    {
+        UMM3UAApplicationServerProcess *asp = _applicationServerProcesses[key];
+        [asp powerOff:reason];
     }
 }
 

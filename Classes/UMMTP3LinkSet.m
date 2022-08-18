@@ -4508,6 +4508,11 @@
 
 - (void)powerOn
 {
+    [self powerOn:NULL];
+}
+
+- (void)powerOn:(NSString *)reason
+{
     NSArray *linkKeys = [_linksBySlc allKeys];
     for(NSNumber *key in linkKeys)
     {
@@ -4517,6 +4522,11 @@
 }
 
 - (void)powerOff
+{
+    [self powerOff:NULL];
+}
+
+- (void)powerOff:(NSString *)reason
 {
     NSArray *linkKeys = [_linksBySlc allKeys];
     for(NSNumber *key in linkKeys)

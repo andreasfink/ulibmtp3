@@ -471,7 +471,9 @@ options:(NSDictionary *)options;
 - (BOOL) isFromAdjacentToLocal:(UMMTP3Label *)label;
 
 - (void)powerOn;
+- (void)powerOn:(NSString *)reason;
 - (void)powerOff;
+- (void)powerOff:(NSString *)reason;
 - (void)forcedPowerOn;
 - (void)forcedPowerOff;
 - (void)start:(int)slc;
