@@ -1112,7 +1112,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processASPAC_ACK:(UMSynchronizedSortedDictionary *)params
 {
-    [_layerHistory addLogEntry:processASPAC_ACK];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processASPAC_ACK"];
