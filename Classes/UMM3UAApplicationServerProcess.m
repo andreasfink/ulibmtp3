@@ -1696,6 +1696,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)powerOn:(NSString *)reason
 {
+    [_layerHistory addLogEntry:[NSString stringWithFormat:@"powerOn requessted. %@",(reason ? reason : @"")]];
+
     if(_forcedOutOfService==YES)
     {
         [self logInfo:@"powerOn ignored due to forcedOutOfService"];
@@ -1716,7 +1718,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [_speedometer clear];
         [_submission_speed clear];
         _speed_within_limit = YES;
-        [self startReopenTimer1];
+        [self stopReopenTimer1];
         [self startReopenTimer2];
     }
     @finally
