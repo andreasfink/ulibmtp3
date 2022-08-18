@@ -1746,17 +1746,19 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             case M3UA_STATUS_IS:    /* in service */
                 [self sendASPIA:NULL];
                 self.m3ua_asp_status=M3UA_STATUS_INACTIVE; /* we dont await ASPIA_ACK */
-                /* fallthrough */
+                __attribute__((fallthrough));
+
             case M3UA_STATUS_INACTIVE:  /* sctp is up, ASPUP received but not in active state */
                 [self sendASPDN:NULL];
                 self.m3ua_asp_status = M3UA_STATUS_BUSY;
-                /* fallthrough */
-                
+                __attribute__((fallthrough));
+
             case M3UA_STATUS_BUSY: /* sctp is up but ASPUP is not received */
             case M3UA_STATUS_OOS:       /* sctp is down, but connection is requested */
                 [_sctpLink closeFor:self reason:reason];
                 self.m3ua_asp_status = M3UA_STATUS_OFF;
-                /* fallthrough */
+                __attribute__((fallthrough));
+
             case M3UA_STATUS_OFF:
             case M3UA_STATUS_UNUSED:
                 [_speedometer clear];
@@ -2288,7 +2290,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     {
                         [self logDebug:@"OOS state. Ignoring Timer Event"];
                     }
-                    [_reopen_timer1 stop];
+                    [self stopReopenTimer1];
                     [_linktest_timer stop];
                     break;
                 case M3UA_STATUS_BUSY:
@@ -2296,7 +2298,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     {
                         [self logDebug:@"BUSY state. Ignoring Timer Event"];
                     }
-                    [_reopen_timer1 stop];
+                    [self stopReopenTimer1];
                     [_linktest_timer stop];
                     break;
                 case M3UA_STATUS_INACTIVE:
@@ -2304,8 +2306,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     {
                         [self logDebug:@"INACTIVE state. Ignoring Timer Event"];
                     }
-                    [_reopen_timer1 stop];
-                    [_reopen_timer2 stop];
+                    [self stopReopenTimer1];
+                    [self stopReopenTimer2];
                     [_linktest_timer stop];
                     break;
 
@@ -2314,8 +2316,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     {
                         [self logDebug:@"IS state. Ignoring Timer Event"];
                     }
-                    [_reopen_timer1 stop];
-                    [_reopen_timer2 stop];
+                    [self stopReopenTimer1];
+                    [self stopReopenTimer2];
                     [_linktest_timer stop];
                     break;
                 case M3UA_STATUS_OFF:
@@ -2325,11 +2327,11 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     {
                         [self logDebug:@"OFF state. Asking SCTP to power on the link"];
                     }
-                    [_reopen_timer1 stop];
-                    [_reopen_timer2 stop];
+                    [self stopReopenTimer1];
+                    [self stopReopenTimer2];
                     [_linktest_timer stop];
                     [self start];
-                    [_reopen_timer2 start];
+                    [self startReopenTimer1];
                     break;
             }
         }
@@ -2359,8 +2361,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     {
                         [self logDebug:@"M3UA_STATUS_UNUSED state. Ignoring timer event"];
                     }
-                    [_reopen_timer1 stop];
-                    [_reopen_timer2 stop];
+                    [self stopReopenTimer1];
+                    [self stopReopenTimer2];
                     [_linktest_timer stop];
                     break;
                 case M3UA_STATUS_OFF:
@@ -2375,25 +2377,25 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     }
                     [_sctpLink closeFor:self reason:@"reopen-timer-2 expired"];
                     self.m3ua_asp_status = M3UA_STATUS_OFF;
-                    [_reopen_timer1 stop];
-                    [_reopen_timer2 stop];
-                    [_reopen_timer1 start];
+                    [self stopReopenTimer1];
+                    [self stopReopenTimer2];
+                    [self startReopenTimer1];
                     break;
                 case M3UA_STATUS_INACTIVE:
                     if(self.logLevel <= UMLOG_DEBUG)
                     {
                         [self logDebug:@"Status M3UA_STATUS_INACTIVE. Stopping timers"];
                     }
-                    [_reopen_timer1 stop];
-                    [_reopen_timer2 stop];
+                    [self stopReopenTimer1];
+                    [self stopReopenTimer2];
                     break;
                 case M3UA_STATUS_IS:
                     if(self.logLevel <= UMLOG_DEBUG)
                     {
                         [self logDebug:@"Status M3UA_STATUS_IS. Stopping timers"];
                     }
-                    [_reopen_timer1 stop];
-                    [_reopen_timer2 stop];
+                    [self stopReopenTimer1];
+                    [self stopReopenTimer2];
                     break;
             }
         }
@@ -2726,6 +2728,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [_layerHistory addLogEntry:@"stop-reopen-timer1"];
     [_reopen_timer1 stop];
 }
+
 - (void)startReopenTimer2
 {
     [_layerHistory addLogEntry:@"start-reopen-timer1"];
@@ -2759,11 +2762,39 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)reopenTimer1Event:(id)parameter
 {
     [_layerHistory addLogEntry:@"reopen-timer1-event"];
+    [self powerOn:@"reopen-timer1 expired"];
 }
 
 - (void)reopenTimer2Event:(id)parameter
 {
     [_layerHistory addLogEntry:@"reopen-timer2-event"];
+    
+    switch(self.m3ua_asp_status)
+    {
+        case M3UA_STATUS_IS:    /* in service */
+            [self sendASPIA:NULL];
+            self.m3ua_asp_status=M3UA_STATUS_INACTIVE; /* we dont await ASPIA_ACK */
+            __attribute__((fallthrough));
+
+        case M3UA_STATUS_INACTIVE:  /* sctp is up, ASPUP received but not in active state */
+            [self sendASPDN:NULL];
+            self.m3ua_asp_status = M3UA_STATUS_BUSY;
+            __attribute__((fallthrough));
+
+        case M3UA_STATUS_BUSY: /* sctp is up but ASPUP is not received */
+        case M3UA_STATUS_OOS:       /* sctp is down, but connection is requested */
+            [_sctpLink closeFor:self reason:@"reopen-timer2 expired and not yet in service"];
+            self.m3ua_asp_status = M3UA_STATUS_OFF;
+            __attribute__((fallthrough));
+
+        case M3UA_STATUS_OFF:
+        case M3UA_STATUS_UNUSED:
+            [_speedometer clear];
+            [_submission_speed clear];
+            _speed_within_limit = YES;
+            self.m3ua_asp_status = M3UA_STATUS_OFF;
+            break;
+    }
 }
 
 @end
