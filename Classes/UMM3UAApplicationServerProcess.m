@@ -2153,9 +2153,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         else
         {
             _beatTime = M3UA_DEFAULT_BEAT_TIMER;
-        }
-        NSLog@"Beat time %lf",beatTime);
-        
+        }        
         if(cfg[@"beat-max-outstanding"])
         {
             self.beatMaxOutstanding = [cfg[@"beat-max-outstanding"] intValue];
