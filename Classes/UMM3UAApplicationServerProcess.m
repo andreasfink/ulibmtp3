@@ -2143,6 +2143,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
         _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
         _speed = M3UA_DEFAULT_SPEED;
+        NSLog(@"Config being set %@",cfg);
 
         self.logLevel = UMLOG_MAJOR;
         
@@ -2153,14 +2154,14 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         else
         {
             _beatTime = M3UA_DEFAULT_BEAT_TIMER;
-        }        
+        }
         if(cfg[@"beat-max-outstanding"])
         {
-            self.beatMaxOutstanding = [cfg[@"beat-max-outstanding"] intValue];
+            _beatMaxOutstanding = [cfg[@"beat-max-outstanding"] intValue];
         }
         else
         {
-            self.beatMaxOutstanding = M3UA_DEFAULT_MAX_BEAT_OUTSTANDING;
+            _beatMaxOutstanding = M3UA_DEFAULT_MAX_BEAT_OUTSTANDING;
         }
 
         if(cfg[@"name"])
