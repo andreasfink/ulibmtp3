@@ -70,6 +70,7 @@
     UMTimer                     *_beatTimer;
     NSTimeInterval              _beatTime;
     int                         _beatMaxOutstanding;
+    int                         _unacknowledgedBeats;
     UMTimer                     *_houseKeepingTimer;
     
     UMThroughputCounter *_inboundThroughputPackets;
