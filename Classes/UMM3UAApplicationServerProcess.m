@@ -2707,7 +2707,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     if(_reopen_timer1_value > 0)
     {
-        [_layerHistory addLogEntry:@"start-reopen-timer1"];
+        [_layerHistory addLogEntry:@"start-reopen-timer1%s"];
         if(_reopen_timer1==NULL)
         {
             _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
@@ -2718,7 +2718,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                                                   repeats:NO
                                           runInForeground:YES];
         }
-        [_reopen_timer1 startIfNotRunning];
+        [_reopen_timer1 start];
     }
     else
     {
@@ -2733,7 +2733,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)startReopenTimer2
 {
-    [_layerHistory addLogEntry:@"start-reopen-timer1"];
+    [_layerHistory addLogEntry:@"start-reopen-timer2"];
     if(_reopen_timer2_value > 0)
     {
         if(_reopen_timer2==NULL)
@@ -2746,7 +2746,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                                                   repeats:NO
                                           runInForeground:YES];
         }
-        [_reopen_timer2 startIfNotRunning];
+        [_reopen_timer2 start];
     }
     else
     {
