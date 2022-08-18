@@ -2139,7 +2139,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     @autoreleasepool
     {
-
         _reopen_timer1_value  = M3UA_DEFAULT_REOPEN1_TIMER;
         _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
         _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
@@ -2147,14 +2146,16 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
         self.logLevel = UMLOG_MAJOR;
         
-        if(cfg[@"beat-time"])
+        if(cfg[@"beat-timer"])
         {
-            self.beatTime = [cfg[@"beat-time"] doubleValue];
+            _beatTime = [cfg[@"beat-timer"] doubleValue];
         }
         else
         {
-            self.beatTime = M3UA_DEFAULT_BEAT_TIMER;
+            _beatTime = M3UA_DEFAULT_BEAT_TIMER;
         }
+        NSLog@"Beat time %lf",beatTime);
+        
         if(cfg[@"beat-max-outstanding"])
         {
             self.beatMaxOutstanding = [cfg[@"beat-max-outstanding"] intValue];
@@ -2217,6 +2218,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             _linktest_timer_value = 30.0;
         }
+        
         _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
                                                selector:@selector(reopenTimer1Event:)
                                                  object:NULL
