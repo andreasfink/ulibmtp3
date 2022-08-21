@@ -1120,7 +1120,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self logDebug:@" stop reopen timer2"];
         [self logDebug:@" start linktest timer"];
     }
-    if((_m3ua_asp_status == M3UA_STATUS_INACTIVE)
+    if(_m3ua_asp_status == M3UA_STATUS_INACTIVE)
     {
         /* link just came up, why are we getting ASP_AC? */
         [self stopReopenTimer1];
