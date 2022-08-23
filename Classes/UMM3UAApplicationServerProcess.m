@@ -2344,16 +2344,16 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         if(oldStatus!= M3UA_STATUS_OFF)
         {
             [_lastLinkDown addEvent:@"sctpReportsDown"];
+            [_sctpLink closeFor:self];
             self.m3ua_asp_status = M3UA_STATUS_OFF;
-            if([_reopen_timer1 isRunning]==NO)
-            {
-                [_sctpLink closeFor:self];
-                [_reopen_timer1 stop];
-                [_reopen_timer2 stop];
-                [_reopen_timer1 start];
-            }
-            [_as aspDown:self reason:@"sctpReportsDown"];
         }
+        if([_reopen_timer1 isRunning]==NO)
+        {
+            [self stopReopenTimer1];
+            [self stopReopenTimer2];
+            [self startReopenTimer1];
+        }
+        [_as aspDown:self reason:@"sctpReportsDown"];
     }
 }
 
