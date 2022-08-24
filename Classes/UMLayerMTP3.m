@@ -77,6 +77,11 @@
                                   runInForeground:NO];
 }
 
+-(NSString *)layerType
+{
+    return @"sctp";
+}
+
 #pragma mark -
 #pragma mark LinkSet Handling
 

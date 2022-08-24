@@ -228,6 +228,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 
 @implementation UMM3UAApplicationServerProcess
+- (NSString *)layerType
+{
+    return @"m3ua-as";
+}
 
 - (BOOL)sctp_connecting
 {
