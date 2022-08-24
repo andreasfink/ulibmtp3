@@ -158,6 +158,11 @@ static const char *m3ua_param_name(uint16_t param_type)
     return self;
 }
 
+- (NSArray <NSString *>*)aspNames
+{
+    return [_applicationServerProcesses allKeys];
+}
+ 
 - (NSData *)getParam:(UMSynchronizedSortedDictionary *)p identifier:(uint16_t)param_id
 {
     return p[ @(param_id)];

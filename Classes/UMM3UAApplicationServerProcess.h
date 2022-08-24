@@ -90,6 +90,7 @@
 
 
 @property(readwrite,strong,atomic)  UMM3UAApplicationServer *as;
+@property(readwrite,strong,atomic)  UMLayerSctp *sctpLink;
 @property(readwrite,strong,atomic)  NSString *name;
 @property (readonly) BOOL sctp_connecting;
 @property (readonly) BOOL sctp_up;
@@ -105,6 +106,8 @@
 @property(readwrite,strong,atomic)  NSString *lastError;
 @property(readwrite,assign,atomic)  NSTimeInterval beatTime;
 @property(readwrite,assign,atomic)  int beatMaxOutstanding;
+@property(readwrite,assign,atomic)  double speedLimit;
+
 @property(readwrite,strong,atomic)  UMThroughputCounter *inboundThroughputPackets;
 @property(readwrite,strong,atomic)  UMThroughputCounter *outboundThroughputPackets;
 @property(readwrite,strong,atomic)  UMThroughputCounter *inboundThroughputBytes;

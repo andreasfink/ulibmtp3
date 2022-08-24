@@ -55,6 +55,7 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 
 /* UMSCTP callbacks */
 - (NSString *)layerName;
+- (NSArray <NSString *>*)aspNames;
 
 
 - (void) adminAttachConfirm:(UMLayer *)attachedLayer
