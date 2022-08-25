@@ -1593,13 +1593,25 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                        userId:(id)uid
                        status:(UMSocketStatus)new_status
 {
+    return [self sctpStatusIndication:caller
+                               userId:uid
+                               status:new_status
+                               reason:NULL];
+}
+
+- (void) sctpStatusIndication:(UMLayer *)caller
+                       userId:(id)uid
+                       status:(UMSocketStatus)new_status
+                       reason:(NSString *)reason
+{
     UMSocketStatus	old_status;
     old_status = _sctp_status;
     if(self.logLevel <= UMLOG_DEBUG)
     {
-        NSString *s = [NSString stringWithFormat:@"sctpStatusIndication: %s->%s",
+        NSString *s = [NSString stringWithFormat:@"sctpStatusIndication: %s->%s Reason %@",
                        get_sctp_status_string(old_status),
-                       get_sctp_status_string(new_status) ];
+                       get_sctp_status_string(new_status),
+                       (reason ? reason : @"undefined")];
         [self logDebug:s];
     }
     if(old_status == new_status)
