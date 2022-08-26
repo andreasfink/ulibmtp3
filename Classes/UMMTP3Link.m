@@ -29,10 +29,12 @@
         _sctp_status = UMSOCKET_STATUS_OFF;
         _last_m2pa_status = M2PA_STATUS_OFF;
         _current_m2pa_status = M2PA_STATUS_OFF;
-        _linkTestAckTime = MTP3_LINK_TEST_ACK_TIMER_DEFAULT; 
-        _linkTestTime = MTP3_LINK_TEST_TIMER_DEFAULT; 
-        _reopenTime1 = MTP3_LINK_REOPEN_TIMER1_DEFAULT;
-        _reopenTime2 = MTP3_LINK_REOPEN_TIMER2_DEFAULT;
+        _linkTestAckTime = MTP3_LINK_TEST_ACK_TIMER_DEFAULT;
+        _reopenTime1  = [UMUtil randomFrom:MTP3_LINK_REOPEN_TIMER1_DEFAULT to:MTP3_LINK_REOPEN_TIMER1_DEFAULT+3];;
+        _reopenTime2  = [UMUtil randomFrom:MTP3_LINK_REOPEN_TIMER2_DEFAULT to:MTP3_LINK_REOPEN_TIMER2_DEFAULT+3];
+        _linkTestTime = [UMUtil randomFrom:MTP3_LINK_TEST_TIMER_DEFAULT to:MTP3_LINK_TEST_TIMER_DEFAULT+3];
+
+
         _reopenTimer1 = [[UMTimer alloc]initWithTarget:self
                                              selector:@selector(reopenTimer1Event:)
                                                object:NULL

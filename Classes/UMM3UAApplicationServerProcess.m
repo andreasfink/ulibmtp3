@@ -2177,9 +2177,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     @autoreleasepool
     {
-        _reopen_timer1_value  = M3UA_DEFAULT_REOPEN1_TIMER;
-        _reopen_timer2_value  = M3UA_DEFAULT_REOPEN2_TIMER;
-        _linktest_timer_value = M3UA_DEFAULT_LINKTEST_TIMER;
+        [UMUtil randomFrom:M3UA_DEFAULT_REOPEN1_TIMER to:M3UA_DEFAULT_REOPEN1_TIMER+3];
+        _reopen_timer1_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN1_TIMER to:M3UA_DEFAULT_REOPEN1_TIMER+3];;
+        _reopen_timer2_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN2_TIMER to:M3UA_DEFAULT_REOPEN2_TIMER+3];
+        _linktest_timer_value = [UMUtil randomFrom:M3UA_DEFAULT_LINKTEST_TIMER to:M3UA_DEFAULT_LINKTEST_TIMER+3];
         _speed = M3UA_DEFAULT_SPEED;
         NSLog(@"Config being set %@",cfg);
 
