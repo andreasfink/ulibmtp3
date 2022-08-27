@@ -4939,14 +4939,6 @@
                           reason:reason];
 }
 
-- (BOOL)updateAdjacentPointcodeUnavailable:(UMMTP3PointCode *)pc
-                                      mask:(int)mask
-                               linksetName:(NSString *)name
-                                  priority:(UMMTP3RoutePriority)prio
-                                    reason:(NSString *)reason
-{
-    
-}
 
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
@@ -4977,6 +4969,10 @@
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
                                mask:(int)mask
 {
+    if(mask == -1)
+    {
+        mask = pc.maxmask;
+    }
     if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
     {
         return;
@@ -5010,6 +5006,11 @@
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
                                 mask:(int)mask
 {
+    if(mask == -1)
+    {
+        mask = pc.maxmask;
+    }
+
     if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
     {
         return;
@@ -5043,6 +5044,11 @@
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
                                  mask:(int)mask
 {
+    if(mask == -1)
+    {
+        mask = pc.maxmask;
+    }
+
     if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
     {
         return;
@@ -5244,6 +5250,11 @@
 
 - (BOOL)allowRoutingUpdateForPointcode:(UMMTP3PointCode *)pc mask:(int)mask
 {
+    if(mask == -1)
+    {
+        mask = pc.maxmask;
+    }
+
     if((pc.pc) == (self.adjacentPointCode.pc))
     {
         return YES; /* adjacent pointcodes are always allowed as otherwise things would not work at all */

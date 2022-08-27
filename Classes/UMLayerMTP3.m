@@ -1541,7 +1541,7 @@
             [_lock unlock];
         }
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
-        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:linkset];
+        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
         [self updateUpperLevelPointCode:pc];
         if(_routingUpdateLogFile)
         {
@@ -1570,7 +1570,7 @@
             [_lock unlock];
         }
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
-        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:linkset];
+        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
         [self updateUpperLevelPointCode:pc];
         if(_routingUpdateLogFile)
         {
@@ -1651,7 +1651,7 @@
                                                 mask:mask
                                          linksetName:name
                                             priority:prio];
-        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:linkset];
+        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
         [self updateUpperLevelPointCode:pc];
         if(_routingUpdateLogFile)
         {
@@ -1668,19 +1668,19 @@
     UMMTP3RouteStatus status = [_routingTable statusOfRoute:pc];
     if(status == UMMTP3_ROUTE_PROHIBITED)
     {
-        [self updateOtherLinksetsPointCodeUnavailable:pc mask:mask excludeLinkSetName:name];
+        [self updateOtherLinksetsPointCodeUnavailable:pc excludeLinkSetName:name];
     }
     else if(status == UMMTP3_ROUTE_RESTRICTED)
     {
-        [self updateOtherLinksetsPointCodeRestricted:pc mask:mask excludeLinkSetName:name];
+        [self updateOtherLinksetsPointCodeRestricted:pc excludeLinkSetName:name];
     }
     else if(status == UMMTP3_ROUTE_ALLOWED)
     {
-        [self updateOtherLinksetsPointCodeAvailable:pc mask:mask excludeLinkSetName:name];
+        [self updateOtherLinksetsPointCodeAvailable:pc excludeLinkSetName:name];
     }
     else if(status == UMMTP3_ROUTE_UNKNOWN)
     {
-        [self updateOtherLinksetsPointCodeAvailable:pc mask:mask excludeLinkSetName:name];
+        [self updateOtherLinksetsPointCodeAvailable:pc excludeLinkSetName:name];
     }
 }
 
@@ -1793,7 +1793,6 @@
 
 
 - (void)updateOtherLinksetsPointCodeUnavailable:(UMMTP3PointCode *)pc
-                                           mask:(int)mask
                              excludeLinkSetName:(NSString *)name
 {
     NSArray *linksetNames = [_linksets allKeys];
@@ -1804,7 +1803,7 @@
             continue;
         }
         UMMTP3LinkSet *linkset = _linksets[linksetName];
-        [linkset advertizePointcodeUnavailable:pc mask:mask];
+        [linkset advertizePointcodeUnavailable:pc mask:pc.maxmask];
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];
@@ -1818,7 +1817,6 @@
 }
 
 - (void)updateOtherLinksetsPointCodeRestricted:(UMMTP3PointCode *)pc
-                                          mask:(int)mask
                             excludeLinkSetName:(NSString *)name
 {
     NSArray *linksetNames = [_linksets allKeys];
@@ -1838,12 +1836,11 @@
             fflush(_routingUpdateLogFile);
             [_lock unlock];
         }
-        [linkset advertizePointcodeRestricted:pc mask:mask];
+        [linkset advertizePointcodeRestricted:pc mask:pc.maxmask];
     }
 }
 
 - (void)updateOtherLinksetsPointCodeAvailable:(UMMTP3PointCode *)pc
-                                         mask:(int)mask
                            excludeLinkSetName:(NSString *)name
 {
     NSArray *linksetNames = [_linksets allKeys];
@@ -1863,7 +1860,7 @@
             fflush(_routingUpdateLogFile);
             [_lock unlock];
         }
-        [linkset advertizePointcodeAvailable:pc mask:mask];
+        [linkset advertizePointcodeAvailable:pc mask:pc.maxmask];
     }
 }
 
