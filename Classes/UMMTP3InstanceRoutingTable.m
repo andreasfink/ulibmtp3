@@ -429,7 +429,7 @@
 
 - (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc
 {
-    int debug = 0
+    int debug = 0;
     if(pc.pc==303)
     {
         debug=1;
