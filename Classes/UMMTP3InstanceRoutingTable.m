@@ -189,10 +189,6 @@
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_ALLOWED;
         NSLog(@"NO, adding %@",route);
-        if(r==NULL)
-        {
-            r = [[NSMutableArray alloc]init];
-        }
         [r addObject:route];
         NSLog(@"added route object %@",route);
         NSMutableArray<UMMTP3InstanceRoute *> *r2 = [self getRouteArray:pc mask:mask];

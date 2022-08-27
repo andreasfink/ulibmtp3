@@ -71,9 +71,7 @@
     self = [super init];
     if(self)
     {
-
         _priority = prio;
-        _name = [self description];
         _linksetName = lsName;
         _pointcode = pc;//[pc maskedPointcode:xmask];
         _mask = xmask;
@@ -115,6 +113,7 @@
         _last_test = 0;
         _t15 = [[UMTimer alloc]init];
         _speedometer = [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
+        _name = [NSString stringWithFormat:@"%d/%d:%d:%@",_pointcode.pc,_mask,_priority,_linksetName];
     }
     return self;
 }
