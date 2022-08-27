@@ -227,6 +227,7 @@
     [s appendFormat:@"tstatus: %d\n",(int)_tstatus];
     [s appendFormat:@"priority: %d\n",(int)_priority];
     [s appendFormat:@"static-route: %@\n",@(_staticRoute)];
+    [s appendFormat:@"is-clone: %@\n",@(_isClone)];
     return s;
 }
 
@@ -247,6 +248,7 @@
     r.speedometer = _speedometer;
     r.priority = _priority;
     r.staticRoute = _staticRoute;
+    r.isClone = YES;
     return r;
 }
 

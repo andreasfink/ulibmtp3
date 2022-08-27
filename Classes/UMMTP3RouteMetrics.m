@@ -20,6 +20,7 @@
     {
         _local_preference = 50;
         _weight = 100;
+        NSLog(@"initof Metrics");
     }
     return self;
 }

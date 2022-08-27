@@ -35,6 +35,7 @@
     UMThroughputCounter         *_speedometer;
     UMMTP3RoutePriority         _priority;
     BOOL                        _staticRoute;
+    BOOL                        _isClone;
 }
 
 @property(readwrite,strong) NSString        *name;
@@ -56,6 +57,7 @@
 @property(readwrite,strong) UMMTP3RouteMetrics *metrics;
 @property(readwrite,assign) UMMTP3RoutePriority priority;
 @property(readwrite,assign) BOOL staticRoute;
+@property(readwrite,assign) BOOL isClone;
 
 - (NSComparisonResult)routingPreference:(UMMTP3InstanceRoute *)other;
 
