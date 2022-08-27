@@ -159,11 +159,12 @@
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     if(r==NULL)
     {
-        NSLog(@"[self getRouteArray:pc mask:mask] returns NULL");
+        NSLog(@"updateDynamicRouteAvailable: [self getRouteArray:%@ mask:%d] returns NULL",pc,mask);
+        r = [[NSMutableArray alloc]init];
     }
     else
     {
-        NSLog(@"[self getRouteArray:pc mask:mask] returns %@",r);
+        NSLog(@"updateDynamicRouteAvailable: [self getRouteArray:%@ mask:%d] returns %@",pc,mask,r);
     }
     BOOL found=NO;
     for(UMMTP3InstanceRoute *route in r)
@@ -209,7 +210,15 @@
     BOOL changed=YES;
     [_lock lock];
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
-
+    if(r==NULL)
+    {
+        NSLog(@"updateDynamicRouteRestricted: [self getRouteArray:%@ mask:%d] returns NULL",pc,mask);
+        r = [[NSMutableArray alloc]init];
+    }
+    else
+    {
+        NSLog(@"updateDynamicRouteRestricted: [self getRouteArray:%@ mask:%d] returns %@",pc,mask,r);
+    }
     NSInteger n = r.count;
     BOOL found=NO;
     for(NSInteger i=0;i<n;i++)
@@ -265,6 +274,15 @@
     BOOL changed = YES;
     [_lock lock];
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
+    if(r==NULL)
+    {
+        NSLog(@"updateDynamicRouteUnavailable: [self getRouteArray:%@ mask:%d] returns NULL",pc,mask);
+        r = [[NSMutableArray alloc]init];
+    }
+    else
+    {
+        NSLog(@"updateDynamicRouteUnavailable: [self getRouteArray:%@ mask:%d] returns %@",pc,mask,r);
+    }
 
     NSInteger n = r.count;
     BOOL found=NO;
