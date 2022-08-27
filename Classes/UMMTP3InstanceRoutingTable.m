@@ -144,26 +144,33 @@
     [_lock lock];
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
 
+    NSLog(@"[self getRouteArray:pc mask:mask] returns %@",r);
+
     BOOL found=NO;
     for(UMMTP3InstanceRoute *route in r)
     {
+        NSLog(@"comparing %@-%d with %@-%d",route.linksetName,route.priority,linkset,prio);
+
         if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
         {
             route.status = UMMTP3_ROUTE_ALLOWED;
             found = YES;
+            NSLog(@"YES: %@",route);
         }
     }
     if(found==NO)
     {
-        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc]init];
-        route.linksetName = linkset;
-        route.pointcode = pc;
-        route.mask = pc.maxmask;
+
+        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
+                                                                 linksetName:linkset
+                                                                    priority:prio
+                                                                        mask:pc.maxmask];
         route.priority = prio;
         route.staticRoute = NO;
-        route.status = UMMTP3_ROUTE_ALLOWED;
+        route.status = UMMTP3_ROUTE_ALLOWED;        
+        NSLog(@"NO, adding %@",route);
         [r addObject:route];
-        NSLog(@"added route object %@",r);
+        NSLog(@"added route object %@",route);
         NSMutableArray<UMMTP3InstanceRoute *> *r2 = [self getRouteArray:pc mask:mask];
         NSLog(@"its now %@",r2);
     }

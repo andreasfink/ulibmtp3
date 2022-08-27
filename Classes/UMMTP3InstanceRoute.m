@@ -64,9 +64,9 @@
 }
 
 - (UMMTP3InstanceRoute *)initWithPc:(UMMTP3PointCode *)pc
-                linksetName:(NSString *)lsName
-                   priority:(UMMTP3RoutePriority)prio
-                       mask:(int)xmask
+                        linksetName:(NSString *)lsName
+                           priority:(UMMTP3RoutePriority)prio
+                               mask:(int)xmask
 {
     self = [super init];
     if(self)
