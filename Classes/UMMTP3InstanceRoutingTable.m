@@ -45,6 +45,20 @@
     return r;
 }
 
+- (void)setRouteArray:(NSMutableArray<UMMTP3InstanceRoute *> *) arr forPointcode:(UMMTP3PointCode *)pc mask:(int) mask
+{
+    NSMutableArray<UMMTP3InstanceRoute *> *r = NULL;
+    if((mask == pc.maxmask) || (mask == -1)) /* single pointcode */
+    {
+        _routesByPointCode[@(pc.pc)] = arr;
+    }
+    else
+    {
+        [_logFeed minorErrorText:[NSString stringWithFormat:@"Can not handle routes with masks yet pc=%@ mask=%d",pc,mask]];
+        r = NULL;
+    }
+}
+
 - (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)pc
                                             mask:(int)mask
                               excludeLinkSetName:(NSString *)linksetName
@@ -143,9 +157,14 @@
 {
     [_lock lock];
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
-
-    NSLog(@"[self getRouteArray:pc mask:mask] returns %@",r);
-
+    if(r==NULL)
+    {
+        NSLog(@"[self getRouteArray:pc mask:mask] returns NULL");
+    }
+    else
+    {
+        NSLog(@"[self getRouteArray:pc mask:mask] returns %@",r);
+    }
     BOOL found=NO;
     for(UMMTP3InstanceRoute *route in r)
     {
@@ -169,6 +188,10 @@
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_ALLOWED;
         NSLog(@"NO, adding %@",route);
+        if(r==NULL)
+        {
+            r = [[NSMutableArray alloc]init];
+        }
         [r addObject:route];
         NSLog(@"added route object %@",route);
         NSMutableArray<UMMTP3InstanceRoute *> *r2 = [self getRouteArray:pc mask:mask];
