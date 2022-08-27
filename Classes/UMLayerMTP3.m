@@ -1647,15 +1647,18 @@
             fflush(_routingUpdateLogFile);
             [_lock unlock];
         }
-        [_routingTable updateDynamicRouteUnavailable:pc
-                                                mask:mask
-                                         linksetName:name
-                                            priority:prio];
-        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
-        [self updateUpperLevelPointCode:pc];
-        if(_routingUpdateLogFile)
+        BOOL changed = [_routingTable updateDynamicRouteUnavailable:pc
+                                                               mask:mask
+                                                        linksetName:name
+                                                           priority:prio];
+        if(changed)
         {
-            [self writeRouteStatusToLog:pc];
+            [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
+            [self updateUpperLevelPointCode:pc];
+            if(_routingUpdateLogFile)
+            {
+                [self writeRouteStatusToLog:pc];
+            }
         }
         return YES;
     }

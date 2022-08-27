@@ -169,8 +169,6 @@
     BOOL found=NO;
     for(UMMTP3InstanceRoute *route in r)
     {
-        NSLog(@"comparing %@-%d with %@-%d",route.linksetName,route.priority,linkset,prio);
-
         if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
         {
             route.status = UMMTP3_ROUTE_ALLOWED;
@@ -188,11 +186,7 @@
         route.priority = prio;
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_ALLOWED;
-        NSLog(@"NO, adding %@",route);
         [r addObject:route];
-        NSLog(@"added route object %@",route);
-        NSMutableArray<UMMTP3InstanceRoute *> *r2 = [self getRouteArray:pc mask:mask];
-        NSLog(@"its now %@",r2);
     }
     [_lock unlock];
     return found;
@@ -478,55 +472,37 @@
 
 - (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc
 {
-    int debug = 0;
-    if(pc.pc==303)
-    {
-        debug=1;
-    }
-    NSArray<UMMTP3InstanceRoute *> *routes = [self findRoutesForDestination:pc
-                                                                      mask:pc.maxmask
-                                                            onlyLinksetName:NULL];
-    if(debug)
-    {
-        NSLog(@"routes: %@",routes);
-        NSLog(@"routes.count: %d",routes.count);
-    }
-    if(routes.count == 0)
+    UMMTP3RouteStatus status = UMMTP3_ROUTE_UNKNOWN;
+    [_lock lock];
+    NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:pc.maxmask];
+    if((r==NULL) || (r.count == 0))
     {
         return UMMTP3_ROUTE_UNKNOWN;
     }
-    
-    UMMTP3RouteStatus status = UMMTP3_ROUTE_UNKNOWN;
-    
-    for(UMMTP3InstanceRoute *route in routes)
+    for(UMMTP3InstanceRoute *route in r)
     {
         switch(route.status)
         {
             case UMMTP3_ROUTE_ALLOWED:
-            {
-                status =UMMTP3_ROUTE_ALLOWED;
+                status = UMMTP3_ROUTE_ALLOWED;
                 break;
-            }
             case UMMTP3_ROUTE_RESTRICTED:
-            {
-                if((status == UMMTP3_ROUTE_UNKNOWN) || (status==UMMTP3_ROUTE_PROHIBITED) || (status == UMMTP3_ROUTE_UNUSED))
+                if((status == UMMTP3_ROUTE_UNKNOWN) || ( status==UMMTP3_ROUTE_PROHIBITED))
                 {
                     status = UMMTP3_ROUTE_RESTRICTED;
                 }
                 break;
-            }
-            case UMMTP3_ROUTE_UNKNOWN:
-            case UMMTP3_ROUTE_UNUSED:
             case UMMTP3_ROUTE_PROHIBITED:
-            {
-                if((status == UMMTP3_ROUTE_UNKNOWN) || (status == UMMTP3_ROUTE_UNUSED))
+                if(status == UMMTP3_ROUTE_UNKNOWN)
                 {
                     status = UMMTP3_ROUTE_PROHIBITED;
                 }
                 break;
-            }
+            default:
+                break;
         }
     }
+    [_lock unlock];
     return status;
 }
 
