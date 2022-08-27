@@ -164,6 +164,8 @@
         route.status = UMMTP3_ROUTE_ALLOWED;
         [r addObject:route];
         NSLog(@"added route object %@",r);
+        NSMutableArray<UMMTP3InstanceRoute *> *r2 = [self getRouteArray:pc mask:mask];
+        NSLog(@"its now %@",r2);
     }
     [_lock unlock];
     return found;
