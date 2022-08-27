@@ -37,12 +37,11 @@
     BOOL                        _staticRoute;
 }
 
-@property(readwrite,strong) NSString *name;
-@property(readwrite,strong) UMMTP3PointCode *pointcode;
-@property(readwrite,assign,atomic) int mask;
+@property(readwrite,strong) NSString        *name;
 @property(readwrite,strong,atomic) NSString *linksetName;
-
-@property(readwrite,strong) UMQueueSingle *deliveryQueue;
+@property(readwrite,strong) UMMTP3PointCode *pointcode;
+@property(readwrite,assign,atomic) int      mask;
+@property(readwrite,strong) UMQueueSingle   *deliveryQueue;
 @property(readwrite,assign,atomic) UMMTP3RouteStatus           status;
 @property(readwrite,assign) UMMTP3RouteTestStatus       tstatus;
 @property(readwrite,assign) UMMTP3RouteCongestionLevel  congestion;

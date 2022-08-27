@@ -54,6 +54,18 @@
     return r;
 }
 
+- (NSString *)description
+{
+    NSMutableString *s = [[NSMutableString alloc]init];
+    [s appendString:[super description]];
+    [s appendFormat:@"\n\tweight: %d",_weight];
+    [s appendFormat:@"\nlocal-preference: %d",_local_preference];
+    [s appendFormat:@"\naggregate: %d",_aggregate];
+    [s appendFormat:@"\nas-path-legnth: %d",_as_path_legnth];
+    [s appendFormat:@"\norigin-type: %d",_origin_type];
+    [s appendFormat:@"\n_multi_exit_discrimators: %d",_multi_exit_discrimators];
+    return s;
+}
 
 
 @end

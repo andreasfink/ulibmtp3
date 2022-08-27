@@ -229,4 +229,25 @@
     [s appendFormat:@"static-route: %@\n",@(_staticRoute)];
     return s;
 }
+
+
+- (UMMTP3InstanceRoute *)copyWithZone:(NSZone *)zone
+{
+    UMMTP3InstanceRoute *r = [[UMMTP3InstanceRoute allocWithZone:zone]init];
+    r.name = _name;
+    r.linksetName = _linksetName;
+    r.pointcode = _pointcode;
+    r.mask = _mask;
+    r.metrics = [_metrics copy];
+    r.deliveryQueue = _deliveryQueue;
+    r.status = _status;
+    r.tstatus = _tstatus;
+    r.last_test = _last_test;
+    r.congestion = _congestion;
+    r.speedometer = _speedometer;
+    r.priority = _priority;
+    r.staticRoute = _staticRoute;
+    return r;
+}
+
 @end
