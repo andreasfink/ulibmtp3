@@ -163,7 +163,7 @@
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_ALLOWED;
         [r addObject:route];
-        NSLog(@"added route object %@",r.objectValue.jsonString);
+        NSLog(@"added route object %@",r);
     }
     [_lock unlock];
     return found;

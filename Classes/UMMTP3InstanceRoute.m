@@ -197,4 +197,36 @@
     return [_pointcode maskedPointcodeString:_mask];
 }
 
+- (NSString *)description
+{
+    NSMutableString *s = [[NSMutableString alloc]init];
+    [s appendFormat:@"%@\n",[super description]];
+    [s appendFormat:@"name: %@\n",_name];
+    [s appendFormat:@"linkset: %@\n",_linksetName];
+    [s appendFormat:@"pointcode: %@\n",_pointcode];
+    [s appendFormat:@"mask: %d\n",_mask];
+    [s appendFormat:@"metrics: %@\n",_metrics];
+    switch(_status)
+    {
+        case UMMTP3_ROUTE_UNUSED:
+            [s appendString:@"status: UMMTP3_ROUTE_UNUSED\n"];
+            break;
+        case UMMTP3_ROUTE_UNKNOWN:
+            [s appendString:@"status: UMMTP3_ROUTE_UNKNOWN\n"];
+            break;
+        case UMMTP3_ROUTE_PROHIBITED:
+            [s appendString:@"status: UMMTP3_ROUTE_PROHIBITED\n"];
+            break;
+        case UMMTP3_ROUTE_RESTRICTED:
+            [s appendString:@"status: UMMTP3_ROUTE_RESTRICTED\n"];
+            break;
+        case UMMTP3_ROUTE_ALLOWED:
+            [s appendString:@"status: UMMTP3_ROUTE_ALLOWED\n"];
+            break;
+    }
+    [s appendFormat:@"tstatus: %d\n",(int)_tstatus];
+    [s appendFormat:@"priority: %d\n",(int)_priority];
+    [s appendFormat:@"static-route: %@\n",@(_staticRoute)];
+    return s;
+}
 @end
