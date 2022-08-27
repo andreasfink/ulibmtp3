@@ -75,7 +75,7 @@
         _priority = prio;
         _name = [self description];
         _linksetName = lsName;
-        _pointcode = [pc maskedPointcode:xmask];
+        _pointcode = pc;//[pc maskedPointcode:xmask];
         _mask = xmask;
         _metrics = [[UMMTP3RouteMetrics alloc]init];
         switch(prio)
