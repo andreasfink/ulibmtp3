@@ -167,7 +167,7 @@
                                                                         mask:pc.maxmask];
         route.priority = prio;
         route.staticRoute = NO;
-        route.status = UMMTP3_ROUTE_ALLOWED;        
+        route.status = UMMTP3_ROUTE_ALLOWED;
         NSLog(@"NO, adding %@",route);
         [r addObject:route];
         NSLog(@"added route object %@",route);
@@ -204,11 +204,10 @@
     }
     if(found==NO)
     {
-        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc]init];
-        route.linksetName = linkset;
-        route.pointcode = pc;
-        route.mask = mask;
-        route.priority = prio;
+        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
+                                                                 linksetName:linkset
+                                                                    priority:prio
+                                                                        mask:pc.maxmask];
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_RESTRICTED;
         [r addObject:route];
@@ -261,11 +260,10 @@
     }
     if(found==NO)
     {
-        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc]init];
-        route.linksetName = linkset;
-        route.pointcode = pc;
-        route.mask = mask;
-        route.priority = prio;
+        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
+                                                                 linksetName:linkset
+                                                                    priority:prio
+                                                                        mask:pc.maxmask];
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_PROHIBITED;
         changed = YES;
@@ -285,7 +283,10 @@
     [_lock lock];
     if((pc.pc == 0) && (mask == 0))
     {
-        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc]init];
+        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
+                                                                 linksetName:linkset
+                                                                    priority:prio
+                                                                        mask:pc.maxmask];
         route.linksetName = linkset;
         route.pointcode = 0;
         route.mask = 0;
@@ -312,7 +313,10 @@
         }
         if(found==NO)
         {
-            UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc]init];
+            UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
+                                                                     linksetName:linkset
+                                                                        priority:prio
+                                                                            mask:pc.maxmask];
             route.linksetName = linkset;
             route.pointcode = pc;
             route.mask = mask;
