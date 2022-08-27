@@ -1541,14 +1541,8 @@
             [_lock unlock];
         }
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
-        if(prio == UMMTP3RoutePriority_1) /* adjacent. we should not exclude it */
-        {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
-        }
-        else
-        {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
-        }
+        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:linkset];
+        [self updateUpperLevelPointCode:pc];
         if(_routingUpdateLogFile)
         {
             [self writeRouteStatusToLog:pc];
@@ -1576,14 +1570,8 @@
             [_lock unlock];
         }
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
-        if(prio == UMMTP3RoutePriority_1) /* adjacent. we should not exclude it */
-        {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
-        }
-        else
-        {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
-        }
+        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:linkset];
+        [self updateUpperLevelPointCode:pc];
         if(_routingUpdateLogFile)
         {
             [self writeRouteStatusToLog:pc];
@@ -1663,14 +1651,8 @@
                                                 mask:mask
                                          linksetName:name
                                             priority:prio];
-        if(prio == UMMTP3RoutePriority_1) /* adjacent. we should not exclude it */
-        {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
-        }
-        else
-        {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
-        }
+        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:linkset];
+        [self updateUpperLevelPointCode:pc];
         if(_routingUpdateLogFile)
         {
             [self writeRouteStatusToLog:pc];
@@ -1679,31 +1661,48 @@
     }
 }
 
-- (void)updateUpperLevelPointCode:(UMMTP3PointCode *)pc
-                             mask:(int)mask
-               excludeLinkSetName:(NSString *)name
+- (void)updateOtherLinksetsForPointCode:(UMMTP3PointCode *)pc
+                     excludeLinkSetName:(NSString *)name
 {
     
     UMMTP3RouteStatus status = [_routingTable statusOfRoute:pc];
     if(status == UMMTP3_ROUTE_PROHIBITED)
     {
         [self updateOtherLinksetsPointCodeUnavailable:pc mask:mask excludeLinkSetName:name];
-        [self updateUpperLevelPointCodeUnavailable:pc];
     }
     else if(status == UMMTP3_ROUTE_RESTRICTED)
     {
         [self updateOtherLinksetsPointCodeRestricted:pc mask:mask excludeLinkSetName:name];
+    }
+    else if(status == UMMTP3_ROUTE_ALLOWED)
+    {
+        [self updateOtherLinksetsPointCodeAvailable:pc mask:mask excludeLinkSetName:name];
+    }
+    else if(status == UMMTP3_ROUTE_UNKNOWN)
+    {
+        [self updateOtherLinksetsPointCodeAvailable:pc mask:mask excludeLinkSetName:name];
+    }
+}
+
+- (void)updateUpperLevelPointCode:(UMMTP3PointCode *)pc
+{
+    
+    UMMTP3RouteStatus status = [_routingTable statusOfRoute:pc];
+    if(status == UMMTP3_ROUTE_PROHIBITED)
+    {
+        [self updateUpperLevelPointCodeUnavailable:pc];
+    }
+    else if(status == UMMTP3_ROUTE_RESTRICTED)
+    {
         [self updateUpperLevelPointCodeRestricted:pc];
 
     }
     else if(status == UMMTP3_ROUTE_ALLOWED)
     {
-        [self updateOtherLinksetsPointCodeAvailable:pc mask:mask excludeLinkSetName:name];
         [self updateUpperLevelPointCodeAvailable:pc];
     }
     else if(status == UMMTP3_ROUTE_UNKNOWN)
     {
-        [self updateOtherLinksetsPointCodeAvailable:pc mask:mask excludeLinkSetName:name];
         [self updateUpperLevelPointCodeAvailable:pc];
     }
 }
