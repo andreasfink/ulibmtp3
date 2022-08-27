@@ -1723,6 +1723,7 @@
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
         [_lock unlock];
+        NSLog(@"%s",s);
     }
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
@@ -1748,6 +1749,7 @@
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
         [_lock unlock];
+        NSLog(@"%s",s);
     }
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
@@ -1774,6 +1776,7 @@
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
         [_lock unlock];
+        NSLog(@"%s",s);
     }
 
     NSArray *userKeys = [_userPart allKeys];
