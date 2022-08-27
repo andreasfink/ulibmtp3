@@ -119,7 +119,7 @@
                                             onlyLinksetName:(NSString *)linksetName
 {
     [_lock lock];
-    NSMutableArray<UMMTP3InstanceRoute *> *r = [[self getRouteArray:pc mask:mask] mutableCopy];
+    NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     if(linksetName.length > 0)
     {
         NSInteger n = r.count;
@@ -490,7 +490,6 @@
     {
         NSLog(@"routes: %@",routes);
         NSLog(@"routes.count: %d",routes.count);
-
     }
     if(routes.count == 0)
     {
