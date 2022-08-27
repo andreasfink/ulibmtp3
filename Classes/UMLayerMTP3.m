@@ -1543,11 +1543,11 @@
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
         if(prio == UMMTP3RoutePriority_1) /* adjacent. we should not exclude it */
         {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
+            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
         }
         else
         {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
+            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
         }
         if(_routingUpdateLogFile)
         {
@@ -1578,11 +1578,11 @@
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
         if(prio == UMMTP3RoutePriority_1) /* adjacent. we should not exclude it */
         {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
+            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
         }
         else
         {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
+            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
         }
         if(_routingUpdateLogFile)
         {
@@ -1665,11 +1665,11 @@
                                             priority:prio];
         if(prio == UMMTP3RoutePriority_1) /* adjacent. we should not exclude it */
         {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
+            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
         }
         else
         {
-            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
+            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
         }
         if(_routingUpdateLogFile)
         {
