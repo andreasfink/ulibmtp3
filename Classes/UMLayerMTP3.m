@@ -1723,8 +1723,9 @@
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
         [_lock unlock];
-        NSLog(@"%s",s);
     }
+    NSLog@("%@ MTP-USER UNAVAILABLE PC %@", now.stringValue,pc.stringValue]);
+
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
     {
@@ -1749,8 +1750,9 @@
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
         [_lock unlock];
-        NSLog(@"%s",s);
     }
+    NSLog@("%@ MTP-USER RESTRICTED PC %@", now.stringValue,pc.stringValue]);
+
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
     {
@@ -1776,8 +1778,8 @@
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
         [_lock unlock];
-        NSLog(@"%s",s);
     }
+    NSLog@("%@ MTP-USER AVAIL PC %@", now.stringValue,pc.stringValue]);
 
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
