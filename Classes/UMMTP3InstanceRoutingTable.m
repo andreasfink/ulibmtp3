@@ -159,12 +159,7 @@
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     if(r==NULL)
     {
-        NSLog(@"updateDynamicRouteAvailable: [self getRouteArray:%@ mask:%d] returns NULL",pc,mask);
         r = [[NSMutableArray alloc]init];
-    }
-    else
-    {
-        NSLog(@"updateDynamicRouteAvailable: [self getRouteArray:%@ mask:%d] returns %@",pc,mask,r);
     }
     BOOL found=NO;
     for(UMMTP3InstanceRoute *route in r)
@@ -173,7 +168,6 @@
         {
             route.status = UMMTP3_ROUTE_ALLOWED;
             found = YES;
-            NSLog(@"YES: %@",route);
         }
     }
     if(found==NO)
@@ -202,18 +196,11 @@
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     if(r==NULL)
     {
-        NSLog(@"updateDynamicRouteRestricted: [self getRouteArray:%@ mask:%d] returns NULL",pc,mask);
         r = [[NSMutableArray alloc]init];
     }
-    else
-    {
-        NSLog(@"updateDynamicRouteRestricted: [self getRouteArray:%@ mask:%d] returns %@",pc,mask,r);
-    }
-    NSInteger n = r.count;
     BOOL found=NO;
-    for(NSInteger i=0;i<n;i++)
+    for(UMMTP3InstanceRoute *route  in r)
     {
-        UMMTP3InstanceRoute *route = r[i];
         if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
         {
             if(route.status == UMMTP3_ROUTE_RESTRICTED)
@@ -266,19 +253,11 @@
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     if(r==NULL)
     {
-        NSLog(@"updateDynamicRouteUnavailable: [self getRouteArray:%@ mask:%d] returns NULL",pc,mask);
         r = [[NSMutableArray alloc]init];
     }
-    else
-    {
-        NSLog(@"updateDynamicRouteUnavailable: [self getRouteArray:%@ mask:%d] returns %@",pc,mask,r);
-    }
-
-    NSInteger n = r.count;
     BOOL found=NO;
-    for(NSInteger i=0;i<n;i++)
+    for(UMMTP3InstanceRoute *route in r)
     {
-        UMMTP3InstanceRoute *route = r[i];
         if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
         {
             if(route.status != UMMTP3_ROUTE_PROHIBITED)
