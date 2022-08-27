@@ -144,11 +144,9 @@
     [_lock lock];
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
 
-    NSInteger n = r.count;
     BOOL found=NO;
-    for(NSInteger i=0;i<n;i++)
+    for(UMMTP3InstanceRoute *route in r)
     {
-        UMMTP3InstanceRoute *route = r[i];
         if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
         {
             route.status = UMMTP3_ROUTE_ALLOWED;
@@ -160,11 +158,12 @@
         UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc]init];
         route.linksetName = linkset;
         route.pointcode = pc;
-        route.mask = mask;
+        route.mask = pc.maxmask;
         route.priority = prio;
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_ALLOWED;
         [r addObject:route];
+        NSLog(@"added route object %@",r.objectValue.jsonString);
     }
     [_lock unlock];
     return found;
@@ -435,11 +434,13 @@
         debug=1;
     }
     NSArray<UMMTP3InstanceRoute *> *routes = [self findRoutesForDestination:pc
-                                                                      mask:14
+                                                                      mask:pc.maxmask
                                                             onlyLinksetName:NULL];
     if(debug)
     {
         NSLog(@"routes: %@",routes);
+        NSLog(@"routes.count: %d",routes.count);
+
     }
     if(routes.count == 0)
     {
