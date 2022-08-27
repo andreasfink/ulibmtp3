@@ -429,9 +429,18 @@
 
 - (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc
 {
+    int debug = 0
+    if(pc.pc==303)
+    {
+        debug=1;
+    }
     NSArray<UMMTP3InstanceRoute *> *routes = [self findRoutesForDestination:pc
                                                                       mask:14
                                                             onlyLinksetName:NULL];
+    if(debug)
+    {
+        NSLog(@"routes: %@",routes);
+    }
     if(routes.count == 0)
     {
         return UMMTP3_ROUTE_UNKNOWN;

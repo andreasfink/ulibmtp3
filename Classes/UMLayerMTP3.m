@@ -1686,7 +1686,6 @@
 
 - (void)updateUpperLevelPointCode:(UMMTP3PointCode *)pc
 {
-    
     UMMTP3RouteStatus status = [_routingTable statusOfRoute:pc];
     if(status == UMMTP3_ROUTE_PROHIBITED)
     {
