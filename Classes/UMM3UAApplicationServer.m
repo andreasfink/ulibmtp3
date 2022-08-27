@@ -375,15 +375,28 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)aspDown:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
-    upCount--;
-    [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-down %@",reason]];
-    [self updateLinkSetStatus];
-    [asp.lastDowns addEvent:reason];
-    [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-DOWN %@",asp.layerName,reason]];
-    [self updateRouteUnavailable:_adjacentPointCode
-                            mask:_adjacentPointCode.maxmask
-                        priority:UMMTP3RoutePriority_1
-                          reason:reason];
+    @autoreleasepool
+    {
+        upCount--;
+        [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-down %@",reason]];
+        [self updateLinkSetStatus];
+        [asp.lastDowns addEvent:reason];
+        [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-DOWN %@",asp.layerName,reason]];
+        if(_m3ua_status != M3UA_STATUS_IS)
+        {
+            [self updateRouteUnavailable:_adjacentPointCode
+                                    mask:_adjacentPointCode.maxmask
+                                priority:UMMTP3RoutePriority_1
+                                  reason:@"last-asp-down"];
+        }
+        else
+        {
+            [self updateRouteAvailable:_adjacentPointCode
+                                    mask:_adjacentPointCode.maxmask
+                                priority:UMMTP3RoutePriority_1
+                                  reason:@"one asp-down-but-still one up"];
+        }
+    }
 }
 
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason

@@ -1626,6 +1626,7 @@
     [_lock unlock];
 }
 
+
 - (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
                    linksetName:(NSString *)name
@@ -1648,7 +1649,14 @@
                                                 mask:mask
                                          linksetName:name
                                             priority:prio];
-        [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
+        if(prio = UMMTP3RoutePriority_1) /* adjacent. we should not exclude it */
+        {
+            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:name];
+        }
+        else
+        {
+            [self updateUpperLevelPointCode:pc mask:mask excludeLinkSetName:NULL];
+        }
         if(_routingUpdateLogFile)
         {
             [self writeRouteStatusToLog:pc];

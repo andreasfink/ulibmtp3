@@ -4939,6 +4939,15 @@
                           reason:reason];
 }
 
+- (BOOL)updateAdjacentPointcodeUnavailable:(UMMTP3PointCode *)pc
+                                      mask:(int)mask
+                               linksetName:(NSString *)name
+                                  priority:(UMMTP3RoutePriority)prio
+                                    reason:(NSString *)reason
+{
+    
+}
+
 - (void)updateRouteUnavailable:(UMMTP3PointCode *)pc
                           mask:(int)mask
                       priority:(UMMTP3RoutePriority)prio
