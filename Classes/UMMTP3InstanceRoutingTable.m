@@ -81,7 +81,6 @@
     return a[a.count-1];
 }
 
-
 - (NSArray<UMMTP3InstanceRoute *> *)findRoutesForDestination:(UMMTP3PointCode *)pc
                                                         mask:(int)mask
                                           excludeLinkSetName:(NSString *)linksetName
@@ -119,30 +118,34 @@
                                             onlyLinksetName:(NSString *)linksetName
 {
     [_lock lock];
+    NSMutableArray *validRoutes = [[NSMutableArray alloc]init];
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
-    if(linksetName.length > 0)
+    for(UMMTP3InstanceRoute *route in r)
     {
-        NSInteger n = r.count;
-        for(NSInteger i=0;i<n;i++)
+        if(linksetName.length > 0)
         {
-            UMMTP3InstanceRoute *route = r[i];
-            if(![route.linksetName isEqualToString:linksetName])
+            if([linksetName isEqualToString:route.linksetName])
             {
-                [r removeObjectAtIndex:i--];
-                n--;
+                [validRoutes addObject:r];
             }
         }
-    }
-    else
-    {
-        r = [[NSMutableArray alloc]init];
+        else
+        {
+            [validRoutes addObject:r];
+        }
     }
     if(r.count == 0)
     {
-        if([_defaultRoute.linksetName isEqualToString:linksetName])
+        if(linksetName.length > 0)
         {
-            r = [[NSMutableArray alloc]init];
-            [r addObject:_defaultRoute];
+            if([linksetName isEqualToString:_defaultRoute.linksetName])
+            {
+                [validRoutes addObject:_defaultRoute];
+            }
+        }
+        else
+        {
+            [validRoutes addObject:_defaultRoute];
         }
     }
     [_lock unlock];
@@ -490,10 +493,6 @@
     NSArray<UMMTP3InstanceRoute *> *routes = [self findRoutesForDestination:pc
                                                                       mask:mask
                                                            onlyLinksetName:ls];
-    if(routes.count == 0)
-    {
-        return YES;
-    }
     for(UMMTP3InstanceRoute *route in routes)
     {
         if(route.status == UMMTP3_ROUTE_ALLOWED)
