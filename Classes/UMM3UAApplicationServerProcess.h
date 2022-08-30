@@ -125,6 +125,8 @@
 @property (readonly)                BOOL congested;
 @property (readonly)                UMThroughputCounter  *speedometer;
 @property (readonly)                BOOL                 standby_mode;
+@property (readonly)                UMMutex *aspLock;
+@property (readonly)                UMMutex *incomingStreamLock;
 
 - (void)start;
 - (void)stop;
