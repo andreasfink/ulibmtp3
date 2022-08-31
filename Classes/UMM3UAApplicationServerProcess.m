@@ -1720,7 +1720,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)forcedPowerOn
 {
     _forcedOutOfService = NO;
-    [self powerOn];
+    [self powerOn:@"forced-power-on"];
 }
 
 - (void)forcedPowerOff
@@ -1745,26 +1745,20 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         return;
     }
     [_aspLock lock];
-    @try
+    if(self.logLevel <= UMLOG_DEBUG)
     {
-        if(self.logLevel <= UMLOG_DEBUG)
-        {
-            [self logInfo:@"powerOn"];
-            [_layerHistory addLogEntry:[NSString stringWithFormat:@"powerOn %@",(reason ? reason : @"")]];
+        [self logInfo:@"powerOn"];
+        [_layerHistory addLogEntry:[NSString stringWithFormat:@"powerOn %@",(reason ? reason : @"")]];
 
-        }
-        [_sctpLink openFor:self sendAbortFirst:YES reason:(reason ? reason : @"m3ua-poweron")];
-        self.m3ua_asp_status = M3UA_STATUS_OOS;
-        [_speedometer clear];
-        [_submission_speed clear];
-        _speed_within_limit = YES;
-        [self stopReopenTimer1];
-        [self startReopenTimer2];
     }
-    @finally
-    {
-        [_aspLock unlock];
-    }
+    self.m3ua_asp_status = M3UA_STATUS_OOS;
+    [_speedometer clear];
+    [_submission_speed clear];
+    _speed_within_limit = YES;
+    [self stopReopenTimer1];
+    [_sctpLink openFor:self sendAbortFirst:YES reason:(reason ? reason : @"m3ua-poweron")];
+    [self startReopenTimer2];
+    [_aspLock unlock];
 }
 
 - (void)powerOff
