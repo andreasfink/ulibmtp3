@@ -88,14 +88,15 @@
     UMM3UAApplicationServerStatusRecords *_lastLinkInactive;
 }
 
-
 @property(readwrite,strong,atomic)  UMM3UAApplicationServer *as;
 @property(readwrite,strong,atomic)  UMLayerSctp *sctpLink;
+
 @property(readwrite,strong,atomic)  NSString *name;
 @property (readonly) BOOL sctp_connecting;
 @property (readonly) BOOL sctp_up;
 @property (readonly) BOOL up;
 @property (readonly) BOOL active;
+
 @property(readonly)    UMSocketStatus                 sctp_status;
 @property(readwrite,assign,atomic)   UMM3UA_Status m3ua_asp_status;
 
