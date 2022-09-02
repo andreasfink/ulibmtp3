@@ -2556,7 +2556,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)startReopenTimer2
 {
-    [_layerHistory addLogEntry:@"start-reopen-timer2"];
+    [_layerHistory addLogEntry:@"m3ua-start-reopen-timer2"];
     if(_reopen_timer2_value > 0)
     {
         if(_reopen_timer2==NULL)
@@ -2573,20 +2573,20 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     else
     {
-        [_layerHistory addLogEntry:@"start-reopen-timer2: timer value is 0"];
+        [_layerHistory addLogEntry:@"m3ua-start-reopen-timer2: timer value is 0"];
     }
 
 }
 
 - (void)stopReopenTimer2
 {
-    [_layerHistory addLogEntry:@"stop-reopen-timer2"];
+    [_layerHistory addLogEntry:@"m3ua-stop-reopen-timer2"];
     [_reopen_timer2 stop];
 }
 
 - (void)reopenTimer1Event:(id)parameter
 {
-    [_layerHistory addLogEntry:@"reopen-timer1-event"];
+    [_layerHistory addLogEntry:@"m3ua-reopen-timer1-event"];
     [self powerOn:@"reopen-timer1 expired"];
 }
 
@@ -2594,12 +2594,13 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     @autoreleasepool
     {
-        [_layerHistory addLogEntry:@"reopenTimer2Event"];
+        [_layerHistory addLogEntry:@"m3ua-reopenTimer2Event"];
         
         switch(self.m3ua_asp_status)
         {
             case M3UA_STATUS_IS:    /* in service */
                 /* all is good */
+                [self stopReopenTimer2];
                 break;
                 
             case M3UA_STATUS_INACTIVE:  /* sctp is up, ASPUP received but not in active state */
@@ -2610,18 +2611,12 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 else
                 {
                     [self sendASPDN:NULL];
-                    [_sctpLink closeFor:self reason:@"reopen-timer2 expired and not yet in service but inactive"];
-                    self.m3ua_asp_status = M3UA_STATUS_OFF;
+                    [self powerOff:@"m3ua-reopen-timer-event2 expired and not yet in service but inactive"];
+                    break;
                 }
                 break;
             default:
-                [_sctpLink closeFor:self reason:@"reopen-timer2 expired and not yet in service"];
-                [_speedometer clear];
-                [_submission_speed clear];
-                _speed_within_limit = YES;
-                self.m3ua_asp_status = M3UA_STATUS_OFF;
-                [_layerHistory addLogEntry:@" we let the reopen timer restart the dead connection"];
-                [self startReopenTimer1];
+                [self powerOff:@"m3ua-reopen-timer-event2 expired and not yet in service"];
                 break;
         }
     }
@@ -2646,11 +2641,15 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     if(_standby_mode)
                     {
                         /* we continue to want to be inactive */
+                        UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+                        pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
                         [self sendASPIA:NULL];
                     }
                     else
                     {
                        /* we want to turn active now active */
+                        UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+                        pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
                         [self sendASPAC:NULL];
                     }
                 }
@@ -2667,6 +2666,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                         /* Lets send ASPAC or ASPIA */
                         if(_standby_mode)
                         {
+                            UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
+                            pl[@(M3UA_PARAM_TRAFFIC_MODE_TYPE)] = @(_as.trafficMode);
                             [self sendASPIA:NULL];
                         }
                         else
@@ -2681,7 +2682,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             default:
                 break;
         }
-
         if(_linktest_timer_value > 0)
         {
             if(self.logLevel <= UMLOG_DEBUG)
