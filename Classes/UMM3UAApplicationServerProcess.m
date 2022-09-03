@@ -2356,7 +2356,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         if(oldStatus!= M3UA_STATUS_OFF)
         {
             [_lastLinkDown addEvent:@"sctpReportsDown"];
-            [_sctpLink closeFor:self];
+            [_sctpLink closeFor:self reason:@"sctpReportsDown"];
             self.m3ua_asp_status = M3UA_STATUS_OFF;
         }
         if([_reopen_timer1 isRunning]==NO)
