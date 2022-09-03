@@ -1099,6 +1099,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [_as aspActive:self reason:@"ASPAC received"];
     self.m3ua_asp_status =  M3UA_STATUS_IS;
     [self sendASPAC_ACK:params];
+    [_as updateLinkSetStatus];
 }
 
 - (void)processASPIA:(UMSynchronizedSortedDictionary *)params
@@ -1112,6 +1113,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [_as aspInactive:self reason:@"ASPIA received"];
     self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
     [self sendASPIA_ACK:params];
+    [_as updateLinkSetStatus];
 }
 
 - (void)processASPAC_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1153,6 +1155,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self powerOff:@"received ASPAC-ACK while in wrong state"];
         [self startReopenTimer1];
     }
+    [_as updateLinkSetStatus];
 }
 
 - (void)processASPIA_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1160,6 +1163,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     /* ASP Inactive acknowledgment */
     self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
     [_as aspInactive:self reason:@"ASPIC_ACK received"];
+    [_as updateLinkSetStatus];
 }
 
 #pragma mark -
@@ -1568,6 +1572,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)setM3ua_asp_status:(UMM3UA_Status)status
 {
+    UMMUTEX_LOCK(_aspLock);
     UMM3UA_Status oldStatus = _m3ua_asp_status;
     _m3ua_asp_status = status;
     if(oldStatus != status)
@@ -1576,6 +1581,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
          [UMM3UAApplicationServer statusString:status] ];
         [_layerHistory addLogEntry:s];
     }
+    UMMUTEX_UNLOCK(_aspLock);
 }
 
 
@@ -1889,6 +1895,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                type:(int)ptype
                 pdu:(NSData *)pdu
 {
+    UMMUTEX_LOCK(_aspLock);
     @autoreleasepool
     {
 
@@ -2038,6 +2045,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 break;
         }
     }
+    UMMUTEX_UNLOCK(_aspLock);
 }
 
 -(void) protocolViolation: (NSString *)reason
@@ -2600,6 +2608,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             case M3UA_STATUS_IS:    /* in service */
                 /* all is good */
+                [_layerHistory addLogEntry:@"we are IN SERVICE. All is good"];
                 [self stopReopenTimer2];
                 break;
                 
@@ -2611,17 +2620,18 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 else
                 {
                     [self sendASPDN:NULL];
+                    [_layerHistory addLogEntry:@"m3ua-reopen-timer-event2 expired and not yet in service but inactive"];
                     [self powerOff:@"m3ua-reopen-timer-event2 expired and not yet in service but inactive"];
                     break;
                 }
                 break;
             default:
+                [_layerHistory addLogEntry:@"m3ua-reopen-timer-event2 expired and not yet in service"];
                 [self powerOff:@"m3ua-reopen-timer-event2 expired and not yet in service"];
                 break;
         }
     }
 }
-
 
 - (void)linktestTimerEvent:(id)parameter
 {
