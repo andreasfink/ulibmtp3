@@ -1099,7 +1099,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [_as aspActive:self reason:@"ASPAC received"];
     self.m3ua_asp_status =  M3UA_STATUS_IS;
     [self sendASPAC_ACK:params];
-    [_as updateLinkSetStatus];
 }
 
 - (void)processASPIA:(UMSynchronizedSortedDictionary *)params
@@ -1113,7 +1112,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [_as aspInactive:self reason:@"ASPIA received"];
     self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
     [self sendASPIA_ACK:params];
-    [_as updateLinkSetStatus];
 }
 
 - (void)processASPAC_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1155,7 +1153,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self powerOff:@"received ASPAC-ACK while in wrong state"];
         [self startReopenTimer1];
     }
-    [_as updateLinkSetStatus];
 }
 
 - (void)processASPIA_ACK:(UMSynchronizedSortedDictionary *)params
@@ -1163,7 +1160,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     /* ASP Inactive acknowledgment */
     self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
     [_as aspInactive:self reason:@"ASPIC_ACK received"];
-    [_as updateLinkSetStatus];
 }
 
 #pragma mark -
@@ -1572,7 +1568,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)setM3ua_asp_status:(UMM3UA_Status)status
 {
-    UMMUTEX_LOCK(_aspLock);
     UMM3UA_Status oldStatus = _m3ua_asp_status;
     _m3ua_asp_status = status;
     if(oldStatus != status)
@@ -1581,7 +1576,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
          [UMM3UAApplicationServer statusString:status] ];
         [_layerHistory addLogEntry:s];
     }
-    UMMUTEX_UNLOCK(_aspLock);
+    [_as updateLinkSetStatus];
 }
 
 
