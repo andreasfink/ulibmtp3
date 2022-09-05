@@ -1305,9 +1305,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         }
         else
         {
-            @throw([NSException exceptionWithName:@"UNKNOWN_DATATYPE"
-                                           reason:@"parameter of unknonw type to be encoded for M3UA parameters"
-                                         userInfo:@{ @"location" :SOURCE_POS_DICT} ]);
+            [self addToLayerHistoryLog:@"UNKNOWN_DATATYPE parameter of unknonw type to be encoded for M3UA parameters"];
+            [self addToLayerHistoryLog:[value description]];
         }
         [d appendByte:((ikey >> 8) & 0xFF)];
         [d appendByte:((ikey >> 0) & 0xFF)];
