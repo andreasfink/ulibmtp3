@@ -1281,8 +1281,12 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (NSData *)paramsList:(UMSynchronizedSortedDictionary *)paramsList
 {
+    
     NSMutableData *d = [[NSMutableData alloc]init];
-
+    if((paramsList==NULL) || (paramsList.count==0))
+    {
+        return NULL;
+    }
     NSArray *keys = [paramsList sortedKeys];
     for(id key in keys)
     {
@@ -1351,8 +1355,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [data appendByte:((packlen & 0x00FF0000) >> 16)];
     [data appendByte:((packlen & 0x0000FF00) >> 8)];
     [data appendByte:((packlen & 0x000000FF) >> 0)];
-    [data appendData:pdu];
-
+    if(pdu)
+    {
+        [data appendData:pdu];
+    }
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"SEND_PDU:"];
