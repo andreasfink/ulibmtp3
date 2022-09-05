@@ -441,7 +441,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [msg appendString:@"M3UA-ERR:\n" ];
     for(NSNumber *key in [params allKeys])
     {
-
         int   code = [key intValue];
         const char *param_name = m3ua_param_name(code);
         NSData *d = [self getParam:params identifier:code];
@@ -1486,38 +1485,45 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendDAUD:(UMSynchronizedSortedDictionary *)params
 {
-    if(self.logLevel <= UMLOG_DEBUG)
+    if(asp.mode != UMM3UAApplicationServerMode_client)
     {
-        [self logDebug:@"sendDAUD"];
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            [self logDebug:@"sendDAUD"];
+        }
+        NSData *paramsPdu = [self paramsList:params];
+        [self sendPduCT:M3UA_CLASS_TYPE_DAUD pdu:paramsPdu stream:0];
+        [_as.prometheusMetrics.m3uadaudTxCount increaseBy:1];
     }
-    NSData *paramsPdu = [self paramsList:params];
-    [self sendPduCT:M3UA_CLASS_TYPE_DAUD pdu:paramsPdu stream:0];
-    [_as.prometheusMetrics.m3uadaudTxCount increaseBy:1];
-
 }
 
 
 -(void)sendDAVA:(UMSynchronizedSortedDictionary *)params
 {
-    if(self.logLevel <= UMLOG_DEBUG)
+    if(asp.mode != UMM3UAApplicationServerMode_client)
     {
-        [self logDebug:@"sendDAVA"];
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            [self logDebug:@"sendDAVA"];
+        }
+        NSData *paramsPdu = [self paramsList:params];
+        [self sendPduCT:M3UA_CLASS_TYPE_DAVA pdu:paramsPdu stream:0];
+        [_as.prometheusMetrics.m3uadavaTxCount increaseBy:1];
     }
-    NSData *paramsPdu = [self paramsList:params];
-    [self sendPduCT:M3UA_CLASS_TYPE_DAVA pdu:paramsPdu stream:0];
-    [_as.prometheusMetrics.m3uadavaTxCount increaseBy:1];
 }
 
 -(void)sendDUNA:(UMSynchronizedSortedDictionary *)params
 {
-    if(self.logLevel <= UMLOG_DEBUG)
+    if(asp.mode != UMM3UAApplicationServerMode_client)
     {
-        [self logDebug:@"sendDUNA"];
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            [self logDebug:@"sendDUNA"];
+        }
+        NSData *paramsPdu = [self paramsList:params];
+        [self sendPduCT:M3UA_CLASS_TYPE_DUNA pdu:paramsPdu stream:0];
+        [_as.prometheusMetrics.m3uadunaTxCount increaseBy:1];
     }
-    NSData *paramsPdu = [self paramsList:params];
-    [self sendPduCT:M3UA_CLASS_TYPE_DUNA pdu:paramsPdu stream:0];
-    [_as.prometheusMetrics.m3uadunaTxCount increaseBy:1];
-
 }
 
 -(void)sendDATA:(UMSynchronizedSortedDictionary *)params

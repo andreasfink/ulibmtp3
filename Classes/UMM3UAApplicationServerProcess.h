@@ -35,6 +35,7 @@
     UMMTP3PointCode             *_localPointCode;
     BOOL                        _aspup_received;
     BOOL                        _standby_mode;
+    BOOL                        _doSendRoutingUpdates;
     NSMutableData       *_incomingStream0;
     NSMutableData       *_incomingStream1;
     UMMutex             *_incomingStreamLock;
@@ -96,6 +97,8 @@
 @property (readonly) BOOL sctp_up;
 @property (readonly) BOOL up;
 @property (readonly) BOOL active;
+@property   (readwrite)BOOL doSendRoutingUpdates;
+
 
 @property(readonly)    UMSocketStatus                 sctp_status;
 @property(readwrite,assign,atomic)   UMM3UA_Status m3ua_asp_status;
