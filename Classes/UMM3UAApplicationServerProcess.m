@@ -1899,6 +1899,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         @try
         {
+            UMMUTEX_LOCK(_aspLock);
+
             int		pos = 0;
             uint16_t	param_len;	/* effective */
             uint16_t	param_len2;	/* padded, rounded to the next 4 byte boundary */
@@ -2049,6 +2051,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         {
             NSString *s = e.description;
             [self addToLayerHistoryLog:s];
+        }
+        @finally
+        {
+            UMMUTEX_UNLOCK(_aspLock);
         }
     }
 }
