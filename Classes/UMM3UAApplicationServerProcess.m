@@ -1485,7 +1485,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendDAUD:(UMSynchronizedSortedDictionary *)params
 {
-    if(asp.mode != UMM3UAApplicationServerMode_client)
+    if(_as.mode != UMM3UAApplicationServerMode_client)
     {
         if(self.logLevel <= UMLOG_DEBUG)
         {
@@ -1500,7 +1500,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendDAVA:(UMSynchronizedSortedDictionary *)params
 {
-    if(asp.mode != UMM3UAApplicationServerMode_client)
+    if(_as.mode != UMM3UAApplicationServerMode_client)
     {
         if(self.logLevel <= UMLOG_DEBUG)
         {
@@ -1514,7 +1514,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 -(void)sendDUNA:(UMSynchronizedSortedDictionary *)params
 {
-    if(asp.mode != UMM3UAApplicationServerMode_client)
+    if(_as.mode != UMM3UAApplicationServerMode_client)
     {
         if(self.logLevel <= UMLOG_DEBUG)
         {
