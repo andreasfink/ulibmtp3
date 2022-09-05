@@ -2533,7 +2533,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     if(_reopen_timer1_value > 0)
     {
-        [_layerHistory addLogEntry:@"start-reopen-timer1"];
+        [_layerHistory addLogEntry:@"m3ua-asp-start-reopen-timer1"];
         if(_reopen_timer1==NULL)
         {
             _reopen_timer1 = [[UMTimer alloc]initWithTarget:self
