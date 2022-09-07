@@ -4649,6 +4649,8 @@
                 break;
             case M2PA_STATUS_ALIGNED_READY:
                 break;
+            case M2PA_STATUS_PROCESSOR_OUTAGE:
+                break;
             case M2PA_STATUS_IS:
                 if(newUp)
                 {
@@ -4706,6 +4708,7 @@
         case M2PA_STATUS_ALIGNED_NOT_READY:
         case M2PA_STATUS_ALIGNED_READY:
         case M2PA_STATUS_IS:
+        case M2PA_STATUS_PROCESSOR_OUTAGE:
             /* link is already coming up. so all is fine */
             break;
     }
