@@ -1540,12 +1540,17 @@
             fflush(_routingUpdateLogFile);
             [_lock unlock];
         }
+        UMMTP3RouteStatus old_status = [_routingTable statusOfRoute:pc];
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
-        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
-        [self updateUpperLevelPointCode:pc];
-        if(_routingUpdateLogFile)
+        UMMTP3RouteStatus new_status = [_routingTable statusOfRoute:pc];
+        if(old_status!=new_status)
         {
-            [self writeRouteStatusToLog:pc];
+            [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
+            [self updateUpperLevelPointCode:pc];
+            if(_routingUpdateLogFile)
+            {
+                [self writeRouteStatusToLog:pc];
+            }
         }
         return YES;
     }
@@ -1569,12 +1574,17 @@
             fflush(_routingUpdateLogFile);
             [_lock unlock];
         }
+        UMMTP3RouteStatus old_status = [_routingTable statusOfRoute:pc];
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
-        [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
-        [self updateUpperLevelPointCode:pc];
-        if(_routingUpdateLogFile)
+        UMMTP3RouteStatus new_status = [_routingTable statusOfRoute:pc];
+        if(old_status!=new_status)
         {
-            [self writeRouteStatusToLog:pc];
+            [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
+            [self updateUpperLevelPointCode:pc];
+            if(_routingUpdateLogFile)
+            {
+                [self writeRouteStatusToLog:pc];
+            }
         }
         return YES;
     }
@@ -1647,11 +1657,14 @@
             fflush(_routingUpdateLogFile);
             [_lock unlock];
         }
-        BOOL changed = [_routingTable updateDynamicRouteUnavailable:pc
-                                                               mask:mask
-                                                        linksetName:name
-                                                           priority:prio];
-        if(changed)
+        UMMTP3RouteStatus old_status = [_routingTable statusOfRoute:pc];
+       [_routingTable updateDynamicRouteUnavailable:pc
+                                               mask:mask
+                                        linksetName:name
+                                           priority:prio];
+        UMMTP3RouteStatus new_status = [_routingTable statusOfRoute:pc];
+
+        if(old_status!=new_status)
         {
             [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
             [self updateUpperLevelPointCode:pc];
