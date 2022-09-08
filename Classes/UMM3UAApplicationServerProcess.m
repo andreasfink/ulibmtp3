@@ -1631,19 +1631,22 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         return;
     }
     _sctp_status = new_status;
-    switch(_sctp_status)
+    if(old_status !=new_status)
     {
-        case UMSOCKET_STATUS_FOOS:
-        case UMSOCKET_STATUS_OFF:
-            [self sctpReportsDown];
-            break;
-        case UMSOCKET_STATUS_OOS:
-            break;
-        case UMSOCKET_STATUS_IS:
-            [self sctpReportsUp];
-            break;
-        case UMSOCKET_STATUS_LISTENING:
-            break;
+        switch(_sctp_status)
+        {
+            case UMSOCKET_STATUS_FOOS:
+            case UMSOCKET_STATUS_OFF:
+                [self sctpReportsDown];
+                break;
+            case UMSOCKET_STATUS_OOS:
+                break;
+            case UMSOCKET_STATUS_IS:
+                [self sctpReportsUp];
+                break;
+            case UMSOCKET_STATUS_LISTENING:
+                break;
+        }
     }
 }
 
