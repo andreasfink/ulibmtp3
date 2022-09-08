@@ -240,7 +240,7 @@
                                   slc:xslc
                                userId:uid
                                status:s
-                                async:NO];
+                                async:YES];
 }
 
 - (void) m2paStatusIndication:(UMLayer *)caller
