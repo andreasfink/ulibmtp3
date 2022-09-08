@@ -21,7 +21,7 @@
 }
 
 @property(readwrite,assign) UMLogLevel logLevel;
-@property(readonly)         UMMutex *lock;
+@property(readonly)         UMMutex *routingTableLock;
 
 - (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)pc
                                             mask:(int)mask
