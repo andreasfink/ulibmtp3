@@ -1759,12 +1759,11 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [_layerHistory addLogEntry:@"powerOn ignored due to forcedOutOfService"];
         return;
     }
-    [_aspLock lock];
+    UMMUTEX_LOCK(_aspLock);
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logInfo:@"powerOn"];
         [_layerHistory addLogEntry:[NSString stringWithFormat:@"powerOn %@",(reason ? reason : @"")]];
-
     }
     self.m3ua_asp_status = M3UA_STATUS_OOS;
     [_speedometer clear];
@@ -1773,7 +1772,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [self stopReopenTimer1];
     [_sctpLink openFor:self sendAbortFirst:YES reason:(reason ? reason : @"m3ua-poweron")];
     [self startReopenTimer2];
-    [_aspLock unlock];
+    UMMUTEX_UNLOCK(_aspLock);
 }
 
 - (void)powerOff
@@ -1784,7 +1783,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)powerOff:(NSString *)reason
 {
     _aspup_received = 0;
-    [_aspLock lock];
+    UMMUTEX_LOCK(_aspLock);
     @try
     {
         [self stopBeatTimer];
@@ -1836,7 +1835,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     @finally
     {
-        [_aspLock unlock];
+        UMMUTEX_UNLOCK(_aspLock);
     }
 }
 
@@ -2655,7 +2654,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)linktestTimerEvent:(id)parameter
 {
-    [_aspLock lock];
+    UMMUTEX_LOCK(_aspLock);
     @try
     {
         /* if status is out of service, we restart the link */
@@ -2723,7 +2722,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     @finally
     {
-        [_aspLock unlock];
+        UMMUTEX_UNLOCK(_aspLock);
     }
 }
 

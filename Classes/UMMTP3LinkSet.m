@@ -4743,13 +4743,12 @@
 
 - (void)updateLinkSetStatus
 {
-    [_currentLinksMutex lock];
+    UMMUTEX_LOCK(_currentLinksMutex);
     
     NSMutableArray *inactiveLinks = [[NSMutableArray alloc]init];
     NSMutableArray *activeLinks = [[NSMutableArray alloc]init];
     NSMutableArray *readyLinks  = [[NSMutableArray alloc]init];
     NSMutableArray *processorOutageLinks  = [[NSMutableArray alloc]init];
-
     NSArray *keys = [_linksBySlc allKeys];
     for (NSNumber *key in keys)
     {
@@ -4857,7 +4856,7 @@
     _currentActiveLinks = activeLinks;
     _currentReadyLinks  = readyLinks;
     _currentProcessorOutageLinks  = processorOutageLinks;
-    [_currentLinksMutex unlock];
+    UMMUTEX_UNLOCK(_currentLinksMutex);
 }
 
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link
