@@ -19,7 +19,7 @@
 {
     UMSyslogClient *_syslogClient;
     long _seq;
-    UMMutex *_lock;
+    UMMutex *_syslogClientLock;
 }
 
 @property(readwrite,strong) UMSyslogClient *syslogClient;

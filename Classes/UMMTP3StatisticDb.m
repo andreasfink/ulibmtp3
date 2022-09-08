@@ -47,7 +47,7 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
             _poolName = poolName;
             _pool = [appContext dbPools][_poolName];
             _table = [[UMDbTable alloc]initWithConfig:config andPools:[appContext dbPools]];
-            _lock = [[UMMutex alloc]initWithName:@"UMMTP3StatisticDb-lock"];
+            _statisticDbLock = [[UMMutex alloc]initWithName:@"UMMTP3StatisticDb-lock"];
             _entries = [[UMSynchronizedDictionary alloc]init];
             _instance = instance;
             
@@ -100,7 +100,7 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
                                                           dpc:dpc
                                                            si:si
                                                      instance:_instance];
-        [_lock lock];
+        [_statisticDbLock lock];
         UMMTP3StatisticDbRecord *rec = _entries[key];
         if(rec == NULL)
         {
@@ -114,7 +114,7 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
             rec.instance = _instance;
             _entries[key] = rec;
         }
-        [_lock unlock];
+        [_statisticDbLock unlock];
         [rec increaseMsuCount:1 byteCount:byteCount];
     }
 }
@@ -123,10 +123,10 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
 {
     @autoreleasepool
     {
-        [_lock lock];
+        [_statisticDbLock lock];
         UMSynchronizedDictionary *tmp = _entries;
         _entries = [[UMSynchronizedDictionary alloc]init];
-        [_lock unlock];
+        [_statisticDbLock unlock];
         
         NSArray *keys = [tmp allKeys];
         for(NSString *key in keys)

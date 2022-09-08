@@ -18,7 +18,7 @@
     self = [super init];
     if(self)
     {
-        _lock = [[UMMutex alloc]initWithName: @"mtp3-instance-routing-table-lock"];
+        _routingTableLock = [[UMMutex alloc]initWithName: @"mtp3-instance-routing-table-lock"];
         _routesByPointCode = [[NSMutableDictionary alloc]init];
     }
     return self;
@@ -86,7 +86,7 @@
                                           excludeLinkSetName:(NSString *)linksetName
                                                        exact:(BOOL)exact
 {
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray<UMMTP3InstanceRoute *> *r = [[self getRouteArray:pc mask:mask] mutableCopy];
     if(linksetName.length > 0)
     {
@@ -101,7 +101,7 @@
             }
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     if(r.count == 0)
     {
         if(![_defaultRoute.linksetName isEqualToString:linksetName])
@@ -117,7 +117,7 @@
                                                        mask:(int)mask
                                             onlyLinksetName:(NSString *)linksetName
 {
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray *validRoutes = [[NSMutableArray alloc]init];
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     for(UMMTP3InstanceRoute *route in r)
@@ -148,7 +148,7 @@
             [validRoutes addObject:_defaultRoute];
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return r;
 }
 
@@ -158,7 +158,7 @@
                         linksetName:(NSString *)linkset
                            priority:(UMMTP3RoutePriority)prio
 {
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     if(r==NULL)
     {
@@ -185,7 +185,7 @@
         route.status = UMMTP3_ROUTE_ALLOWED;
         [r addObject:route];
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return found;
 }
 
@@ -195,7 +195,7 @@
                             priority:(UMMTP3RoutePriority)prio
 {
     BOOL changed=YES;
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     if(r==NULL)
     {
@@ -224,14 +224,14 @@
         route.status = UMMTP3_ROUTE_RESTRICTED;
         [r addObject:route];
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return changed;
 }
 
 - (NSArray *)linksetNamesWhichHaveStaticRoutesForPointcode:(UMMTP3PointCode *)pc mask:(int)mask excluding:(NSString *)excluded
 {
     NSMutableArray *arr = [[NSMutableArray alloc]init];
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     NSInteger n = r.count;
     for(NSInteger i=0;i<n;i++)
@@ -242,7 +242,7 @@
             [arr addObject:route.linksetName];
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return arr;
 }
 
@@ -252,7 +252,7 @@
                              priority:(UMMTP3RoutePriority)prio
 {
     BOOL changed = YES;
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
     if(r==NULL)
     {
@@ -282,7 +282,7 @@
         changed = YES;
         [r addObject:route];
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return changed;
 }
 
@@ -292,8 +292,7 @@
                priority:(UMMTP3RoutePriority)prio
 {
     BOOL found=NO;
-
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     if((pc.pc == 0) && (mask == 0))
     {
         UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
@@ -340,7 +339,7 @@
             [r addObject:route];
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return found;
 }
 
@@ -350,7 +349,7 @@
                linksetName:(NSString *)linkset
                   priority:(UMMTP3RoutePriority)prio
 {
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
 
     NSInteger n = r.count;
@@ -365,14 +364,13 @@
             break;
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return found;
 }
 
 - (void)updateLinksetUnavailable:(NSString *)linkset
 {
-    [_lock lock];
-
+    UMMUTEX_LOCK(_routingTableLock);
     NSArray *pointcodes = [_routesByPointCode allKeys];
     for(id pointcode in pointcodes)
     {
@@ -385,13 +383,12 @@
             }
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
 }
 
 - (void)updateLinksetRestricted:(NSString *)linkset
 {
-    [_lock lock];
-
+    UMMUTEX_LOCK(_routingTableLock);
     NSArray *pointcodes = [_routesByPointCode allKeys];
     for(id pointcode in pointcodes)
     {
@@ -404,12 +401,12 @@
             }
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
 }
 
 - (void)updateLinksetAvailable:(NSString *)linkset
 {
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
 
     NSArray *pointcodes = [_routesByPointCode allKeys];
     for(id pointcode in pointcodes)
@@ -423,12 +420,12 @@
             }
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
 }
 
 - (NSArray<UMMTP3InstanceRoute *>*)prohibitedOrRestrictedRoutes
 {
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray *r = [[NSMutableArray alloc]init];
     NSArray *pointcodes = [_routesByPointCode allKeys];
     for(id pointcode in pointcodes)
@@ -442,7 +439,7 @@
             }
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return r;
 }
 
@@ -455,10 +452,11 @@
 - (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc
 {
     UMMTP3RouteStatus status = UMMTP3_ROUTE_UNKNOWN;
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:pc.maxmask];
     if((r==NULL) || (r.count == 0))
     {
+        UMMUTEX_UNLOCK(_routingTableLock);
         return UMMTP3_ROUTE_UNKNOWN;
     }
     for(UMMTP3InstanceRoute *route in r)
@@ -484,7 +482,7 @@
                 break;
         }
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return status;
 }
 
@@ -506,7 +504,7 @@
 - (UMSynchronizedSortedDictionary *)objectValue
 {
     UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc]init];
-    [_lock lock];
+    UMMUTEX_LOCK(_routingTableLock);
     NSArray *pointcodes = [_routesByPointCode allKeys];
     pointcodes = [pointcodes sortedArrayUsingSelector:@selector(compare:)];
     for(NSNumber *pointcode in pointcodes)
@@ -565,9 +563,8 @@
         }
         dict[pointcode.stringValue] = a;
     }
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_routingTableLock);
     return dict;
-
 }
 
 

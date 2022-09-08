@@ -14,7 +14,7 @@
 @interface UMM3UAApplicationServerStatusRecords : UMObject
 {
     UMM3UAApplicationServerStatusRecord *_entries[UMM3UAApplicationServerStatusRecord_max_entries];
-    UMMutex *_lock;
+    UMMutex *_aspStatusRecordLock;
 }
 
 - (void)addEvent:(NSString *)event;

@@ -70,6 +70,12 @@
 
 #define SOURCE_POS_DICT @{ @"file": @(__FILE__) , @"line":@(__LINE__) , @"func":@(__func__) }
 
+#ifdef __APPLE__
+#define FALLTHROUGH  __attribute__((fallthrough))
+#else
+#define FALLTHROUGH
+#endif
+
 static const char *m3ua_class_string(uint8_t pclass);
 static const char *m3ua_type_string(uint8_t pclass,uint8_t ptype);
 static const char *m3ua_param_name(uint16_t param_type);
@@ -1631,19 +1637,22 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         return;
     }
     _sctp_status = new_status;
-    switch(_sctp_status)
+    if(old_status !=new_status)
     {
-        case UMSOCKET_STATUS_FOOS:
-        case UMSOCKET_STATUS_OFF:
-            [self sctpReportsDown];
-            break;
-        case UMSOCKET_STATUS_OOS:
-            break;
-        case UMSOCKET_STATUS_IS:
-            [self sctpReportsUp];
-            break;
-        case UMSOCKET_STATUS_LISTENING:
-            break;
+        switch(_sctp_status)
+        {
+            case UMSOCKET_STATUS_FOOS:
+            case UMSOCKET_STATUS_OFF:
+                [self sctpReportsDown];
+                break;
+            case UMSOCKET_STATUS_OOS:
+                break;
+            case UMSOCKET_STATUS_IS:
+                [self sctpReportsUp];
+                break;
+            case UMSOCKET_STATUS_LISTENING:
+                break;
+        }
     }
 }
 
@@ -1756,12 +1765,11 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [_layerHistory addLogEntry:@"powerOn ignored due to forcedOutOfService"];
         return;
     }
-    [_aspLock lock];
+    UMMUTEX_LOCK(_aspLock);
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logInfo:@"powerOn"];
         [_layerHistory addLogEntry:[NSString stringWithFormat:@"powerOn %@",(reason ? reason : @"")]];
-
     }
     self.m3ua_asp_status = M3UA_STATUS_OOS;
     [_speedometer clear];
@@ -1770,7 +1778,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [self stopReopenTimer1];
     [_sctpLink openFor:self sendAbortFirst:YES reason:(reason ? reason : @"m3ua-poweron")];
     [self startReopenTimer2];
-    [_aspLock unlock];
+    UMMUTEX_UNLOCK(_aspLock);
 }
 
 - (void)powerOff
@@ -1781,7 +1789,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)powerOff:(NSString *)reason
 {
     _aspup_received = 0;
-    [_aspLock lock];
+    UMMUTEX_LOCK(_aspLock);
     @try
     {
         [self stopBeatTimer];
@@ -1794,18 +1802,18 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             case M3UA_STATUS_IS:    /* in service */
                 [self sendASPIA:NULL];
                 self.m3ua_asp_status=M3UA_STATUS_INACTIVE; /* we dont await ASPIA_ACK */
-                __attribute__((fallthrough));
+                FALLTHROUGH;
 
             case M3UA_STATUS_INACTIVE:  /* sctp is up, ASPUP received but not in active state */
                 [self sendASPDN:NULL];
                 self.m3ua_asp_status = M3UA_STATUS_BUSY;
-                __attribute__((fallthrough));
+                FALLTHROUGH;
 
             case M3UA_STATUS_BUSY: /* sctp is up but ASPUP is not received */
             case M3UA_STATUS_OOS:       /* sctp is down, but connection is requested */
                 [_sctpLink closeFor:self reason:reason];
                 self.m3ua_asp_status = M3UA_STATUS_OFF;
-                __attribute__((fallthrough));
+                FALLTHROUGH;
 
             case M3UA_STATUS_OFF:
             case M3UA_STATUS_UNUSED:
@@ -1815,7 +1823,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 self.m3ua_asp_status = M3UA_STATUS_OFF;
                 break;
         }
-        usleep(0.1);
+        UMMUTEX_UNLOCK(_aspLock);
+        usleep(0.5);
+        UMMUTEX_LOCK(_aspLock);
         if(_forcedOutOfService == NO)
         {
             if(_sctpLink.isPassive)
@@ -1833,7 +1843,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     @finally
     {
-        [_aspLock unlock];
+        UMMUTEX_UNLOCK(_aspLock);
     }
 }
 
@@ -1903,164 +1913,150 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
     @autoreleasepool
     {
-        @try
+        int		pos = 0;
+        uint16_t	param_len;	/* effective */
+        uint16_t	param_len2;	/* padded, rounded to the next 4 byte boundary */
+        uint16_t	classtype;
+
+        classtype = (pclass << 8) | ptype;
+
+
+        pos=0;
+        UMSynchronizedSortedDictionary	*params = [[UMSynchronizedSortedDictionary alloc]init];
+        NSUInteger len = pdu.length;
+        const uint8_t *bytes = pdu.bytes;
+
+        while((pos+4)<len)
         {
-            UMMUTEX_LOCK(_aspLock);
-
-            int		pos = 0;
-            uint16_t	param_len;	/* effective */
-            uint16_t	param_len2;	/* padded, rounded to the next 4 byte boundary */
-            uint16_t	classtype;
-
-            classtype = (pclass << 8) | ptype;
-
-
-            pos=0;
-            UMSynchronizedSortedDictionary	*params = [[UMSynchronizedSortedDictionary alloc]init];
-            NSUInteger len = pdu.length;
-            const uint8_t *bytes = pdu.bytes;
-
-            while((pos+4)<len)
+            uint16_t param_type= ntohs(*(uint16_t *)&bytes[pos]);
+            param_len = (bytes[pos+2] << 8) | bytes[pos+3];
+            /* param_len2 is the length of the data including padding */
+            if((param_len % 4)==0)
             {
-                uint16_t param_type= ntohs(*(uint16_t *)&bytes[pos]);
-                param_len = (bytes[pos+2] << 8) | bytes[pos+3];
-                /* param_len2 is the length of the data including padding */
-                if((param_len % 4)==0)
-                {
-                    param_len2 = param_len;
-                }
-                else
-                {
-                    param_len2 = (param_len+3) & ~0x03;
-                }
-                if((pos + param_len2) > len)
-                {
-                    break;
-                }
-                if((pos + param_len) > len)
-                {
-                    break;
-                }
-
-                NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4)];
-                pos += param_len2;
-                if(self.logLevel <= UMLOG_DEBUG)
-                {
-                    [self logDebug:@"M3UA Packet:"];
-                    [self logDebug:[NSString stringWithFormat:@"  Parameter: 0x%04x (%s)",param_type,m3ua_param_name(param_type)]];
-                    [self logDebug:[NSString stringWithFormat:@"  Data: %@",[data hexString]]];
-                }
-                params[@(param_type)]=data;
+                param_len2 = param_len;
+            }
+            else
+            {
+                param_len2 = (param_len+3) & ~0x03;
+            }
+            if((pos + param_len2) > len)
+            {
+                break;
+            }
+            if((pos + param_len) > len)
+            {
+                break;
             }
 
-            switch(classtype)
+            NSData *data = [NSData dataWithBytes:&bytes[pos+4] length:(param_len-4)];
+            pos += param_len2;
+            if(self.logLevel <= UMLOG_DEBUG)
             {
-                case M3UA_CLASS_TYPE_BEAT:
-                    [self processBEAT:params];
-                    [_as.prometheusMetrics.m3uabeatRxCount increaseBy:1];
-                    return;
-                case M3UA_CLASS_TYPE_BEAT_ACK:
-                    [self processBEAT_ACK:params];
-                    [_as.prometheusMetrics.m3uabeatackRxCount increaseBy:1];
-                    return;
-                case M3UA_CLASS_TYPE_ERR: /* management */
-                    [self processERR:params];
-                    [_as.prometheusMetrics.m3uaerrRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_NTFY:
-                    [self processNTFY:params];
-                    [_as.prometheusMetrics.m3uantfyRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_DATA:
-                    [_as.speedometerRx increase];
-                    [_as.speedometerRxBytes increaseBy:(uint32_t)pdu.length];
-                    [self processDATA:params];
-                    [_as.prometheusMetrics.m3uadataRxCount increaseBy:1];
-                    [_as.prometheusMetrics.msuRxThroughput increaseBy:1];
-                    [_as.prometheusMetrics.msuRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_DUNA:
-                    [self processDUNA:params];
-                    [_as.prometheusMetrics.m3uadunaRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_DAVA:
-                    [self processDAVA:params];
-                    [_as.prometheusMetrics.m3uadavaRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_DAUD:
-                    [self processDAUD:params];
-                    [_as.prometheusMetrics.m3uadaudRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_SCON:
-                    [self processSCON:params];
-                    [_as.prometheusMetrics.m3uasconRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_DUPU:
-                    [self processDUPU:params];
-                    [_as.prometheusMetrics.m3uadupuRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_DRST:
-                    [self processDRST:params];
-                    [_as.prometheusMetrics.m3uadrstRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_ASPUP:
-                    [self processASPUP:params];
-                    [_as.prometheusMetrics.m3uaaspupRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_ASPDN:
-                    [self processASPDN:params];
-                    [_as.prometheusMetrics.m3uaaspdnRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_ASPUP_ACK:
-                    [self processASPUP_ACK:params];
-                    [_as.prometheusMetrics.m3uaaspupackRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_ASPDN_ACK:
-                    [self processASPDN_ACK:params];
-                    [_as.prometheusMetrics.m3uaaspdnackRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_ASPAC:
-                    [self processASPAC:params];
-                    [_as.prometheusMetrics.m3uaaspacRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_ASPIA:
-                    [self processASPIA:params];
-                    [_as.prometheusMetrics.m3uaaspiaRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_ASPAC_ACK:
-                    [self processASPAC_ACK:params];
-                    [_as.prometheusMetrics.m3uaaspacackRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_ASPIA_ACK:
-                    [self processASPIA_ACK:params];
-                    [_as.prometheusMetrics.m3uaaspiaackRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_REG_REQ:
-                    [self processREG_REQ:params];
-                    [_as.prometheusMetrics.m3uaregreqRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_REG_RSP:
-                    [self processREG_RSP:params];
-                    [_as.prometheusMetrics.m3uaregrspRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_DEREG_REQ:
-                    [self processDEREG_REQ:params];
-                    [_as.prometheusMetrics.m3uaderegreqRxCount increaseBy:1];
-                    break;
-                case M3UA_CLASS_TYPE_DEREG_RSP:
-                    [self processDEREG_RSP:params];
-                    [_as.prometheusMetrics.m3uaderegrspRxCount increaseBy:1];
-                    break;
+                [self logDebug:@"M3UA Packet:"];
+                [self logDebug:[NSString stringWithFormat:@"  Parameter: 0x%04x (%s)",param_type,m3ua_param_name(param_type)]];
+                [self logDebug:[NSString stringWithFormat:@"  Data: %@",[data hexString]]];
             }
+            params[@(param_type)]=data;
         }
-        @catch(NSException *e)
+
+        switch(classtype)
         {
-            NSString *s = e.description;
-            [self addToLayerHistoryLog:s];
-        }
-        @finally
-        {
-            UMMUTEX_UNLOCK(_aspLock);
+            case M3UA_CLASS_TYPE_BEAT:
+                [self processBEAT:params];
+                [_as.prometheusMetrics.m3uabeatRxCount increaseBy:1];
+                return;
+            case M3UA_CLASS_TYPE_BEAT_ACK:
+                [self processBEAT_ACK:params];
+                [_as.prometheusMetrics.m3uabeatackRxCount increaseBy:1];
+                return;
+            case M3UA_CLASS_TYPE_ERR: /* management */
+                [self processERR:params];
+                [_as.prometheusMetrics.m3uaerrRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_NTFY:
+                [self processNTFY:params];
+                [_as.prometheusMetrics.m3uantfyRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_DATA:
+                [_as.speedometerRx increase];
+                [_as.speedometerRxBytes increaseBy:(uint32_t)pdu.length];
+                [self processDATA:params];
+                [_as.prometheusMetrics.m3uadataRxCount increaseBy:1];
+                [_as.prometheusMetrics.msuRxThroughput increaseBy:1];
+                [_as.prometheusMetrics.msuRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_DUNA:
+                [self processDUNA:params];
+                [_as.prometheusMetrics.m3uadunaRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_DAVA:
+                [self processDAVA:params];
+                [_as.prometheusMetrics.m3uadavaRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_DAUD:
+                [self processDAUD:params];
+                [_as.prometheusMetrics.m3uadaudRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_SCON:
+                [self processSCON:params];
+                [_as.prometheusMetrics.m3uasconRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_DUPU:
+                [self processDUPU:params];
+                [_as.prometheusMetrics.m3uadupuRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_DRST:
+                [self processDRST:params];
+                [_as.prometheusMetrics.m3uadrstRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_ASPUP:
+                [self processASPUP:params];
+                [_as.prometheusMetrics.m3uaaspupRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_ASPDN:
+                [self processASPDN:params];
+                [_as.prometheusMetrics.m3uaaspdnRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_ASPUP_ACK:
+                [self processASPUP_ACK:params];
+                [_as.prometheusMetrics.m3uaaspupackRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_ASPDN_ACK:
+                [self processASPDN_ACK:params];
+                [_as.prometheusMetrics.m3uaaspdnackRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_ASPAC:
+                [self processASPAC:params];
+                [_as.prometheusMetrics.m3uaaspacRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_ASPIA:
+                [self processASPIA:params];
+                [_as.prometheusMetrics.m3uaaspiaRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_ASPAC_ACK:
+                [self processASPAC_ACK:params];
+                [_as.prometheusMetrics.m3uaaspacackRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_ASPIA_ACK:
+                [self processASPIA_ACK:params];
+                [_as.prometheusMetrics.m3uaaspiaackRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_REG_REQ:
+                [self processREG_REQ:params];
+                [_as.prometheusMetrics.m3uaregreqRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_REG_RSP:
+                [self processREG_RSP:params];
+                [_as.prometheusMetrics.m3uaregrspRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_DEREG_REQ:
+                [self processDEREG_REQ:params];
+                [_as.prometheusMetrics.m3uaderegreqRxCount increaseBy:1];
+                break;
+            case M3UA_CLASS_TYPE_DEREG_RSP:
+                [self processDEREG_RSP:params];
+                [_as.prometheusMetrics.m3uaderegrspRxCount increaseBy:1];
+                break;
         }
     }
 }
@@ -2201,7 +2197,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         _reopen_timer2_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN2_TIMER to:M3UA_DEFAULT_REOPEN2_TIMER+3];
         _linktest_timer_value = [UMUtil randomFrom:M3UA_DEFAULT_LINKTEST_TIMER to:M3UA_DEFAULT_LINKTEST_TIMER+3];
         _speed = M3UA_DEFAULT_SPEED;
-        NSLog(@"Config being set %@",cfg);
 
         self.logLevel = UMLOG_MAJOR;
         
@@ -2652,7 +2647,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)linktestTimerEvent:(id)parameter
 {
-    [_aspLock lock];
+    UMMUTEX_LOCK(_aspLock);
     @try
     {
         /* if status is out of service, we restart the link */
@@ -2720,7 +2715,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     @finally
     {
-        [_aspLock unlock];
+        UMMUTEX_UNLOCK(_aspLock);
     }
 }
 

@@ -18,7 +18,7 @@
     self = [super init];
     if(self)
     {
-        _lock = [[UMMutex alloc]initWithName:@"UMMTP3StatisticDbRecord-lock"];
+        _statisticDbRecordLock = [[UMMutex alloc]initWithName:@"UMMTP3StatisticDbRecord-lock"];
     }
     return self;
 }
@@ -46,7 +46,7 @@
     {
         @try
         {
-            [_lock lock];
+            [_statisticDbRecordLock lock];
             UMDbQuery *query = [UMDbQuery queryForFile:__FILE__ line: __LINE__];
             if(!query.isInCache)
             {
@@ -90,7 +90,7 @@
         }
         @finally
         {
-            [_lock unlock];
+            [_statisticDbRecordLock unlock];
         }
     }
     return success;
@@ -103,7 +103,7 @@
     {
         @try
         {
-            [_lock lock];
+            [_statisticDbRecordLock lock];
             
             UMDbQuery *query = [UMDbQuery queryForFile:__FILE__ line: __LINE__];
             if(!query.isInCache)
@@ -138,7 +138,7 @@
         }
         @finally
         {
-            [_lock unlock];
+            [_statisticDbRecordLock unlock];
         }
     }
     return success;
@@ -146,15 +146,15 @@
 
 - (void)increaseMsuCount:(int)msuCount byteCount:(int)byteCount
 {
-    [_lock lock];
+    [_statisticDbRecordLock lock];
     _msu_count += msuCount;
     _bytes_count += byteCount;
-    [_lock unlock];
+    [_statisticDbRecordLock unlock];
 }
 
 - (void)flushToPool:(UMDbPool *)pool table:(UMDbTable *)table
 {
-    [_lock lock];
+    [_statisticDbRecordLock lock];
     if([self updateDb:pool table:table] == NO)
     {
         if([self insertIntoDb:pool table:table])
@@ -163,7 +163,7 @@
             _bytes_count = 0;
         }
     }
-    [_lock unlock];
+    [_statisticDbRecordLock unlock];
 }
 
 @end

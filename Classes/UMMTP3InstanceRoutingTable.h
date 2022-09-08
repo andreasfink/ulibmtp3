@@ -16,11 +16,12 @@
     NSString                            *_logFileName;
     UMLogLevel                          _logLevel;
     NSMutableDictionary                 *_routesByPointCode;
-    UMMutex                             *_lock;
+    UMMutex                             *_routingTableLock;
     UMMTP3InstanceRoute                 *_defaultRoute;
 }
 
 @property(readwrite,assign) UMLogLevel logLevel;
+@property(readonly)         UMMutex *routingTableLock;
 
 - (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)pc
                                             mask:(int)mask

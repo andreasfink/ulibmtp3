@@ -133,19 +133,22 @@
     }
     else
     {
-        [self.logFeed debugText:@"linkset has zero links in the IS state"];
-        [self.logFeed debugText:[NSString stringWithFormat:@"_linksBySlc: %@",_linksBySlc.description]];
-        NSMutableString *s = [[NSMutableString alloc]init];
-        NSArray *linkKeys = [_linksBySlc allKeys];
-        for(NSNumber *key in linkKeys)
+        if(_logLevel <=UMLOG_DEBUG)
         {
-            UMMTP3Link *link2 = _linksBySlc[key];
-            [s appendFormat:@"\t%@",link.name];
-            [s appendFormat:@" SLC %d",link.slc];
-            [s appendFormat:@" %@",[UMLayerM2PA m2paStatusString:link2.current_m2pa_status]];
-            [s appendString:@"\n"];
+            [self.logFeed debugText:@"linkset has zero links in the IS state"];
+            [self.logFeed debugText:[NSString stringWithFormat:@"_linksBySlc: %@",_linksBySlc.description]];
+            NSMutableString *s = [[NSMutableString alloc]init];
+            NSArray *linkKeys = [_linksBySlc allKeys];
+            for(NSNumber *key in linkKeys)
+            {
+                UMMTP3Link *link2 = _linksBySlc[key];
+                [s appendFormat:@"\t%@",link2.name];
+                [s appendFormat:@" SLC %d",link2.slc];
+                [s appendFormat:@" %@",[UMLayerM2PA m2paStatusString:link2.current_m2pa_status]];
+                [s appendString:@"\n"];
+            }
+            [self.logFeed debugText:s];
         }
-        [self.logFeed debugText:s];
     }
     return link;
 }
@@ -4586,8 +4589,13 @@
         return;
     }
     M2PA_Status old_status = link.current_m2pa_status;
+    if(old_status == status)
+    {
+        return;
+    }
+
     link.current_m2pa_status = status;
-    link.last_m2pa_status = status;
+    link.last_m2pa_status = old_status;
     BOOL newUp = NO;
     BOOL newDown = NO;
 
@@ -4649,7 +4657,10 @@
                 break;
             case M2PA_STATUS_ALIGNED_READY:
                 break;
+            case M2PA_STATUS_PROCESSOR_OUTAGE:
+                break;
             case M2PA_STATUS_IS:
+                [link stopReopenTimer1];
                 if(newUp)
                 {
                     link.awaitFirstSLTA = YES;
@@ -4684,6 +4695,7 @@
     {
         case M2PA_STATUS_FOOS:
             /* human told us not to start. So we do nothing */
+            [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link stopReopenTimer2];
             [link powerOff];
@@ -4706,7 +4718,9 @@
         case M2PA_STATUS_ALIGNED_NOT_READY:
         case M2PA_STATUS_ALIGNED_READY:
         case M2PA_STATUS_IS:
+        case M2PA_STATUS_PROCESSOR_OUTAGE:
             /* link is already coming up. so all is fine */
+            [link stopReopenTimer1];
             break;
     }
 }
@@ -4740,13 +4754,11 @@
 
 - (void)updateLinkSetStatus
 {
-    [_currentLinksMutex lock];
-    
+    UMMUTEX_LOCK(_currentLinksMutex);
     NSMutableArray *inactiveLinks = [[NSMutableArray alloc]init];
     NSMutableArray *activeLinks = [[NSMutableArray alloc]init];
     NSMutableArray *readyLinks  = [[NSMutableArray alloc]init];
     NSMutableArray *processorOutageLinks  = [[NSMutableArray alloc]init];
-
     NSArray *keys = [_linksBySlc allKeys];
     for (NSNumber *key in keys)
     {
@@ -4759,10 +4771,6 @@
                 {
                     [_prometheusMetrics.linkDownCount increaseBy:1];
                 }
-                [self updateRouteUnavailable:_adjacentPointCode
-                                        mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1
-                                      reason:@"M2PA-OFF"];
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_OOS:
@@ -4770,10 +4778,6 @@
                 {
                     [_prometheusMetrics.linkDownCount increaseBy:1];
                 }
-                [self updateRouteUnavailable:_adjacentPointCode
-                                        mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1
-                                      reason:@"M2PA-OOS"];
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_INITIAL_ALIGNMENT:
@@ -4781,10 +4785,6 @@
                 {
                     [_prometheusMetrics.linkDownCount increaseBy:1];
                 }
-                [self updateRouteUnavailable:_adjacentPointCode
-                                        mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1
-                                      reason:@"M2PA-INITIAL-ALIGNMENT"];
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_ALIGNED_NOT_READY:
@@ -4792,17 +4792,9 @@
                 {
                     [_prometheusMetrics.linkDownCount increaseBy:1];
                 }
-                [self updateRouteUnavailable:_adjacentPointCode
-                                        mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1
-                                      reason:@"M2PA-ALIGNED-NOT-READY"];
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_ALIGNED_READY:
-                [self updateRouteUnavailable:_adjacentPointCode
-                                        mask:_adjacentPointCode.maxmask
-                                    priority:UMMTP3RoutePriority_1
-                                      reason:@"M2PA-ALIGNED-READY"];
                 [readyLinks addObject:link];
                 break;
             case M2PA_STATUS_IS:
@@ -4812,18 +4804,10 @@
                 }
                 if(link.m2pa.remote_processor_outage)
                 {
-                    [self updateRouteUnavailable:_adjacentPointCode
-                                            mask:_adjacentPointCode.maxmask
-                                        priority:UMMTP3RoutePriority_1
-                                         reason:@"M2PA-IN-SERVICE (remote processor outage)"];
                     [processorOutageLinks addObject:link];
                 }
                 else
                 {
-                    [self updateRouteAvailable:_adjacentPointCode
-                                          mask:_adjacentPointCode.maxmask
-                                      priority:UMMTP3RoutePriority_1
-                                        reason:@"M2PA-IN-SERVICE"];
                     [activeLinks addObject:link];
                 }
                 break;
@@ -4838,23 +4822,44 @@
     _readyLinksCount = readyLinks.count;
     _processorOutageLinksCount = processorOutageLinks.count;
 
+    BOOL nowAvailable=NO;
+    BOOL nowUnavailable=NO;
     if((_currentActiveLinks.count == 0) && (_activeLinksCount > 0))
     {
+        /* the linkset now has active links */
         _mtp3.ready = YES;
-        [_mtp3 updateRoutingTableLinksetAvailabe:_name];
-        _lastLinksetUp = [NSDate date];
+        nowAvailable = YES;
     }
-    else if(_activeLinksCount == 0)
+    else if((_activeLinksCount == 0) && (_currentActiveLinks.count > 0))
     {
-        [self forgetAdvertizedPointcodes];
-        [_mtp3 updateRoutingTableLinksetUnavailabe:_name];
-        _lastLinksetDown = [NSDate date];
+        /* the linkset has no active links anymore */
+        nowUnavailable = YES;
     }
     _currentInactiveLinks = inactiveLinks;
     _currentActiveLinks = activeLinks;
     _currentReadyLinks  = readyLinks;
     _currentProcessorOutageLinks  = processorOutageLinks;
-    [_currentLinksMutex unlock];
+    UMMUTEX_UNLOCK(_currentLinksMutex);
+    
+    if(nowAvailable)
+    {
+        [_mtp3 updateRoutingTableLinksetAvailabe:_name];
+        [self updateRouteAvailable:_adjacentPointCode
+                              mask:_adjacentPointCode.maxmask
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"updateLinksetStatus activeLinks > 0"];
+        _lastLinksetUp = [NSDate date];
+    }
+    if(nowUnavailable)
+    {
+        [self forgetAdvertizedPointcodes];
+        [_mtp3 updateRoutingTableLinksetUnavailabe:_name];
+        [self updateRouteUnavailable:_adjacentPointCode
+                                mask:_adjacentPointCode.maxmask
+                            priority:UMMTP3RoutePriority_1
+                              reason:@"updateLinksetStatus activeLinks < 1"];
+        _lastLinksetDown = [NSDate date];
+    }
 }
 
 - (void)linktestTimeEventForLink:(UMMTP3Link *)link
