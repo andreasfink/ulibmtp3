@@ -4695,6 +4695,7 @@
     {
         case M2PA_STATUS_FOOS:
             /* human told us not to start. So we do nothing */
+            [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link stopReopenTimer2];
             [link powerOff];
@@ -4719,6 +4720,7 @@
         case M2PA_STATUS_IS:
         case M2PA_STATUS_PROCESSOR_OUTAGE:
             /* link is already coming up. so all is fine */
+            [link stopReopenTimer1];
             break;
     }
 }
