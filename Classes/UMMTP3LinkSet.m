@@ -4660,6 +4660,7 @@
             case M2PA_STATUS_PROCESSOR_OUTAGE:
                 break;
             case M2PA_STATUS_IS:
+                [link stopReopenTimer1];
                 if(newUp)
                 {
                     link.awaitFirstSLTA = YES;
