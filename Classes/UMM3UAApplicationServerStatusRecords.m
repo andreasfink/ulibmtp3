@@ -18,14 +18,14 @@
         {
             _entries[i] = NULL;
         }
-        _lock = [[UMMutex alloc]initWithName:@"UMM3UAApplicationServerStatusRecords-lock"];
+        _aspStatusRecordLock = [[UMMutex alloc]initWithName:@"UMM3UAApplicationServerStatusRecords-lock"];
     }
     return self;
 }
 
 - (void)addEvent:(NSString *)event
 {
-    [_lock lock];
+    UMMUTEX_LOCK(_aspStatusRecordLock);
     UMM3UAApplicationServerStatusRecord *entry = [[UMM3UAApplicationServerStatusRecord alloc]initWithString:event];
     int i = UMM3UAApplicationServerStatusRecord_max_entries-1;
     while(i>0)
@@ -34,7 +34,7 @@
         i--;
     }
     _entries[0] = entry;
-    [_lock unlock];
+    UMMUTEX_UNLOCK(_aspStatusRecordLock);
 }
 
 - (NSString *)stringValue

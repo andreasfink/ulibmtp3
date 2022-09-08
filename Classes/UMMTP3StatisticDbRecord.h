@@ -19,7 +19,7 @@
     int     _si;
     int     _msu_count;
     int     _bytes_count;
-    UMMutex *_lock;
+    UMMutex *_statisticDbRecordLock;
 }
 
 @property(readwrite,strong,atomic)  NSString *ymdh;
