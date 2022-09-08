@@ -4826,12 +4826,13 @@
     BOOL nowUnavailable=NO;
     if((_currentActiveLinks.count == 0) && (_activeLinksCount > 0))
     {
+        /* the linkset now has active links */
         _mtp3.ready = YES;
         nowAvailable = YES;
     }
-    
-    else if(_activeLinksCount == 0)
+    else if((_activeLinksCount == 0) && (_currentActiveLinks.count > 0))
     {
+        /* the linkset has no active links anymore */
         nowUnavailable = YES;
     }
     _currentInactiveLinks = inactiveLinks;
