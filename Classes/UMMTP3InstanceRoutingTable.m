@@ -456,6 +456,7 @@
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:pc.maxmask];
     if((r==NULL) || (r.count == 0))
     {
+        UMMUTEX_UNLOCK(_routingTableLock);
         return UMMTP3_ROUTE_UNKNOWN;
     }
     for(UMMTP3InstanceRoute *route in r)
