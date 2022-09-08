@@ -16,7 +16,7 @@
     NSString                            *_logFileName;
     UMLogLevel                          _logLevel;
     NSMutableDictionary                 *_routesByPointCode;
-    UMMutex                             *_lock;
+    UMMutex                             *_routingTableLock;
     UMMTP3InstanceRoute                 *_defaultRoute;
 }
 
