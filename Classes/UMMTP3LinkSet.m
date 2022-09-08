@@ -133,19 +133,22 @@
     }
     else
     {
-        [self.logFeed debugText:@"linkset has zero links in the IS state"];
-        [self.logFeed debugText:[NSString stringWithFormat:@"_linksBySlc: %@",_linksBySlc.description]];
-        NSMutableString *s = [[NSMutableString alloc]init];
-        NSArray *linkKeys = [_linksBySlc allKeys];
-        for(NSNumber *key in linkKeys)
+        if(_logLevel <=UMLOG_DEBUG)
         {
-            UMMTP3Link *link2 = _linksBySlc[key];
-            [s appendFormat:@"\t%@",link.name];
-            [s appendFormat:@" SLC %d",link.slc];
-            [s appendFormat:@" %@",[UMLayerM2PA m2paStatusString:link2.current_m2pa_status]];
-            [s appendString:@"\n"];
+            [self.logFeed debugText:@"linkset has zero links in the IS state"];
+            [self.logFeed debugText:[NSString stringWithFormat:@"_linksBySlc: %@",_linksBySlc.description]];
+            NSMutableString *s = [[NSMutableString alloc]init];
+            NSArray *linkKeys = [_linksBySlc allKeys];
+            for(NSNumber *key in linkKeys)
+            {
+                UMMTP3Link *link2 = _linksBySlc[key];
+                [s appendFormat:@"\t%@",link2.name];
+                [s appendFormat:@" SLC %d",link2.slc];
+                [s appendFormat:@" %@",[UMLayerM2PA m2paStatusString:link2.current_m2pa_status]];
+                [s appendString:@"\n"];
+            }
+            [self.logFeed debugText:s];
         }
-        [self.logFeed debugText:s];
     }
     return link;
 }

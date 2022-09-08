@@ -2197,7 +2197,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         _reopen_timer2_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN2_TIMER to:M3UA_DEFAULT_REOPEN2_TIMER+3];
         _linktest_timer_value = [UMUtil randomFrom:M3UA_DEFAULT_LINKTEST_TIMER to:M3UA_DEFAULT_LINKTEST_TIMER+3];
         _speed = M3UA_DEFAULT_SPEED;
-        NSLog(@"Config being set %@",cfg);
 
         self.logLevel = UMLOG_MAJOR;
         
