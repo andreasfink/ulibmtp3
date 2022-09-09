@@ -2379,12 +2379,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [_sctpLink closeFor:self reason:@"sctpReportsDown"];
             self.m3ua_asp_status = M3UA_STATUS_OFF;
         }
-        if([_reopen_timer1 isRunning]==NO)
-        {
-            [self stopReopenTimer1];
-            [self stopReopenTimer2];
-            [self startReopenTimer1];
-        }
+        [self stopReopenTimer1];
+        [self stopReopenTimer2];
+        [self startReopenTimer1];
         [_as aspDown:self reason:@"sctpReportsDown"];
     }
 }
@@ -2739,7 +2736,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         if(_unacknowledgedBeats > _beatMaxOutstanding)
         {
             [self powerOff:@"max-outstanding-beats reached"];
-            [self startReopenTimer1];
         }
         else
         {
