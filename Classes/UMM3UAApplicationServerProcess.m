@@ -2278,7 +2278,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                                                    name:@"m3ua_asp_reopenTimer1"
                                                 repeats:NO
                                         runInForeground:YES];
-
+        
         _reopen_timer2 = [[UMTimer alloc]initWithTarget:self
                                                selector:@selector(reopenTimer2Event:)
                                                  object:NULL
@@ -2365,24 +2365,27 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     @autoreleasepool
     {
         UMM3UA_Status oldStatus = self.m3ua_asp_status;
-        [self logInfo:@"sctpReportsDown"];
-        [_layerHistory addLogEntry:@"sctpReportsDown"];
-        [_as.mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ SCTP-DOWN",self.layerName]];
-        [ _as updateRouteUnavailable:_as.adjacentPointCode
-                                mask:_as.adjacentPointCode.maxmask
-                              forAsp:self
-                            priority:UMMTP3RoutePriority_1
-                              reason:@"SCTP-DOWN"];
         if(oldStatus!= M3UA_STATUS_OFF)
         {
+            self.m3ua_asp_status= M3UA_STATUS_OFF;
+            [self logInfo:@"sctpReportsDown"];
+            [_layerHistory addLogEntry:@"sctpReportsDown"];
+            [_as.mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ SCTP-DOWN",self.layerName]];
+            [ _as updateRouteUnavailable:_as.adjacentPointCode
+                                    mask:_as.adjacentPointCode.maxmask
+                                  forAsp:self
+                                priority:UMMTP3RoutePriority_1
+                                  reason:@"SCTP-DOWN"];
             [_lastLinkDown addEvent:@"sctpReportsDown"];
             [_sctpLink closeFor:self reason:@"sctpReportsDown"];
             self.m3ua_asp_status = M3UA_STATUS_OFF;
+            if((![_reopen_timer1 isRunning]) || (![_reopen_timer1 isExpired]))
+            {
+                [self startReopenTimer1];
+            }
+            [self stopReopenTimer2];
+            [_as aspDown:self reason:@"sctpReportsDown"];
         }
-        [self stopReopenTimer1];
-        [self stopReopenTimer2];
-        [self startReopenTimer1];
-        [_as aspDown:self reason:@"sctpReportsDown"];
     }
 }
 
@@ -2567,13 +2570,13 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 }
 - (void)stopReopenTimer1
 {
-    [_layerHistory addLogEntry:@"m3ua-stop-reopen-timer1"];
+    [_layerHistory addLogEntry:@"m3ua-asp-stop-reopen-timer1"];
     [_reopen_timer1 stop];
 }
 
 - (void)startReopenTimer2
 {
-    [_layerHistory addLogEntry:@"m3ua-start-reopen-timer2"];
+    [_layerHistory addLogEntry:@"m3ua-asp-start-reopen-timer2"];
     if(_reopen_timer2_value > 0)
     {
         if(_reopen_timer2==NULL)
