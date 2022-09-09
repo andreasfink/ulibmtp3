@@ -75,6 +75,7 @@
                                              name:@"routeRetestTimer"
                                           repeats:YES
                                   runInForeground:NO];
+    _mtp3Lock = [[UMMutex alloc]init];
 }
 
 -(NSString *)layerType
