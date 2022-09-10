@@ -1610,17 +1610,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void) sctpStatusIndication:(UMLayer *)caller
                        userId:(id)uid
                        status:(UMSocketStatus)new_status
-{
-    return [self sctpStatusIndication:caller
-                               userId:uid
-                               status:new_status
-                               reason:NULL];
-}
-
-- (void) sctpStatusIndication:(UMLayer *)caller
-                       userId:(id)uid
-                       status:(UMSocketStatus)new_status
                        reason:(NSString *)reason
+                       socket:(NSNumber *)socketNumber
 {
     UMSocketStatus	old_status;
     old_status = _sctp_status;
