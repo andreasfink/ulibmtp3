@@ -2071,11 +2071,27 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
 }
 
+
 - (void) sctpDataIndication:(UMLayer *)caller
                      userId:(id)uid
                    streamId:(uint16_t)streamID
                  protocolId:(uint32_t)pid
                        data:(NSData *)data
+{
+    [self sctpDataIndication:caller
+                         userId:uid
+                       streamId:streamID
+                     protocolId:pid
+                           data:data
+                      socket:NULL];
+}
+
+- (void) sctpDataIndication:(UMLayer *)caller
+                     userId:(id)uid
+                   streamId:(uint16_t)streamID
+                 protocolId:(uint32_t)pid
+                       data:(NSData *)data
+                     socket:(NSNumber *)socket
 {
     @autoreleasepool
     {
@@ -2128,6 +2144,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                     protocolId:(uint32_t)pid
                           data:(NSData *)d
                       incoming:(BOOL)in
+                        socket:(NSNumber *)socket
 {
 
 }
@@ -2178,6 +2195,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 {
 
 }
+
 
 
 - (NSDictionary *)config
