@@ -1612,7 +1612,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                        status:(UMSocketStatus)new_status
                        reason:(NSString *)reason
                        socket:(NSNumber *)socketNumber
-{
+{    
     UMSocketStatus	old_status;
     old_status = _sctp_status;
     if(self.logLevel <= UMLOG_DEBUG)
