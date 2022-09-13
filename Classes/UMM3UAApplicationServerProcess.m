@@ -2386,12 +2386,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                                 priority:UMMTP3RoutePriority_1
                                   reason:@"SCTP-DOWN"];
             [_lastLinkDown addEvent:@"sctpReportsDown"];
-            [_sctpLink closeFor:self reason:@"sctpReportsDown"];
             self.m3ua_asp_status = M3UA_STATUS_OFF;
-            if((![_reopen_timer1 isRunning]) || (![_reopen_timer1 isExpired]))
-            {
-                [self startReopenTimer1];
-            }
+            [self startReopenTimer1];
             [self stopReopenTimer2];
             [_as aspDown:self reason:@"sctpReportsDown"];
         }
@@ -2751,7 +2747,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         }
         else
         {
-            [_layerHistory addLogEntry:@"sending BEAT"];
             NSString *str = [[NSDate date]stringValue];
             NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
             UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
