@@ -1767,7 +1767,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [_submission_speed clear];
     _speed_within_limit = YES;
     [self stopReopenTimer1];
-    [_sctpLink openFor:self sendAbortFirst:YES reason:(reason ? reason : @"m3ua-poweron")];
+    [_sctpLink openFor:self sendAbortFirst:NO reason:(reason ? reason : @"m3ua-poweron")];
     [self startReopenTimer2];
     UMMUTEX_UNLOCK(_aspLock);
 }
