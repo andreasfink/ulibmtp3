@@ -41,6 +41,10 @@
 		A6C78D881A29437B006C66A2 /* ulibsctp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D851A29437B006C66A2 /* ulibsctp.framework */; };
 		A6C78D8C1A294393006C66A2 /* ulib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D8B1A294392006C66A2 /* ulib.framework */; };
 		A6C78D8D1A294393006C66A2 /* ulib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D8B1A294392006C66A2 /* ulib.framework */; };
+		A6D7826228ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A6D7826028ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.h */; };
+		A6D7826328ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D7826128ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.m */; };
+		A6D7826A28ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = A6D7826828ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.h */; };
+		A6D7826B28ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D7826928ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.m */; };
 		A6E3090823AAF32400783116 /* mtp3routeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E3090723AAF32400783116 /* mtp3routeTests.m */; };
 		A6E3D78E22BABDAE00D5B1B6 /* ulibsctp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C78D851A29437B006C66A2 /* ulibsctp.framework */; };
 		A6E99F6D268194CF002AD342 /* UMMTP3LinkSetPrometheusData.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E99F6B268194CF002AD342 /* UMMTP3LinkSetPrometheusData.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -262,6 +266,10 @@
 		A6C78D8B1A294392006C66A2 /* ulib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulib.framework; path = "/Library/Application Support/FinkTelecomServices/frameworks/ulib.framework"; sourceTree = "<absolute>"; };
 		A6D75F051FCF258A005C198E /* UMMTP3SyslogClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3SyslogClient.h; sourceTree = "<group>"; };
 		A6D75F061FCF258A005C198E /* UMMTP3SyslogClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3SyslogClient.m; sourceTree = "<group>"; };
+		A6D7826028ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3LinkSetRoutingTable.h; sourceTree = "<group>"; };
+		A6D7826128ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3LinkSetRoutingTable.m; sourceTree = "<group>"; };
+		A6D7826828ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMMTP3LinkSetRoutingTableEntry.h; sourceTree = "<group>"; };
+		A6D7826928ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3LinkSetRoutingTableEntry.m; sourceTree = "<group>"; };
 		A6E3090723AAF32400783116 /* mtp3routeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mtp3routeTests.m; sourceTree = "<group>"; };
 		A6E7BF2F1FBECDF600C53765 /* Q.708B-2011-ISPC.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Q.708B-2011-ISPC.pdf"; sourceTree = "<group>"; };
 		A6E7BF541FBED6CC00C53765 /* rfc-4666-m3ua.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "rfc-4666-m3ua.txt"; sourceTree = "<group>"; };
@@ -386,6 +394,10 @@
 				A6B3761523FA6539007F6F20 /* UMMTP3InstanceRoutingTable.m */,
 				A60A36E11A305DCF0090FC94 /* UMMTP3LinkSet.h */,
 				A60A36E21A305DCF0090FC94 /* UMMTP3LinkSet.m */,
+				A6D7826028ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.h */,
+				A6D7826128ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.m */,
+				A6D7826828ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.h */,
+				A6D7826928ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.m */,
 				A6E99F6B268194CF002AD342 /* UMMTP3LinkSetPrometheusData.h */,
 				A6E99F6C268194CF002AD342 /* UMMTP3LinkSetPrometheusData.m */,
 				A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */,
@@ -521,9 +533,11 @@
 				A6F178F221AF03B00084D972 /* UMSyntaxToken_Pointcode.h in Headers */,
 				A6F178E121AF03B00084D972 /* UMMTP3Task_adminAttachOrder.h in Headers */,
 				A6F178F021AF03B00084D972 /* UMMTP3Variant.h in Headers */,
+				A6D7826A28ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.h in Headers */,
 				A6F178EE21AF03B00084D972 /* UMMTP3Task_stop.h in Headers */,
 				A6F178E521AF03B00084D972 /* UMMTP3Task_m2paCongestionCleared.h in Headers */,
 				A6F178CB21AF03B00084D972 /* UMM3UAApplicationServer.h in Headers */,
+				A6D7826228ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.h in Headers */,
 				A6F178C621AF03B00084D972 /* ulibmtp3.h in Headers */,
 				A6B3762A23FA7BE1007F6F20 /* UMMTP3RouteCongestionLevel.h in Headers */,
 				A6F178E821AF03B00084D972 /* UMMTP3Task_m2paProcessorRestored.h in Headers */,
@@ -677,12 +691,14 @@
 				A6AA23CA24854164008D5A57 /* UMMTP3StatisticDbRecord.m in Sources */,
 				A6AD89F421CD73F300F40945 /* UMMTP3TranslationTableMap.m in Sources */,
 				A6F1791021AF044B0084D972 /* UMMTP3Task_m2paStatusIndication.m in Sources */,
+				A6D7826B28ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.m in Sources */,
 				A6F178F821AF044B0084D972 /* UMMTP3Label.m in Sources */,
 				A6F1790521AF044B0084D972 /* UMMTP3Task_adminAttachOrder.m in Sources */,
 				A6F1791321AF044B0084D972 /* UMMTP3TransitPermission.m in Sources */,
 				A6F1790C21AF044B0084D972 /* UMMTP3Task_m2paProcessorRestored.m in Sources */,
 				A6F1790021AF044B0084D972 /* UMMTP3PointcodeFilter.m in Sources */,
 				A6F1790F21AF044B0084D972 /* UMMTP3Task_m2paSpeedLimitReachedCleared.m in Sources */,
+				A6D7826328ECD42A00A9A5BF /* UMMTP3LinkSetRoutingTable.m in Sources */,
 				A6F178F521AF044B0084D972 /* UMM3UAApplicationServerProcess.m in Sources */,
 				A6F1790821AF044B0084D972 /* UMMTP3Task_m2paCongestion.m in Sources */,
 				A6F1791121AF044B0084D972 /* UMMTP3Task_start.m in Sources */,
