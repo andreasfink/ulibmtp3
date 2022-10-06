@@ -4643,8 +4643,10 @@
             case M2PA_STATUS_OFF: /* connection requested but SCTP is not yet up */
                 [link stopLinkTestTimer];
                 [link stopReopenTimer1];
-                [link.m2pa.stateMachineLogFeed debugText:@"PowerOff NOT requested due to status M2PA_STATUS_OFF"];
-                //[link powerOff];
+                if((old_status==M2PA_STATUS_DISCONNECTED) || (old_status==M2PA_STATUS_FOOS))
+                {
+                    [link startReopenTimer2];
+                }
                 break;
             case M2PA_STATUS_OOS:
                 [link stopLinkTestTimer];
