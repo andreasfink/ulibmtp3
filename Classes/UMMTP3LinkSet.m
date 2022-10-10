@@ -4640,7 +4640,7 @@
                 [link powerOff];
                 [link startReopenTimer1]; /* this will power on in few sec */
                 break;
-            case M2PA_STATUS_OFF: /* connection requested but SCTP is not yet up */
+            case M2PA_STATUS_CONNECTING: /* connection requested but SCTP is not yet up */
                 [link stopLinkTestTimer];
                 [link stopReopenTimer1];
                 if((old_status==M2PA_STATUS_DISCONNECTED) || (old_status==M2PA_STATUS_FOOS))
@@ -4702,7 +4702,7 @@
             [link stopReopenTimer2];
             [link powerOff];
             break;
-        case M2PA_STATUS_OFF:
+        case M2PA_STATUS_CONNECTING:  /* connection requested but SCTP is not yet up */
             /* link stayed off. so lets kick it and restart it */
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
@@ -4768,42 +4768,23 @@
         switch(link.current_m2pa_status)
         {
             default:
-            case M2PA_STATUS_OFF:
-                if([_currentActiveLinks indexOfObject:link] != NSNotFound)
-                {
-                    [_prometheusMetrics.linkDownCount increaseBy:1];
-                }
+            case M2PA_STATUS_DISCONNECTED:
+            case M2PA_STATUS_CONNECTING:
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_OOS:
-                if([_currentActiveLinks indexOfObject:link] != NSNotFound)
-                {
-                    [_prometheusMetrics.linkDownCount increaseBy:1];
-                }
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_INITIAL_ALIGNMENT:
-                if([_currentActiveLinks indexOfObject:link] != NSNotFound)
-                {
-                    [_prometheusMetrics.linkDownCount increaseBy:1];
-                }
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_ALIGNED_NOT_READY:
-                if([_currentActiveLinks indexOfObject:link] != NSNotFound)
-                {
-                    [_prometheusMetrics.linkDownCount increaseBy:1];
-                }
                 [inactiveLinks addObject:link];
                 break;
             case M2PA_STATUS_ALIGNED_READY:
                 [readyLinks addObject:link];
                 break;
             case M2PA_STATUS_IS:
-                if([_currentActiveLinks indexOfObject:link] == NSNotFound)
-                {
-                    [_prometheusMetrics.linkUpCount increaseBy:1];
-                }
                 if(link.m2pa.remote_processor_outage)
                 {
                     [processorOutageLinks addObject:link];
@@ -4831,11 +4812,15 @@
         /* the linkset now has active links */
         _mtp3.ready = YES;
         nowAvailable = YES;
+        [_prometheusMetrics.linkUpCount increaseBy:1];
+
     }
     else if((_activeLinksCount == 0) && (_currentActiveLinks.count > 0))
     {
         /* the linkset has no active links anymore */
         nowUnavailable = YES;
+        [_prometheusMetrics.linkDownCount increaseBy:1];
+
     }
     _currentInactiveLinks = inactiveLinks;
     _currentActiveLinks = activeLinks;
