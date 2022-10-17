@@ -1659,10 +1659,10 @@
             UMMUTEX_UNLOCK(_mtp3Lock);
         }
         UMMTP3RouteStatus old_status = [_routingTable statusOfRoute:pc];
-       [_routingTable updateDynamicRouteUnavailable:pc
-                                               mask:mask
-                                        linksetName:name
-                                           priority:prio];
+        [_routingTable updateDynamicRouteUnavailable:pc
+                                                mask:mask
+                                         linksetName:name
+                                            priority:prio];
         UMMTP3RouteStatus new_status = [_routingTable statusOfRoute:pc];
 
         if(old_status!=new_status)

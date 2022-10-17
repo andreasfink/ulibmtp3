@@ -185,6 +185,7 @@
         route.status = UMMTP3_ROUTE_ALLOWED;
         [r addObject:route];
     }
+    [self setRouteArray:r forPointcode:pc mask:mask];
     UMMUTEX_UNLOCK(_routingTableLock);
     return found;
 }
@@ -224,6 +225,7 @@
         route.status = UMMTP3_ROUTE_RESTRICTED;
         [r addObject:route];
     }
+    [self setRouteArray:r forPointcode:pc mask:mask];
     UMMUTEX_UNLOCK(_routingTableLock);
     return changed;
 }
@@ -282,6 +284,7 @@
         changed = YES;
         [r addObject:route];
     }
+    [self setRouteArray:r forPointcode:pc mask:mask];
     UMMUTEX_UNLOCK(_routingTableLock);
     return changed;
 }

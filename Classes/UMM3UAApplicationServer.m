@@ -369,7 +369,6 @@ static const char *m3ua_param_name(uint16_t param_type)
     [asp.lastUps addEvent:reason];
     [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-up %@",reason]];
     [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-UP %@",asp.layerName,reason]];
-
     [self updateLinkSetStatus];
 }
 
@@ -409,7 +408,6 @@ static const char *m3ua_param_name(uint16_t param_type)
                           mask:_adjacentPointCode.maxmask
                       priority:UMMTP3RoutePriority_1
                         reason:reason];
-
     if(_trafficMode == UMM3UATrafficMode_override)
     {
         NSArray *keys = [_applicationServerProcesses allKeys];
