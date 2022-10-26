@@ -1725,8 +1725,7 @@
 
 - (UMMTP3RouteStatus)getRouteStatus:(UMMTP3PointCode *)pc
 {
-    int mask = 0;
-    UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:mask excludeLinkSetName:NULL exact:YES];
+    UMMTP3InstanceRoute *ir = [_routingTable findRouteForDestination:pc mask:pc.maxmask excludeLinkSetName:NULL exact:YES];
     return ir.status;
 }
 

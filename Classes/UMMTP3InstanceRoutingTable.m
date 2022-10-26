@@ -107,7 +107,10 @@
         if(![_defaultRoute.linksetName isEqualToString:linksetName])
         {
             r = [[NSMutableArray alloc]init];
-            [r addObject:_defaultRoute];
+            if(_defaultRoute)
+            {
+                [r addObject:_defaultRoute];
+            }
         }
     }
     return r;
