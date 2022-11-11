@@ -241,11 +241,6 @@
     [_m2pa powerOffFor:_linkset.mtp3 forced:YES reason:@"forcedPowerOff"];
 }
 
-- (void)powerOn
-{
-    [self powerOn:NULL];
-}
-
 - (void)powerOn:(NSString *)reason
 {
     if(_forcedOutOfService==NO)

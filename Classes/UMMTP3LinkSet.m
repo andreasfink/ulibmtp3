@@ -4693,6 +4693,7 @@
             [link stopReopenTimer1];
             [link startReopenTimer1];
             [link stopReopenTimer2];
+            [link powerOn:@"reopentimer1"];
             break;
         case M2PA_STATUS_OOS:
         case M2PA_STATUS_INITIAL_ALIGNMENT:
