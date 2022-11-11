@@ -1733,7 +1733,7 @@
                 slc:(int)slc
                link:(UMMTP3Link *)link
 {
-    if(link.current_m2pa_status != M2PA_STATUS_ALIGNED_READY)
+    if(link.current_m2pa_status == M2PA_STATUS_ALIGNED_READY)
     {
         [self m2paStatusUpdate:M2PA_STATUS_IS slc:slc];
     }
@@ -4593,25 +4593,20 @@
     {
         return;
     }
-
     link.current_m2pa_status = status;
-    link.last_m2pa_status = old_status;
-    BOOL newUp = NO;
-    BOOL newDown = NO;
 
     [self updateLinkSetStatus];
-    
     if((status == M2PA_STATUS_IS) && (old_status != M2PA_STATUS_IS))
     {
         _activeLinks++;
-        newUp = YES;
+        link.lastLinkUp = [NSDate date];
     }
     else if((status != M2PA_STATUS_IS) && (old_status == M2PA_STATUS_IS))
     {
         _activeLinks--;
-        newDown = YES;
+        link.lastLinkDown = [NSDate date];
     }
-
+    
     if(_activeLinks==0)
     {
         link.emergency = YES;
@@ -4643,12 +4638,9 @@
             case M2PA_STATUS_CONNECTING: /* connection requested but SCTP is not yet up */
                 [link stopLinkTestTimer];
                 [link stopReopenTimer1];
-                if((old_status==M2PA_STATUS_DISCONNECTED) || (old_status==M2PA_STATUS_FOOS))
-                {
-                    [link startReopenTimer2];
-                }
+                [link startReopenTimer2];
                 break;
-            case M2PA_STATUS_OOS:
+            case M2PA_STATUS_OOS: /* sctp is established but M2PA not started yet */
                 [link stopLinkTestTimer];
                 [link stopReopenTimer1];
                 [link start];
@@ -4663,26 +4655,15 @@
                 break;
             case M2PA_STATUS_IS:
                 [link stopReopenTimer1];
-                if(newUp)
-                {
-                    link.awaitFirstSLTA = YES;
-                    link.firstSLTMSent = NO;
-                    [link stopLinkTestTimer];
-                    if(link.firstSLTMSent == NO)
-                    [self linktestTimeEventForLink:link];
-                    link.firstSLTMSent = YES;
-                    [link startLinkTestTimer];
-                    [link stopReopenTimer2];
-                }
+                link.awaitFirstSLTA = YES;
+                link.firstSLTMSent = NO;
+                [link stopLinkTestTimer];
+                if(link.firstSLTMSent == NO)
+                [self linktestTimeEventForLink:link];
+                link.firstSLTMSent = YES;
+                [link startLinkTestTimer];
+                [link stopReopenTimer2];
                 break;
-        }
-        if(newUp)
-        {
-            link.lastLinkUp = [NSDate date];
-        }
-        if(newDown)
-        {
-            link.lastLinkDown = [NSDate date];
         }
     }
 }
@@ -4700,14 +4681,12 @@
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link stopReopenTimer2];
-            [link powerOff:@"reopenTimer1Event and status is FOOS"];
             break;
         case M2PA_STATUS_CONNECTING:  /* connection requested but SCTP is not yet up */
             /* link stayed off. so lets kick it and restart it */
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link startReopenTimer2];
-            [link powerOn:@"reopenTimer1Event and status is CONNECTING"];
             break;
         case M2PA_STATUS_DISCONNECTED:
             /* link is establishing already (from other side for example). lets not mess with it but check again in 6 seconds again.*/
@@ -4731,7 +4710,7 @@
  we tear everythign down after reopen timer 2 and restart the link */
 - (void)reopenTimer2EventFor:(UMMTP3Link *)link
 {
-    if(link.last_m2pa_status != M2PA_STATUS_IS)
+    if(link.current_m2pa_status != M2PA_STATUS_IS)
     {
         [link stopLinkTestTimer];
         [link stopReopenTimer1];

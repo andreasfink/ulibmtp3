@@ -27,7 +27,6 @@
     {
         _logLevel = UMLOG_MAJOR;
         _sctp_status = UMSOCKET_STATUS_OFF;
-        _last_m2pa_status = M2PA_STATUS_DISCONNECTED;
         _current_m2pa_status = M2PA_STATUS_DISCONNECTED;
         _linkTestAckTime = MTP3_LINK_TEST_ACK_TIMER_DEFAULT;
         _reopenTime1  = [UMUtil randomFrom:MTP3_LINK_REOPEN_TIMER1_DEFAULT to:MTP3_LINK_REOPEN_TIMER1_DEFAULT+3];;
@@ -87,7 +86,6 @@
     self.sctp_status = s;
     if((s==UMSOCKET_STATUS_OFF) || (s==UMSOCKET_STATUS_FOOS))
     {
-        self.last_m2pa_status = self.current_m2pa_status;
         self.current_m2pa_status =  M2PA_STATUS_DISCONNECTED;
     }
 }
