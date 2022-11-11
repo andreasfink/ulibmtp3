@@ -4520,7 +4520,7 @@
     for(NSNumber *key in linkKeys)
     {
         UMMTP3Link *link = _linksBySlc[key];
-        [link powerOn];
+        [link powerOn:reason];
     }
 }
 
@@ -4536,7 +4536,7 @@
     {
         UMMTP3Link *link = _linksBySlc[key];
         [link.m2pa.stateMachineLogFeed debugText:@"PowerOff requested from linkset PowerOff"];
-        [link powerOff];
+        [link powerOff:reason];
     }
 }
 
@@ -4630,14 +4630,14 @@
                 [link stopReopenTimer1];
                 [link stopReopenTimer2];
                 [link.m2pa.stateMachineLogFeed debugText:@"PowerOff requested due to status M2PA_STATUS_FOOS"];
-                [link powerOff];
+                [link powerOff:@"m2pa state changed to FOOS"];
                 break;
             case M2PA_STATUS_DISCONNECTED:
                 [link stopLinkTestTimer];
                 [link stopReopenTimer1];
                 [link stopReopenTimer2];
                 [link.m2pa.stateMachineLogFeed debugText:@"PowerOff requested due to status M2PA_STATUS_DISCONNECTED"];
-                [link powerOff];
+                [link powerOff:@"m2pa state changed to DISCONNECTED"];
                 [link startReopenTimer1]; /* this will power on in few sec */
                 break;
             case M2PA_STATUS_CONNECTING: /* connection requested but SCTP is not yet up */
@@ -4700,14 +4700,14 @@
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link stopReopenTimer2];
-            [link powerOff];
+            [link powerOff:@"reopenTimer1Event and status is FOOS"];
             break;
         case M2PA_STATUS_CONNECTING:  /* connection requested but SCTP is not yet up */
             /* link stayed off. so lets kick it and restart it */
             [link stopLinkTestTimer];
             [link stopReopenTimer1];
             [link startReopenTimer2];
-            [link powerOn];
+            [link powerOn:@"reopenTimer1Event and status is CONNECTING"];
             break;
         case M2PA_STATUS_DISCONNECTED:
             /* link is establishing already (from other side for example). lets not mess with it but check again in 6 seconds again.*/
@@ -4737,7 +4737,7 @@
         [link stopReopenTimer1];
         [link stopReopenTimer2];
         [link.m2pa.stateMachineLogFeed debugText:@"reopenTimer2Event: not in service after reopen timer 2 expired. "];
-        [link powerOff];
+        [link powerOff:@"reopenTimer2Event and status is not IS"];
         [link startReopenTimer1];
     }
 }

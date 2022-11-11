@@ -258,11 +258,6 @@
     }
 }
 
-- (void)powerOff
-{
-    [self powerOff:NULL];
-}
-
 - (void)powerOff:(NSString *)reason
 {
     [_m2pa.stateMachineLogFeed debugText:@"powerOff requested in MTP3Link"];
