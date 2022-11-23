@@ -3676,8 +3676,8 @@ RFC 4666             SS7 MTP3-User Adaptation Layer       September 2006
    The "Destination Status Unknown" error MAY be sent if a DAUD is
    received at an SG enquiring of the availability/congestion status of
    a destination and the SG does not wish to provide the status (e.g.,
-   the sender is not authorized to know the status).  For this error,
-   the invalid or unauthorized Point Code(s) MUST be included along with
+   the sender is not authorised to know the status).  For this error,
+   the invalid or unauthorised Point Code(s) MUST be included along with
    the Network Appearance and/or Routing Context associated with the
    Point Code(s).
 
@@ -4998,10 +4998,10 @@ RFC 4666             SS7 MTP3-User Adaptation Layer       September 2006
    and compares it with the currently provisioned Routing Keys.  If the
    received Routing Key matches an existing SGP Routing Key entry and
    the ASP is not currently included in the list of ASPs for the related
-   Application Server, the SGP MAY authorize the ASP to be added to the
+   Application Server, the SGP MAY authorise the ASP to be added to the
    AS.  Or, if the Routing Key does not currently exist and the received
    Routing Key data is valid and unique, an SGP supporting dynamic
-   configuration MAY authorize the creation of a new Routing Key and
+   configuration MAY authorise the creation of a new Routing Key and
    related Application Server and add the ASP to the new AS.  In either
    case, the SGP returns a Registration Response message to the ASP,
    containing the same Local-RK-Identifier as provided in the initial
@@ -5059,7 +5059,7 @@ RFC 4666             SS7 MTP3-User Adaptation Layer       September 2006
    procedure or RC does not exist.  Otherwise, a Registration Response
    "Successfully Registered" is returned.
 
-   If the SGP does not authorize an otherwise valid registration
+   If the SGP does not authorise an otherwise valid registration
    request, the SGP returns a REG RSP message to the ASP containing the
    Registration Result "Error - Permission Denied".
 
@@ -5299,7 +5299,7 @@ RFC 4666             SS7 MTP3-User Adaptation Layer       September 2006
    list of Affected Point Codes.
 
    An SG MAY refuse to provide the availability or congestion status of
-   a destination if, for example, the ASP is not authorized to know the
+   a destination if, for example, the ASP is not authorised to know the
    status of the destination.  The SG MAY respond with an Error Message
    (Error Code = "Destination Status Unknown").
 
