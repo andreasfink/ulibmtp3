@@ -54,17 +54,17 @@ typedef enum UMMTP3ScreeningTraceLevel
 
 @interface UMMTP3LinkSet : UMObject
 {
-    UMLayerMTP3                 *_mtp3;
-    NSString                    *_name;
-    UMSynchronizedSortedDictionary *_linksBySlc;
-    UMMutex                     *_slsLock;
-    UMLogLevel                  _logLevel;
-    UMMTP3Variant               _variant;
-    UMMTP3PointCode             *_localPointCode;
-    UMMTP3PointCode             *_adjacentPointCode;
-    NSNumber                    *_overrideNetworkIndicator;
-    int                         _linkSelector;
-    unsigned long               _nationalOptions;
+    UMLayerMTP3                     *_mtp3;
+    NSString                        *_name;
+    UMSynchronizedSortedDictionary  *_linksBySlc;
+    UMMutex                         *_slsLock;
+    UMLogLevel                      _logLevel;
+    UMMTP3Variant                   _variant;
+    UMMTP3PointCode                 *_localPointCode;
+    UMMTP3PointCode                 *_adjacentPointCode;
+    NSNumber                        *_overrideNetworkIndicator;
+    int                             _linkSelector;
+    unsigned long                   _nationalOptions;
     UMMTP3WhiteList             *_incomingWhiteList;
     UMMTP3BlackList             *_incomingBlackList;
     int                         _tra_sent;

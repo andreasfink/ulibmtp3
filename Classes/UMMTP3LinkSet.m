@@ -1535,10 +1535,17 @@
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
-                    [self.logFeed debugText:[NSString stringWithFormat:@"  Data: %@ ",pdu2]];
-                    [self.logFeed debugText:[NSString stringWithFormat:@"  idx=: %d ",idx]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  Data:   %@",pdu2]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  idx=:   %d",idx]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  ls:     %@",_name]];
                 }
-                [_mtp3 processIncomingPdu:label data:pdu2 userpartId:si ni:ni sls:sls mp:mp linksetName:_name linkset:self];
+                [_mtp3 processIncomingPdu:label data:pdu2
+                               userpartId:si
+                                       ni:ni
+                                      sls:sls
+                                       mp:mp
+                              linksetName:_name
+                                  linkset:self];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_TUP:

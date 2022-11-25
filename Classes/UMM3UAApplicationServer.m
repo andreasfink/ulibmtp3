@@ -365,7 +365,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
 - (void)aspUp:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
-    upCount++;
+    _upCount++;
     [asp.lastUps addEvent:reason];
     [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-up %@",reason]];
     [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-UP %@",asp.layerName,reason]];
@@ -376,7 +376,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 {
     @autoreleasepool
     {
-        upCount--;
+        _upCount--;
         [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-down %@",reason]];
         [self updateLinkSetStatus];
         [asp.lastDowns addEvent:reason];
@@ -401,7 +401,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void)aspActive:(UMM3UAApplicationServerProcess *)asp reason:(NSString *)reason
 {
     [self addToLayerHistoryLog:[NSString stringWithFormat:@"asp-active %@",reason]];
-    activeCount++;
+    _activeCount++;
     [asp.lastActives addEvent:reason];
     [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ AS-ACTIVE %@",asp.layerName,reason]];
     [self updateRouteAvailable:_adjacentPointCode
@@ -435,7 +435,7 @@ static const char *m3ua_param_name(uint16_t param_type)
     {
         [asp.lastInactives addEvent:reason];
         [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ ASP-INACTIVE %@",asp.layerName,reason]];
-        activeCount--;
+        _activeCount--;
         BOOL somethingsActive = NO;
         NSArray *keys = [_applicationServerProcesses allKeys];
         int newActiveCount = 0;
@@ -453,7 +453,7 @@ static const char *m3ua_param_name(uint16_t param_type)
                 break;
             }
         }
-        activeCount = newActiveCount;
+        _activeCount = newActiveCount;
         if(somethingsActive == NO)
         {
             [self updateRouteUnavailable:_adjacentPointCode
@@ -478,7 +478,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 
     [_mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"%@ AS-PENDING %@",self.layerName,reason]];
 
-    activeCount--;
+    _activeCount--;
     BOOL somethingsActive = NO;
     NSArray *keys = [_applicationServerProcesses allKeys];
     for(id key in keys)

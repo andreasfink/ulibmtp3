@@ -32,16 +32,16 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 @interface UMM3UAApplicationServer : UMMTP3LinkSet
 {
     /* config params */
-    UMM3UATrafficMode   _trafficMode;
-    NSNumber			*_routingContext;
-    NSNumber            *_networkAppearance;
-    UMM3UA_Status       _m3ua_status;
+    UMM3UATrafficMode           _trafficMode;
+    NSNumber			        *_routingContext;
+    NSNumber                    *_networkAppearance;
+    UMM3UA_Status               _m3ua_status;
     UMSynchronizedSortedDictionary *_applicationServerProcesses;
-    int                 upCount;
-    int                 activeCount;
-    BOOL                _useRoutingKey;
-    BOOL                _send_aspup;
-    BOOL                _send_aspac;
+    int                         _upCount;
+    int                         _activeCount;
+    BOOL                        _useRoutingKey;
+    BOOL                        _send_aspup;
+    BOOL                        _send_aspac;
     UMM3UAApplicationServerMode _mode;
 }
 

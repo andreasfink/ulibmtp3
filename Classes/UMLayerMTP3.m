@@ -1343,7 +1343,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset ];
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_TUP:
@@ -1352,8 +1359,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_TUP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_ISUP:
@@ -1362,8 +1375,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_DUP_C:
@@ -1372,7 +1391,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_C",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
 
             }
                 break;
@@ -1382,8 +1408,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_DUP_F",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_RES_TESTING:
@@ -1392,8 +1424,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_RES_TESTING",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_BROADBAND_ISUP:
@@ -1402,8 +1440,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_ISUP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SAT_ISUP:
@@ -1412,8 +1456,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_SAT_ISUP",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_B:
@@ -1422,8 +1472,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_B",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_C:
@@ -1432,8 +1488,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_C",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_D:
@@ -1442,8 +1504,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_D",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_E:
@@ -1452,8 +1520,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_E",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
             case MTP3_SERVICE_INDICATOR_SPARE_F:
@@ -1462,8 +1536,14 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SPARE_F",si]];
                 }
-                [self processUserPart:label data:data userpartId:si ni:ni sls:sls mp:mp linksetName:linksetName linkset:linkset];
-
+                [self processUserPart:label
+                                 data:data
+                           userpartId:si
+                                   ni:ni
+                                  sls:sls
+                                   mp:mp
+                          linksetName:linksetName
+                              linkset:linkset];
             }
                 break;
         }
