@@ -1232,6 +1232,7 @@
                                        mp:mp
                               linksetName:linksetName
                                   linkset:linkset];
+    
             [_statisticDb addByteCount:(int)data.length
                        incomingLinkset:linksetName
                        outgoingLinkset:@"local"
