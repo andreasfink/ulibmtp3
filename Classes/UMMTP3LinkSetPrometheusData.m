@@ -731,259 +731,259 @@
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_errRxCount.help = @"count of received UPT packets";
+            _m3ua_errRxCount.help = @"count of received ERR packets";
 
             _m3ua_ntfyRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_ntfy_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_ntfyRxCount.help = @"count of received UPT packets";
+            _m3ua_ntfyRxCount.help = @"count of receive NTFY packets";
 
             _m3ua_ntfyTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_ntfy_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_ntfyTxCount.help = @"count of received UPT packets";
+            _m3ua_ntfyTxCount.help = @"count of sent NTFY packets";
 
             _m3ua_dataTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_data_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_dataTxCount.help = @"count of received UPT packets";
+            _m3ua_dataTxCount.help = @"count of sent DATA packets";
 
             _m3ua_dataRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_data_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_dataRxCount.help = @"count of received UPT packets";
+            _m3ua_dataRxCount.help = @"count of received DATA packets";
 
             _m3ua_dunaTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_duna_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_dunaTxCount.help = @"count of received UPT packets";
+            _m3ua_dunaTxCount.help = @"count of sent DUNA packets";
 
             _m3ua_dunaRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_duna_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_dunaRxCount.help = @"count of received UPT packets";
+            _m3ua_dunaRxCount.help = @"count of received DUNA packets";
 
             _m3ua_davaTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_dava_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_davaTxCount.help = @"count of received UPT packets";
+            _m3ua_davaTxCount.help = @"count of sent DAVA packets";
 
             _m3ua_davaRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_dava_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_davaRxCount.help = @"count of received UPT packets";
+            _m3ua_davaRxCount.help = @"count of received DAVA packets";
 
             _m3ua_daudTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_daud_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_daudTxCount.help = @"count of received UPT packets";
+            _m3ua_daudTxCount.help = @"count of sent DAUD packets";
 
             _m3ua_daudRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_daud_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_daudRxCount.help = @"count of received UPT packets";
+            _m3ua_daudRxCount.help = @"count of received DAUD packets";
 
             _m3ua_sconTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_scon_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_sconTxCount.help = @"count of received UPT packets";
+            _m3ua_sconTxCount.help = @"count of sent SCON packets";
 
             _m3ua_sconRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_scon_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_sconRxCount.help = @"count of received UPT packets";
+            _m3ua_sconRxCount.help = @"count of received SCON packets";
 
             _m3ua_dupuTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_dupu_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_dupuTxCount.help = @"count of received UPT packets";
+            _m3ua_dupuTxCount.help = @"count of sent DUPU packets";
 
             _m3ua_dupuRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_dupu_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_dupuRxCount.help = @"count of received UPT packets";
+            _m3ua_dupuRxCount.help = @"count of received DUPU packets";
 
             _m3ua_drstTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_drst_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_drstTxCount.help = @"count of received UPT packets";
+            _m3ua_drstTxCount.help = @"count of sent DRST packets";
 
             _m3ua_drstRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_drst_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_drstRxCount.help = @"count of received UPT packets";
+            _m3ua_drstRxCount.help = @"count of received DRST packets";
 
             _m3ua_aspupTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspup_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspupTxCount.help = @"count of received UPT packets";
+            _m3ua_aspupTxCount.help = @"count of sent ASPUP packets";
 
             _m3ua_aspupRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspup_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspupRxCount.help = @"count of received UPT packets";
+            _m3ua_aspupRxCount.help = @"count of sent ASPUP packets";
 
             _m3ua_apsdnTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_apsdn_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_apsdnTxCount.help = @"count of received UPT packets";
+            _m3ua_apsdnTxCount.help = @"count of sent ASPDN packets";
 
             _m3ua_apsdnRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_apsdn_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_apsdnRxCount.help = @"count of received UPT packets";
+            _m3ua_apsdnRxCount.help = @"count of received ASPDN packets";
 
             _m3ua_beatTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_beat_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_beatTxCount.help = @"count of received UPT packets";
+            _m3ua_beatTxCount.help = @"count of sent BEAT packets";
 
             _m3ua_beatRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_beat_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_beatRxCount.help = @"count of received UPT packets";
+            _m3ua_beatRxCount.help = @"count of received BEAT packets";
 
             _m3ua_aspupackTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspupack_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspupackTxCount.help = @"count of received UPT packets";
+            _m3ua_aspupackTxCount.help = @"count of sent ASPUP_ACK packets";
 
             _m3ua_aspupackRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspupack_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspupackRxCount.help = @"count of received UPT packets";
+            _m3ua_aspupackRxCount.help = @"count of received ASPUP_ACK packets";
 
             _m3ua_aspdnackTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspdnack_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspdnackTxCount.help = @"count of received UPT packets";
+            _m3ua_aspdnackTxCount.help = @"count of sent ASPDN_ACK packets";
 
             _m3ua_aspdnackRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspdnack_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspdnackRxCount.help = @"count of received UPT packets";
+            _m3ua_aspdnackRxCount.help = @"count of received ASPDN_ACK packets";
 
             _m3ua_beatackTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_beatack_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_beatackTxCount.help = @"count of received UPT packets";
+            _m3ua_beatackTxCount.help = @"count of sent BEAT_ACK packets";
 
             _m3ua_beatackRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_beatack_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_beatackRxCount.help = @"count of received UPT packets";
+            _m3ua_beatackRxCount.help = @"count of received BEAT_ACK packets";
 
             _m3ua_aspacTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspac_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspacTxCount.help = @"count of received UPT packets";
+            _m3ua_aspacTxCount.help = @"count of sent ASPAC packets";
 
             _m3ua_aspacRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspac_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspacRxCount.help = @"count of received UPT packets";
+            _m3ua_aspacRxCount.help = @"count of received ASPAC packets";
 
             _m3ua_aspiaTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspia_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspiaTxCount.help = @"count of received UPT packets";
+            _m3ua_aspiaTxCount.help = @"count of sent ASPIA packets";
 
             _m3ua_aspiaRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspia_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspiaRxCount.help = @"count of received UPT packets";
+            _m3ua_aspiaRxCount.help = @"count of received ASPIA packets";
 
             _m3ua_aspacackTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspacack_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspacackTxCount.help = @"count of received UPT packets";
+            _m3ua_aspacackTxCount.help = @"count of sent ASPAC_ACK packets";
 
             _m3ua_aspacackRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_aspacack_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_aspacackRxCount.help = @"count of received UPT packets";
+            _m3ua_aspacackRxCount.help = @"count of received ASPAC_ACK packets";
 
             _m3ua_regreqTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_regreq_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_regreqTxCount.help = @"count of received UPT packets";
+            _m3ua_regreqTxCount.help = @"count of sent REGREQ packets";
 
             _m3ua_regreqRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_regreq_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_regreqRxCount.help = @"count of received UPT packets";
+            _m3ua_regreqRxCount.help = @"count of received REGREQ packets";
 
             _m3ua_regrspTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_regrsp_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_regrspTxCount.help = @"count of received UPT packets";
+            _m3ua_regrspTxCount.help = @"count of sent REGRSP packets";
 
             _m3ua_regrspRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_regrsp_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_regrspRxCount.help = @"count of received UPT packets";
+            _m3ua_regrspRxCount.help = @"count of received REGRSP packets";
 
             _m3ua_deregreqTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_deregreq_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_deregreqTxCount.help = @"count of received UPT packets";
+            _m3ua_deregreqTxCount.help = @"count of sent DEREGREQ packets";
 
             _m3ua_deregreqRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_deregreq_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_deregreqRxCount.help = @"count of received UPT packets";
+            _m3ua_deregreqRxCount.help = @"count of received DEREGREQ packets";
 
             _m3ua_deregrspTxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_deregrsp_tx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_deregrspTxCount.help = @"count of received UPT packets";
+            _m3ua_deregrspTxCount.help = @"count of sent DEREGRSP packets";
 
             _m3ua_deregrspRxCount = [[UMPrometheusMetric alloc]initWithMetricName:@"m3ua_deregrsp_rx_count"
                                                                subname1:@"linkset"
                                                               subvalue1:_linksetName
                                                                    type:UMPrometheusMetricType_counter];
-            _m3ua_deregrspRxCount.help = @"count of received UPT packets";
+            _m3ua_deregrspRxCount.help = @"count of received DEREGRSP packets";
 
         }
         

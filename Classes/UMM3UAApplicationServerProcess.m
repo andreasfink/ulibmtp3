@@ -1700,7 +1700,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                                                selector:@selector(beatTimerEvent:)
                                                  object:NULL
                                                 seconds:_beatTime
-                                                   name:@"beat-timer"
+                                                   name:@"m3ua_asp_beatTimer"
                                                 repeats:YES
                                         runInForeground:YES];
         }
@@ -1710,6 +1710,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         }
         [self stopBeatTimer];
         [self startBeatTimer];
+    }
+    else
+    {
+        [self stopBeatTimer];
     }
 }
 
@@ -2347,7 +2351,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)sctpReportsUp
 {
-
     @autoreleasepool
     {
         /***************************************************************************
@@ -2365,6 +2368,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [_as.mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"ASP %@ SCTP-UP",self.layerName]];
         }
         _aspup_received = 0;
+        _unacknowledgedBeats = 0;
         [self start];
     }
 }
