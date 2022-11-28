@@ -1217,6 +1217,14 @@
                linksetName:(NSString *)linksetName
                    linkset:(UMMTP3LinkSet *)linkset
 {
+    if(linksetName.length == 0)
+    {
+        if(_logLevel <=UMLOG_DEBUG)
+        {
+            [self logDebug:[NSString stringWithFormat:@"processIncomingPdu: linksetName is NULL for linkset %@",linkset.name]];
+        }
+        linksetName = linkset.name;
+    }
     @autoreleasepool
     {
         [linkset.speedometerRx increase];
@@ -1328,6 +1336,14 @@
                              linkset:(UMMTP3LinkSet *)linkset
 
 {
+    if(linksetName.length == 0)
+    {
+        if(_logLevel <=UMLOG_DEBUG)
+        {
+            [self logDebug:[NSString stringWithFormat:@"processIncomingPduLocal: linksetName is NULL for linkset %@",linkset.name]];
+        }
+        linksetName = linkset.name;
+    }
     @autoreleasepool
     {
 
