@@ -5545,6 +5545,7 @@
                     {
                         [p loadConfigFromFile:_mtp3_screeningPluginConfigFileName];
                         _mtp3_screeningPlugin = p;
+                        NSLog(@"PLUGIN-LOADING-CONFIG: mtp3-screening-plugin at path %@ has loaded %@ config file",filepath,_mtp3_screeningPluginConfigFileName);
                     }
                 }
             }
@@ -5625,6 +5626,7 @@
                     {
                         [p loadConfigFromFile:_sccp_screeningPluginConfigFileName];
                         _sccp_screeningPlugin = p;
+                        NSLog(@"PLUGIN-LOADING-CONFIG: sccp-screening-plugin at path %@ has loaded config from %@",filepath,_sccp_screeningPluginConfigFileName);
                     }
                 }
             }
