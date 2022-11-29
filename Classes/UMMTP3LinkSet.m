@@ -5610,7 +5610,7 @@
                     [ph close];
                     _sccp_screeningPlugin = NULL;
                     _sccp_screeningPluginName = NULL;
-                    NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method screenSccpPacketInbound:error:plugin:traceDestination:",filepath);
+                    NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method screenSccpPacketInbound:error:",filepath);
                 }
                 else
                 {
