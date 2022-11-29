@@ -1536,9 +1536,17 @@
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Service Indicator: [%d] SCCP",si]];
                     [self.logFeed debugText:[NSString stringWithFormat:@"  Data:   %@",pdu2]];
-                    [self.logFeed debugText:[NSString stringWithFormat:@"  idx=:   %d",idx]];
+                    [self.logFeed debugText:[NSString stringWithFormat:@"  idx:    %d",idx]];
                     [self.logFeed debugText:[NSString stringWithFormat:@"  ls:     %@",_name]];
                 }
+                if(_name == NULL)
+                {
+                    if(_logLevel <=UMLOG_DEBUG)
+                    {
+                        [self logDebug:@"msuIndication2: _name is NULL"];
+                    }
+                }
+
                 [_mtp3 processIncomingPdu:label data:pdu2
                                userpartId:si
                                        ni:ni
