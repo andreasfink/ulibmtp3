@@ -32,8 +32,8 @@
 -(UMMTP3TransitPermission_result) screenIncomingLabel:(UMMTP3Label *)label
                                                 error:(NSError **)e
                                               linkset:(NSString *)linksetName;
-- (NSString *)loadConfigFromFile:(NSString *)config;
-- (NSString *)reloadConfig;
+- (NSError *)loadConfigFromFile:(NSString *)config;
+- (NSError *)reloadConfig;
 - (void)close;
 @end
 
