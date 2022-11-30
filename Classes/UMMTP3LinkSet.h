@@ -32,16 +32,16 @@
 -(UMMTP3TransitPermission_result) screenIncomingLabel:(UMMTP3Label *)label
                                                 error:(NSError **)e
                                               linkset:(NSString *)linksetName;
-- (void)loadConfigFromFile:(NSString *)config;
-- (void)reloadConfig;
+- (NSString *)loadConfigFromFile:(NSString *)config;
+- (NSString *)reloadConfig;
 - (void)close;
 @end
 
 @protocol UMMTP3SCCPScreeningPluginProtocol
 - (int)screenSccpPacketInbound:(id)packet
                          error:(NSError **)err;
-- (void)loadConfigFromFile:(NSString *)filename;
-- (void)reloadConfig;
+- (NSError *)loadConfigFromFile:(NSString *)filename;
+- (NSError *)reloadConfig;
 - (void)close;
 @end
 

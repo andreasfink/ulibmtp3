@@ -3540,13 +3540,13 @@
         switch(i)
         {
             case 0:
-                _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_none;
+                _sccpScreeningTraceLevel = UMMTP3ScreeningTraceLevel_none;
                 break;
             case 1:
-                _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_rejected_only;
+                _sccpScreeningTraceLevel = UMMTP3ScreeningTraceLevel_rejected_only;
                 break;
             case 2:
-                _mtp3ScreeningTraceLevel = UMMTP3ScreeningTraceLevel_everything;
+                _sccpScreeningTraceLevel = UMMTP3ScreeningTraceLevel_everything;
                 break;
             default:
                 [self logMajorError:@"Invalid value for screening-sccp-plugin-trace-level. Should be 0...2"];
@@ -5459,23 +5459,35 @@
 
 - (void)reopenLogfiles
 {
+    [self logDebug:@"reopenLogfiles"];
     [self openMtp3ScreeningTraceFile];
     [self openSccpScreeningTraceFile];
 }
 
 - (void)reloadPluginConfigs
 {
-    [_mtp3_screeningPlugin reloadConfig];
-    [_sccp_screeningPlugin reloadConfig];
+    [self logDebug:@"reloadPluginConfigs"];
+    if(_mtp3_screeningPlugin==NULL)
+    {
+        [self logDebug:@"reloadPluginConfigs MTP3"];
+        [_mtp3_screeningPlugin reloadConfig];
+    }
+    if(_sccp_screeningPlugin)
+    {
+        [self logDebug:@"reloadPluginConfigs SCCP"];
+        [_sccp_screeningPlugin reloadConfig];
+    }
 }
 
 
 - (void)reloadPlugins
 {
+    [self logDebug:@"Reloading SCCP Screening Plugins"];
     [_sccp_screeningPlugin close];
     _sccp_screeningPlugin = NULL;
     [self loadSccpScreeningPlugin];
     
+    [self logDebug:@"Reloading MTP3 Screening Plugins"];
     [_mtp3_screeningPlugin close];
     _mtp3_screeningPlugin = NULL;
     [self loadMtp3ScreeningPlugin];
@@ -5483,8 +5495,9 @@
 
 - (void)loadMtp3ScreeningPlugin
 {
-    if(_mtp3_screeningPluginName ==NULL)
+    if(_mtp3_screeningPluginName == NULL)
     {
+        [self logDebug:@"PLUGIN-LOADING: No MTP3 Screening Plugin defined"];
         return;
     }
     /* we have a plugin but it has not been loaded yet */
@@ -5501,7 +5514,7 @@
     UMPluginHandler *ph = [[UMPluginHandler alloc]initWithFile:filepath];
     if(ph==NULL)
     {
-        NSLog(@"PLUGIN-ERROR: can not load plugin at %@",filepath);
+        [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: can not load plugin at %@",filepath]];
         _mtp3_screeningPluginName = NULL;
         _mtp3_screeningPlugin = NULL;
     }
@@ -5517,43 +5530,54 @@
             [ph close];
             _mtp3_screeningPlugin = NULL;
             _mtp3_screeningPluginName = NULL;
-            NSLog(@"LOADING-ERROR: can not open plugin at path %@. Reason %@",filepath,ph.error);
+            [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: can not open plugin at path %@. Reason %@",filepath,ph.error]];
         }
         else
         {
             NSDictionary *info = ph.info;
             NSString *type = info[@"type"];
-            if(![type isEqualToString:@"mtp3-screening"])
+            if((![type isEqualToString:@"mtp3-screening"]) && (![type isEqualToString:@"ss7-filter"]))
             {
                 [ph close];
                 _mtp3_screeningPlugin = NULL;
                 _mtp3_screeningPluginName = NULL;
-                NSLog(@"LOADING-ERROR: plugin at path %@ is not of type mtp3-screening but %@",filepath,type);
+                [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: plugin at path %@ is not of type mtp3-screening but %@",filepath,type]];
             }
             else
             {
                 UMPlugin<UMMTP3ScreeningPluginProtocol> *p = (UMPlugin<UMMTP3ScreeningPluginProtocol> *)[ph instantiate];
-                if(![p respondsToSelector:@selector(screenIncomingLabel:error:linkset:)])
+                if(p==NULL)
                 {
-                    [ph close];
-                    _mtp3_screeningPlugin = NULL;
-                    _mtp3_screeningPluginName = NULL;
-                    NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method screenIncomingLabel:error:linkset:",filepath);
+                    [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: instantiate: plugin_create_func() returns NULL"]];
                 }
                 else
                 {
-                    if(![p respondsToSelector:@selector(loadConfigFromFile:)])
+                    if(![p respondsToSelector:@selector(screenIncomingLabel:error:linkset:)])
                     {
                         [ph close];
                         _mtp3_screeningPlugin = NULL;
                         _mtp3_screeningPluginName = NULL;
-                        NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method loadConfigFromFile:",filepath);
+                        [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: plugin at path %@ does not implement method screenIncomingLabel:error:linkset:",filepath]];
                     }
                     else
                     {
-                        [p loadConfigFromFile:_mtp3_screeningPluginConfigFileName];
-                        _mtp3_screeningPlugin = p;
-                        NSLog(@"PLUGIN-LOADING-CONFIG: mtp3-screening-plugin at path %@ has loaded %@ config file",filepath,_mtp3_screeningPluginConfigFileName);
+                        if(![p respondsToSelector:@selector(loadConfigFromFile:)])
+                        {
+                            [ph close];
+                            _mtp3_screeningPlugin = NULL;
+                            _mtp3_screeningPluginName = NULL;
+                            [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: plugin at path %@ does not implement method loadConfigFromFile:",filepath]];
+                        }
+                        else
+                        {
+                            NSError *err = [p loadConfigFromFile:_mtp3_screeningPluginConfigFileName];
+                            if(err)
+                            {
+                                [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-CONFIG: loadConfigFromFile returns %@",err.description]];
+                            }
+                            _mtp3_screeningPlugin = p;
+                            [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-CONFIG: mtp3-screening-plugin at path %@ has loaded %@ config file",filepath,_mtp3_screeningPluginConfigFileName]];
+                        }
                     }
                 }
             }
@@ -5567,21 +5591,32 @@
     NSString *filepath;
     if(_sccp_screeningPluginName == NULL)
     {
+        [self logDebug:@"PLUGIN-LOADING: No SCCP Screening Plugin defined"];
         return;
     }
+
     if(([_sccp_screeningPluginName hasPrefix:@"/"]) || (_appdel.filterEnginesPath.length==0))
     {
         filepath = _sccp_screeningPluginName;
     }
     else
     {
-        filepath = [NSString stringWithFormat:@"%@/%@",_appdel.filterEnginesPath,_sccp_screeningPluginName];
+        NSString *path = _appdel.filterEnginesPath;
+        if([path hasSuffix:@"/"])
+        {
+            filepath = [NSString stringWithFormat:@"%@%@",path,_sccp_screeningPluginName];
+        }
+        else
+        {
+            filepath = [NSString stringWithFormat:@"%@/%@",path,_sccp_screeningPluginName];
+
+        }
     }
-    
+    [self logDebug:[NSString stringWithFormat:@"loadSccpScreeningPlugin %@",filepath]];
     UMPluginHandler *ph = [[UMPluginHandler alloc]initWithFile:filepath];
     if(ph==NULL)
     {
-        NSLog(@"PLUGIN-ERROR: can not load sccp-screening plugin at %@ for layer %@",filepath,_name);
+        [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: can not load sccp-screening plugin at %@ for layer %@",filepath,_name]];
         _sccp_screeningPlugin = NULL;
         _sccp_screeningPluginName = NULL;
     }
@@ -5597,48 +5632,61 @@
             [ph close];
             _sccp_screeningPlugin = NULL;
             _sccp_screeningPluginName = NULL;
-            NSLog(@"LOADING-ERROR: can not open plugin at path %@. Reason %@",filepath,ph.error);
+            [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: can not open plugin at path %@. Reason %@",filepath,ph.error]];
         }
         else
         {
+            [self logDebug:@"loadSccpScreeningPlugin openWithDictionary successful"];
             NSDictionary *info = ph.info;
             NSString *type = info[@"type"];
-            if(![type isEqualToString:@"sccp-screening"])
+            if((![type isEqualToString:@"sccp-screening"]) && (![type isEqualToString:@"ss7-filter"]))
             {
                 [ph close];
                 _sccp_screeningPlugin = NULL;
                 _sccp_screeningPluginName = NULL;
-                NSLog(@"LOADING-ERROR: plugin at path %@ is not of type mtp3-screening but %@",filepath,type);
+                [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: plugin at path %@ is not of type sccp-screening or ss7-filter but %@",filepath,type]];
             }
             else
             {
                 UMPlugin<UMMTP3SCCPScreeningPluginProtocol> *p = (UMPlugin<UMMTP3SCCPScreeningPluginProtocol> *)[ph instantiate];
-                if(![p respondsToSelector:@selector(screenSccpPacketInbound:error:)])
+                if(p==NULL)
                 {
-                    [ph close];
-                    _sccp_screeningPlugin = NULL;
-                    _sccp_screeningPluginName = NULL;
-                    NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method screenSccpPacketInbound:error:",filepath);
+                    [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: instantiate: plugin_create_func() returns NULL"]];
                 }
                 else
                 {
-
-                    if(![p respondsToSelector:@selector(loadConfigFromFile:)])
+                    if(![p respondsToSelector:@selector(screenSccpPacketInbound:error:)])
                     {
                         [ph close];
-                        _mtp3_screeningPlugin = NULL;
-                        _mtp3_screeningPluginName = NULL;
-                        NSLog(@"LOADING-ERROR: plugin at path %@ does not implement method loadConfigFromFile:",filepath);
+                        _sccp_screeningPlugin = NULL;
+                        _sccp_screeningPluginName = NULL;
+                        [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: plugin at path %@ does not implement method screenSccpPacketInbound:error:",filepath]];
                     }
                     else
                     {
-                        [p loadConfigFromFile:_sccp_screeningPluginConfigFileName];
-                        _sccp_screeningPlugin = p;
-                        NSLog(@"PLUGIN-LOADING-CONFIG: sccp-screening-plugin at path %@ has loaded config from %@",filepath,_sccp_screeningPluginConfigFileName);
+                        
+                        if(![p respondsToSelector:@selector(loadConfigFromFile:)])
+                        {
+                            [ph close];
+                            _sccp_screeningPlugin = NULL;
+                            _sccp_screeningPluginName = NULL;
+                            [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-ERROR: plugin at path %@ does not implement method loadConfigFromFile:",filepath]];
+                        }
+                        else
+                        {
+                            NSError *err = [p loadConfigFromFile:_sccp_screeningPluginConfigFileName];
+                            if(err)
+                            {
+                                [self logMajorError:[NSString stringWithFormat:@"PLUGIN-LOADING-CONFIG: loadConfigFromFile returns %@",err.description]];
+                            }
+                            _sccp_screeningPlugin = p;
+                            [self logInfo:[NSString stringWithFormat:@"PLUGIN-LOADING-CONFIG: sccp-screening-plugin at path %@ has loaded config from %@",filepath,_sccp_screeningPluginConfigFileName]];
+                        }
                     }
                 }
             }
         }
     }
 }
+
 @end
