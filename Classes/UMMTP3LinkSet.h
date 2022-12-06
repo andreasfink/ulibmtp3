@@ -38,7 +38,7 @@
 @end
 
 @protocol UMMTP3SCCPScreeningPluginProtocol
-- (int)screenSccpPacketInbound:(id)packet
+- (int)screenSccpPacketInbound:(id)packet /* really returns UMSccpScreening_result */
                          error:(NSError **)err;
 - (NSError *)loadConfigFromFile:(NSString *)filename;
 - (NSError *)reloadConfig;
