@@ -4765,6 +4765,7 @@
                 break;
         }
     }
+    [self updateLinkSetStatus];
 }
 
 /* reopen Timer Event 1 happens when a link got closed.
