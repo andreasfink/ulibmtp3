@@ -4659,7 +4659,6 @@
     }
 }
 
-
 - (void)attachmentConfirmed:(int)slc
 {
     UMMTP3Link *link = [self getLinkBySlc:slc];
@@ -4678,7 +4677,6 @@
     [link sctpStatusUpdate:status];
     [self updateLinkSetStatus];
 }
-
 
 - (void)m2paStatusUpdate:(M2PA_Status)status slc:(int)slc
 {
