@@ -193,7 +193,7 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong) NSString                                *mtp3_screeningPluginConfigFileName;
 @property(readwrite,strong) NSString                                *mtp3_screeningPluginTraceFileName;
 
-@property(readwrite,strong) UMPlugin                                *sccp_screeningPlugin;
+@property(readwrite,strong) UMPlugin<UMMTP3SCCPScreeningPluginProtocol>*sccp_screeningPlugin;
 @property(readwrite,strong) NSString                                *sccp_screeningPluginName;
 @property(readwrite,strong) NSString                                *sccp_screeningPluginConfigFileName;
 @property(readwrite,strong) NSString                                *sccp_screeningPluginTraceFileName;
@@ -533,5 +533,7 @@ options:(NSDictionary *)options;
 - (void)reopenLogfiles;
 - (void)reloadPluginConfigs;
 - (void)reloadPlugins;
+- (void)loadMtp3ScreeningPlugin;
+- (void)loadSccpScreeningPlugin;
 
 @end
