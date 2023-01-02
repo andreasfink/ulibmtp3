@@ -4972,8 +4972,6 @@
     {
         return;
     }
-    
-
     if(_logLevel <=UMLOG_DEBUG)
     {
         NSString *s = [NSString stringWithFormat:@"updateRouteAvailable:%@/%d",pc.stringValue,mask];

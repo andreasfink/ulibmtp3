@@ -459,7 +459,7 @@
 {
     UMMTP3RouteStatus status = UMMTP3_ROUTE_UNKNOWN;
     UMMUTEX_LOCK(_routingTableLock);
-    NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:pc.maxmask];
+    NSMutableArray<UMMTP3InstanceRoute *> *r = [[self getRouteArray:pc mask:pc.maxmask] copy];
     if((r==NULL) || (r.count == 0))
     {
         UMMUTEX_UNLOCK(_routingTableLock);
