@@ -160,14 +160,16 @@
                                mask:(int)mask
                         linksetName:(NSString *)linkset
                            priority:(UMMTP3RoutePriority)prio
+                         hasChanged:(BOOL *)hasChanged
 {
+    BOOL    found = NO;
     UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
+    UMMTP3InstanceRoute *oldBestRoute = [self bestRoute:pc routeArray:r];
     if(r==NULL)
     {
         r = [[NSMutableArray alloc]init];
     }
-    BOOL found=NO;
     for(UMMTP3InstanceRoute *route in r)
     {
         if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
@@ -188,6 +190,19 @@
         route.status = UMMTP3_ROUTE_ALLOWED;
         [r addObject:route];
     }
+    UMMTP3InstanceRoute *newBestRoute = [self bestRoute:pc routeArray:r];
+    if(*hasChanged)
+    {
+        if(oldBestRoute != newBestRoute)
+        {
+            *hasChanged = YES;
+        }
+        else
+        {
+            *hasChanged = NO;
+        }
+    }
+    
     [self setRouteArray:r forPointcode:pc mask:mask];
     UMMUTEX_UNLOCK(_routingTableLock);
     return found;
@@ -197,23 +212,21 @@
                                 mask:(int)mask
                          linksetName:(NSString *)linkset
                             priority:(UMMTP3RoutePriority)prio
+                          hasChanged:(BOOL *)hasChanged
 {
-    BOOL changed=YES;
+    BOOL found = NO;
     UMMUTEX_LOCK(_routingTableLock);
     NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
+    UMMTP3InstanceRoute *oldBestRoute = [self bestRoute:pc routeArray:r];
     if(r==NULL)
     {
         r = [[NSMutableArray alloc]init];
     }
-    BOOL found=NO;
-    for(UMMTP3InstanceRoute *route  in r)
+    
+    for(UMMTP3InstanceRoute *route in r)
     {
         if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
         {
-            if(route.status == UMMTP3_ROUTE_RESTRICTED)
-            {
-                changed = NO;
-            }
             route.status = UMMTP3_ROUTE_RESTRICTED;
             found = YES;
         }
@@ -228,10 +241,74 @@
         route.status = UMMTP3_ROUTE_RESTRICTED;
         [r addObject:route];
     }
+    UMMTP3InstanceRoute *newBestRoute = [self bestRoute:pc routeArray:r];
+    if(*hasChanged)
+    {
+        if(oldBestRoute != newBestRoute)
+        {
+            *hasChanged = YES;
+        }
+        else
+        {
+            *hasChanged = NO;
+        }
+    }
     [self setRouteArray:r forPointcode:pc mask:mask];
     UMMUTEX_UNLOCK(_routingTableLock);
-    return changed;
+    return found;
 }
+
+
+- (BOOL)updateDynamicRouteUnavailable:(UMMTP3PointCode *)pc
+                                 mask:(int)mask
+                          linksetName:(NSString *)linkset
+                             priority:(UMMTP3RoutePriority)prio
+                           hasChanged:(BOOL *)hasChanged
+{
+    UMMUTEX_LOCK(_routingTableLock);
+    NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
+    UMMTP3InstanceRoute *oldBestRoute = [self bestRoute:pc routeArray:r];
+    if(r==NULL)
+    {
+        r = [[NSMutableArray alloc]init];
+    }
+    BOOL found=NO;
+    
+    for(UMMTP3InstanceRoute *route in r)
+    {
+        if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
+        {
+            route.status = UMMTP3_ROUTE_PROHIBITED;
+            found = YES;
+        }
+    }
+    if(found==NO)
+    {
+        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
+                                                                 linksetName:linkset
+                                                                    priority:prio
+                                                                        mask:pc.maxmask];
+        route.staticRoute = NO;
+        route.status = UMMTP3_ROUTE_PROHIBITED;
+        [r addObject:route];
+    }
+    UMMTP3InstanceRoute *newBestRoute = [self bestRoute:pc routeArray:r];
+    if(*hasChanged)
+    {
+        if(oldBestRoute != newBestRoute)
+        {
+            *hasChanged = YES;
+        }
+        else
+        {
+            *hasChanged = NO;
+        }
+    }
+    [self setRouteArray:r forPointcode:pc mask:mask];
+    UMMUTEX_UNLOCK(_routingTableLock);
+    return found;
+}
+
 
 - (NSArray *)linksetNamesWhichHaveStaticRoutesForPointcode:(UMMTP3PointCode *)pc mask:(int)mask excluding:(NSString *)excluded
 {
@@ -250,48 +327,6 @@
     UMMUTEX_UNLOCK(_routingTableLock);
     return arr;
 }
-
-- (BOOL)updateDynamicRouteUnavailable:(UMMTP3PointCode *)pc
-                                 mask:(int)mask
-                          linksetName:(NSString *)linkset
-                             priority:(UMMTP3RoutePriority)prio
-{
-    BOOL changed = YES;
-    UMMUTEX_LOCK(_routingTableLock);
-    NSMutableArray<UMMTP3InstanceRoute *> *r = [self getRouteArray:pc mask:mask];
-    if(r==NULL)
-    {
-        r = [[NSMutableArray alloc]init];
-    }
-    BOOL found=NO;
-    for(UMMTP3InstanceRoute *route in r)
-    {
-        if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
-        {
-            if(route.status != UMMTP3_ROUTE_PROHIBITED)
-            {
-                changed = YES;
-            }
-            route.status = UMMTP3_ROUTE_PROHIBITED;
-            found = YES;
-        }
-    }
-    if(found==NO)
-    {
-        UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
-                                                                 linksetName:linkset
-                                                                    priority:prio
-                                                                        mask:pc.maxmask];
-        route.staticRoute = NO;
-        route.status = UMMTP3_ROUTE_PROHIBITED;
-        changed = YES;
-        [r addObject:route];
-    }
-    [self setRouteArray:r forPointcode:pc mask:mask];
-    UMMUTEX_UNLOCK(_routingTableLock);
-    return changed;
-}
-
 - (BOOL) addStaticRoute:(UMMTP3PointCode *)pc
                    mask:(int)mask
             linksetName:(NSString *)linkset
@@ -455,41 +490,131 @@
 }
 
 
-- (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc
+/* this assumes the routing table lock is engaged */
+- (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
 {
-    UMMTP3RouteStatus status = UMMTP3_ROUTE_UNKNOWN;
-    UMMUTEX_LOCK(_routingTableLock);
-    NSMutableArray<UMMTP3InstanceRoute *> *r = [[self getRouteArray:pc mask:pc.maxmask] copy];
-    if((r==NULL) || (r.count == 0))
+    if(r==NULL)
     {
-        UMMUTEX_UNLOCK(_routingTableLock);
-        return UMMTP3_ROUTE_UNKNOWN;
+        r = [self getRouteArray:pc mask:pc.maxmask];
+    }
+    UMMTP3InstanceRoute *bestRoute = NULL;
+    if(r.count == 0)
+    {
+        return NULL;
     }
     for(UMMTP3InstanceRoute *route in r)
     {
         switch(route.status)
         {
             case UMMTP3_ROUTE_ALLOWED:
-                status = UMMTP3_ROUTE_ALLOWED;
+                if(bestRoute==NULL)
+                {
+                    bestRoute=route;
+                }
+                else if(bestRoute.status == UMMTP3_ROUTE_ALLOWED)
+                {
+                    if(bestRoute.priority <= route.priority)
+                    {
+                        bestRoute = route;
+                    }
+                }
+                else
+                {
+                    bestRoute = route;
+                }
                 break;
             case UMMTP3_ROUTE_RESTRICTED:
-                if((status == UMMTP3_ROUTE_UNKNOWN) || ( status==UMMTP3_ROUTE_PROHIBITED))
+                if(bestRoute==NULL)
                 {
-                    status = UMMTP3_ROUTE_RESTRICTED;
+                    bestRoute=route;
+                }
+                else
+                {
+                    switch(bestRoute.status)
+                    {
+                        case UMMTP3_ROUTE_ALLOWED:
+                            continue;
+                        case UMMTP3_ROUTE_UNUSED:
+                        case UMMTP3_ROUTE_UNKNOWN:
+                            bestRoute = route;
+                            break;
+                        case UMMTP3_ROUTE_RESTRICTED:
+                            if(bestRoute.priority == route.priority)
+                            {
+                                /* in tie case, we prefer the static route */
+                                if(route.staticRoute)
+                                {
+                                    bestRoute = route;
+                                }
+                            }
+                            if(bestRoute.priority <= route.priority)
+                            {
+                                bestRoute = route;
+                            }
+                            break;
+                        case UMMTP3_ROUTE_PROHIBITED:
+                            bestRoute = route;
+                            break;
+                    }
                 }
                 break;
             case UMMTP3_ROUTE_PROHIBITED:
-                if(status == UMMTP3_ROUTE_UNKNOWN)
+                if(bestRoute==NULL)
                 {
-                    status = UMMTP3_ROUTE_PROHIBITED;
+                    bestRoute=route;
+                }
+                else
+                {
+                    switch(bestRoute.status)
+                    {
+
+                        case UMMTP3_ROUTE_ALLOWED:
+                        case UMMTP3_ROUTE_RESTRICTED:
+                            continue;
+                        case UMMTP3_ROUTE_PROHIBITED:
+                            if(bestRoute.priority == route.priority)
+                            {
+                                /* in tie case, we prefer the static route */
+                                if(route.staticRoute)
+                                {
+                                    bestRoute = route;
+                                }
+                            }
+                            if(bestRoute.priority <= route.priority)
+                            {
+                                bestRoute = route;
+                            }
+                            break;
+                        case UMMTP3_ROUTE_UNUSED:
+                        case UMMTP3_ROUTE_UNKNOWN:
+                            bestRoute = route;
+                            break;
+                    }
                 }
                 break;
-            default:
+            case UMMTP3_ROUTE_UNUSED:
+            case UMMTP3_ROUTE_UNKNOWN:
+                if(bestRoute==NULL)
+                {
+                    bestRoute=route;
+                }
                 break;
         }
     }
-    UMMUTEX_UNLOCK(_routingTableLock);
-    return status;
+    return bestRoute;
+}
+
+/* this assumes routing table lock is engaged */
+
+- (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc
+{
+    
+    UMMTP3InstanceRoute *route = [self bestRoute:pc routeArray:NULL];
+    if(route == NULL)
+    {
+        return UMMTP3_ROUTE_UNKNOWN;
+    }
+    return route.status;
 }
 
 - (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls
@@ -573,5 +698,14 @@
     return dict;
 }
 
+- (void)lock
+{
+    UMMUTEX_LOCK(_routingTableLock);
+}
+
+- (void)unlock
+{
+    UMMUTEX_UNLOCK(_routingTableLock);
+}
 
 @end

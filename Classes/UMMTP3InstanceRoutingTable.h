@@ -23,6 +23,9 @@
 @property(readwrite,assign) UMLogLevel logLevel;
 @property(readonly)         UMMutex *routingTableLock;
 
+- (void)lock;
+- (void)unlock;
+
 - (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)pc
                                             mask:(int)mask
                               excludeLinkSetName:(NSString *)linksetName
@@ -37,18 +40,22 @@
 - (BOOL)updateDynamicRouteAvailable:(UMMTP3PointCode *)pc
                                mask:(int)mask
                         linksetName:(NSString *)linkset
-                           priority:(UMMTP3RoutePriority)prio;
+                           priority:(UMMTP3RoutePriority)prio
+                         hasChanged:(BOOL *)hasChanged;
 
 - (BOOL)updateDynamicRouteRestricted:(UMMTP3PointCode *)pc
                                 mask:(int)mask
                          linksetName:(NSString *)linkset
-                            priority:(UMMTP3RoutePriority)prio;
+                            priority:(UMMTP3RoutePriority)prio
+                          hasChanged:(BOOL *)hasChanged;
+
 
 
 - (BOOL)updateDynamicRouteUnavailable:(UMMTP3PointCode *)pc
                                  mask:(int)mask
                           linksetName:(NSString *)linkset
-                             priority:(UMMTP3RoutePriority)prio;
+                             priority:(UMMTP3RoutePriority)prio
+                           hasChanged:(BOOL *)hasChanged;
 
 - (NSArray *)linksetNamesWhichHaveStaticRoutesForPointcode:(UMMTP3PointCode *)pc mask:(int)mask excluding:(NSString *)excluded;
 
@@ -71,6 +78,10 @@
 - (UMSynchronizedSortedDictionary *)routeStatus;
 - (UMSynchronizedSortedDictionary *)objectValue;
 - (NSArray<UMMTP3InstanceRoute *>*)prohibitedOrRestrictedRoutes;
+
+/* this assumes the routing table lock is already engaged */
+- (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r;
+
 @end
 
 

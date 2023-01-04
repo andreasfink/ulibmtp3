@@ -1629,19 +1629,18 @@
 {
     @autoreleasepool
     {
+        UMMUTEX_LOCK(_mtp3Lock);
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];
             NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: AVAILABLE PRIO: %d REASON=%@", now.stringValue,name,pc,prio,reason];
-            UMMUTEX_LOCK(_mtp3Lock);
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
-            UMMUTEX_UNLOCK(_mtp3Lock);
         }
-        UMMTP3RouteStatus old_status = [_routingTable statusOfRoute:pc];
-        [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio];
-        UMMTP3RouteStatus new_status = [_routingTable statusOfRoute:pc];
-        if(old_status!=new_status)
+        BOOL hasChanged = NO;
+        [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio hasChanged:&hasChanged];
+        UMMUTEX_UNLOCK(_routingTable.routingTableLock);
+        if(hasChanged)
         {
             [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
             [self updateUpperLevelPointCode:pc];
@@ -1650,6 +1649,7 @@
                 [self writeRouteStatusToLog:pc];
             }
         }
+        UMMUTEX_UNLOCK(_mtp3Lock);
         return YES;
     }
 }
@@ -1662,20 +1662,18 @@
 {
     @autoreleasepool
     {
+        UMMUTEX_LOCK(_mtp3Lock);
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];
             NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: AVAILABLE RESTRICTED: %d REASON=%@", now.stringValue,name,pc,prio,reason];
 
-            UMMUTEX_LOCK(_mtp3Lock);
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
-            UMMUTEX_UNLOCK(_mtp3Lock);
         }
-        UMMTP3RouteStatus old_status = [_routingTable statusOfRoute:pc];
-        [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio];
-        UMMTP3RouteStatus new_status = [_routingTable statusOfRoute:pc];
-        if(old_status!=new_status)
+        BOOL hasChanged = NO;
+        [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio hasChanged:&hasChanged];
+        if(hasChanged)
         {
             [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
             [self updateUpperLevelPointCode:pc];
@@ -1684,9 +1682,47 @@
                 [self writeRouteStatusToLog:pc];
             }
         }
+        UMMUTEX_UNLOCK(_mtp3Lock);
         return YES;
     }
 }
+
+- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
+                          mask:(int)mask
+                   linksetName:(NSString *)name
+                      priority:(UMMTP3RoutePriority)prio
+                        reason:(NSString *)reason
+{
+    @autoreleasepool
+    {
+        UMMUTEX_LOCK(_mtp3Lock);
+        if(_routingUpdateLogFile)
+        {
+            NSDate *now = [NSDate date];
+            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: UNAVAILABLE PRIO: %d REASON:%@", now.stringValue,name,pc,prio,reason];
+            fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
+            fflush(_routingUpdateLogFile);
+        }
+        BOOL hasChanged = NO;
+        [_routingTable updateDynamicRouteUnavailable:pc
+                                                mask:mask
+                                         linksetName:name
+                                            priority:prio
+                                          hasChanged:&hasChanged];
+        if(hasChanged)
+        {
+            [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
+            [self updateUpperLevelPointCode:pc];
+            if(_routingUpdateLogFile)
+            {
+                [self writeRouteStatusToLog:pc];
+            }
+        }
+        UMMUTEX_UNLOCK(_mtp3Lock);
+        return YES;
+    }
+}
+
 
 - (void)writeRouteStatusEventToLog:(NSString *)event
 {
@@ -1736,44 +1772,6 @@
     UMMUTEX_UNLOCK(_mtp3Lock);
 }
 
-
-- (BOOL)updateRouteUnavailable:(UMMTP3PointCode *)pc
-                          mask:(int)mask
-                   linksetName:(NSString *)name
-                      priority:(UMMTP3RoutePriority)prio
-                        reason:(NSString *)reason
-{
-    @autoreleasepool
-    {
-
-        if(_routingUpdateLogFile)
-        {
-            NSDate *now = [NSDate date];
-            NSString *s = [NSString stringWithFormat:@"%@ LINKSET: %@ PC: %@ STATUS: UNAVAILABLE PRIO: %d REASON:%@", now.stringValue,name,pc,prio,reason];
-            UMMUTEX_LOCK(_mtp3Lock);
-            fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
-            fflush(_routingUpdateLogFile);
-            UMMUTEX_UNLOCK(_mtp3Lock);
-        }
-        UMMTP3RouteStatus old_status = [_routingTable statusOfRoute:pc];
-        [_routingTable updateDynamicRouteUnavailable:pc
-                                                mask:mask
-                                         linksetName:name
-                                            priority:prio];
-        UMMTP3RouteStatus new_status = [_routingTable statusOfRoute:pc];
-
-        if(old_status!=new_status)
-        {
-            [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
-            [self updateUpperLevelPointCode:pc];
-            if(_routingUpdateLogFile)
-            {
-                [self writeRouteStatusToLog:pc];
-            }
-        }
-        return YES;
-    }
-}
 
 - (void)updateOtherLinksetsForPointCode:(UMMTP3PointCode *)pc
                      excludeLinkSetName:(NSString *)name
