@@ -1906,6 +1906,7 @@
                               mask:_adjacentPointCode.maxmask
                           priority:UMMTP3RoutePriority_1
                             reason:@"first SLTA"];
+        [self sendRoutingTable:reverse_label ni:ni mp:mp slc:slc link:link];
     }
     [self updateLinkSetStatus];
 }
@@ -4109,6 +4110,39 @@
           options:NULL];
 }
 
+- (void)sendRoutingTable:(UMMTP3Label *)label
+                      ni:(int)ni
+                      mp:(int)mp
+                     slc:(int)slc
+                    link:(UMMTP3Link *)link
+{
+    
+   NSDictionary *dict = [_mtp3.routingTable statusOfPointcodes]; /* key is NSNumber of pc, value is NSNumber of UMMTP3RouteStatus */
+    
+    NSArray *keys = [dict allKeys];
+    for(NSNumber *pointcode in keys)
+    {
+        NSNumber *n = dict[pointcode];
+        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWithPc:[pointcode intValue]
+                                                         variant:_mtp3.variant];
+        UMMTP3RouteStatus status = [n intValue];
+        switch(status)
+        {
+            case UMMTP3_ROUTE_PROHIBITED:
+                [self advertizePointcodeUnavailable:pc mask:-1];
+                break;
+            case UMMTP3_ROUTE_RESTRICTED:
+                [self advertizePointcodeRestricted:pc mask:-1];
+                break;
+            case UMMTP3_ROUTE_ALLOWED:
+                [self advertizePointcodeAvailable:pc mask:-1];
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 /* Group RSM */
 - (void)sendRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
@@ -5116,7 +5150,6 @@
     {
         mask = pc.maxmask;
     }
-
     if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
     {
         return;

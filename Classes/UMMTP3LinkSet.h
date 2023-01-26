@@ -24,7 +24,6 @@
 @class UMMTP3PointCode;
 @class UMMTP3WhiteList;
 @class UMMTP3BlackList;
-@class UMMTP3RoutingTable;
 @class UMMTP3TranslationTableMap;
 @class UMMTP3PointCodeTranslationTable;
 
@@ -160,7 +159,6 @@ typedef enum UMMTP3ScreeningTraceLevel
 
 @property(readwrite,strong) UMMTP3WhiteList *incomingWhiteList;
 @property(readwrite,strong) UMMTP3BlackList *incomingBlackList;
-@property(readwrite,strong) UMMTP3RoutingTable *routingTable;
 
 @property(readonly,assign) int activeLinks;
 @property(readonly,assign) int inactiveLinks;

@@ -74,6 +74,8 @@
 - (void)updateLinksetAvailable:(NSString *)linkset;
 
 - (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc;
+- (NSDictionary  *)statusOfPointcodes; /* key is NSNumber of pc, value is NSNumber of UMMTP3RouteStatus */
+
 - (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls;
 - (UMSynchronizedSortedDictionary *)routeStatus;
 - (UMSynchronizedSortedDictionary *)objectValue;

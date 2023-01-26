@@ -208,6 +208,22 @@
     return found;
 }
 
+- (NSDictionary  *)statusOfPointcodes /* key is NSNumber of pc, value is nsnumber of UMMTP3RouteStatus */
+{
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
+    UMMUTEX_LOCK(_routingTableLock);
+    NSArray *pointcodes = [_routesByPointCode allKeys];
+    for(NSNumber *pointcode in pointcodes)
+    {
+        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:pointcode
+                                                        variant:UMMTP3Variant_Undefined];
+        UMMTP3RouteStatus status = [self statusOfRoute:pc];
+        dict[pointcode] = @(status);
+    }
+    UMMUTEX_UNLOCK(_routingTableLock);
+    return dict;
+}
+
 - (BOOL)updateDynamicRouteRestricted:(UMMTP3PointCode *)pc
                                 mask:(int)mask
                          linksetName:(NSString *)linkset
