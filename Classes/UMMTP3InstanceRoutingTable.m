@@ -215,7 +215,7 @@
     NSArray *pointcodes = [_routesByPointCode allKeys];
     for(NSNumber *pointcode in pointcodes)
     {
-        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:pointcode
+        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:pointcode.intValue
                                                         variant:UMMTP3Variant_Undefined];
         UMMTP3RouteStatus status = [self statusOfRoute:pc];
         dict[pointcode] = @(status);
