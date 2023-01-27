@@ -1643,7 +1643,7 @@
         if(hasChanged)
         {
             [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
-            [self updateUpperLevelPointCode:pc];
+            [self updateUpperLevelPointCode:pc status:UMMTP3_ROUTE_ALLOWED];
             if(_routingUpdateLogFile)
             {
                 [self writeRouteStatusToLog:pc];
@@ -1796,9 +1796,8 @@
     }
 }
 
-- (void)updateUpperLevelPointCode:(UMMTP3PointCode *)pc
+- (void)updateUpperLevelPointCode:(UMMTP3PointCode *)pc status:(UMMTP3RouteStatus)status
 {
-    UMMTP3RouteStatus status = [_routingTable statusOfRoute:pc];
     if(status == UMMTP3_ROUTE_PROHIBITED)
     {
         [self updateUpperLevelPointCodeUnavailable:pc];
@@ -1816,6 +1815,12 @@
     {
         [self updateUpperLevelPointCodeAvailable:pc];
     }
+}
+
+- (void)updateUpperLevelPointCode:(UMMTP3PointCode *)pc
+{
+    UMMTP3RouteStatus status = [_routingTable statusOfRoute:pc];
+    [self updateUpperLevelPointCode:pc status:status];
 }
 
 - (UMMTP3RouteStatus)getRouteStatus:(UMMTP3PointCode *)pc

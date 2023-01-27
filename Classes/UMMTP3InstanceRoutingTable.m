@@ -529,7 +529,7 @@
                 }
                 else if(bestRoute.status == UMMTP3_ROUTE_ALLOWED)
                 {
-                    if(bestRoute.priority <= route.priority)
+                    if(bestRoute.priority > route.priority)
                     {
                         bestRoute = route;
                     }
@@ -563,7 +563,7 @@
                                     bestRoute = route;
                                 }
                             }
-                            if(bestRoute.priority <= route.priority)
+                            else if(bestRoute.priority > route.priority)
                             {
                                 bestRoute = route;
                             }
@@ -596,7 +596,7 @@
                                     bestRoute = route;
                                 }
                             }
-                            if(bestRoute.priority <= route.priority)
+                            else if(bestRoute.priority > route.priority)
                             {
                                 bestRoute = route;
                             }
@@ -636,8 +636,8 @@
 - (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls
 {
     NSArray<UMMTP3InstanceRoute *> *routes = [self findRoutesForDestination:pc
-                                                                      mask:mask
-                                                           onlyLinksetName:ls];
+                                                                       mask:mask
+                                                            onlyLinksetName:ls];
     for(UMMTP3InstanceRoute *route in routes)
     {
         if(route.status == UMMTP3_ROUTE_ALLOWED)
