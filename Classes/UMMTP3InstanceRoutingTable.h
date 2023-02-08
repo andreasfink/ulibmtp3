@@ -74,7 +74,10 @@
 - (void)updateLinksetAvailable:(NSString *)linkset;
 
 - (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc;
+- (UMMTP3RouteStatus) statusOfStaticOrDirectlyConnectedRoute:(UMMTP3PointCode *)pc;
+
 - (NSDictionary  *)statusOfPointcodes; /* key is NSNumber of pc, value is NSNumber of UMMTP3RouteStatus */
+- (NSDictionary  *)statusOfStaticOrDirectlyConnectedPointcodes; /* key is NSNumber of pc, value is NSNumber of UMMTP3RouteStatus */
 
 - (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls;
 - (UMSynchronizedSortedDictionary *)routeStatus;
@@ -82,7 +85,12 @@
 - (NSArray<UMMTP3InstanceRoute *>*)prohibitedOrRestrictedRoutes;
 
 /* this assumes the routing table lock is already engaged */
-- (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r;
+- (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc
+                         routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r;
+
+- (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc
+                         routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
+                 staticOrDirectOnly:(BOOL)staticOrDirectOnly;
 
 @end
 
