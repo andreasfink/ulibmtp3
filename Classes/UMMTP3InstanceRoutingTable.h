@@ -74,7 +74,7 @@
 - (void)updateLinksetAvailable:(NSString *)linkset;
 
 - (UMMTP3RouteStatus) statusOfRoute:(UMMTP3PointCode *)pc;
-- (UMMTP3RouteStatus) statusOfStaticOrDirectlyConnectedRoute:(UMMTP3PointCode *)pc;
+- (UMMTP3RouteStatus) statusOfStaticOrDirectlyConnectedRoute:(UMMTP3PointCode *)pc excludingLinkset:(NSString *)lsname;
 
 - (NSDictionary  *)statusOfPointcodes; /* key is NSNumber of pc, value is NSNumber of UMMTP3RouteStatus */
 - (NSDictionary  *)statusOfStaticOrDirectlyConnectedPointcodesExcludingLinkset:(NSString *)lsname; /* key is NSNumber of pc, value is NSNumber of UMMTP3RouteStatus */

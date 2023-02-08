@@ -233,7 +233,7 @@
     {
         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:pointcode.intValue
                                                         variant:UMMTP3Variant_Undefined];
-        UMMTP3RouteStatus status = [self statusOfStaticOrDirectlyConnectedRoute:pc excludingLinkset:ls];
+        UMMTP3RouteStatus status = [self statusOfStaticOrDirectlyConnectedRoute:pc excludingLinkset:lsname];
         dict[pointcode] = @(status);
     }
     UMMUTEX_UNLOCK(_routingTableLock);
@@ -526,10 +526,10 @@
 - (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc
                          routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
 {
-    return [[self bestRoute:pc
-                 routeArray:r
-         staticOrDirectOnly:NO
-           excludingLinkset:NULL];
+    return [self bestRoute:pc
+                routeArray:r
+        staticOrDirectOnly:NO
+          excludingLinkset:NULL];
 }
 - (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc
                          routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
