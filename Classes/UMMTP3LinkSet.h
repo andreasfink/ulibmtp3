@@ -125,7 +125,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     BOOL                        _deniedPointcodesInRoutingUpdatesAll;
     NSArray                     *_allowedAdvertizedPointcodes;
     NSArray                     *_deniedAdvertizedPointcodes;
-    
+
     UMMTP3ScreeningTraceLevel _sccpScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
     UMMTP3ScreeningTraceLevel _mtp3ScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
     UMMTP3LinkSetPrometheusData *_prometheusMetrics;
