@@ -224,6 +224,22 @@
     return dict;
 }
 
+- (NSDictionary  *)statusOfStaticOrDirectlyConnectedPointcodes /* key is NSNumber of pc, value is nsnumber of UMMTP3RouteStatus */
+{
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
+    UMMUTEX_LOCK(_routingTableLock);
+    NSArray *pointcodes = [_routesByPointCode allKeys];
+    for(NSNumber *pointcode in pointcodes)
+    {
+        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:pointcode.intValue
+                                                        variant:UMMTP3Variant_Undefined];
+        UMMTP3RouteStatus status = [self statusOfStaticOrDirectlyConnectedRoute:pc];
+        dict[pointcode] = @(status);
+    }
+    UMMUTEX_UNLOCK(_routingTableLock);
+    return dict;
+}
+
 - (BOOL)updateDynamicRouteRestricted:(UMMTP3PointCode *)pc
                                 mask:(int)mask
                          linksetName:(NSString *)linkset
@@ -507,7 +523,16 @@
 
 
 /* this assumes the routing table lock is engaged */
-- (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
+- (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc
+                         routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
+{
+    return [self bestRoute:pc
+                routeArray:r
+        staticOrDirectOnly:NO];
+}
+- (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc
+                         routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
+                 staticOrDirectOnly:(BOOL)staticOrDirectOnly
 {
     if(r==NULL)
     {
@@ -520,6 +545,10 @@
     }
     for(UMMTP3InstanceRoute *route in r)
     {
+        if((staticOrDirectOnly==YES) && (!((route.staticRoute) || (route.priority==1))))
+        {
+            continue;
+        }
         switch(route.status)
         {
             case UMMTP3_ROUTE_ALLOWED:
@@ -626,6 +655,19 @@
 {
     
     UMMTP3InstanceRoute *route = [self bestRoute:pc routeArray:NULL];
+    if(route == NULL)
+    {
+        return UMMTP3_ROUTE_UNKNOWN;
+    }
+    return route.status;
+}
+
+
+
+- (UMMTP3RouteStatus) statusOfStaticOrDirectlyConnectedRoute:(UMMTP3PointCode *)pc
+{
+    
+    UMMTP3InstanceRoute *route = [self bestRoute:pc routeArray:NULL staticOrDirectOnly:YES];
     if(route == NULL)
     {
         return UMMTP3_ROUTE_UNKNOWN;
