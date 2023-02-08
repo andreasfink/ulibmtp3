@@ -77,7 +77,7 @@
 - (UMMTP3RouteStatus) statusOfStaticOrDirectlyConnectedRoute:(UMMTP3PointCode *)pc;
 
 - (NSDictionary  *)statusOfPointcodes; /* key is NSNumber of pc, value is NSNumber of UMMTP3RouteStatus */
-- (NSDictionary  *)statusOfStaticOrDirectlyConnectedPointcodes; /* key is NSNumber of pc, value is NSNumber of UMMTP3RouteStatus */
+- (NSDictionary  *)statusOfStaticOrDirectlyConnectedPointcodesExcludingLinkset:(NSString *)lsname; /* key is NSNumber of pc, value is NSNumber of UMMTP3RouteStatus */
 
 - (BOOL) isRouteAvailable:(UMMTP3PointCode *)pc mask:(int)mask linkset:(NSString *)ls;
 - (UMSynchronizedSortedDictionary *)routeStatus;
@@ -90,7 +90,8 @@
 
 - (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc
                          routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
-                 staticOrDirectOnly:(BOOL)staticOrDirectOnly;
+                 staticOrDirectOnly:(BOOL)staticOrDirectOnly
+                   excludingLinkset:(NSString *)ls;
 
 @end
 
