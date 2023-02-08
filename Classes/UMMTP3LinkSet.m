@@ -4117,7 +4117,7 @@
                     link:(UMMTP3Link *)link
 {
     
-    NSDictionary *dict = [_mtp3.routingTable statusOfStaticOrDirectlyConnectedPointcodes];
+    NSDictionary *dict = [_mtp3.routingTable statusOfStaticOrDirectlyConnectedPointcodesExcludingLinkset:self.name];
     NSArray *keys = [dict allKeys];
     for(NSNumber *pointcode in keys)
     {

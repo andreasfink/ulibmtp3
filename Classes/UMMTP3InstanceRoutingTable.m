@@ -224,7 +224,7 @@
     return dict;
 }
 
-- (NSDictionary  *)statusOfStaticOrDirectlyConnectedPointcodes /* key is NSNumber of pc, value is nsnumber of UMMTP3RouteStatus */
+- (NSDictionary  *)statusOfStaticOrDirectlyConnectedPointcodesExcludingLinkset:(NSString *)lsname /* key is NSNumber of pc, value is nsnumber of UMMTP3RouteStatus */
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
     UMMUTEX_LOCK(_routingTableLock);
@@ -233,7 +233,7 @@
     {
         UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:pointcode.intValue
                                                         variant:UMMTP3Variant_Undefined];
-        UMMTP3RouteStatus status = [self statusOfStaticOrDirectlyConnectedRoute:pc];
+        UMMTP3RouteStatus status = [self statusOfStaticOrDirectlyConnectedRoute:pc excludingLinkset:lsname];
         dict[pointcode] = @(status);
     }
     UMMUTEX_UNLOCK(_routingTableLock);
@@ -528,11 +528,13 @@
 {
     return [self bestRoute:pc
                 routeArray:r
-        staticOrDirectOnly:NO];
+        staticOrDirectOnly:NO
+          excludingLinkset:NULL];
 }
 - (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc
                          routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
                  staticOrDirectOnly:(BOOL)staticOrDirectOnly
+                   excludingLinkset:(NSString *)ls
 {
     if(r==NULL)
     {
@@ -546,6 +548,10 @@
     for(UMMTP3InstanceRoute *route in r)
     {
         if((staticOrDirectOnly==YES) && (!((route.staticRoute) || (route.priority==1))))
+        {
+            continue;
+        }
+        if([ls isEqualToString:route.linksetName])
         {
             continue;
         }
@@ -664,10 +670,10 @@
 
 
 
-- (UMMTP3RouteStatus) statusOfStaticOrDirectlyConnectedRoute:(UMMTP3PointCode *)pc
+- (UMMTP3RouteStatus) statusOfStaticOrDirectlyConnectedRoute:(UMMTP3PointCode *)pc excludingLinkset:(NSString *)ls
 {
     
-    UMMTP3InstanceRoute *route = [self bestRoute:pc routeArray:NULL staticOrDirectOnly:YES];
+    UMMTP3InstanceRoute *route = [self bestRoute:pc routeArray:NULL staticOrDirectOnly:YES excludingLinkset:ls];
     if(route == NULL)
     {
         return UMMTP3_ROUTE_UNKNOWN;
