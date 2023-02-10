@@ -4116,6 +4116,9 @@
                      slc:(int)slc
                     link:(UMMTP3Link *)link
 {
+    /* TEMP WORKAROUND */
+    return;
+    
     NSMutableDictionary *d = [[NSMutableDictionary alloc]init];
     d[@"label"] = label ? label : [NSNull null];
     d[@"ni"] = @(ni);
@@ -4163,6 +4166,7 @@
             default:
                 break;
         }
+        usleep(100000);
     }
 }
 
