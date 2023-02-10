@@ -5107,7 +5107,7 @@
     {
         mask = pc.maxmask;
     }
-    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    if((_dontAdvertizeRoutes) || (pc.pc == _mtp3.opc.pc))
     {
         return;
     }
@@ -5155,7 +5155,7 @@
         mask = pc.maxmask;
     }
 
-    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    if((_dontAdvertizeRoutes) || (pc.pc == _mtp3.opc.pc))
     {
         return;
     }
@@ -5201,7 +5201,7 @@
     {
         mask = pc.maxmask;
     }
-    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    if((_dontAdvertizeRoutes) || (pc.pc == _mtp3.opc.pc))
     {
         return;
     }
