@@ -487,6 +487,11 @@ options:(NSDictionary *)options;
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask;
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask;
+
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask link:(UMMTP3Link *)link;
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask link:(UMMTP3Link *)link;
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask link:(UMMTP3Link *)link;
+
 - (void)stopDetachAndDestroy;
 - (NSString *)webStatus;
 
