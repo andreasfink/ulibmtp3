@@ -4116,7 +4116,34 @@
                      slc:(int)slc
                     link:(UMMTP3Link *)link
 {
+    /* TEMP WORKAROUND */
+    return;
     
+    NSMutableDictionary *d = [[NSMutableDictionary alloc]init];
+    d[@"label"] = label ? label : [NSNull null];
+    d[@"ni"] = @(ni);
+    d[@"mp"] = @(mp);
+    d[@"slc"] = @(slc);
+    d[@"link"] = link ? link : [NSNull null];
+    [self runSelectorInBackground: @selector(sendRoutingTableBackground:) withObject:d];
+}
+
+
+- (void)sendRoutingTableBackground:(NSDictionary *)d;
+{
+    UMMTP3Label *label = d[@"label"];
+    if([label isKindOfClass:[NSNull class]])
+    {
+        label = NULL;
+    }
+    int ni = [d[@"ni"] intValue];
+    int mpi = [d[@"mp"] intValue];
+    int slc = [d[@"slc"] intValue];
+    UMMTP3Link *link = d[@"link"];
+    if([link isKindOfClass:[NSNull class]])
+    {
+        link = NULL;
+    }
     NSDictionary *dict = [_mtp3.routingTable statusOfStaticOrDirectlyConnectedPointcodesExcludingLinkset:self.name];
     NSArray *keys = [dict allKeys];
     for(NSNumber *pointcode in keys)
@@ -4128,17 +4155,18 @@
         switch(status)
         {
             case UMMTP3_ROUTE_PROHIBITED:
-                [self advertizePointcodeUnavailable:pc mask:-1];
+                [self advertizePointcodeUnavailable:pc mask:-1 link:link];
                 break;
             case UMMTP3_ROUTE_RESTRICTED:
-                [self advertizePointcodeRestricted:pc mask:-1];
+                [self advertizePointcodeRestricted:pc mask:-1 link:link];
                 break;
             case UMMTP3_ROUTE_ALLOWED:
-                [self advertizePointcodeAvailable:pc mask:-1];
+                [self advertizePointcodeAvailable:pc mask:-1 link:link];
                 break;
             default:
                 break;
         }
+        usleep(100000);
     }
 }
 
@@ -5070,11 +5098,20 @@
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
                                mask:(int)mask
 {
+    [self advertizePointcodeAvailable:pc
+                                 mask:mask
+                                 link:NULL];
+}
+
+- (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc
+                               mask:(int)mask
+                               link:(UMMTP3Link *)link
+{
     if(mask == -1)
     {
         mask = pc.maxmask;
     }
-    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    if((_dontAdvertizeRoutes) || (pc.pc == _mtp3.opc.pc))
     {
         return;
     }
@@ -5100,19 +5137,29 @@
         UMMTP3Label *label = [[UMMTP3Label alloc]init];
         label.opc = self.localPointCode;
         label.dpc = self.adjacentPointCode;
-        [self sendTFA:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
+        [self sendTFA:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:link];
     }
+}
+
+
+- (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
+                                mask:(int)mask
+{
+    [self advertizePointcodeRestricted:pc
+                                  mask:mask
+                                  link:NULL];
 }
 
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc
                                 mask:(int)mask
+                                link:(UMMTP3Link *)link
 {
     if(mask == -1)
     {
         mask = pc.maxmask;
     }
 
-    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    if((_dontAdvertizeRoutes) || (pc.pc == _mtp3.opc.pc))
     {
         return;
     }
@@ -5138,18 +5185,27 @@
         UMMTP3Label *label = [[UMMTP3Label alloc]init];
         label.opc = self.localPointCode;
         label.dpc = self.adjacentPointCode;
-        [self sendTFR:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
+        [self sendTFR:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:link];
     }
 }
 
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
+                                mask:(int)mask
+{
+    [self advertizePointcodeUnavailable:pc
+                                  mask:mask
+                                  link:NULL];
+}
+
+- (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc
                                  mask:(int)mask
+                                 link:(UMMTP3Link *)link
 {
     if(mask == -1)
     {
         mask = pc.maxmask;
     }
-    if((_dontAdvertizeRoutes) && (pc.pc != _mtp3.opc.pc))
+    if((_dontAdvertizeRoutes) || (pc.pc == _mtp3.opc.pc))
     {
         return;
     }
@@ -5181,7 +5237,7 @@
         UMMTP3Label *label = [[UMMTP3Label alloc]init];
         label.opc = self.localPointCode;
         label.dpc = self.adjacentPointCode;
-        [self sendTFP:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:NULL];
+        [self sendTFP:label destination:pc ni:self.networkIndicator mp:0 slc:0 link:link];
     }
 }
 
