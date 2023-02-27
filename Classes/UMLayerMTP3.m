@@ -60,6 +60,7 @@
 	_links	         = [[UMSynchronizedSortedDictionary alloc]init];
     _userPart        = [[UMSynchronizedSortedDictionary  alloc]init];
     _routingTable    = [[UMMTP3InstanceRoutingTable alloc]init];
+    _propagatingPointcodes = [[UMSynchronizedSortedDictionary alloc]init];
     _housekeepingTimer = [[UMTimer alloc]initWithTarget:self
                                                selector:@selector(housekeeping)
                                                  object:NULL
@@ -104,6 +105,7 @@
         ls.localPointCode = self.opc;
     }
     _linksets[ls.name]=ls;
+    _propagatingPointcodes[@(ls.adjacentPointCode.pc)] = @(ls.adjacentPointCode.pc);
     [self refreshRoutingTable];
 }
 
@@ -2078,4 +2080,12 @@
     }
 }
 
+- (void)addStaticRoute:(UMMTP3PointCode *)pc
+                  mask:(int)mask
+           linksetName:(NSString *)linkset
+              priority:(int)prio
+{
+    [_routingTable addStaticRoute:pc mask:mask linksetName:linkset priority:prio];
+    _propagatingPointcodes[@(pc.pc)] = @(pc.pc);
+}
 @end
