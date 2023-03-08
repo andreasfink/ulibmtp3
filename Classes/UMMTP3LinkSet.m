@@ -4118,7 +4118,7 @@
 {
     /* FIXME: TEMP WORKAROUND */
     return;
-    
+#if 0
     NSMutableDictionary *d = [[NSMutableDictionary alloc]init];
     d[@"label"] = label ? label : [NSNull null];
     d[@"ni"] = @(ni);
@@ -4126,6 +4126,7 @@
     d[@"slc"] = @(slc);
     d[@"link"] = link ? link : [NSNull null];
     [self runSelectorInBackground: @selector(sendRoutingTableBackground:) withObject:d];
+#endif
 }
 
 
@@ -4136,9 +4137,9 @@
     {
         label = NULL;
     }
-    int ni = [d[@"ni"] intValue];
-    int mpi = [d[@"mp"] intValue];
-    int slc = [d[@"slc"] intValue];
+    //int ni = [d[@"ni"] intValue];
+    //int mpi = [d[@"mp"] intValue];
+    //int slc = [d[@"slc"] intValue];
     UMMTP3Link *link = d[@"link"];
     if([link isKindOfClass:[NSNull class]])
     {
