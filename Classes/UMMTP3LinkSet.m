@@ -4137,9 +4137,19 @@
     {
         label = NULL;
     }
-    //int ni = [d[@"ni"] intValue];
-    //int mpi = [d[@"mp"] intValue];
-    //int slc = [d[@"slc"] intValue];
+    int ni = [d[@"ni"] intValue];
+    int mpi = [d[@"mp"] intValue];
+    int slc = [d[@"slc"] intValue];
+
+#pragma unused(ni)
+#pragma unused(mpi)
+#pragma unused(slc)
+
+
+#pragma unused(ni)
+#pragma unused(mpi)
+#pragma unused(slc)
+
     UMMTP3Link *link = d[@"link"];
     if([link isKindOfClass:[NSNull class]])
     {
