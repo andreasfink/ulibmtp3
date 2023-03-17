@@ -15,6 +15,10 @@ autom4te.cache
 Classes/ulibmtp3_version.h
 BUILDNR
 make_buildnr.sh
+buildnumber.c
+buildnumber.h
+ulibmtp3.pc
+ulibmtp3_config.h
 
 #########################
 # .gitignore file for Xcode4 and Xcode5 Source projects
