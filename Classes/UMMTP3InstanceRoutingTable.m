@@ -172,7 +172,7 @@
     }
     for(UMMTP3InstanceRoute *route in r)
     {
-        if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
+        if ([route.linksetName isEqualToString:linkset])
         {
             route.status = UMMTP3_ROUTE_ALLOWED;
             found = YES;
@@ -180,7 +180,6 @@
     }
     if(found==NO)
     {
-
         UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
                                                                  linksetName:linkset
                                                                     priority:prio
@@ -257,7 +256,7 @@
     
     for(UMMTP3InstanceRoute *route in r)
     {
-        if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
+        if ([route.linksetName isEqualToString:linkset])
         {
             route.status = UMMTP3_ROUTE_RESTRICTED;
             found = YES;
@@ -308,7 +307,7 @@
     
     for(UMMTP3InstanceRoute *route in r)
     {
-        if (([route.linksetName isEqualToString:linkset]) && (route.priority == prio))
+        if ([route.linksetName isEqualToString:linkset])
         {
             route.status = UMMTP3_ROUTE_PROHIBITED;
             found = YES;

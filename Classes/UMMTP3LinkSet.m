@@ -4145,6 +4145,11 @@
 #pragma unused(mpi)
 #pragma unused(slc)
 
+
+#pragma unused(ni)
+#pragma unused(mpi)
+#pragma unused(slc)
+
     UMMTP3Link *link = d[@"link"];
     if([link isKindOfClass:[NSNull class]])
     {
