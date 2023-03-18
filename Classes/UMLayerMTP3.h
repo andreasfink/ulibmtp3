@@ -352,5 +352,4 @@ typedef enum UMMTP3_Error
                   mask:(int)maxmask
            linksetName:(NSString *)linkset
               priority:(int)prio;
-
 @end
