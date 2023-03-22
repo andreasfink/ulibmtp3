@@ -1100,7 +1100,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         [self logDebug:@"processASPAC"];
     }
-
     [_as aspActive:self reason:@"ASPAC received"];
     self.m3ua_asp_status =  M3UA_STATUS_IS;
     [self sendASPAC_ACK:params];
@@ -2531,6 +2530,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     dict[@"as.send_aspup"] =  _as.send_aspup ? @"YES" : @"NO";
     dict[@"as.send_aspac"] =  _as.send_aspac ? @"YES" : @"NO";
+    dict[@"as.await_aspup"] =  _as.await_aspup ? @"YES" : @"NO";
+    dict[@"as.await_aspac"] =  _as.await_aspac ? @"YES" : @"NO";
     dict[@"configured-speed"] = @(_speed);
     dict[@"current-speed"] = [_speedometer getSpeedTripleJson];
     dict[@"submission-speed"] = [_submission_speed getSpeedTripleJson];

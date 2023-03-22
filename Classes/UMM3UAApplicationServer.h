@@ -42,6 +42,8 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
     BOOL                        _useRoutingKey;
     BOOL                        _send_aspup;
     BOOL                        _send_aspac;
+    BOOL                        _await_aspup;
+    BOOL                        _await_aspac;
     UMM3UAApplicationServerMode _mode;
 }
 
@@ -51,6 +53,8 @@ for the link to be in ALIGNED_READY, if not, power it down again, wait Reopen1 t
 @property(readwrite,strong,atomic)  NSNumber            *networkAppearance;
 @property(readwrite,assign,atomic)  BOOL send_aspup;
 @property(readwrite,assign,atomic)  BOOL send_aspac;
+@property(readwrite,assign,atomic)  BOOL await_aspup;
+@property(readwrite,assign,atomic)  BOOL await_aspac;
 @property(readwrite,assign,atomic)  UMM3UAApplicationServerMode mode;
 
 /* UMSCTP callbacks */

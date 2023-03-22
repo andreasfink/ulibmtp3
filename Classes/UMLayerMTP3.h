@@ -345,8 +345,8 @@ typedef enum UMMTP3_Error
 - (void)reloadPluginConfigs;
 - (void)reloadPlugins;
 
-- (void)updateRoutingTableLinksetUnavailabe:(NSString *)linksetName;
-- (void)updateRoutingTableLinksetAvailabe:(NSString *)linksetName;
+- (void)updateRoutingTableLinksetUnavailable:(NSString *)linksetName;
+- (void)updateRoutingTableLinksetAvailable:(NSString *)linksetName;
 
 - (void)addStaticRoute:(UMMTP3PointCode *)pc
                   mask:(int)maxmask
