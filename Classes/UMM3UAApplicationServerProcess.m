@@ -1102,7 +1102,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     [_as aspActive:self reason:@"ASPAC received"];
     self.m3ua_asp_status =  M3UA_STATUS_IS;
-    [_as updateLinkSetStatus];
     [self sendASPAC_ACK:params];
 }
 
@@ -1116,7 +1115,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
     [_as aspInactive:self reason:@"ASPIA received"];
     self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
-    [_as updateLinkSetStatus];
     [self sendASPIA_ACK:params];
 }
 

@@ -1235,6 +1235,26 @@ static const char *m3ua_param_name(uint16_t param_type)
                        [UMM3UAApplicationServer statusString:_m3ua_status]];
         [self addToLayerHistoryLog:s];
     }
+    
+    if((oldStatus!=M3UA_STATUS_IS) && (_m3ua_status==M3UA_STATUS_IS))
+    {
+        [_mtp3 updateRoutingTableLinksetAvailable:_name];
+        [self updateRouteAvailable:_adjacentPointCode
+                              mask:_adjacentPointCode.maxmask
+                          priority:UMMTP3RoutePriority_1
+                            reason:@"updateLinksetStatus activeLinks > 0"];
+        _lastLinksetUp = [NSDate date];
+    }
+    else if((oldStatus==M3UA_STATUS_IS) && (_m3ua_status!=M3UA_STATUS_IS))
+    {
+        [self forgetAdvertizedPointcodes];
+        [_mtp3 updateRoutingTableLinksetUnavailable:_name];
+        [self updateRouteUnavailable:_adjacentPointCode
+                                mask:_adjacentPointCode.maxmask
+                            priority:UMMTP3RoutePriority_1
+                              reason:@"updateLinksetStatus activeLinks < 1"];
+        _lastLinksetDown = [NSDate date];
+    }
 }
 
 
