@@ -513,6 +513,10 @@ options:(NSDictionary *)options;
                        reason:(NSString *)reason;
 /* returns YES if status has changed */
 
+/* update routes if all links are up or down*/
+- (void)updateRoutingTableLinksetAvailable;
+- (void)updateRoutingTableLinksetUnavailable;
+
 - (UMMTP3PointCode *)remoteToLocalPointcode:(UMMTP3PointCode *)pc;
 - (UMMTP3PointCode *)localToRemotePointcode:(UMMTP3PointCode *)pc;
 - (UMMTP3Label *)remoteToLocalLabel:(UMMTP3Label *)label;

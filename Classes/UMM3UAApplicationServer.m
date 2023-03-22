@@ -912,25 +912,34 @@ static const char *m3ua_param_name(uint16_t param_type)
             _mode = UMM3UAApplicationServerMode_server;
             _send_aspup = NO;
             _send_aspac = NO;
+            _await_aspup = YES;
+            _await_aspac = YES;
         }
         else if([s isEqualToString:@"client"])
         {
             _mode = UMM3UAApplicationServerMode_client;
             _send_aspup = YES;
             _send_aspac = YES;
+            _await_aspup = NO;
+            _await_aspac = NO;
         }
         else if([s isEqualToString:@"peer"])
         {
             _mode = UMM3UAApplicationServerMode_peer;
             _send_aspup = YES;
             _send_aspac = YES;
+            _await_aspup = YES;
+            _await_aspac = YES;
+
         }
     }
     else
     {
-        _mode = UMM3UAApplicationServerMode_peer;
-        _send_aspup = YES;
-        _send_aspac = YES;
+        _mode = UMM3UAApplicationServerMode_server;
+        _send_aspup = NO;
+        _send_aspac = NO;
+        _await_aspup = YES;
+        _await_aspac = YES;
     }
     if(cfg[@"send-aspup"])
     {
@@ -938,7 +947,15 @@ static const char *m3ua_param_name(uint16_t param_type)
     }
     if(cfg[@"send-aspac"])
     {
-        _send_aspup = [cfg[@"send-aspac"] boolValue];
+        _send_aspac = [cfg[@"send-aspac"] boolValue];
+    }
+    if(cfg[@"await-aspup"])
+    {
+        _await_aspup = [cfg[@"await-aspup"] boolValue];
+    }
+    if(cfg[@"await-aspac"])
+    {
+        _await_aspac = [cfg[@"await-aspac"] boolValue];
     }
 
     _prometheusMetrics = [[UMMTP3LinkSetPrometheusData alloc]initWithPrometheus:_mtp3.prometheus

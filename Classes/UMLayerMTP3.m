@@ -1656,6 +1656,8 @@
     }
 }
 
+
+
 - (BOOL)updateRouteRestricted:(UMMTP3PointCode *)pc
                          mask:(int)mask
                   linksetName:(NSString *)name
@@ -2035,12 +2037,12 @@
     }
 }
 
-- (void)updateRoutingTableLinksetUnavailabe:(NSString *)linksetName
+- (void)updateRoutingTableLinksetUnavailable:(NSString *)linksetName
 {
     [_routingTable updateLinksetUnavailable:linksetName];
 }
 
-- (void)updateRoutingTableLinksetAvailabe:(NSString *)linksetName
+- (void)updateRoutingTableLinksetAvailable:(NSString *)linksetName
 {
     [_routingTable updateLinksetAvailable:linksetName];
 }

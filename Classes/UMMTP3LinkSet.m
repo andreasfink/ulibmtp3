@@ -4980,7 +4980,7 @@
     
     if(nowAvailable)
     {
-        [_mtp3 updateRoutingTableLinksetAvailabe:_name];
+        [_mtp3 updateRoutingTableLinksetAvailable:_name];
         [self updateRouteAvailable:_adjacentPointCode
                               mask:_adjacentPointCode.maxmask
                           priority:UMMTP3RoutePriority_1
@@ -4990,7 +4990,7 @@
     if(nowUnavailable)
     {
         [self forgetAdvertizedPointcodes];
-        [_mtp3 updateRoutingTableLinksetUnavailabe:_name];
+        [_mtp3 updateRoutingTableLinksetUnavailable:_name];
         [self updateRouteUnavailable:_adjacentPointCode
                                 mask:_adjacentPointCode.maxmask
                             priority:UMMTP3RoutePriority_1
@@ -5783,6 +5783,15 @@
             }
         }
     }
+}
+
+- (void)updateRoutingTableLinksetAvailable
+{
+    [_mtp3 updateRoutingTableLinksetAvailable:_name];
+}
+- (void)updateRoutingTableLinksetUnavailable
+{
+    [_mtp3 updateRoutingTableLinksetUnavailable:_name];
 }
 
 @end
