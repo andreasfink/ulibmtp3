@@ -1642,7 +1642,7 @@
         BOOL hasChanged = NO;
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio hasChanged:&hasChanged];
         UMMUTEX_UNLOCK(_routingTable.routingTableLock);
-        if(hasChanged)
+        if((hasChanged) || (1))
         {
             [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
             [self updateUpperLevelPointCode:pc status:UMMTP3_ROUTE_ALLOWED];
@@ -1677,7 +1677,7 @@
         }
         BOOL hasChanged = NO;
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio hasChanged:&hasChanged];
-        if(hasChanged)
+        if((hasChanged) || (1))
         {
             [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
             [self updateUpperLevelPointCode:pc];
@@ -1713,7 +1713,7 @@
                                          linksetName:name
                                             priority:prio
                                           hasChanged:&hasChanged];
-        if(hasChanged)
+        if((hasChanged) || (1))
         {
             [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
             [self updateUpperLevelPointCode:pc];
