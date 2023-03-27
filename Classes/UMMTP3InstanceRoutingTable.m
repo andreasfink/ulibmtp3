@@ -358,10 +358,21 @@
     UMMUTEX_UNLOCK(_routingTableLock);
     return arr;
 }
+
 - (BOOL) addStaticRoute:(UMMTP3PointCode *)pc
                    mask:(int)mask
             linksetName:(NSString *)linkset
                priority:(UMMTP3RoutePriority)prio
+{
+    return [self addStaticRoute:pc mask:mask linksetName:linkset priority:prio weight:NULL localPreference:NULL];
+}
+
+- (BOOL) addStaticRoute:(UMMTP3PointCode *)pc
+                   mask:(int)mask
+            linksetName:(NSString *)linkset
+               priority:(UMMTP3RoutePriority)prio
+                 weight:(NSNumber *)weight
+        localPreference:(NSNumber *)localpref
 {
     BOOL found=NO;
     UMMUTEX_LOCK(_routingTableLock);
@@ -370,7 +381,9 @@
         UMMTP3InstanceRoute *route = [[UMMTP3InstanceRoute alloc] initWithPc:pc
                                                                  linksetName:linkset
                                                                     priority:prio
-                                                                        mask:pc.maxmask];
+                                                                        mask:pc.maxmask
+                                                                      weight:weight
+                                                             localPreference:localpref];
         route.linksetName = linkset;
         route.pointcode = 0;
         route.mask = 0;

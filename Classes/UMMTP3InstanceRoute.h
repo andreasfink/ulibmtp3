@@ -62,6 +62,13 @@
 - (NSComparisonResult)routingPreference:(UMMTP3InstanceRoute *)other;
 
 - (UMMTP3InstanceRoute *)initWithPc:(UMMTP3PointCode *)pc
+                        linksetName:(NSString *)lsName
+                           priority:(UMMTP3RoutePriority)prio
+                               mask:(int)xmask
+                             weight:(NSNumber *)weight
+                    localPreference:(NSNumber *)localpref;
+
+- (UMMTP3InstanceRoute *)initWithPc:(UMMTP3PointCode *)pc
                         linksetName:(NSString *)linksetName
                            priority:(UMMTP3RoutePriority)prio
                                mask:(int)mask;

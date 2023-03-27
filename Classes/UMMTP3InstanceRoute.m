@@ -63,10 +63,26 @@
     return NSOrderedSame;
 }
 
+
 - (UMMTP3InstanceRoute *)initWithPc:(UMMTP3PointCode *)pc
                         linksetName:(NSString *)lsName
                            priority:(UMMTP3RoutePriority)prio
                                mask:(int)xmask
+{
+    return [self initWithPc:pc
+                linksetName:lsName
+                   priority:prio
+                       mask:xmask
+                     weight:NULL
+            localPreference:NULL];
+}
+
+- (UMMTP3InstanceRoute *)initWithPc:(UMMTP3PointCode *)pc
+                        linksetName:(NSString *)lsName
+                           priority:(UMMTP3RoutePriority)prio
+                               mask:(int)xmask
+                             weight:(NSNumber *)weight
+                    localPreference:(NSNumber *)localpref
 {
     self = [super init];
     if(self)
@@ -106,6 +122,14 @@
             case UMMTP3RoutePriority_9:
                 _metrics.local_preference = 3;
                 break;
+        }
+        if(localpref)
+        {
+            _metrics.local_preference = [localpref intValue];
+        }
+        if(weight)
+        {
+            _metrics.weight = [weight intValue];
         }
         _deliveryQueue = [[UMQueueSingle alloc]init];
         _status = UMMTP3_ROUTE_UNKNOWN;

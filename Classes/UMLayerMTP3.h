@@ -348,8 +348,16 @@ typedef enum UMMTP3_Error
 - (void)updateRoutingTableLinksetUnavailable:(NSString *)linksetName;
 - (void)updateRoutingTableLinksetAvailable:(NSString *)linksetName;
 
-- (void)addStaticRoute:(UMMTP3PointCode *)pc
+- (BOOL)addStaticRoute:(UMMTP3PointCode *)pc
                   mask:(int)maxmask
            linksetName:(NSString *)linkset
               priority:(int)prio;
+
+- (BOOL) addStaticRoute:(UMMTP3PointCode *)pc
+                   mask:(int)mask
+            linksetName:(NSString *)linkset
+               priority:(UMMTP3RoutePriority)prio
+                 weight:(NSNumber *)weight
+        localPreference:(NSNumber *)localpref;
+
 @end

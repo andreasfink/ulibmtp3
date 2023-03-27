@@ -2082,12 +2082,35 @@
     }
 }
 
-- (void)addStaticRoute:(UMMTP3PointCode *)pc
-                  mask:(int)mask
+
+- (BOOL)addStaticRoute:(UMMTP3PointCode *)pc
+                  mask:(int)maxmask
            linksetName:(NSString *)linkset
               priority:(int)prio
 {
-    [_routingTable addStaticRoute:pc mask:mask linksetName:linkset priority:prio];
+    return [self addStaticRoute:pc
+                           mask:maxmask
+                    linksetName:linkset
+                       priority:prio
+                         weight:NULL
+                localPreference:NULL];
+}
+
+
+- (BOOL) addStaticRoute:(UMMTP3PointCode *)pc
+                   mask:(int)mask
+            linksetName:(NSString *)linkset
+               priority:(UMMTP3RoutePriority)prio
+                 weight:(NSNumber *)weight
+        localPreference:(NSNumber *)localpref
+{
+    
+   BOOL r = [_routingTable addStaticRoute:pc mask:mask
+                      linksetName:linkset
+                         priority:prio
+                           weight:weight
+                  localPreference:localpref];
     _propagatingPointcodes[@(pc.pc)] = @(pc.pc);
+    return r;
 }
 @end
