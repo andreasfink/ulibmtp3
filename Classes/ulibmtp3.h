@@ -55,3 +55,4 @@
 #import "UMMTP3StatisticDbRecord.h"
 #import "UMM3UAApplicationServerStatusRecord.h"
 #import "UMM3UAApplicationServerStatusRecords.h"
+#import "UMMTP3RoutingUpdateDb.h"

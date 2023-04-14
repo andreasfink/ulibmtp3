@@ -8,6 +8,7 @@
 
 #import <ulibdb/ulibdb.h>
 #import "UMLayerMTP3ApplicationContextProtocol.h"
+#import "UMMTP3PointCode.h"
 
 @interface UMMTP3RoutingUpdateDb : UMObject
 {
@@ -28,5 +29,11 @@
                                  autocreate:(BOOL)autocreate
                                    instance:(NSString *)instance;
 
+- (void)doAutocreate;
 
+- (BOOL)logInboundLinkset:(NSString *)inboundLinkset
+          outboundLinkset:(NSString *)outboundLinkset
+                      dpc:(UMMTP3PointCode *)dpc
+                   status:(NSString *)status
+                   reason:(NSString *)reason;  /* returns YES on success */
 @end

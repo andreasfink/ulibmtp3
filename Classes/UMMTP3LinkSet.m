@@ -22,6 +22,7 @@
 #import "UMMTP3TransitPermission.h"
 #import "UMMTP3InstanceRoutingTable.h"
 #import "UMMTP3PointCodeTranslationTable.h"
+#import "UMMTP3RoutingUpdateDb.h"
 
 @implementation UMMTP3LinkSet
 
@@ -954,8 +955,8 @@
                 if(_logLevel <= UMLOG_DEBUG)
                 {
                     [self.logFeed debugText:[NSString stringWithFormat:@"  screening: implicitly denied"]];
-                    break;
                 }
+                break;
             }
             case UMMTP3TransitPermission_explicitlyPermitted:
             {
@@ -5118,6 +5119,11 @@
                                mask:(int)mask
                                link:(UMMTP3Link *)link
 {
+    [_mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_name
+                                         dpc:pc
+                                      status:@"available"
+                                      reason:@"advertizePointcodeAvailable"];
     if(mask == -1)
     {
         mask = pc.maxmask;
@@ -5165,6 +5171,11 @@
                                 mask:(int)mask
                                 link:(UMMTP3Link *)link
 {
+    [_mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_name
+                                         dpc:pc
+                                      status:@"restricted"
+                                      reason:@"advertizePointcodeRestricted"];
     if(mask == -1)
     {
         mask = pc.maxmask;
@@ -5212,6 +5223,11 @@
                                  mask:(int)mask
                                  link:(UMMTP3Link *)link
 {
+    [_mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_name
+                                         dpc:pc
+                                      status:@"unavailable"
+                                      reason:@"advertizePointcodeUnavailable"];
     if(mask == -1)
     {
         mask = pc.maxmask;

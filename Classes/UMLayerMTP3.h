@@ -112,6 +112,7 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) NSString            *routingUpdateLogFileName;
 @property (readwrite,strong,atomic) UMMutex             *mtp3Lock;
 @property (readwrite,strong,atomic) UMSynchronizedDictionary *propagatingPointcodes; /* key and value is NSNumber */
+@property (readonly,strong,atomic) UMMTP3RoutingUpdateDb           *routingUpdateDb;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq name:(NSString *)name;
 

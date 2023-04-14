@@ -954,8 +954,6 @@
                 fflush(_routingUpdateLogFile);
             }
         }
-        
-       
     }
 }
 
@@ -1189,10 +1187,15 @@
                                                                    appContext:_appContext
                                                                    autocreate:_routingUpdateDbAutoCreate.boolValue
                                                                      instance:_routingUpdateDbInstance];
-            if(_statisticDbAutoCreate.boolValue)
+            if(_routingUpdateDbAutoCreate.boolValue)
             {
-                [_statisticDb doAutocreate];
+                [_routingUpdateDb doAutocreate];
             }
+            [_routingUpdateDb logInboundLinkset:@""
+                                outboundLinkset:@""
+                                            dpc:_opc
+                                         status:@"available"
+                                         reason:@"--STARTUP--"];
             [_housekeepingTimer start];
         }
         UMMTP3Task_start *task = [[UMMTP3Task_start alloc]initWithReceiver:self];
@@ -1683,6 +1686,12 @@
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
         }
+
+        [_routingUpdateDb logInboundLinkset:name
+                            outboundLinkset:@""
+                                        dpc:pc
+                                     status:@"available"
+                                     reason:reason];
         BOOL hasChanged = NO;
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio hasChanged:&hasChanged];
         UMMUTEX_UNLOCK(_routingTable.routingTableLock);
@@ -1719,6 +1728,12 @@
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
         }
+        [_routingUpdateDb logInboundLinkset:name
+                            outboundLinkset:@""
+                                        dpc:pc
+                                     status:@"restricted"
+                                     reason:reason];
+
         BOOL hasChanged = NO;
         [_routingTable updateDynamicRouteRestricted:pc mask:mask linksetName:name priority:prio hasChanged:&hasChanged];
         if((hasChanged) || (1))
@@ -1751,6 +1766,11 @@
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
         }
+        [_routingUpdateDb logInboundLinkset:name
+                            outboundLinkset:@""
+                                        dpc:pc
+                                     status:@"unavailable"
+                                     reason:reason];
         BOOL hasChanged = NO;
         [_routingTable updateDynamicRouteUnavailable:pc
                                                 mask:mask
@@ -1784,6 +1804,11 @@
     fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
     fflush(_routingUpdateLogFile);
     UMMUTEX_UNLOCK(_mtp3Lock);
+    [_routingUpdateDb logInboundLinkset:@""
+                        outboundLinkset:@""
+                                    dpc:NULL
+                                 status:@"event"
+                                 reason:event];
 }
 
 - (void)writeRouteStatusToLog:(UMMTP3PointCode *)pc
@@ -1818,6 +1843,13 @@
     fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
     fflush(_routingUpdateLogFile);
     UMMUTEX_UNLOCK(_mtp3Lock);
+    
+    [_routingUpdateDb logInboundLinkset:@""
+                        outboundLinkset:@""
+                                    dpc:pc
+                                 status:status
+                                 reason:@""];
+
 }
 
 
@@ -1888,6 +1920,11 @@
         fflush(_routingUpdateLogFile);
         UMMUTEX_UNLOCK(_mtp3Lock);
     }
+    [_routingUpdateDb logInboundLinkset:@"mtp3"
+                        outboundLinkset:@"sccp"
+                                    dpc:pc
+                                 status:@"unavailable"
+                                 reason:@"mtp-user"];
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
     {
@@ -1913,6 +1950,12 @@
         fflush(_routingUpdateLogFile);
         UMMUTEX_UNLOCK(_mtp3Lock);
     }
+    [_routingUpdateDb logInboundLinkset:@"mtp3"
+                        outboundLinkset:@"sccp"
+                                    dpc:pc
+                                 status:@"restricted"
+                                 reason:@"mtp-user"];
+
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
     {
@@ -1939,6 +1982,12 @@
         fflush(_routingUpdateLogFile);
         UMMUTEX_UNLOCK(_mtp3Lock);
     }
+    [_routingUpdateDb logInboundLinkset:@"mtp3"
+                        outboundLinkset:@"sccp"
+                                    dpc:pc
+                                 status:@"available"
+                                 reason:@"mtp-user"];
+
     NSArray *userKeys = [_userPart allKeys];
     for(NSNumber *userKey in userKeys)
     {
@@ -1965,6 +2014,13 @@
             continue;
         }
         UMMTP3LinkSet *linkset = _linksets[linksetName];
+        
+        [_routingUpdateDb logInboundLinkset:name
+                            outboundLinkset:linksetName
+                                        dpc:pc
+                                     status:@"unavailable"
+                                     reason:@"updateOtherLinksetsPointCodeUnavailable"];
+
         [linkset advertizePointcodeUnavailable:pc mask:pc.maxmask];
         if(_routingUpdateLogFile)
         {
@@ -1989,6 +2045,11 @@
             continue;
         }
         UMMTP3LinkSet *linkset = _linksets[linksetName];
+        [_routingUpdateDb logInboundLinkset:name
+                            outboundLinkset:linksetName
+                                        dpc:pc
+                                     status:@"restricted"
+                                     reason:@"updateOtherLinksetsPointCodeRestricted"];
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];

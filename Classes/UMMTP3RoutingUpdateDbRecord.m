@@ -34,7 +34,8 @@
                 NSArray *fields = @[
                                     @"timestamp",
                                     @"instance",
-                                    @"linkset",
+                                    @"inbound_linkset",
+                                    @"outbound_linkset",
                                     @"dpc",
                                     @"status",
                                     @"reason"];
@@ -46,8 +47,9 @@
             NSArray *params  = [NSArray arrayWithObjects:
                                 STRING_NONEMPTY(_timestamp),
                                 STRING_NONEMPTY(_instance),
-                                STRING_NONEMPTY(_linkset),
-                                STRING_NONEMPTY(_dpc),
+                                STRING_NONEMPTY(_inboundLinkset),
+                                STRING_NONEMPTY(_outboundLinkset),
+                                STRING_NONEMPTY(_dpc.description),
                                 STRING_NONEMPTY(_status),
                                 STRING_NONEMPTY(_reason),
                                 NULL];

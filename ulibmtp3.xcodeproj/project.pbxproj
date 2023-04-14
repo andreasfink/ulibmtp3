@@ -22,9 +22,9 @@
 		A65270F825C33580007CF832 /* UMM3UAApplicationServerMode.h in Headers */ = {isa = PBXBuildFile; fileRef = A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A691E59F237001A800589718 /* UMMTP3PointCodeTranslationTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A691E5A0237001A800589718 /* UMMTP3PointCodeTranslationTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A691E59E237001A800589718 /* UMMTP3PointCodeTranslationTable.m */; };
-		A694AC1029E8143800CD21F1 /* UMMTP3RoutingUpdateDb.h in Headers */ = {isa = PBXBuildFile; fileRef = A694AC0E29E8143800CD21F1 /* UMMTP3RoutingUpdateDb.h */; };
+		A694AC1029E8143800CD21F1 /* UMMTP3RoutingUpdateDb.h in Headers */ = {isa = PBXBuildFile; fileRef = A694AC0E29E8143800CD21F1 /* UMMTP3RoutingUpdateDb.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A694AC1129E8143800CD21F1 /* UMMTP3RoutingUpdateDb.m in Sources */ = {isa = PBXBuildFile; fileRef = A694AC0F29E8143800CD21F1 /* UMMTP3RoutingUpdateDb.m */; };
-		A694AC1429E8144000CD21F1 /* UMMTP3RoutingUpdateDbRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = A694AC1229E8144000CD21F1 /* UMMTP3RoutingUpdateDbRecord.h */; };
+		A694AC1429E8144000CD21F1 /* UMMTP3RoutingUpdateDbRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = A694AC1229E8144000CD21F1 /* UMMTP3RoutingUpdateDbRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A694AC1529E8144000CD21F1 /* UMMTP3RoutingUpdateDbRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = A694AC1329E8144000CD21F1 /* UMMTP3RoutingUpdateDbRecord.m */; };
 		A6AA23C924854164008D5A57 /* UMMTP3StatisticDbRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = A6AA23C724854164008D5A57 /* UMMTP3StatisticDbRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6AA23CA24854164008D5A57 /* UMMTP3StatisticDbRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AA23C824854164008D5A57 /* UMMTP3StatisticDbRecord.m */; };

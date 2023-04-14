@@ -17,7 +17,8 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
     {"dbkey",               NULL,       NO,     DB_PRIMARY_INDEX,   DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,1},
     {"timestamp",           NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             32,    0,NULL,NULL,2},
     {"instance",            NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
-    {"linkset",             NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
+    {"inbound_linkset",     NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
+    {"outbound_linkset",    NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
     {"dpc",                 NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
     {"status",              NULL,       NO,     DB_NOT_INDEXED,     DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
     {"reason",              NULL,       NO,     DB_NOT_INDEXED,     DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
@@ -60,4 +61,19 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
     [_pool returnSession:session file:__FILE__ line:__LINE__ func:__func__];
 }
 
+- (BOOL)logInboundLinkset:(NSString *)inboundLinkset
+          outboundLinkset:(NSString *)outboundLinkset
+                      dpc:(UMMTP3PointCode *)dpc
+                   status:(NSString *)status
+                   reason:(NSString *)reason  /* returns YES on success */
+{
+    UMMTP3RoutingUpdateDbRecord *r = [[UMMTP3RoutingUpdateDbRecord alloc]init];
+    r.instance = _instance;
+    r.inboundLinkset = inboundLinkset;
+    r.outboundLinkset = outboundLinkset;
+    r.dpc = dpc;
+    r.status = status;
+    r.reason = reason;
+    return [r insertIntoDb:_pool table:_table];
+}
 @end
