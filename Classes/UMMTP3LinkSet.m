@@ -5119,11 +5119,6 @@
                                mask:(int)mask
                                link:(UMMTP3Link *)link
 {
-    [_mtp3.routingUpdateDb logInboundLinkset:@""
-                             outboundLinkset:_name
-                                         dpc:pc
-                                      status:@"available"
-                                      reason:@"advertizePointcodeAvailable"];
     if(mask == -1)
     {
         mask = pc.maxmask;
@@ -5136,7 +5131,11 @@
     {
         return;
     }
-
+    [_mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_name
+                                         dpc:pc
+                                      status:@"available"
+                                      reason:@"advertizePointcodeAvailable"];
     if(mask != pc.maxmask)
     {
         [self logWarning:@"We dont support advertizements with mask other than maxmask"];
@@ -5189,6 +5188,11 @@
     {
         return;
     }
+    [_mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_name
+                                         dpc:pc
+                                      status:@"restricted"
+                                      reason:@"advertizePointcodeRestricted"];
 
     if(mask != pc.maxmask)
     {
@@ -5257,6 +5261,12 @@
         NSLog(@"not advertizing pointcode unavailable %d to APC %d",pc.pc, _adjacentPointCode.pc);
         return;
     }
+    [_mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_name
+                                         dpc:pc
+                                      status:@"prohibited"
+                                      reason:@"advertizePointcodeRestricted"];
+
     NSNumber *n = _advertizedPointcodes[@(pc.pc)];
     if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_PROHIBITED))
     {

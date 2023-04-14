@@ -2405,6 +2405,12 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
+    [_as.mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_name
+                                         dpc:pc
+                                      status:@"restricted"
+                                      reason:@"DAVA"];
+
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     UMMTP3PointCode *translatedPointCode = [_as localToRemotePointcode:pc];
     [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:translatedPointCode mask:mask]];
