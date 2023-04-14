@@ -557,7 +557,7 @@
                 [_routingUpdateDb logInboundLinkset:linkset
                                     outboundLinkset:@""
                                                 dpc:route.pointcode
-                                             status:@"restricted"
+                                             status:@"available"
                                              reason:@"updateLinksetAvailable"];
             }
         }
