@@ -37,6 +37,7 @@
 #import "UMM3UAApplicationServerProcess.h"
 #import "UMMTP3SyslogClient.h"
 #import "UMMTP3StatisticDb.h"
+#import "UMMTP3RoutingUpdateDb.h"
 
 @implementation UMLayerMTP3
 
@@ -919,6 +920,29 @@
         {
             _statisticDbAutoCreate=@(YES);
         }
+
+
+        if(cfg[@"routing-update-db-instance"])
+        {
+            _routingUpdateDbInstance       = [cfg[@"routing-update-db-instance"] stringValue];
+        }
+        if(cfg[@"routing-update-db-pool"])
+        {
+            _routingUpdateDbPool        = [cfg[@"routing-update-db-pool"] stringValue];
+        }
+        if(cfg[@"routing-update-db-table"])
+        {
+            _routingUpdateDbTable       = [cfg[@"routing-update-db-table"] stringValue];
+        }
+        if(cfg[@"routing-update-db-autocreate"])
+        {
+            _routingUpdateDbAutoCreate  = @([cfg[@"routing-update-db-autocreate"] boolValue]);
+        }
+        else
+        {
+            _routingUpdateDbAutoCreate=@(YES);
+        }
+
         if(cfg[@"routing-update-log"])
         {
             _routingUpdateLogFileName = [cfg[@"routing-update-log"] stringValue];
@@ -930,6 +954,8 @@
                 fflush(_routingUpdateLogFile);
             }
         }
+        
+       
     }
 }
 
@@ -1138,13 +1164,31 @@
         {
             if(_statisticDbInstance==NULL)
             {
-                _statisticDbInstance = _layerName;
+                _statisticDbInstance = _appContext.hostname;
             }
             _statisticDb = [[UMMTP3StatisticDb alloc]initWithPoolName:_statisticDbPool
                                                             tableName:_statisticDbTable
                                                            appContext:_appContext
                                                            autocreate:_statisticDbAutoCreate.boolValue
                                                              instance:_statisticDbInstance];
+            if(_statisticDbAutoCreate.boolValue)
+            {
+                [_statisticDb doAutocreate];
+            }
+            [_housekeepingTimer start];
+        }
+        if(_routingUpdateDbPool && _routingUpdateDbTable)
+        {
+            if(_routingUpdateDbInstance==NULL)
+            {
+                _routingUpdateDbInstance = _appContext.hostname;
+            }
+    
+            _routingUpdateDb = [[UMMTP3RoutingUpdateDb alloc]initWithPoolName:_routingUpdateDbPool
+                                                                    tableName:_routingUpdateDbTable
+                                                                   appContext:_appContext
+                                                                   autocreate:_routingUpdateDbAutoCreate.boolValue
+                                                                     instance:_routingUpdateDbInstance];
             if(_statisticDbAutoCreate.boolValue)
             {
                 [_statisticDb doAutocreate];

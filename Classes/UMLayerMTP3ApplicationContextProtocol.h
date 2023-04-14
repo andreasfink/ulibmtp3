@@ -19,7 +19,7 @@
 @class UMMTP3TranslationTableMap;
 @class UMDbPool;
 @protocol UMLayerMTP3ApplicationContextProtocol<NSObject>
-
+- (NSString *)hostname;
 - (UMLayerSctp *)getSCTP:(NSString *)name;
 - (UMLayerMTP3 *)getMTP3:(NSString *)name;
 - (UMLayerM2PA *)getM2PA:(NSString *)name;

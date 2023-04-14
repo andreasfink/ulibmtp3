@@ -39,6 +39,7 @@
 @class UMM3UAApplicationServer;
 @class UMMTP3SyslogClient;
 @class UMMTP3StatisticDb;
+@class UMMTP3RoutingUpdateDb;
 
 #import "UMLayerMTP3UserProtocol.h"
 typedef enum UMMTP3_Error
@@ -73,6 +74,14 @@ typedef enum UMMTP3_Error
     NSNumber                        *_statisticDbAutoCreate;
     NSString                        *_statisticDbInstance;
     UMMTP3StatisticDb               *_statisticDb;
+    
+    NSString                        *_routingUpdateDbPool;
+    NSString                        *_routingUpdateDbTable;
+    NSNumber                        *_routingUpdateDbAutoCreate;
+    NSString                        *_routingUpdateDbInstance;
+    UMMTP3RoutingUpdateDb           *_routingUpdateDb;
+
+  
     UMTimer                         *_housekeepingTimer;
     UMPrometheus                    *_prometheus;
     NSTimeInterval                  _routeRetestTime;
