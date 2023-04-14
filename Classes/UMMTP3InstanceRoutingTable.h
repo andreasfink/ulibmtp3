@@ -10,6 +10,7 @@
 
 #import "UMMTP3InstanceRoute.h"
 #import "UMMTP3RoutePriority.h"
+#import "UMMTP3RoutingUpdateDb.h"
 
 @interface UMMTP3InstanceRoutingTable : UMObject
 {
@@ -18,10 +19,12 @@
     NSMutableDictionary                 *_routesByPointCode;
     UMMutex                             *_routingTableLock;
     UMMTP3InstanceRoute                 *_defaultRoute;
+    UMMTP3RoutingUpdateDb               *_routingUpdateDb;
 }
 
 @property(readwrite,assign) UMLogLevel logLevel;
 @property(readonly)         UMMutex *routingTableLock;
+@property(readwrite,strong) UMMTP3RoutingUpdateDb *routingUpdateDb;
 
 - (void)lock;
 - (void)unlock;

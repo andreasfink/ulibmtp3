@@ -176,6 +176,11 @@
         {
             route.status = UMMTP3_ROUTE_ALLOWED;
             found = YES;
+            [_routingUpdateDb logInboundLinkset:@"mtp3"
+                                outboundLinkset:@""
+                                            dpc:pc
+                                         status:@"available(new)"
+                                         reason:@"updateDynamicRouteAvailable(existing)"];
         }
     }
     if(found==NO)
@@ -188,6 +193,12 @@
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_ALLOWED;
         [r addObject:route];
+        [_routingUpdateDb logInboundLinkset:@"mtp3"
+                            outboundLinkset:@""
+                                        dpc:pc
+                                     status:@"available(new)"
+                                     reason:@"updateDynamicRouteAvailable(new)"];
+
     }
     UMMTP3InstanceRoute *newBestRoute = [self bestRoute:pc routeArray:r];
     if(*hasChanged)
@@ -260,6 +271,11 @@
         {
             route.status = UMMTP3_ROUTE_RESTRICTED;
             found = YES;
+            [_routingUpdateDb logInboundLinkset:@"mtp3"
+                                outboundLinkset:@""
+                                            dpc:pc
+                                         status:@"restricted(existing)"
+                                         reason:@"updateDynamicRouteRestricted(existing)"];
         }
     }
     if(found==NO)
@@ -271,6 +287,12 @@
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_RESTRICTED;
         [r addObject:route];
+        [_routingUpdateDb logInboundLinkset:@"mtp3"
+                            outboundLinkset:@""
+                                        dpc:pc
+                                     status:@"restricted(existing)"
+                                     reason:@"updateDynamicRouteRestricted(new)"];
+
     }
     UMMTP3InstanceRoute *newBestRoute = [self bestRoute:pc routeArray:r];
     if(*hasChanged)
@@ -311,6 +333,11 @@
         {
             route.status = UMMTP3_ROUTE_PROHIBITED;
             found = YES;
+            [_routingUpdateDb logInboundLinkset:@"mtp3"
+                                outboundLinkset:@""
+                                            dpc:pc
+                                         status:@"unavailable(existing)"
+                                         reason:@"updateDynamicRouteUnavailable(existing)"];
         }
     }
     if(found==NO)
@@ -322,6 +349,11 @@
         route.staticRoute = NO;
         route.status = UMMTP3_ROUTE_PROHIBITED;
         [r addObject:route];
+        [_routingUpdateDb logInboundLinkset:@"mtp3"
+                            outboundLinkset:@""
+                                        dpc:pc
+                                     status:@"unavailable(new)"
+                                     reason:@"updateDynamicRouteUnavailable(new)"];
     }
     UMMTP3InstanceRoute *newBestRoute = [self bestRoute:pc routeArray:r];
     if(*hasChanged)
@@ -405,6 +437,11 @@
                 found = YES;
                 route.status = UMMTP3_ROUTE_ALLOWED;
                 route.tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
+                [_routingUpdateDb logInboundLinkset:@"mtp3"
+                                    outboundLinkset:@""
+                                                dpc:pc
+                                             status:@"unknown(existing)"
+                                             reason:@"addStaticRoute(new)"];
                 break;
             }
         }
@@ -422,6 +459,11 @@
             route.status = UMMTP3_ROUTE_ALLOWED;
             route.tstatus = UMMTP3_TEST_STATUS_UNKNOWN;
             [r addObject:route];
+            [_routingUpdateDb logInboundLinkset:@"mtp3"
+                                outboundLinkset:@""
+                                            dpc:pc
+                                         status:@"unknown(new)"
+                                         reason:@"addStaticRoute(new)"];
         }
     }
     UMMUTEX_UNLOCK(_routingTableLock);
@@ -465,6 +507,11 @@
             if([route.linksetName isEqualToString:linkset])
             {
                 route.status = UMMTP3_ROUTE_PROHIBITED;
+                [_routingUpdateDb logInboundLinkset:linkset
+                                    outboundLinkset:@""
+                                                dpc:route.pointcode
+                                             status:@"prohibited"
+                                             reason:@"updateLinksetUnavailable"];
             }
         }
     }
@@ -483,6 +530,11 @@
             if([route.linksetName isEqualToString:linkset])
             {
                 route.status = UMMTP3_ROUTE_RESTRICTED;
+                [_routingUpdateDb logInboundLinkset:linkset
+                                    outboundLinkset:@""
+                                                dpc:route.pointcode
+                                             status:@"restricted"
+                                             reason:@"updateLinksetRestricted"];
             }
         }
     }
@@ -502,6 +554,11 @@
             if([route.linksetName isEqualToString:linkset])
             {
                 route.status = UMMTP3_ROUTE_ALLOWED;
+                [_routingUpdateDb logInboundLinkset:linkset
+                                    outboundLinkset:@""
+                                                dpc:route.pointcode
+                                             status:@"restricted"
+                                             reason:@"updateLinksetAvailable"];
             }
         }
     }

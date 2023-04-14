@@ -1766,11 +1766,6 @@
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
         }
-        [_routingUpdateDb logInboundLinkset:name
-                            outboundLinkset:@""
-                                        dpc:pc
-                                     status:@"unavailable"
-                                     reason:reason];
         BOOL hasChanged = NO;
         [_routingTable updateDynamicRouteUnavailable:pc
                                                 mask:mask
@@ -2014,13 +2009,6 @@
             continue;
         }
         UMMTP3LinkSet *linkset = _linksets[linksetName];
-        
-        [_routingUpdateDb logInboundLinkset:name
-                            outboundLinkset:linksetName
-                                        dpc:pc
-                                     status:@"unavailable"
-                                     reason:@"updateOtherLinksetsPointCodeUnavailable"];
-
         [linkset advertizePointcodeUnavailable:pc mask:pc.maxmask];
         if(_routingUpdateLogFile)
         {
