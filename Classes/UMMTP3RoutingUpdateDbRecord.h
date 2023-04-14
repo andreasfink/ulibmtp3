@@ -6,7 +6,8 @@
 //  Copyright © 2023 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import <ulibss7config/ulibss7config.h>
+#import <ulibdb/ulibdb.h>
+#import "UMMTP3PointCode.h"
 
 @interface UMMTP3RoutingUpdateDbRecord : UMObject
 {
