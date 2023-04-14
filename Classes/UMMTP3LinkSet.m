@@ -2190,6 +2190,12 @@
 - (void)processTFC:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc status:(int)status ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+    NSString *reason = @"processTFC";
+    NSString *statusStr = @"controlled";
+    if(pc.pc != translatedPc.pc)
+    {
+        reason = [NSString stringWithFormat:@"processTFC(%d)",pc.pc];
+    }
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFC (Transfer-controlled signal)"];
@@ -2204,10 +2210,23 @@
     if(translatedPc.pc == _mtp3.opc.pc)
     {
         [self logDebug:@"ignoring TFC for own pointcode"];
+        statusStr = @"ignored(own)";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:statusStr
+                                          reason:reason];
     }
     else if(translatedPc.pc == _adjacentPointCode.pc)
     {
         [self logDebug:@"TFC for adjacent pointcode"];
+        statusStr = @"adjacent controlled";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:statusStr
+                                          reason:reason];
+
         [self updateRouteRestricted:translatedPc
                                mask:translatedPc.maxmask
                            priority:UMMTP3RoutePriority_1
@@ -2215,6 +2234,12 @@
     }
     else
     {
+        statusStr = @"transit controlled";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:statusStr
+                                          reason:reason];
         [self updateRouteRestricted:translatedPc
                               mask:translatedPc.maxmask
                           priority:UMMTP3RoutePriority_5
@@ -2268,28 +2293,38 @@
     {
         [self logDebug:@"ignoring TFP for own pointcode"];
         status=@"ignored (own-pc)";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:status
+                                          reason:reason];
     }
     if(translatedPc.pc == _adjacentPointCode.pc)
     {
+        status = @"adjacent unavailable";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:status
+                                          reason:reason];
         [self updateRouteUnavailable:translatedPc
                                 mask:translatedPc.maxmask
                             priority:UMMTP3RoutePriority_1
                               reason:@"TFP"];
-        status = @"adjacent unavailable";
     }
     else
     {
+        status = @"transit unavailable";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:status
+                                          reason:reason];
         [self updateRouteUnavailable:translatedPc
                                 mask:translatedPc.maxmask
                             priority:UMMTP3RoutePriority_5
                               reason:@"TFP"];
-        status = @"transit unavailable";
     }
-    [_mtp3.routingUpdateDb logInboundLinkset:self.name
-                             outboundLinkset:@""
-                                         dpc:translatedPc
-                                      status:status
-                                      reason:reason];
 }
 
 
@@ -2305,7 +2340,7 @@
     NSString *status = @"restricted";
     if(pc.pc != translatedPc.pc)
     {
-        reason = [NSString stringWithFormat:@"processTFR(%d)",pc.pc];
+        reason = [NSString stringWithFormat:@"processTFR1(%d)",pc.pc];
     }
 
     if(_logLevel <=UMLOG_DEBUG)
@@ -2322,29 +2357,40 @@
     {
         [self logDebug:@"ignoring TFR for own pointcode"];
         status=@"ignored (own-pc)";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:status
+                                          reason:reason];
     }
     else if(translatedPc.pc == _adjacentPointCode.pc)
     {
+        status = @"adjacent restricted";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:status
+                                          reason:reason];
+
         [self updateRouteRestricted:translatedPc
                                mask:translatedPc.maxmask
                            priority:UMMTP3RoutePriority_1
                              reason:@"TFR from adjacent"];
-        status = @"adjacent restricted";
 
     }
     else
     {
+        status = @"transit restricted";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:status
+                                          reason:reason];
         [self updateRouteRestricted:translatedPc
                                mask:translatedPc.maxmask
                            priority:UMMTP3RoutePriority_5
                              reason:@"TFR from non adjacent"];
-        status = @"transit restricted";
     }
-    [_mtp3.routingUpdateDb logInboundLinkset:self.name
-                             outboundLinkset:@""
-                                         dpc:translatedPc
-                                      status:status
-                                      reason:reason];
 }
 
 
@@ -2388,32 +2434,40 @@
     if(translatedPc.pc == _mtp3.opc.pc)
     {
         [self logDebug:@"ignoring TFA for own pointcode"];
+        status=@"ignored(own)";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:status
+                                          reason:reason];
     }
     else if(translatedPc.pc == _adjacentPointCode.pc)
     {
+        status = @"adjacent available";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:status
+                                          reason:reason];
         [self updateRouteAvailable:translatedPc
                               mask:translatedPc.maxmask
                           priority:UMMTP3RoutePriority_1
                             reason:@"TFA from adjacent"];
-        status = @"adjacent available";
-
     }
     else
     {
+        status = @"transit available";
+        [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                                 outboundLinkset:@""
+                                             dpc:translatedPc
+                                          status:status
+                                          reason:reason];
         [self updateRouteAvailable:translatedPc
                               mask:translatedPc.maxmask
                           priority:UMMTP3RoutePriority_5
                             reason:@"TFA from non-adjacent"];
-        status = @"transit available";
     }
-    [_mtp3.routingUpdateDb logInboundLinkset:self.name
-                             outboundLinkset:@""
-                                         dpc:translatedPc
-                                      status:status
-                                      reason:reason];
 }
-
-
 
 /* Group RSM */
 - (void)processRST:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
