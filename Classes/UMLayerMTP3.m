@@ -1191,6 +1191,7 @@
             {
                 [_routingUpdateDb doAutocreate];
             }
+            _routingTable.routingUpdateDb = _routingUpdateDb;
             [_routingUpdateDb logInboundLinkset:@""
                                 outboundLinkset:@""
                                             dpc:_opc
