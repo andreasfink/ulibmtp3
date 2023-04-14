@@ -43,6 +43,7 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
                                        @"pool-name"  : poolName };
             _poolName = poolName;
             _pool = [appContext dbPools][_poolName];
+            _appContext = appContext;
             _table = [[UMDbTable alloc]initWithConfig:config andPools:[appContext dbPools]];
             _instance = instance;
         }
@@ -52,6 +53,10 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
 
 - (void)doAutocreate
 {
+    if(_table.pools == NULL)
+    {
+        _table.pools = [_appContext dbPools];
+    }
     if(_pool==NULL)
     {
         _pool = _table.pools[_poolName];

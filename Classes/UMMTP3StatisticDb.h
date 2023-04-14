@@ -19,6 +19,7 @@
     NSDateFormatter *_ymdhDateFormatter;
     NSString *_instance;
     NSString *_poolName;
+    id<UMLayerMTP3ApplicationContextProtocol>   _appContext;
 }
 
 - (UMMTP3StatisticDb *)initWithPoolName:(NSString *)pool

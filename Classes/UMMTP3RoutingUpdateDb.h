@@ -16,6 +16,7 @@
     UMDbTable   *_table;
     NSString    *_instance;
     NSString    *_poolName;
+    id<UMLayerMTP3ApplicationContextProtocol>   _appContext;
 }
 
 @property(readwrite,strong) UMDbPool    *pool;

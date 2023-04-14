@@ -57,6 +57,7 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
             [_ymdhDateFormatter setLocale:ukLocale];
             [_ymdhDateFormatter setDateFormat:@"yyyyMMddHH"];
             [_ymdhDateFormatter setTimeZone:tz];
+            _appContext = appContext;
         }
         return self;
     }
@@ -64,6 +65,10 @@ static dbFieldDef UMMTP3StatisticDb_fields[] =
 
 - (void)doAutocreate
 {
+    if(_table.pools == NULL)
+    {
+        _table.pools = [_appContext dbPools];
+    }
     if(_pool==NULL)
     {
         _pool = _table.pools[_poolName];
