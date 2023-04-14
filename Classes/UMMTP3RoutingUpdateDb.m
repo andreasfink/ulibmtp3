@@ -14,15 +14,15 @@
 
 static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
 {
-    {"dbkey",               NULL,       NO,     DB_PRIMARY_INDEX,   DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,1},
-    {"timestamp",           NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             32,    0,NULL,NULL,2},
-    {"instance",            NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
-    {"inbound_linkset",     NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
-    {"outbound_linkset",    NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
-    {"dpc",                 NULL,       NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
-    {"status",              NULL,       NO,     DB_NOT_INDEXED,     DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
-    {"reason",              NULL,       NO,     DB_NOT_INDEXED,     DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
-    { "",                   NULL,       NO,     DB_NOT_INDEXED,     DB_FIELD_TYPE_END,                 0,     0,NULL,NULL,0},
+    {"dbkey",               "AUTO_INCREMENT",       NO,     DB_PRIMARY_INDEX,   DB_FIELD_TYPE_INTEGER,             255,   0,NULL,NULL,1},
+    {"timestamp",           NULL,                   NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             32,    0,NULL,NULL,2},
+    {"instance",            NULL,                   NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
+    {"inbound_linkset",     NULL,                   NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
+    {"outbound_linkset",    NULL,                   NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
+    {"dpc",                 NULL,                   NO,     DB_INDEXED,         DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
+    {"status",              NULL,                   NO,     DB_NOT_INDEXED,     DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
+    {"reason",              NULL,                   NO,     DB_NOT_INDEXED,     DB_FIELD_TYPE_VARCHAR,             255,   0,NULL,NULL,2},
+    { "",                   NULL,                   NO,     DB_NOT_INDEXED,     DB_FIELD_TYPE_END,                 0,     0,NULL,NULL,0},
 };
 
  
