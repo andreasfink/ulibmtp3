@@ -49,7 +49,7 @@
                                 STRING_NONEMPTY(_instance),
                                 STRING_NONEMPTY(_inboundLinkset),
                                 STRING_NONEMPTY(_outboundLinkset),
-                                STRING_NONEMPTY(_dpc.description),
+                                (_dpc ? [NSString stringWithFormat:@"%d",_dpc.pc] : @""),
                                 STRING_NONEMPTY(_status),
                                 STRING_NONEMPTY(_reason),
                                 NULL];

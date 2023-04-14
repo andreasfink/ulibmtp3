@@ -2248,7 +2248,12 @@
               link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
-
+    NSString *reason = @"processTFP";
+    NSString *status = @"unavailable";
+    if(pc.pc != translatedPc.pc)
+    {
+        reason = [NSString stringWithFormat:@"processTFP(%d)",pc.pc];
+    }
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"processTFP (Transfer-prohibited signal)"];
@@ -2262,6 +2267,7 @@
     if(translatedPc.pc == _mtp3.opc.pc)
     {
         [self logDebug:@"ignoring TFP for own pointcode"];
+        status=@"ignored (own-pc)";
     }
     if(translatedPc.pc == _adjacentPointCode.pc)
     {
@@ -2269,6 +2275,7 @@
                                 mask:translatedPc.maxmask
                             priority:UMMTP3RoutePriority_1
                               reason:@"TFP"];
+        status = @"adjacent unavailable";
     }
     else
     {
@@ -2276,7 +2283,13 @@
                                 mask:translatedPc.maxmask
                             priority:UMMTP3RoutePriority_5
                               reason:@"TFP"];
+        status = @"transit unavailable";
     }
+    [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                             outboundLinkset:@""
+                                         dpc:translatedPc
+                                      status:status
+                                      reason:reason];
 }
 
 
@@ -2288,6 +2301,12 @@
               link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+    NSString *reason = @"processTFR";
+    NSString *status = @"restricted";
+    if(pc.pc != translatedPc.pc)
+    {
+        reason = [NSString stringWithFormat:@"processTFR(%d)",pc.pc];
+    }
 
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -2302,6 +2321,7 @@
     if(translatedPc.pc == _mtp3.opc.pc)
     {
         [self logDebug:@"ignoring TFR for own pointcode"];
+        status=@"ignored (own-pc)";
     }
     else if(translatedPc.pc == _adjacentPointCode.pc)
     {
@@ -2309,6 +2329,8 @@
                                mask:translatedPc.maxmask
                            priority:UMMTP3RoutePriority_1
                              reason:@"TFR from adjacent"];
+        status = @"adjacent restricted";
+
     }
     else
     {
@@ -2316,7 +2338,13 @@
                                mask:translatedPc.maxmask
                            priority:UMMTP3RoutePriority_5
                              reason:@"TFR from non adjacent"];
+        status = @"transit restricted";
     }
+    [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                             outboundLinkset:@""
+                                         dpc:translatedPc
+                                      status:status
+                                      reason:reason];
 }
 
 
@@ -2340,6 +2368,12 @@
               link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPc = [self remoteToLocalPointcode:pc];
+    NSString *reason = @"processTFA";
+    NSString *status = @"available";
+    if(pc.pc != translatedPc.pc)
+    {
+        reason = [NSString stringWithFormat:@"processTFA(%d)",pc.pc];
+    }
 
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -2361,6 +2395,8 @@
                               mask:translatedPc.maxmask
                           priority:UMMTP3RoutePriority_1
                             reason:@"TFA from adjacent"];
+        status = @"adjacent available";
+
     }
     else
     {
@@ -2368,7 +2404,13 @@
                               mask:translatedPc.maxmask
                           priority:UMMTP3RoutePriority_5
                             reason:@"TFA from non-adjacent"];
+        status = @"transit available";
     }
+    [_mtp3.routingUpdateDb logInboundLinkset:self.name
+                             outboundLinkset:@""
+                                         dpc:translatedPc
+                                      status:status
+                                      reason:reason];
 }
 
 
@@ -4024,7 +4066,16 @@
            link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
-
+    NSString *reason = @"TFP";
+    if(translatedPointCode.pc != pc.pc)
+    {
+        reason = [[NSString alloc]initWithFormat:@"TFP(%d)",translatedPointCode.pc];
+    }
+    [_mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:self.name
+                                         dpc:pc
+                                      status:@"prohibited"
+                                      reason:reason];
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFP (Transfer-prohibited signal)"];
@@ -4056,7 +4107,16 @@
 - (void)sendTFR:(UMMTP3Label *)label destination:(UMMTP3PointCode *)pc ni:(int)ni mp:(int)mp slc:(int)slc link:(UMMTP3Link *)link
 {
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
-
+    NSString *reason =@"TFR";
+    if(translatedPointCode.pc != pc.pc)
+    {
+        reason = [[NSString alloc]initWithFormat:@"TFR(%d)",translatedPointCode.pc];
+    }
+    [_mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:self.name
+                                         dpc:pc
+                                      status:@"restricted"
+                                      reason:reason];
     if(_logLevel <=UMLOG_DEBUG)
     {
         [self logDebug:@"sendTFR (Transfer-restricted signal (national option))"];
@@ -4086,7 +4146,17 @@
             slc:(int)slc
            link:(UMMTP3Link *)link
 {
+    NSString *reason = @"TFA";
     UMMTP3PointCode *translatedPointCode = [self localToRemotePointcode:pc];
+    if(translatedPointCode.pc != pc.pc)
+    {
+        reason = [[NSString alloc]initWithFormat:@"TFA(%d)",translatedPointCode.pc];
+    }
+    [_mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:self.name
+                                         dpc:pc
+                                      status:@"available"
+                                      reason:reason];
 
     if(_logLevel <=UMLOG_DEBUG)
     {
@@ -5131,11 +5201,6 @@
     {
         return;
     }
-    [_mtp3.routingUpdateDb logInboundLinkset:@""
-                             outboundLinkset:_name
-                                         dpc:pc
-                                      status:@"available"
-                                      reason:@"advertizePointcodeAvailable"];
     if(mask != pc.maxmask)
     {
         [self logWarning:@"We dont support advertizements with mask other than maxmask"];
@@ -5170,11 +5235,6 @@
                                 mask:(int)mask
                                 link:(UMMTP3Link *)link
 {
-    [_mtp3.routingUpdateDb logInboundLinkset:@""
-                             outboundLinkset:_name
-                                         dpc:pc
-                                      status:@"restricted"
-                                      reason:@"advertizePointcodeRestricted"];
     if(mask == -1)
     {
         mask = pc.maxmask;
@@ -5188,12 +5248,6 @@
     {
         return;
     }
-    [_mtp3.routingUpdateDb logInboundLinkset:@""
-                             outboundLinkset:_name
-                                         dpc:pc
-                                      status:@"restricted"
-                                      reason:@"advertizePointcodeRestricted"];
-
     if(mask != pc.maxmask)
     {
         NSLog(@"We dont support advertizements with mask other than maxmask");
@@ -5227,11 +5281,6 @@
                                  mask:(int)mask
                                  link:(UMMTP3Link *)link
 {
-    [_mtp3.routingUpdateDb logInboundLinkset:@""
-                             outboundLinkset:_name
-                                         dpc:pc
-                                      status:@"unavailable"
-                                      reason:@"advertizePointcodeUnavailable"];
     if(mask == -1)
     {
         mask = pc.maxmask;
@@ -5261,12 +5310,6 @@
         NSLog(@"not advertizing pointcode unavailable %d to APC %d",pc.pc, _adjacentPointCode.pc);
         return;
     }
-    [_mtp3.routingUpdateDb logInboundLinkset:@""
-                             outboundLinkset:_name
-                                         dpc:pc
-                                      status:@"prohibited"
-                                      reason:@"advertizePointcodeRestricted"];
-
     NSNumber *n = _advertizedPointcodes[@(pc.pc)];
     if((n==NULL) || ( n.integerValue != UMMTP3_ROUTE_PROHIBITED))
     {

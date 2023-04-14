@@ -15,6 +15,7 @@
 #import "UMM3UATrafficMode.h"
 #import "UMLayerMTP3.h"
 #import "UMMTP3LinkSetPrometheusData.h"
+#import "UMMTP3RoutingUpdateDb.h"
 
 #define	M3UA_CLASS_TYPE_ERR			0x0000
 #define M3UA_CLASS_TYPE_NTFY		0x0001
@@ -1531,6 +1532,21 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
 }
 
+-(void)sendDRST:(UMSynchronizedSortedDictionary *)params
+{
+    if(_as.mode != UMM3UAApplicationServerMode_client)
+    {
+        if(self.logLevel <= UMLOG_DEBUG)
+        {
+            [self logDebug:@"sendDRST"];
+        }
+        NSData *paramsPdu = [self paramsList:params];
+        [self sendPduCT:M3UA_CLASS_TYPE_DRST pdu:paramsPdu stream:0];
+        [_as.prometheusMetrics.m3uadavaTxCount increaseBy:1];
+    }
+}
+
+
 -(void)sendDATA:(UMSynchronizedSortedDictionary *)params
 {
     if(self.logLevel <= UMLOG_DEBUG)
@@ -2405,30 +2421,57 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)advertizePointcodeAvailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
-    [_as.mtp3.routingUpdateDb logInboundLinkset:@""
-                             outboundLinkset:_name
-                                         dpc:pc
-                                      status:@"restricted"
-                                      reason:@"DAVA"];
-
+    NSString *reason = @"DAVA";
+    
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     UMMTP3PointCode *translatedPointCode = [_as localToRemotePointcode:pc];
+    if(translatedPointCode.pc != pc.pc)
+    {
+        reason = [NSString stringWithFormat:@"DAVA(%d)",translatedPointCode.pc];
+    }
+    [_as.mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_as.name
+                                         dpc:pc
+                                      status:@"available"
+                                      reason:reason];
     [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:translatedPointCode mask:mask]];
     [self sendDAVA:pl];
 }
 
 - (void)advertizePointcodeRestricted:(UMMTP3PointCode *)pc mask:(int)mask
 {
+    NSString *reason = @"DRST";
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     UMMTP3PointCode *translatedPointCode = [_as localToRemotePointcode:pc];
+    if(translatedPointCode.pc != pc.pc)
+    {
+        reason = [NSString stringWithFormat:@"DRST(%d)",translatedPointCode.pc];
+    }
+    [_as.mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_as.name
+                                         dpc:pc
+                                      status:@"restricted"
+                                      reason:reason];
+
     [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:translatedPointCode mask:mask]];
-    [self sendDUNA:pl];
+    [self sendDRST:pl];
 }
 
 - (void)advertizePointcodeUnavailable:(UMMTP3PointCode *)pc mask:(int)mask
 {
+    NSString *reason = @"DUNA";
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     UMMTP3PointCode *translatedPointCode = [_as localToRemotePointcode:pc];
+    
+    if(translatedPointCode.pc != pc.pc)
+    {
+        reason = [NSString stringWithFormat:@"DUNA(%d)",translatedPointCode.pc];
+    }
+    [_as.mtp3.routingUpdateDb logInboundLinkset:@""
+                             outboundLinkset:_as.name
+                                         dpc:pc
+                                      status:@"unavailable"
+                                      reason:reason];
     [self setParam:pl identifier:M3UA_PARAM_AFFECTED_POINT_CODE value:[self affectedPointcode:translatedPointCode mask:mask]];
     [self sendDUNA:pl];
 }
