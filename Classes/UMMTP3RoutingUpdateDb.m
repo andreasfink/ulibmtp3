@@ -46,6 +46,7 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
             _appContext = appContext;
             _table = [[UMDbTable alloc]initWithConfig:config andPools:[appContext dbPools]];
             _instance = instance;
+            _recordsToBeInserted = [[UMSynchronizedArray alloc]init];
         }
         return self;
     }
@@ -66,7 +67,7 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
     [_pool returnSession:session file:__FILE__ line:__LINE__ func:__func__];
 }
 
-- (BOOL)logInboundLinkset:(NSString *)inboundLinkset
+- (void)logInboundLinkset:(NSString *)inboundLinkset
           outboundLinkset:(NSString *)outboundLinkset
                       dpc:(UMMTP3PointCode *)dpc
                    status:(NSString *)status
@@ -79,6 +80,23 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
     r.dpc = dpc;
     r.status = status;
     r.reason = reason;
-    return [r insertIntoDb:_pool table:_table];
+    [_recordsToBeInserted addObject:r];
 }
+
+- (int)work
+{
+    int i = 0;
+    UMMTP3RoutingUpdateDbRecord *r  = NULL;
+    do
+    {
+        r = [_recordsToBeInserted removeFirst];
+        if(r)
+        {
+            i++;
+            [r insertIntoDb:_pool table:_table];
+        }
+    } while(r);
+    return i;
+}
+
 @end

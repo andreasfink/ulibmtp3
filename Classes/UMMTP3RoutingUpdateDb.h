@@ -10,13 +10,14 @@
 #import "UMLayerMTP3ApplicationContextProtocol.h"
 #import "UMMTP3PointCode.h"
 
-@interface UMMTP3RoutingUpdateDb : UMObject
+@interface UMMTP3RoutingUpdateDb : UMBackgrounder
 {
     UMDbPool    *_pool;
     UMDbTable   *_table;
     NSString    *_instance;
     NSString    *_poolName;
     id<UMLayerMTP3ApplicationContextProtocol>   _appContext;
+    UMSynchronizedArray *_recordsToBeInserted;
 }
 
 @property(readwrite,strong) UMDbPool    *pool;
@@ -32,9 +33,9 @@
 
 - (void)doAutocreate;
 
-- (BOOL)logInboundLinkset:(NSString *)inboundLinkset
+- (void)logInboundLinkset:(NSString *)inboundLinkset
           outboundLinkset:(NSString *)outboundLinkset
                       dpc:(UMMTP3PointCode *)dpc
                    status:(NSString *)status
-                   reason:(NSString *)reason;  /* returns YES on success */
+                   reason:(NSString *)reason;
 @end

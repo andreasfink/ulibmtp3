@@ -1197,6 +1197,7 @@
                                             dpc:_opc
                                          status:@"available"
                                          reason:@"--STARTUP--"];
+            [_routingUpdateDb startBackgroundTask];
             [_housekeepingTimer start];
         }
         UMMTP3Task_start *task = [[UMMTP3Task_start alloc]initWithReceiver:self];
