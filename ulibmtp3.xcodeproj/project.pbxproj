@@ -184,7 +184,7 @@
 		A60A36F61A3063E60090FC94 /* UMMTP3PointCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3PointCode.m; sourceTree = "<group>"; };
 		A60A36FA1A306B710090FC94 /* UMMTP3RouteMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMMTP3RouteMetrics.h; sourceTree = "<group>"; };
 		A60A36FB1A306B710090FC94 /* UMMTP3RouteMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3RouteMetrics.m; sourceTree = "<group>"; };
-		A615D90A1B4D5F2900854472 /* sctp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sctp.framework; path = /Library/Frameworks/sctp.framework; sourceTree = "<absolute>"; };
+		A615D90A1B4D5F2900854472 /* ulibsctp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ulibsctp.framework; path = "/Library/Application Support/FinkTelecomServices/frameworks/ulibsctp.framework"; sourceTree = "<absolute>"; };
 		A618677628AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM3UAApplicationServerStatusRecord.h; sourceTree = "<group>"; };
 		A618677728AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM3UAApplicationServerStatusRecord.m; sourceTree = "<group>"; };
 		A618677A28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM3UAApplicationServerStatusRecords.h; sourceTree = "<group>"; };
@@ -355,7 +355,7 @@
 			isa = PBXGroup;
 			children = (
 				A6C78D8B1A294392006C66A2 /* ulib.framework */,
-				A615D90A1B4D5F2900854472 /* sctp.framework */,
+				A615D90A1B4D5F2900854472 /* ulibsctp.framework */,
 				A6AA23CD24854209008D5A57 /* ulibdb.framework */,
 				A6C78D851A29437B006C66A2 /* ulibsctp.framework */,
 				A6C78D821A29436E006C66A2 /* ulibm2pa.framework */,
