@@ -34,13 +34,18 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
 {
     @autoreleasepool
     {
-        self = [super init];
+        UMSleeper *ws = [[UMSleeper alloc]initFromFile:__FILE__
+                                                  line:__LINE__
+                                              function:__func__];
+
+        self = [super initWithName:@"UMMTP3RoutingUpdateDb" workSleeper:ws];
         if(self)
         {
             NSDictionary *config =@{   @"enable"     : @(YES),
                                        @"table-name" : table,
                                        @"autocreate" : @(autocreate),
                                        @"pool-name"  : poolName };
+            _workSleeper = ws;
             _poolName = poolName;
             _pool = [appContext dbPools][_poolName];
             _appContext = appContext;
@@ -81,6 +86,7 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
     r.status = status;
     r.reason = reason;
     [_recordsToBeInserted addObject:r];
+    [_workSleeper wakeUp];
 }
 
 - (int)work
