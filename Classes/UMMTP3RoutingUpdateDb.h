@@ -18,7 +18,6 @@
     NSString    *_poolName;
     id<UMLayerMTP3ApplicationContextProtocol>   _appContext;
     UMSynchronizedArray *_recordsToBeInserted;
-    UMSleeper   *_workSleeper;
 }
 
 @property(readwrite,strong) UMDbPool    *pool;

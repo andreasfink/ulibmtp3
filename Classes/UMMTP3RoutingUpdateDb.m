@@ -34,11 +34,7 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
 {
     @autoreleasepool
     {
-        UMSleeper *ws = [[UMSleeper alloc]initFromFile:__FILE__
-                                                  line:__LINE__
-                                              function:__func__];
-
-        self = [super initWithName:@"UMMTP3RoutingUpdateDb" workSleeper:ws];
+        self = [super initWithName:@"UMMTP3RoutingUpdateDb" workSleeper:NULL];
         if(self)
         {
             NSDictionary *config =@{   @"enable"     : @(YES),
