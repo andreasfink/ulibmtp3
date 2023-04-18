@@ -41,7 +41,6 @@ static dbFieldDef UMMTP3RoutingUpdateDb_fields[] =
                                        @"table-name" : table,
                                        @"autocreate" : @(autocreate),
                                        @"pool-name"  : poolName };
-            _workSleeper = ws;
             _poolName = poolName;
             _pool = [appContext dbPools][_poolName];
             _appContext = appContext;
