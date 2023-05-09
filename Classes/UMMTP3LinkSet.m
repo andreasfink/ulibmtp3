@@ -2299,7 +2299,7 @@
                                           status:status
                                           reason:reason];
     }
-    if(translatedPc.pc == _adjacentPointCode.pc)
+    else if(pc.pc == _adjacentPointCodeTranslated.pc)
     {
         status = @"adjacent unavailable";
         [_mtp3.routingUpdateDb logInboundLinkset:self.name
@@ -2363,7 +2363,7 @@
                                           status:status
                                           reason:reason];
     }
-    else if(translatedPc.pc == _adjacentPointCode.pc)
+    else if(pc.pc == _adjacentPointCodeTranslated.pc)
     {
         status = @"adjacent restricted";
         [_mtp3.routingUpdateDb logInboundLinkset:self.name
@@ -2441,7 +2441,7 @@
                                           status:status
                                           reason:reason];
     }
-    else if(translatedPc.pc == _adjacentPointCode.pc)
+    else if(pc.pc == _adjacentPointCodeTranslated.pc)
     {
         status = @"adjacent available";
         [_mtp3.routingUpdateDb logInboundLinkset:self.name
@@ -5429,6 +5429,11 @@
         {
             [self.logFeed debugText:[NSString stringWithFormat:@"Failed to load pointcode translation table '%@'",_pointcodeTranslationTableNameOut]];
         }
+        _adjacentPointCodeTranslated = [self localToRemotePointcode:_adjacentPointCode];
+    }
+    else
+    {
+        _adjacentPointCodeTranslated = NULL;
     }
 }
 

@@ -61,6 +61,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     UMMTP3Variant                   _variant;
     UMMTP3PointCode                 *_localPointCode;
     UMMTP3PointCode                 *_adjacentPointCode;
+    UMMTP3PointCode                 *_adjacentPointCodeTranslated;
     NSNumber                        *_overrideNetworkIndicator;
     int                             _linkSelector;
     unsigned long                   _nationalOptions;
@@ -155,6 +156,8 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,assign) UMMTP3Variant variant;
 @property(readwrite,strong) UMMTP3PointCode *localPointCode;
 @property(readwrite,strong) UMMTP3PointCode *adjacentPointCode;
+@property(readwrite,strong) UMMTP3PointCode *adjacentPointCodeTranslated;
+
 @property(readwrite,strong) NSNumber *overrideNetworkIndicator;
 
 @property(readwrite,strong) UMMTP3WhiteList *incomingWhiteList;

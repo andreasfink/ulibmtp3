@@ -830,10 +830,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     for (NSData *d in affpcs)
     {
         int mask = 0;
-        UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        pc = [_as remoteToLocalPointcode:pc];
+        UMMTP3PointCode *pc1 = [self extractAffectedPointCode:d mask:&mask];
+        UMMTP3PointCode *pc = [_as remoteToLocalPointcode:pc1];
         UMMTP3RoutePriority p = UMMTP3RoutePriority_5;
-        if(pc.pc == _as.adjacentPointCode.pc)
+        if(pc1.pc == _as.adjacentPointCodeTranslated.pc)
         {
             p = UMMTP3RoutePriority_1;
         }
@@ -859,10 +859,10 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     for (NSData *d in affpcs)
     {
         int mask = 0;
-        UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
-        pc = [_as remoteToLocalPointcode:pc];
+        UMMTP3PointCode *pc1 = [self extractAffectedPointCode:d mask:&mask];
+        UMMTP3PointCode *pc = [_as remoteToLocalPointcode:pc1];
         UMMTP3RoutePriority p = UMMTP3RoutePriority_5;
-        if(pc.pc == _as.adjacentPointCode.pc)
+        if(pc1.pc == _as.adjacentPointCodeTranslated.pc)
         {
             p = UMMTP3RoutePriority_1;
         }
@@ -894,7 +894,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     for (NSData *d in affpcs)
     {
         int mask = 0;
-        UMMTP3PointCode *pc = [self extractAffectedPointCode:d mask:&mask];
+        UMMTP3PointCode *pc1 = [self extractAffectedPointCode:d mask:&mask];
+        UMMTP3PointCode *pc = [_as remoteToLocalPointcode:pc1];
+
         pc = [_as remoteToLocalPointcode:pc];
         [self logDebug:[NSString stringWithFormat:@" affected pointcode %@",pc]];
         if(pc)
