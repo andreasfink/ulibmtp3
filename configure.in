@@ -17,7 +17,7 @@ MAJORVER=`echo $VERSION | cut -f1 -d.`
 MINORVER=`echo $VERSION | cut -f2 -d.`
 REVISION=`echo $VERSION | cut -f3 -d.`
 ULIBMTP3_VERSION=`head -n 1 VERSION`
-CONFIG_HEADER=ulibmtp3_config.h
+CONFIG_HEADER=${PROJECT_NAME}/ulibmtp3_config.h
 DEPENDENT_PKGCONFIGS="ulibm2pa ulibdb"
 PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 export PKG_CONFIG_PATH
@@ -217,7 +217,7 @@ AC_CONFIG_FILES([Makefile.osx])
 AC_CONFIG_FILES([Makefile.linux])
 AC_CONFIG_FILES([Makefile.freebsd])
 AC_CONFIG_FILES([ulibmtp3.pc])
-AC_CONFIG_FILES([Classes/ulibmtp3_version.h])
+AC_CONFIG_FILES([${PROJECT_NAME}/ulibmtp3_version.h])
 AC_CONFIG_FILES([make_buildnr.sh])
 AC_OUTPUT
 
