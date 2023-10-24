@@ -8,7 +8,7 @@
 
 #import <ulib/ulib.h>
 #import <ulibdb/ulibdb.h>
-#import "UMLayerMTP3ApplicationContextProtocol.h"
+#import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
 
 @interface UMMTP3StatisticDb : UMObject
 {

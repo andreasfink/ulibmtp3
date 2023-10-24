@@ -10,7 +10,7 @@
 // the author.
 
 #import <ulib/ulib.h>
-#import "UMMTP3TransitPermission.h"
+#import <ulibmtp3/UMMTP3TransitPermission.h>
 
 @class UMMTP3Label;
 

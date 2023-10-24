@@ -7,7 +7,7 @@
 //
 
 #import <ulib/ulib.h>
-#import "UMMTP3RoutePriority.h"
+#import <ulibmtp3/UMMTP3RoutePriority.h>
 
 @class UMMTP3PointCode;
 typedef enum UMMTP3LinkSetRoutingTableStatus

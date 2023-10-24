@@ -7,8 +7,8 @@
 //
 
 #import <ulibdb/ulibdb.h>
-#import "UMLayerMTP3ApplicationContextProtocol.h"
-#import "UMMTP3PointCode.h"
+#import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
 
 @interface UMMTP3RoutingUpdateDb : UMBackgrounder
 {

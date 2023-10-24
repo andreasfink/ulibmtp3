@@ -7,7 +7,7 @@
 //
 
 #import <ulibdb/ulibdb.h>
-#import "UMMTP3PointCode.h"
+#import <ulibmtp3/UMMTP3PointCode.h>
 
 @interface UMMTP3RoutingUpdateDbRecord : UMObject
 {

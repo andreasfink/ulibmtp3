@@ -12,8 +12,8 @@
 #import <ulib/ulib.h>
 #import <ulib/ulib.h>
 #import <ulibm2pa/ulibm2pa.h>
-#import "UMMTP3Variant.h"
-#import "UMMTP3InstanceRoute.h"
+#import <ulibmtp3/UMMTP3Variant.h>
+#import <ulibmtp3/UMMTP3InstanceRoute.h>
 
 /* defines the methods a MTP3 layer must implement from a MTP3 Users perspective */
 /* this is provided by UMLayerMTP3 and by UMLayerM3UA */

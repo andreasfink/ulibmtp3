@@ -10,8 +10,8 @@
 // the author.
 
 #import <ulib/ulib.h>
-#import "UMMTP3PointCode.h"
-#import "UMMTP3Variant.h"
+#import <ulibmtp3/UMMTP3PointCode.h>
+#import <ulibmtp3/UMMTP3Variant.h>
 
 @class UMMTP3PointCode;
 

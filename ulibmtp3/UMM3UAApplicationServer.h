@@ -10,13 +10,13 @@
 #import <ulibsctp/ulibsctp.h>
 
 
-#import "UMMTP3LinkSet.h"
-#import "UMM3UATrafficMode.h"
-#import "UMM3UAStatus.h"
-#import "UMMTP3RouteStatus.h"
-#import "UMM3UAApplicationServerMode.h"
+#import <ulibmtp3/UMMTP3LinkSet.h>
+#import <ulibmtp3/UMM3UATrafficMode.h>
+#import <ulibmtp3/UMM3UAStatus.h>
+#import <ulibmtp3/UMMTP3RouteStatus.h>
+#import <ulibmtp3/UMM3UAApplicationServerMode.h>
 
-#import "UMLayerMTP3ApplicationContextProtocol.h"
+#import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
 /* note: a M3UA "link" is the same as what in traditional SS7 is called a linkset */
 /* it corresponds to an association of two MTP nodes */
 /* while a traditional linkset has multiple physical links separated with SLC's */

@@ -7,11 +7,11 @@
 //
 
 #import <ulib/ulib.h>
-#import "UMMTP3RoutePriority.h"
-#import "UMLayerMTP3ApplicationContextProtocol.h"
-#import "UMMTP3RouteStatus.h"
-#import "UMMTP3RouteCongestionLevel.h"
-#import "UMMTP3RouteTestStatus.h"
+#import <ulibmtp3/UMMTP3RoutePriority.h>
+#import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
+#import <ulibmtp3/UMMTP3RouteStatus.h>
+#import <ulibmtp3/UMMTP3RouteCongestionLevel.h>
+#import <ulibmtp3/UMMTP3RouteTestStatus.h>
 
 @class UMMTP3PointCode;
 @class UMMTP3LinkSet;

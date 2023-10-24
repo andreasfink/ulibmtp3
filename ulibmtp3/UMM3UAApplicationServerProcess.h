@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <ulibsctp/ulibsctp.h>
-#import "UMMTP3Variant.h"
-#import "UMMTP3PointCode.h"
-#import "UMM3UAStatus.h"
-#import "UMMTP3Label.h"
-#import "UMM3UAApplicationServerStatusRecord.h"
-#import "UMM3UAApplicationServerStatusRecords.h"
+#import <ulibmtp3/UMMTP3Variant.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
+#import <ulibmtp3/UMM3UAStatus.h>
+#import <ulibmtp3/UMMTP3Label.h>
+#import <ulibmtp3/UMM3UAApplicationServerStatusRecord.h>
+#import <ulibmtp3/UMM3UAApplicationServerStatusRecords.h>
 
 #define M3UA_DEFAULT_BEAT_TIMER                0
 #define M3UA_DEFAULT_MAX_BEAT_OUTSTANDING      3

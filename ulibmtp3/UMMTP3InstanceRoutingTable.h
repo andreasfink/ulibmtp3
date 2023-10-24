@@ -8,9 +8,9 @@
 
 #import <ulib/ulib.h>
 
-#import "UMMTP3InstanceRoute.h"
-#import "UMMTP3RoutePriority.h"
-#import "UMMTP3RoutingUpdateDb.h"
+#import <ulibmtp3/UMMTP3InstanceRoute.h>
+#import <ulibmtp3/UMMTP3RoutePriority.h>
+#import <ulibmtp3/UMMTP3RoutingUpdateDb.h>
 
 @interface UMMTP3InstanceRoutingTable : UMObject
 {

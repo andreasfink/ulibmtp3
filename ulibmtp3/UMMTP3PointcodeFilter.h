@@ -7,8 +7,8 @@
 //
 
 #import <ulib/ulib.h>
-#import "UMMTP3PointCode.h"
-#import "UMMTP3Filter_Result.h"
+#import <ulibmtp3/UMMTP3PointCode.h>
+#import <ulibmtp3/UMMTP3Filter_Result.h>
 
 @interface UMMTP3PointcodeFilter : UMPlugin
 {

@@ -7,7 +7,7 @@
 //
 
 #import <ulib/ulib.h>
-#import "UMM3UAApplicationServerStatusRecord.h"
+#import <ulibmtp3/UMM3UAApplicationServerStatusRecord.h>
 
 #define UMM3UAApplicationServerStatusRecord_max_entries 10
 

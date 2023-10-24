@@ -15,11 +15,11 @@
 
 #define    MTP3_ROUTE_RETEST_TIMER_DEFAULT    40        /* T10 30..60 sec*/
 
-#import "UMMTP3Variant.h"
-#import "UMLayerMTP3ApplicationContextProtocol.h"
-#import "UMMTP3RoutePriority.h"
-#import "UMMTP3InstanceRoutingTable.h"
-#import "UMMTP3InstanceRoute.h"
+#import <ulibmtp3/UMMTP3Variant.h>
+#import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
+#import <ulibmtp3/UMMTP3RoutePriority.h>
+#import <ulibmtp3/UMMTP3InstanceRoutingTable.h>
+#import <ulibmtp3/UMMTP3InstanceRoute.h>
 @class UMMTP3LinkSet;
 @class UMMTP3Link;
 @class UMMTP3PointCode;
@@ -41,7 +41,7 @@
 @class UMMTP3StatisticDb;
 @class UMMTP3RoutingUpdateDb;
 
-#import "UMLayerMTP3UserProtocol.h"
+#import <ulibmtp3/UMLayerMTP3UserProtocol.h>
 typedef enum UMMTP3_Error
 {
     UMMTP3_no_error = 0,
