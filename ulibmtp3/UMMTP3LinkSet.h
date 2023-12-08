@@ -17,7 +17,6 @@
 #import <ulibmtp3/UMMTP3RoutePriority.h>
 #import <ulibmtp3/UMMTP3LinkSetPrometheusData.h>
 
-
 @class UMMTP3Link;
 @class UMLayerMTP3;
 @class UMMTP3Label;
@@ -26,6 +25,7 @@
 @class UMMTP3BlackList;
 @class UMMTP3TranslationTableMap;
 @class UMMTP3PointCodeTranslationTable;
+@class SccpNumberTranslation;
 
 @protocol UMMTP3ScreeningPluginProtocol
 -(UMMTP3TransitPermission_result) screenIncomingLabel:(UMMTP3Label *)label
@@ -89,6 +89,16 @@ typedef enum UMMTP3ScreeningTraceLevel
     NSString                    *_ttmap_out_name;
     UMMTP3TranslationTableMap   *_ttmap_in;
     UMMTP3TranslationTableMap   *_ttmap_out;
+    
+    NSString                    *_cga_number_translation_in_name;
+    NSString                    *_cda_number_translation_in_name;
+    NSString                    *_cga_number_translation_out_name;
+    NSString                    *_cda_number_translation_out_name;
+    SccpNumberTranslation       *_cga_number_translation_in;
+    SccpNumberTranslation       *_cda_number_translation_in;
+    SccpNumberTranslation       *_cga_number_translation_out;
+    SccpNumberTranslation       *_cda_number_translation_out;
+
     NSString                    *_linkNamesBySlc[16];
     UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableBidi;
     UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableIn;
@@ -186,6 +196,18 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong) NSString *ttmap_out_name;
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_in;
 @property(readwrite,strong) UMMTP3TranslationTableMap   *ttmap_out;
+
+
+@property(readwrite,strong) NSString                    *cga_number_translation_in_name;
+@property(readwrite,strong) NSString                    *cda_number_translation_in_name;
+@property(readwrite,strong) NSString                    *cga_number_translation_out_name;
+@property(readwrite,strong) NSString                    *cda_number_translation_out_name;
+@property(readwrite,strong) SccpNumberTranslation       *cga_number_translation_in;
+@property(readwrite,strong) SccpNumberTranslation       *cda_number_translation_in;
+@property(readwrite,strong) SccpNumberTranslation       *cga_number_translation_out;
+@property(readwrite,strong) SccpNumberTranslation       *cda_number_translation_out;
+
+
 @property(readwrite,strong) NSString                    *lastError;
 
 

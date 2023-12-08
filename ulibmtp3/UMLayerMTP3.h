@@ -40,6 +40,7 @@
 @class UMMTP3SyslogClient;
 @class UMMTP3StatisticDb;
 @class UMMTP3RoutingUpdateDb;
+@class SccpNumberTranslation;
 
 #import <ulibmtp3/UMLayerMTP3UserProtocol.h>
 typedef enum UMMTP3_Error
@@ -369,5 +370,8 @@ typedef enum UMMTP3_Error
                priority:(UMMTP3RoutePriority)prio
                  weight:(NSNumber *)weight
         localPreference:(NSNumber *)localpref;
+
+- (SccpNumberTranslation *) callingPartyAddressTranslationOutForLinkset:(NSString *)linksetName;
+- (SccpNumberTranslation *) calledPartyAddressTranslationOutForLinkset:(NSString *)linkset;
 
 @end

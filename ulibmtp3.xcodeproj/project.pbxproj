@@ -451,13 +451,13 @@
 				A6F442B91CB2706A00C2B472 /* UMMTP3Task_stop.m */,
 				A62851371A46E32A0090FC94 /* UMMTP3TransitPermission.h */,
 				A62851381A46E32A0090FC94 /* UMMTP3TransitPermission.m */,
+				A6AD89F121CD73F300F40945 /* UMMTP3TranslationTableMap.h */,
+				A6AD89F221CD73F300F40945 /* UMMTP3TranslationTableMap.m */,
 				A6B717E41A31B3000090FC94 /* UMMTP3Variant.h */,
 				A628513B1A46E3F40090FC94 /* UMMTP3WhiteList.h */,
 				A628513C1A46E3F40090FC94 /* UMMTP3WhiteList.m */,
 				A666EF681E89C4AF004804CB /* UMSyntaxToken_Pointcode.h */,
 				A666EF691E89C4AF004804CB /* UMSyntaxToken_Pointcode.m */,
-				A6AD89F121CD73F300F40945 /* UMMTP3TranslationTableMap.h */,
-				A6AD89F221CD73F300F40945 /* UMMTP3TranslationTableMap.m */,
 				A6AA23D524855071008D5A57 /* UMMTP3StatisticDb.h */,
 				A6AA23D624855071008D5A57 /* UMMTP3StatisticDb.m */,
 				A6AA23C724854164008D5A57 /* UMMTP3StatisticDbRecord.h */,
@@ -633,7 +633,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = "Andreas Fink (andreas@fink.org)";
 				TargetAttributes = {
 					A604D0F819B999AA0090FC94 = {

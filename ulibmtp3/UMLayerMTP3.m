@@ -959,11 +959,29 @@
 
 - (UMMTP3InstanceRoute *)findRouteForDestination:(UMMTP3PointCode *)search_dpc
 {
-    UMMTP3InstanceRoute *re = [_routingTable findRouteForDestination:search_dpc
+    UMMTP3InstanceRoute *rte = [_routingTable findRouteForDestination:search_dpc
                                                                 mask:search_dpc.maxmask
                                                   excludeLinkSetName:NULL
                                                                exact:NO];
-    return re;
+    if(rte.linksetName.length > 0)
+    {
+        UMMTP3LinkSet *linkset = _linksets[rte.linksetName];
+        rte.cga_number_translation_out = linkset.cga_number_translation_out;
+        rte.cda_number_translation_out = linkset.cda_number_translation_out;
+    }
+    return rte;
+}
+
+- (SccpNumberTranslation *) callingPartyAddressTranslationOutForLinkset:(NSString *)linksetName
+{
+    UMMTP3LinkSet *linkset = _linksets[linksetName];
+    return linkset.cga_number_translation_out;
+}
+
+- (SccpNumberTranslation *) calledPartyAddressTranslationOutForLinkset:(NSString *)linksetName
+{
+    UMMTP3LinkSet *linkset = _linksets[linksetName];
+    return linkset.cda_number_translation_out;
 }
 
 
@@ -983,6 +1001,7 @@
          routedToLinkset:NULL
                      sls:-1];
 }
+
 
 - (UMMTP3_Error)sendPDU:(NSData *)pdu
                     opc:(UMMTP3PointCode *)fopc
@@ -1637,6 +1656,29 @@
         {
             linkset.ttmap_in = [_appContext getTTMap:linkset.ttmap_in_name];
         }
+        
+        if((linkset.ttmap_out==NULL) && (linkset.ttmap_out_name.length > 0))
+        {
+            linkset.ttmap_out = [_appContext getTTMap:linkset.ttmap_out_name];
+        }
+        if((linkset.cga_number_translation_in==NULL) && (linkset.cga_number_translation_in_name.length > 0))
+        {
+            linkset.cga_number_translation_in = [_appContext getSccpNumberTransationByName:linkset.cga_number_translation_in_name];
+        }
+        if((linkset.cga_number_translation_out==NULL) && (linkset.cga_number_translation_out_name.length > 0))
+        {
+            linkset.cga_number_translation_out = [_appContext getSccpNumberTransationByName:linkset.cga_number_translation_out_name];
+        }
+        
+        if((linkset.cda_number_translation_in==NULL) && (linkset.cda_number_translation_in_name.length > 0))
+        {
+            linkset.cda_number_translation_in = [_appContext getSccpNumberTransationByName:linkset.cda_number_translation_in_name];
+        }
+        if((linkset.cda_number_translation_out==NULL) && (linkset.cda_number_translation_out_name.length > 0))
+        {
+            linkset.cda_number_translation_out = [_appContext getSccpNumberTransationByName:linkset.cda_number_translation_out_name];
+        }
+
         id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
         if(inst)
         {
@@ -1650,7 +1692,9 @@
                           sls:sls
                   linksetName:linksetName
                       options:options
-                        ttmap:linkset.ttmap_in];
+                        ttmap:linkset.ttmap_in
+             cgaTranslationIn:linkset.cga_number_translation_in
+             cdaTranslationIn:linkset.cda_number_translation_in];
         }
         else if(_problematicPacketDumper)
         {

@@ -17,7 +17,10 @@
 @class UMLayerSctp;
 @class UMMTP3PointCodeTranslationTable;
 @class UMMTP3TranslationTableMap;
+@class UMMTP3CGATranslationTableMap;
 @class UMDbPool;
+@class SccpNumberTranslation;
+
 @protocol UMLayerMTP3ApplicationContextProtocol<NSObject>
 - (NSString *)hostname;
 - (UMLayerSctp *)getSCTP:(NSString *)name;
@@ -29,6 +32,7 @@
 - (UMM3UAApplicationServer *)getM3UAAS:(NSString *)name;
 - (UMMTP3PointCodeTranslationTable *)getMTP3PointCodeTranslationTable:(NSString *)name;
 - (UMMTP3TranslationTableMap *)getTTMap:(NSString *)name;
+- (SccpNumberTranslation *)getSccpNumberTransationByName:(NSString *)name;
 - (UMSynchronizedDictionary *)dbPools;
 - (NSString *)filterEnginesPath;
 - (id)licenseDirectory;

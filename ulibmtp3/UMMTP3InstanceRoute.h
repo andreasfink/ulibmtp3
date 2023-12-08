@@ -16,8 +16,7 @@
 @class UMMTP3PointCode;
 @class UMMTP3LinkSet;
 @class UMMTP3RouteMetrics;
-
-
+@class SccpNumberTranslation;
 
 @interface UMMTP3InstanceRoute : UMObject
 {
@@ -36,6 +35,8 @@
     UMMTP3RoutePriority         _priority;
     BOOL                        _staticRoute;
     BOOL                        _isClone;
+    SccpNumberTranslation       *_cga_number_translation_out;
+    SccpNumberTranslation       *_cda_number_translation_out;
 }
 
 @property(readwrite,strong) NSString        *name;
@@ -58,6 +59,8 @@
 @property(readwrite,assign) UMMTP3RoutePriority priority;
 @property(readwrite,assign) BOOL staticRoute;
 @property(readwrite,assign) BOOL isClone;
+@property(readwrite,strong) SccpNumberTranslation       *cga_number_translation_out;
+@property(readwrite,strong) SccpNumberTranslation       *cda_number_translation_out;
 
 - (NSComparisonResult)routingPreference:(UMMTP3InstanceRoute *)other;
 
