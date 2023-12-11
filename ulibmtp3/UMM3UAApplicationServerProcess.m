@@ -139,7 +139,7 @@ static const char *m3ua_type_string(uint8_t pclass,uint8_t ptype)
         case M3UA_CLASS_TYPE_ASPDN_ACK:
             return "ASPDN_ACK";
         case M3UA_CLASS_TYPE_ASPAC:
-            return "ASPA";
+            return "ASPAC";
         case M3UA_CLASS_TYPE_ASPIA:
             return "ASPIA";
         case M3UA_CLASS_TYPE_ASPAC_ACK:
@@ -1031,6 +1031,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)processASPUP:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Up */
+    [_layerHistory addLogEntry:@"received ASPUP"];
     [self sendASPUP_ACK:NULL];
     self.m3ua_asp_status = M3UA_STATUS_INACTIVE;
     [_as aspUp:self reason:@"ASPUP received"];
@@ -1039,6 +1040,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)processASPDN:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Down */
+    [_layerHistory addLogEntry:@"received ASPDN"];
     [self sendASPDN_ACK:NULL];
     self.m3ua_asp_status = M3UA_STATUS_BUSY;
     [_as aspDown:self reason:@"ASPDN received"];
@@ -1059,7 +1061,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)processASPUP_ACK:(UMSynchronizedSortedDictionary *)params
 {
     /* ASP Up acknlowledgment */
-
+    [_layerHistory addLogEntry:@"received ASPUP_ACK"];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processASPUP_ACK"];
@@ -1088,6 +1090,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processASPDN_ACK:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"received ASPDN_ACK"];
     self.m3ua_asp_status = M3UA_STATUS_BUSY;
     /* ASP Down acknlowledgment */
 }
@@ -1098,6 +1101,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processASPAC:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"received ASPAC"];
+
     /* ASP Active*/
     if(self.logLevel <= UMLOG_DEBUG)
     {
@@ -1110,6 +1115,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processASPIA:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"received ASPIA"];
     /* ASP Inactive */
     if(self.logLevel <= UMLOG_DEBUG)
     {
@@ -1123,6 +1129,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processASPAC_ACK:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"received ASPAC_ACK"];
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logDebug:@"processASPAC_ACK"];
@@ -1164,6 +1171,8 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processASPIA_ACK:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"received ASPIA_ACK"];
+
     /* ASP Inactive acknowledgment */
     self.m3ua_asp_status =  M3UA_STATUS_INACTIVE;
     [_as aspInactive:self reason:@"ASPIC_ACK received"];
@@ -1174,22 +1183,26 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processREG_REQ:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"received REG_REQ(ignored)"];
     /* Registration Request */
 }
 
 - (void)processREG_RSP:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"received REG_RSP(ignored)"];
     /* Registration Response */
 
 }
 
 - (void)processDEREG_REQ:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"received DEREG_REQ(ignored)"];
     /* Deregistration Request */
 }
 
 - (void)processDEREG_RSP:(UMSynchronizedSortedDictionary *)params
 {
+    [_layerHistory addLogEntry:@"received DEREG_RSP(ignored)"];
     /* Deregistration Response */
 }
 
@@ -1362,7 +1375,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [data appendByte:((packlen & 0x00FF0000) >> 16)];
     [data appendByte:((packlen & 0x0000FF00) >> 8)];
     [data appendByte:((packlen & 0x000000FF) >> 0)];
-    if(pdu)
+    if(pdu.length > 0)
     {
         [data appendData:pdu];
     }
