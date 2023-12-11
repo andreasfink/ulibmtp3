@@ -19,6 +19,7 @@ buildnumber.c
 buildnumber.h
 ulibmtp3.pc
 ulibmtp3_config.h
+*.m.d
 
 #########################
 # .gitignore file for Xcode4 and Xcode5 Source projects
