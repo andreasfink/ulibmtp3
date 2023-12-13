@@ -100,6 +100,7 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) UMMTP3PointCode     *ansiOpc;
 @property (readwrite,strong,atomic) UMMTP3PointCode     *chinaOpc;
 @property (readwrite,strong,atomic) UMMTP3PointCode     *japanOpc;
+@property (readwrite,strong,atomic) id<UMLayerMTP3ApplicationContextProtocol>appContext;
 
 @property (readwrite,assign,atomic) BOOL                ready;
 @property (readwrite,strong,atomic) UMMTP3SyslogClient  *problematicPacketDumper;
