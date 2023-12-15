@@ -1661,24 +1661,6 @@
         {
             linkset.ttmap_out = [_appContext getTTMap:linkset.ttmap_out_name];
         }
-        if((linkset.cga_number_translation_in==NULL) && (linkset.cga_number_translation_in_name.length > 0))
-        {
-            linkset.cga_number_translation_in = [_appContext getSccpNumberTransationByName:linkset.cga_number_translation_in_name];
-        }
-        if((linkset.cga_number_translation_out==NULL) && (linkset.cga_number_translation_out_name.length > 0))
-        {
-            linkset.cga_number_translation_out = [_appContext getSccpNumberTransationByName:linkset.cga_number_translation_out_name];
-        }
-        
-        if((linkset.cda_number_translation_in==NULL) && (linkset.cda_number_translation_in_name.length > 0))
-        {
-            linkset.cda_number_translation_in = [_appContext getSccpNumberTransationByName:linkset.cda_number_translation_in_name];
-        }
-        if((linkset.cda_number_translation_out==NULL) && (linkset.cda_number_translation_out_name.length > 0))
-        {
-            linkset.cda_number_translation_out = [_appContext getSccpNumberTransationByName:linkset.cda_number_translation_out_name];
-        }
-
         id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
         if(inst)
         {

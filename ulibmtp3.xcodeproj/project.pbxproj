@@ -926,6 +926,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 38L827M334;
+				DSTROOT = "/Library/Application Support";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "$(DSTROOT)/$(INSTALL_PATH)";
@@ -939,6 +940,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
+				INSTALL_PATH = FinkTelecomServices/frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.16.3;
 				ONLY_ACTIVE_ARCH = NO;
@@ -958,6 +960,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 38L827M334;
+				DSTROOT = "/Library/Application Support";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "$(DSTROOT)/$(INSTALL_PATH)";
@@ -971,6 +974,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
+				INSTALL_PATH = FinkTelecomServices/frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.16.3;
 				PRODUCT_BUNDLE_IDENTIFIER = me.fink.ulibmtp3;
