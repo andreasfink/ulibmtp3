@@ -37,6 +37,8 @@
 #import <ulibmtp3/UMMTP3Task_m2paSpeedLimitReached.h>
 #import <ulibmtp3/UMMTP3Task_m2paSpeedLimitReachedCleared.h>
 #import <ulibmtp3/UMMTP3Task_m2paStatusIndication.h>
+#import <ulibmtp3/UMMTP3Task_stop.h>
+#import <ulibmtp3/UMMTP3Task_start.h>
 #import <ulibmtp3/UMMTP3TransitPermission.h>
 #import <ulibmtp3/UMMTP3Variant.h>
 #import <ulibmtp3/UMMTP3WhiteList.h>
@@ -56,3 +58,5 @@
 #import <ulibmtp3/UMM3UAApplicationServerStatusRecord.h>
 #import <ulibmtp3/UMM3UAApplicationServerStatusRecords.h>
 #import <ulibmtp3/UMMTP3RoutingUpdateDb.h>
+#import <ulibmtp3/UMMTP3RoutingUpdateDbRecord.h>
+#import <ulibmtp3/ulibmtp3_version.h>
