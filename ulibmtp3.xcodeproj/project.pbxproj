@@ -145,7 +145,6 @@
 		A6F1792E21AF044B0084D972 /* UMMTP3Task_stop.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F442B91CB2706A00C2B472 /* UMMTP3Task_stop.m */; };
 		A6F1792F21AF044B0084D972 /* UMMTP3TransitPermission.m in Sources */ = {isa = PBXBuildFile; fileRef = A62851381A46E32A0090FC94 /* UMMTP3TransitPermission.m */; };
 		A6F1793021AF044B0084D972 /* UMMTP3WhiteList.m in Sources */ = {isa = PBXBuildFile; fileRef = A628513C1A46E3F40090FC94 /* UMMTP3WhiteList.m */; };
-		A6F1793121AF044B0084D972 /* UMSyntaxToken_Pointcode.m in Sources */ = {isa = PBXBuildFile; fileRef = A666EF691E89C4AF004804CB /* UMSyntaxToken_Pointcode.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -755,7 +754,6 @@
 				A60A36F91A3063E60090FC94 /* UMMTP3PointCode.m in Sources */,
 				A6F1792421AF044B0084D972 /* UMMTP3Task_m2paCongestion.m in Sources */,
 				A6F1792D21AF044B0084D972 /* UMMTP3Task_start.m in Sources */,
-				A6F1793121AF044B0084D972 /* UMSyntaxToken_Pointcode.m in Sources */,
 				A6F1792C21AF044B0084D972 /* UMMTP3Task_m2paStatusIndication.m in Sources */,
 				A6F1792321AF044B0084D972 /* UMMTP3Task_adminCreateLinkSet.m in Sources */,
 				A60A36E51A305DCF0090FC94 /* UMMTP3LinkSet.m in Sources */,
@@ -856,7 +854,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /FinkTelecomServices/frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				WARNING_CFLAGS = "-Wimplicit-fallthrough";
 			};
@@ -920,14 +918,19 @@
 		A604D12219B999AA0090FC94 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					arm64,
+					x86_64,
+				);
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 38L827M334;
-				DSTROOT = "/Library/Application Support";
+				DSTROOT = "/Library/Application Support/";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "$(DSTROOT)/$(INSTALL_PATH)";
@@ -941,7 +944,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
-				INSTALL_PATH = FinkTelecomServices/frameworks;
+				INSTALL_PATH = /FinkTelecomServices/frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.16.3;
 				ONLY_ACTIVE_ARCH = NO;
@@ -955,14 +958,19 @@
 		A604D12319B999AA0090FC94 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					arm64,
+					x86_64,
+				);
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 38L827M334;
-				DSTROOT = "/Library/Application Support";
+				DSTROOT = "/Library/Application Support/";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "$(DSTROOT)/$(INSTALL_PATH)";
@@ -976,9 +984,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SupportingFiles/ulibmtp3-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/SupportingFiles/ulibmtp3-Info.plist";
-				INSTALL_PATH = FinkTelecomServices/frameworks;
+				INSTALL_PATH = /FinkTelecomServices/frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.16.3;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = me.fink.ulibmtp3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
