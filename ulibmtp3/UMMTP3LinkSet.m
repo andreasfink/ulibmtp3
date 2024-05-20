@@ -3047,7 +3047,6 @@
     if(_variant==UMMTP3Variant_ANSI)
     {
         [pdu appendByte:([pattern length]<<4) | (slc & 0x0F)];
-        
     }
     else
     {

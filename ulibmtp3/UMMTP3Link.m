@@ -180,6 +180,14 @@
     if (cfg[@"reopen-timer1"])
     {
         _reopenTime1 = [cfg[@"reopen-timer1"] doubleValue];
+        if(_reopenTime1 < 1.0)
+        {
+            _reopenTime1 = 1;
+        }
+        if(_reopenTime1>60)
+        {
+            _reopenTime1 = 60;
+        }
     }
     else
     {
@@ -190,14 +198,20 @@
     if (cfg[@"reopen-timer2"])
     {
         _reopenTime2 = [cfg[@"reopen-timer2"] doubleValue];
+        if(_reopenTime2 < 60)
+        {
+            _reopenTime2 = 60;
+        }
+        if(_reopenTime2>600)
+        {
+            _reopenTime2 = 600;
+        }
     }
     else
     {
         _reopenTime2 = MTP3_LINK_REOPEN_TIMER2_DEFAULT;
     }
     _reopenTimer2.seconds = _reopenTime2;
-
-
     if (cfg[@"m2pa"])
     {
         NSString *m2pa_name = [cfg[@"m2pa"] stringValue];
