@@ -3,6 +3,11 @@
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
 *.o
+*.d
+install
+libulibmtp3.a
+libulibmtp3.so
+version.h
 Makefile
 Makefile.linux
 Makefile.osx
@@ -19,7 +24,6 @@ buildnumber.c
 buildnumber.h
 ulibmtp3.pc
 ulibmtp3_config.h
-*.m.d
 
 #########################
 # .gitignore file for Xcode4 and Xcode5 Source projects
