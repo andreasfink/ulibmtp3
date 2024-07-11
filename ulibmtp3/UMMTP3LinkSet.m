@@ -3309,10 +3309,10 @@
     }
     if(slc < 0)
     {
-        [_slsLock lock];
+        UMMUTEX_LOCK(_slsLock);
         translatedLabel.sls = _last_sls;
         _last_sls = (_last_sls+1) % 16;
-        [_slsLock unlock];
+        UMMUTEX_UNLOCK(_slsLock);
     }
     else
     {
@@ -5663,11 +5663,11 @@
     {
         @autoreleasepool
         {
-            [_sccp_traceLock lock];
+            UMMUTEX_LOCK(_sccp_traceLock);
             const char *str = [s UTF8String];
             fprintf(_sccp_screeningPluginTraceFile,"%s\n",str);
             fflush(_sccp_screeningPluginTraceFile);
-            [_sccp_traceLock unlock];
+            UMMUTEX_UNLOCK(_sccp_traceLock);
         }
     }
 }
@@ -5697,11 +5697,11 @@
     {
         @autoreleasepool
         {
-            [_mtp3_traceLock lock];
+            UMMUTEX_LOCK(_mtp3_traceLock);
             const char *str = [s UTF8String];
             fprintf(_mtp3_screeningPluginTraceFile,"%s\n",str);
             fflush(_mtp3_screeningPluginTraceFile);
-            [_mtp3_traceLock unlock];
+            UMMUTEX_UNLOCK(_mtp3_traceLock);
         }
     }
 }

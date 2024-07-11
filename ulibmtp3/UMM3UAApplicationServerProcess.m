@@ -2133,32 +2133,38 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             return;
         }
         
-        [_incomingStreamLock lock];
-        if(self.logLevel <= UMLOG_DEBUG)
+        UMMUTEX_LOCK(_incomingStreamLock);
+        @try 
         {
-            [self logDebug:@"sctpDataIndication"];
-            [self logDebug:[NSString stringWithFormat:@" rx-streamid: %d",streamID]];
-            [self logDebug:[NSString stringWithFormat:@" rx-data: %@",[data hexString]]];
-        }
-        if(streamID == 0)
-        {
-            if(_incomingStream0 == NULL)
+            if(self.logLevel <= UMLOG_DEBUG)
             {
-                _incomingStream0 = [[NSMutableData alloc]init];
+                [self logDebug:@"sctpDataIndication"];
+                [self logDebug:[NSString stringWithFormat:@" rx-streamid: %d",streamID]];
+                [self logDebug:[NSString stringWithFormat:@" rx-data: %@",[data hexString]]];
             }
-            [_incomingStream0 appendData:data];
-            [self lookForIncomingPdu:streamID];
-        }
-        else
-        {
-            if(_incomingStream1 == NULL)
+            if(streamID == 0)
             {
-                _incomingStream1 = [[NSMutableData alloc]init];
+                if(_incomingStream0 == NULL)
+                {
+                    _incomingStream0 = [[NSMutableData alloc]init];
+                }
+                [_incomingStream0 appendData:data];
+                [self lookForIncomingPdu:streamID];
             }
-            [_incomingStream1 appendData:data];
-            [self lookForIncomingPdu:streamID];
+            else
+            {
+                if(_incomingStream1 == NULL)
+                {
+                    _incomingStream1 = [[NSMutableData alloc]init];
+                }
+                [_incomingStream1 appendData:data];
+                [self lookForIncomingPdu:streamID];
+            }
         }
-        [_incomingStreamLock unlock];
+        @finally
+        {
+            UMMUTEX_UNLOCK(_incomingStreamLock);
+        }
 
     }
 }
