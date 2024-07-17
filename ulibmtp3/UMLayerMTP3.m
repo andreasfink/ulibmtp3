@@ -1706,7 +1706,7 @@
 {
     @autoreleasepool
     {
-        UMMUTEX_LOCK(_mtp3Lock);
+        ummutex_lock(_mtp3Lock);
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];
@@ -1722,7 +1722,7 @@
                                      reason:reason];
         BOOL hasChanged = NO;
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio hasChanged:&hasChanged];
-        UMMUTEX_UNLOCK(_routingTable.routingTableLock);
+        ummutex_unlock(_routingTable.routingTableLock);
         if((hasChanged) || (1))
         {
             [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
@@ -1732,7 +1732,7 @@
                 [self writeRouteStatusToLog:pc];
             }
         }
-        UMMUTEX_UNLOCK(_mtp3Lock);
+        ummutex_unlock(_mtp3Lock);
         return YES;
     }
 }
@@ -1747,7 +1747,7 @@
 {
     @autoreleasepool
     {
-        UMMUTEX_LOCK(_mtp3Lock);
+        ummutex_lock(_mtp3Lock);
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];
@@ -1773,7 +1773,7 @@
                 [self writeRouteStatusToLog:pc];
             }
         }
-        UMMUTEX_UNLOCK(_mtp3Lock);
+        ummutex_unlock(_mtp3Lock);
         return YES;
     }
 }
@@ -1786,7 +1786,7 @@
 {
     @autoreleasepool
     {
-        UMMUTEX_LOCK(_mtp3Lock);
+        ummutex_lock(_mtp3Lock);
         if(_routingUpdateLogFile)
         {
             NSDate *now = [NSDate date];
@@ -1809,7 +1809,7 @@
                 [self writeRouteStatusToLog:pc];
             }
         }
-        UMMUTEX_UNLOCK(_mtp3Lock);
+        ummutex_unlock(_mtp3Lock);
         return YES;
     }
 }
@@ -1823,10 +1823,10 @@
     }
     NSDate *now = [NSDate date];
     NSString *s = [NSString stringWithFormat:@"%@ INFO: %@", now.stringValue,event];
-    UMMUTEX_LOCK(_mtp3Lock);
+    ummutex_lock(_mtp3Lock);
     fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
     fflush(_routingUpdateLogFile);
-    UMMUTEX_UNLOCK(_mtp3Lock);
+    ummutex_unlock(_mtp3Lock);
     [_routingUpdateDb logInboundLinkset:@""
                         outboundLinkset:@""
                                     dpc:NULL
@@ -1862,10 +1862,10 @@
     }
     NSDate *now = [NSDate date];
     NSString *s = [NSString stringWithFormat:@"%@ PC: %@ STATUS: %@", now.stringValue,pc.stringValue,status];
-    UMMUTEX_LOCK(_mtp3Lock);
+    ummutex_lock(_mtp3Lock);
     fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
     fflush(_routingUpdateLogFile);
-    UMMUTEX_UNLOCK(_mtp3Lock);
+    ummutex_unlock(_mtp3Lock);
     
     [_routingUpdateDb logInboundLinkset:@""
                         outboundLinkset:@""
@@ -1938,10 +1938,10 @@
     {
         NSDate *now = [NSDate date];
         NSString *s = [NSString stringWithFormat:@"%@ MTP-USER UNAVAILABLE PC %@ (%d)", now.stringValue,pc.stringValue,(int)pc.pc];
-        UMMUTEX_LOCK(_mtp3Lock);
+        ummutex_lock(_mtp3Lock);
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
-        UMMUTEX_UNLOCK(_mtp3Lock);
+        ummutex_unlock(_mtp3Lock);
     }
     [_routingUpdateDb logInboundLinkset:@"mtp3"
                         outboundLinkset:@"sccp"
@@ -1968,10 +1968,10 @@
     {
         NSDate *now = [NSDate date];
         NSString *s = [NSString stringWithFormat:@"%@ MTP-USER RESTRICTED PC %@ (%d)", now.stringValue,pc.stringValue,pc.pc];
-        UMMUTEX_LOCK(_mtp3Lock);
+        ummutex_lock(_mtp3Lock);
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
-        UMMUTEX_UNLOCK(_mtp3Lock);
+        ummutex_unlock(_mtp3Lock);
     }
     [_routingUpdateDb logInboundLinkset:@"mtp3"
                         outboundLinkset:@"sccp"
@@ -2000,10 +2000,10 @@
     {
         NSDate *now = [NSDate date];
         NSString *s = [NSString stringWithFormat:@"%@ MTP-USER AVAIL PC %@", now.stringValue,pc.stringValue];
-        UMMUTEX_LOCK(_mtp3Lock);
+        ummutex_lock(_mtp3Lock);
         fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
         fflush(_routingUpdateLogFile);
-        UMMUTEX_UNLOCK(_mtp3Lock);
+        ummutex_unlock(_mtp3Lock);
     }
     [_routingUpdateDb logInboundLinkset:@"mtp3"
                         outboundLinkset:@"sccp"
@@ -2042,10 +2042,10 @@
         {
             NSDate *now = [NSDate date];
             NSString *s = [NSString stringWithFormat:@"%@ ADVERTIZE PC %@ UNAVAIL to linkset %@", now.stringValue,pc.stringValue,linksetName];
-            UMMUTEX_LOCK(_mtp3Lock);
+            ummutex_lock(_mtp3Lock);
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
-            UMMUTEX_UNLOCK(_mtp3Lock);
+            ummutex_unlock(_mtp3Lock);
         }
     }
 }
@@ -2070,10 +2070,10 @@
         {
             NSDate *now = [NSDate date];
             NSString *s = [NSString stringWithFormat:@"%@ ADVERTIZE PC %@ RESTRICTED to linkset %@", now.stringValue,pc.stringValue,linksetName];
-            UMMUTEX_LOCK(_mtp3Lock);
+            ummutex_lock(_mtp3Lock);
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
-            UMMUTEX_UNLOCK(_mtp3Lock);
+            ummutex_unlock(_mtp3Lock);
         }
         [linkset advertizePointcodeRestricted:pc mask:pc.maxmask];
     }
@@ -2094,10 +2094,10 @@
         {
             NSDate *now = [NSDate date];
             NSString *s = [NSString stringWithFormat:@"%@ ADVERTIZE PC %@ AVAIL to linkset %@", now.stringValue,pc.stringValue,linksetName];
-            UMMUTEX_LOCK(_mtp3Lock);
+            ummutex_lock(_mtp3Lock);
             fprintf(_routingUpdateLogFile,"%s\n",s.UTF8String);
             fflush(_routingUpdateLogFile);
-            UMMUTEX_UNLOCK(_mtp3Lock);
+            ummutex_unlock(_mtp3Lock);
         }
         [linkset advertizePointcodeAvailable:pc mask:pc.maxmask];
     }

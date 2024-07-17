@@ -55,7 +55,7 @@
          severity:(int)severity
          facility:(int)facility
 {
-    UMMUTEX_LOCK(_syslogClientLock);
+    ummutex_lock(_syslogClientLock);
     _seq++;
     _seq = _seq % 100000000;
 
@@ -75,7 +75,7 @@
                         message:msgString
                        facility:facility
                        severity:severity];
-    UMMUTEX_UNLOCK(_syslogClientLock);
+    ummutex_unlock(_syslogClientLock);
 }
 
 - (void)logRawPacket:(NSData *)data
@@ -109,7 +109,7 @@
             facility:(int)facility
          withComment:(NSString *)comment
 {
-    UMMUTEX_LOCK(_syslogClientLock);
+    ummutex_lock(_syslogClientLock);
     _seq++;
     _seq = _seq % 100000000;
 
@@ -129,7 +129,7 @@
                         message:msgString
                        facility:facility
                        severity:severity];
-    UMMUTEX_UNLOCK(_syslogClientLock);
+    ummutex_unlock(_syslogClientLock);
 }
 
 
@@ -137,7 +137,7 @@
             severity:(int)severity
             facility:(int)facility
 {
-    UMMUTEX_LOCK(_syslogClientLock);
+    ummutex_lock(_syslogClientLock);
     _seq++;
     _seq = _seq % 100000000;
 
@@ -146,7 +146,7 @@
                         message:msgString
                        facility:facility
                        severity:severity];
-    UMMUTEX_UNLOCK(_syslogClientLock);
+    ummutex_unlock(_syslogClientLock);
 }
 
 

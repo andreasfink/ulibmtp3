@@ -1790,7 +1790,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [_layerHistory addLogEntry:@"powerOn ignored due to forcedOutOfService"];
         return;
     }
-    UMMUTEX_LOCK(_aspLock);
+    ummutex_lock(_aspLock);
     if(self.logLevel <= UMLOG_DEBUG)
     {
         [self logInfo:@"powerOn"];
@@ -1803,7 +1803,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [self stopReopenTimer1];
     [_sctpLink openFor:self sendAbortFirst:NO reason:(reason ? reason : @"m3ua-poweron")];
     [self startReopenTimer2];
-    UMMUTEX_UNLOCK(_aspLock);
+    ummutex_unlock(_aspLock);
 }
 
 - (void)powerOff
@@ -1814,7 +1814,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 - (void)powerOff:(NSString *)reason
 {
     _aspup_received = 0;
-    UMMUTEX_LOCK(_aspLock);
+    ummutex_lock(_aspLock);
     @try
     {
         [self stopBeatTimer];
@@ -1848,9 +1848,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 self.m3ua_asp_status = M3UA_STATUS_OFF;
                 break;
         }
-        UMMUTEX_UNLOCK(_aspLock);
+        ummutex_unlock(_aspLock);
         usleep(0.5);
-        UMMUTEX_LOCK(_aspLock);
+        ummutex_lock(_aspLock);
         if(_forcedOutOfService == NO)
         {
             if(_sctpLink.isPassive)
@@ -1868,7 +1868,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     @finally
     {
-        UMMUTEX_UNLOCK(_aspLock);
+        ummutex_unlock(_aspLock);
     }
 }
 
@@ -2133,7 +2133,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             return;
         }
         
-        UMMUTEX_LOCK(_incomingStreamLock);
+        ummutex_lock(_incomingStreamLock);
         @try 
         {
             if(self.logLevel <= UMLOG_DEBUG)
@@ -2163,7 +2163,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         }
         @finally
         {
-            UMMUTEX_UNLOCK(_incomingStreamLock);
+            ummutex_unlock(_incomingStreamLock);
         }
 
     }
@@ -2722,7 +2722,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)linktestTimerEvent:(id)parameter
 {
-    UMMUTEX_LOCK(_aspLock);
+    ummutex_lock(_aspLock);
     @try
     {
         /* if status is out of service, we restart the link */
@@ -2790,7 +2790,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     @finally
     {
-        UMMUTEX_UNLOCK(_aspLock);
+        ummutex_unlock(_aspLock);
     }
 }
 

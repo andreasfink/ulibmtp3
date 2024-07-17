@@ -3309,10 +3309,10 @@
     }
     if(slc < 0)
     {
-        UMMUTEX_LOCK(_slsLock);
+        ummutex_lock(_slsLock);
         translatedLabel.sls = _last_sls;
         _last_sls = (_last_sls+1) % 16;
-        UMMUTEX_UNLOCK(_slsLock);
+        ummutex_unlock(_slsLock);
     }
     else
     {
@@ -5056,7 +5056,7 @@
 
 - (void)updateLinkSetStatus
 {
-    UMMUTEX_LOCK(_currentLinksMutex);
+    ummutex_lock(_currentLinksMutex);
     NSMutableArray *inactiveLinks = [[NSMutableArray alloc]init];
     NSMutableArray *activeLinks = [[NSMutableArray alloc]init];
     NSMutableArray *readyLinks  = [[NSMutableArray alloc]init];
@@ -5126,7 +5126,7 @@
     _currentActiveLinks = activeLinks;
     _currentReadyLinks  = readyLinks;
     _currentProcessorOutageLinks  = processorOutageLinks;
-    UMMUTEX_UNLOCK(_currentLinksMutex);
+    ummutex_unlock(_currentLinksMutex);
     
     if(nowAvailable)
     {
@@ -5663,11 +5663,11 @@
     {
         @autoreleasepool
         {
-            UMMUTEX_LOCK(_sccp_traceLock);
+            ummutex_lock(_sccp_traceLock);
             const char *str = [s UTF8String];
             fprintf(_sccp_screeningPluginTraceFile,"%s\n",str);
             fflush(_sccp_screeningPluginTraceFile);
-            UMMUTEX_UNLOCK(_sccp_traceLock);
+            ummutex_unlock(_sccp_traceLock);
         }
     }
 }
@@ -5697,11 +5697,11 @@
     {
         @autoreleasepool
         {
-            UMMUTEX_LOCK(_mtp3_traceLock);
+            ummutex_lock(_mtp3_traceLock);
             const char *str = [s UTF8String];
             fprintf(_mtp3_screeningPluginTraceFile,"%s\n",str);
             fflush(_mtp3_screeningPluginTraceFile);
-            UMMUTEX_UNLOCK(_mtp3_traceLock);
+            ummutex_unlock(_mtp3_traceLock);
         }
     }
 }
