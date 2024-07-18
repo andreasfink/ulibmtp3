@@ -1722,7 +1722,6 @@
                                      reason:reason];
         BOOL hasChanged = NO;
         [_routingTable updateDynamicRouteAvailable:pc mask:mask linksetName:name priority:prio hasChanged:&hasChanged];
-        ummutex_unlock(_routingTable.routingTableLock);
         if((hasChanged) || (1))
         {
             [self updateOtherLinksetsForPointCode:pc excludeLinkSetName:name];
