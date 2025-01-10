@@ -2187,7 +2187,7 @@
                     label.opc = linkset.localPointCode;
                 }
                 label.dpc = linkset.adjacentPointCode;
-                label.sls = [UMUtil random:16];
+                label.sls = [UMUtil random:16]; 
                 if((route.status == UMMTP3_ROUTE_PROHIBITED) || (route.status == UMMTP3_ROUTE_RESTRICTED))
                 {
                     [linkset sendRST:label
