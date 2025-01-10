@@ -1082,21 +1082,15 @@
                 UMMTP3Label *label = [[UMMTP3Label alloc]init];
                 label.opc = fopc;
                 label.dpc = fdpc;
-                if(sls == -1)
+                label.sls = sls;
+                if((sls <0) || (sls > 16))
                 {
-                    NSString *s = options[@"mtp3-sls"];
-                    if(s.length > 0)
-                    {
-                        label.sls = [s intValue] % 16;
-                    }
-                    else
-                    {
-                        label.sls = [UMUtil random:16];
-                    }
+                    label.sls = [UMUtil random:16];
                 }
-                else
+                NSString *s = options[@"mtp3-sls"];
+                if(s.length > 0)
                 {
-                    label.sls = sls;
+                    label.sls = [s intValue] % 16;
                 }
                 int ni;
                 if(linkset.overrideNetworkIndicator)
@@ -2187,7 +2181,7 @@
                     label.opc = linkset.localPointCode;
                 }
                 label.dpc = linkset.adjacentPointCode;
-                label.sls = [UMUtil random:16]; 
+                label.sls = [UMUtil random:16];
                 if((route.status == UMMTP3_ROUTE_PROHIBITED) || (route.status == UMMTP3_ROUTE_RESTRICTED))
                 {
                     [linkset sendRST:label

@@ -237,6 +237,7 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong,atomic) NSDate                      *lastLinksetUp;
 @property(readwrite,strong,atomic) NSDate                      *lastLinksetDown;
 
+- (int)nextSLS;
 - (void)addLink:(UMMTP3Link *)lnk;
 - (void)removeAllLinks;
 - (UMMTP3Link *)getLinkBySlc:(int)slc;
