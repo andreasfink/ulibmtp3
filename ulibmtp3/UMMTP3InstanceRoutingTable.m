@@ -47,7 +47,6 @@
 
 - (void)setRouteArray:(NSMutableArray<UMMTP3InstanceRoute *> *) arr forPointcode:(UMMTP3PointCode *)pc mask:(int) mask
 {
-    NSMutableArray<UMMTP3InstanceRoute *> *r = NULL;
     if((mask == pc.maxmask) || (mask == -1)) /* single pointcode */
     {
         _routesByPointCode[@(pc.pc)] = arr;
@@ -55,7 +54,6 @@
     else
     {
         [_logFeed minorErrorText:[NSString stringWithFormat:@"Can not handle routes with masks yet pc=%@ mask=%d",pc,mask]];
-        r = NULL;
     }
 }
 
