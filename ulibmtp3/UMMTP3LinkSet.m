@@ -3235,6 +3235,16 @@
           options:NULL];
 }
 
+- (int)nextSLS
+{
+    int sls;
+    
+    ummutex_lock(_slsLock);
+    sls = _last_sls;
+    _last_sls = (_last_sls+1) % 16;
+    ummutex_unlock(_slsLock);
+    return sls;
+}
 
 -(void)sendPdu:(NSData *)data
          label:(UMMTP3Label *)label
@@ -3266,7 +3276,6 @@
     {
         [self logMajorError:@"sendPdu: No link found in Linkset!"];
     }
-    
     NSMutableData *pdu = [[NSMutableData alloc]init];
     uint8_t len;
     
@@ -3372,7 +3381,7 @@
             label:label
           heading:heading
              link:NULL
-              slc:-1
+              slc:label.sls
                ni:ni
                mp:mp
                si:si
