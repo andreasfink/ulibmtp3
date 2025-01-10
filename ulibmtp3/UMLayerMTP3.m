@@ -1082,7 +1082,7 @@
                 UMMTP3Label *label = [[UMMTP3Label alloc]init];
                 label.opc = fopc;
                 label.dpc = fdpc;
-                if(sls != -1)
+                if(sls == -1)
                 {
                     NSString *s = options[@"mtp3-sls"];
                     if(s.length > 0)
