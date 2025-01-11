@@ -70,6 +70,7 @@
 
 - (void)addLink:(UMMTP3Link *)lnk
 {
+    lnk.m2pa.statsCounterDelegate = self;
     UMAssert(lnk!=NULL,@"addLink:NULL");
     int slc = lnk.slc;
     UMAssert(((slc>=0) && (slc < 16)),@"addLink SLC is not in range 0...15");
@@ -92,6 +93,7 @@
     for(NSString *key in keys)
     {
         UMMTP3Link *link = _linksBySlc[key];
+        link.m2pa.statsCounterDelegate = NULL;
         if(link)
         {
             [_mtp3 removeLink:link];
