@@ -52,7 +52,7 @@ typedef enum UMMTP3_Error
     UMMTP3_error_internal_error = -1,
 } UMMTP3_Error;
 
-@interface UMLayerMTP3 : UMLayer<UMLayerM2PAUserProtocol>
+@interface UMLayerMTP3 : UMLayer<UMLayerM2PAUserProtocol,UMM2PAStatisticsCouter>
 {
 	UMSynchronizedSortedDictionary  *_linksets;
 	UMSynchronizedSortedDictionary  *_links;
@@ -91,7 +91,18 @@ typedef enum UMMTP3_Error
     FILE                            *_routingUpdateLogFile;
     UMMutex                         *_mtp3Lock;
     UMSynchronizedDictionary        *_propagatingPointcodes; /* key and value is NSNumber */
+    
+    UMThroughputCounter *_inboundThroughputPackets;
+    UMThroughputCounter *_outboundThroughputPackets;
+    UMThroughputCounter *_inboundThroughputBytes;
+    UMThroughputCounter *_outboundThroughputBytes;
 }
+
+@property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
+@property(readwrite,strong)     UMThroughputCounter *outboundThroughputPackets;
+@property(readwrite,strong)     UMThroughputCounter *inboundThroughputBytes;
+@property(readwrite,strong)     UMThroughputCounter *outboundThroughputBytes;
+
 
 @property (readwrite,assign,atomic) int                 networkIndicator;
 @property (readwrite,assign,atomic) UMMTP3Variant       variant;

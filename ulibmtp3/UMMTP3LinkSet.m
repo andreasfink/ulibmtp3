@@ -71,6 +71,8 @@
 - (void)addLink:(UMMTP3Link *)lnk
 {
     lnk.m2pa.statsCounterDelegate = self;
+    lnk.m2pa.statsCounterDelegate2 = lnk;
+    
     UMAssert(lnk!=NULL,@"addLink:NULL");
     int slc = lnk.slc;
     UMAssert(((slc>=0) && (slc < 16)),@"addLink SLC is not in range 0...15");

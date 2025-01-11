@@ -23,7 +23,7 @@ typedef enum UMMTP3Link_attachmentStatus
     UMMTP3Link_attachmentStatus_attached            =   2,
 } UMMTP3Link_attachmentStatus;
 
-@interface UMMTP3Link : UMObject
+@interface UMMTP3Link : UMObject<UMM2PAStatisticsCouter>
 {
     NSString                    *_name;
     int                         _slc;
@@ -70,8 +70,16 @@ typedef enum UMMTP3Link_attachmentStatus
     NSDate                      *_lastLinkUp;
     NSDate                      *_lastLinkDown;
     UMHistoryLog                *_layerHistory;
-
+    UMThroughputCounter *_inboundThroughputPackets;
+    UMThroughputCounter *_outboundThroughputPackets;
+    UMThroughputCounter *_inboundThroughputBytes;
+    UMThroughputCounter *_outboundThroughputBytes;
 }
+
+@property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
+@property(readwrite,strong)     UMThroughputCounter *outboundThroughputPackets;
+@property(readwrite,strong)     UMThroughputCounter *inboundThroughputBytes;
+@property(readwrite,strong)     UMThroughputCounter *outboundThroughputBytes;
 
 - (NSString *)name;
 - (void)addToLayerHistoryLog:(NSString *)s;

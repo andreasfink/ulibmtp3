@@ -33,6 +33,10 @@
         _reopenTime2  = [UMUtil randomFrom:MTP3_LINK_REOPEN_TIMER2_DEFAULT to:MTP3_LINK_REOPEN_TIMER2_DEFAULT+3];
         _linkTestTime = [UMUtil randomFrom:MTP3_LINK_TEST_TIMER_DEFAULT to:MTP3_LINK_TEST_TIMER_DEFAULT+3];
 
+        _inboundThroughputPackets   =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
+        _outboundThroughputPackets  =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
+        _inboundThroughputBytes     =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
+        _outboundThroughputBytes    =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
 
         _reopenTimer1 = [[UMTimer alloc]initWithTarget:self
                                              selector:@selector(reopenTimer1Event:)
