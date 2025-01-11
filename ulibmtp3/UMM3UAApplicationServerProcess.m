@@ -696,7 +696,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     data3 = protocolData.bytes;
     
     [_inboundThroughputPackets increaseBy:1];
+    [_as.inboundThroughputPackets increaseBy:1];
     [_inboundThroughputBytes increaseBy:(uint32_t)protocolData.length];
+    [_as.inboundThroughputBytes increaseBy:(uint32_t)protocolData.length];
 
     i = 0;
     /* here M3UA starts */
@@ -1263,7 +1265,9 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [pdu appendData:data];
 
     [_outboundThroughputPackets increaseBy:1];
+    [_as.outboundThroughputPackets increaseBy:1];
     [_outboundThroughputBytes increaseBy:(uint32_t)pdu.length];
+    [_as.outboundThroughputBytes increaseBy:(uint32_t)pdu.length];
 
     UMSynchronizedSortedDictionary *pl = [[UMSynchronizedSortedDictionary alloc]init];
     if(_as.networkAppearance)

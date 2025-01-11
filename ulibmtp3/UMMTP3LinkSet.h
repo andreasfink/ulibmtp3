@@ -51,7 +51,8 @@ typedef enum UMMTP3ScreeningTraceLevel
     UMMTP3ScreeningTraceLevel_everything = 2,
 } UMMTP3ScreeningTraceLevel;
 
-@interface UMMTP3LinkSet : UMObject
+@interface UMMTP3LinkSet : UMObject<UMM2PAStatisticsCouter>
+
 {
     UMLayerMTP3                     *_mtp3;
     NSString                        *_name;
@@ -144,7 +145,17 @@ typedef enum UMMTP3ScreeningTraceLevel
     NSDate                      *_lastLinksetDown;
     UMTimer                     *_routeRetestTimer; /* timer T10 */
     UMHistoryLog                *_layerHistory;
+    
+    UMThroughputCounter *_inboundThroughputPackets;
+    UMThroughputCounter *_outboundThroughputPackets;
+    UMThroughputCounter *_inboundThroughputBytes;
+    UMThroughputCounter *_outboundThroughputBytes;
 }
+
+@property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
+@property(readwrite,strong)     UMThroughputCounter *outboundThroughputPackets;
+@property(readwrite,strong)     UMThroughputCounter *inboundThroughputBytes;
+@property(readwrite,strong)     UMThroughputCounter *outboundThroughputBytes;
 
 - (void)addToLayerHistoryLog:(NSString *)s;
 

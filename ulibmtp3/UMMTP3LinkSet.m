@@ -54,6 +54,11 @@
         _mtp3_traceLock = [[UMMutex alloc]initWithName:@"mtp3-trace-lock"];
         _currentLinksMutex = [[UMMutex alloc]initWithName:@"current-links-mutex"];
         _layerHistory = [[UMHistoryLog alloc]initWithMaxLines:100];
+        
+        _inboundThroughputPackets   =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
+        _outboundThroughputPackets  =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
+        _inboundThroughputBytes     =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
+        _outboundThroughputBytes    =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
     }
     return self;
 }
