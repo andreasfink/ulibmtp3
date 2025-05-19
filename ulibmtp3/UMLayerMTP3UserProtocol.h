@@ -28,20 +28,10 @@
                 sls:(int)sls
         linksetName:(NSString *)linksetName
             options:(NSDictionary *)options
-              ttmap:(UMMTP3TranslationTableMap *)map;
-
-- (void)mtpTransfer:(NSData *)data
-       callingLayer:(id)mtp3Layer
-                opc:(UMMTP3PointCode *)opc
-                dpc:(UMMTP3PointCode *)dpc
-                 si:(int)si
-                 ni:(int)ni
-                sls:(int)sls
-        linksetName:(NSString *)linksetName
-            options:(NSDictionary *)options
-              ttmap:(UMMTP3TranslationTableMap *)map
-   cgaTranslationIn:(SccpNumberTranslation *)cga_number_translation_in
-   cdaTranslationIn:(SccpNumberTranslation *)cda_number_translation_in;
+       called_ttmap:(UMMTP3TranslationTableMap *)map
+      calling_ttmap:(UMMTP3TranslationTableMap *)calling_ttmap
+ called_translation:(SccpNumberTranslation *)called_number_translation_in
+calling_translation:(SccpNumberTranslation *)calling_number_translation_in;
 
 - (void)mtpPause:(NSData *)data
     callingLayer:(id)mtp3Layer

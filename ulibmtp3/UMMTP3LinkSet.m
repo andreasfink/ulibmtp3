@@ -3467,38 +3467,50 @@
 
     if(cfg[@"tt-map-in"]) /* optional */
     {
-        _ttmap_in_name = [cfg[@"tt-map-in"] stringValue];
-        _ttmap_in = [appContext getTTMap:_ttmap_in_name];
+        _called_ttmap_in_name = [cfg[@"tt-map-in"] stringValue];
+        _called_ttmap_in = [appContext getTTMap:_called_ttmap_in_name];
     }
     if(cfg[@"tt-map-out"]) /* optional */
     {
-        _ttmap_out_name = [cfg[@"tt-map-out"] stringValue];
-        _ttmap_out = [appContext getTTMap:_ttmap_in_name];
+        _called_ttmap_out_name = [cfg[@"tt-map-out"] stringValue];
+        _called_ttmap_out = [appContext getTTMap:_called_ttmap_out_name];
     }
+
+    if(cfg[@"calling-tt-map-in"]) /* optional */
+    {
+        _calling_ttmap_in_name = [cfg[@"calling-tt-map-in"] stringValue];
+        _calling_ttmap_in = [appContext getTTMap:_calling_ttmap_in_name];
+    }
+    if(cfg[@"calling-tt-map-out"]) /* optional */
+    {
+        _calling_ttmap_out_name = [cfg[@"calling-tt-map-out"] stringValue];
+        _calling_ttmap_out = [appContext getTTMap:_calling_ttmap_out_name];
+    }
+
 
     if(cfg[@"cga-number-translation-in"]) /* optional */
     {
-        _cga_number_translation_in_name = [cfg[@"cga-number-translation-in"] stringValue];
-        _cga_number_translation_in = [appContext getSccpNumberTransationByName:_cga_number_translation_in_name];
+        _calling_number_translation_in_name = [cfg[@"cga-number-translation-in"] stringValue];
+        _calling_number_translation_in = [appContext getSccpNumberTransationByName:_calling_number_translation_in_name];
     }
 
     if(cfg[@"cga-number-translation-out"]) /* optional */
     {
-        _cga_number_translation_out_name = [cfg[@"cga-number-translation-out"] stringValue];
-        _cga_number_translation_out = [appContext getSccpNumberTransationByName:_cga_number_translation_out_name];
+        _calling_number_translation_out_name = [cfg[@"cga-number-translation-out"] stringValue];
+        _calling_number_translation_out = [appContext getSccpNumberTransationByName:_calling_number_translation_out_name];
     }
 
     if(cfg[@"cda-number-translation-in"]) /* optional */
     {
-        _cda_number_translation_in_name = [cfg[@"cda-number-translation-in"] stringValue];
-        _cda_number_translation_in = [appContext getSccpNumberTransationByName:_cda_number_translation_in_name];
+        _called_number_translation_in_name = [cfg[@"cda-number-translation-in"] stringValue];
+        _called_number_translation_in = [appContext getSccpNumberTransationByName:_called_number_translation_in_name];
 
     }
 
     if(cfg[@"cda-number-translation-out"]) /* optional */
     {
-        _cda_number_translation_out_name = [cfg[@"cda-number-translation-out"] stringValue];
-        _cda_number_translation_out = [appContext getSccpNumberTransationByName:_cda_number_translation_out_name];
+        _called_number_translation_out_name = [cfg[@"cda-number-translation-out"] stringValue];
+        _called_number_translation_out = [appContext getSccpNumberTransationByName:_called_number_translation_out_name];
     }
 
     if(cfg[@"pointcode-translation-table"]) /* optional */

@@ -971,8 +971,8 @@
     if(rte.linksetName.length > 0)
     {
         UMMTP3LinkSet *linkset = _linksets[rte.linksetName];
-        rte.cga_number_translation_out = linkset.cga_number_translation_out;
-        rte.cda_number_translation_out = linkset.cda_number_translation_out;
+        rte.cga_number_translation_out = linkset.calling_number_translation_out;
+        rte.cda_number_translation_out = linkset.called_number_translation_out;
     }
     return rte;
 }
@@ -980,13 +980,13 @@
 - (SccpNumberTranslation *) callingPartyAddressTranslationOutForLinkset:(NSString *)linksetName
 {
     UMMTP3LinkSet *linkset = _linksets[linksetName];
-    return linkset.cga_number_translation_out;
+    return linkset.calling_number_translation_out;
 }
 
 - (SccpNumberTranslation *) calledPartyAddressTranslationOutForLinkset:(NSString *)linksetName
 {
     UMMTP3LinkSet *linkset = _linksets[linksetName];
-    return linkset.cda_number_translation_out;
+    return linkset.called_number_translation_out;
 }
 
 
@@ -1651,15 +1651,26 @@
         NSDate *ts = [NSDate new];
         options[@"mtp3-timestamp"] = ts;
 
-        if((linkset.ttmap_in==NULL) && (linkset.ttmap_in_name.length > 0))
+        if((linkset.called_ttmap_in==NULL) && (linkset.called_ttmap_in_name.length > 0))
         {
-            linkset.ttmap_in = [_appContext getTTMap:linkset.ttmap_in_name];
+            linkset.called_ttmap_in = [_appContext getTTMap:linkset.called_ttmap_in_name];
         }
         
-        if((linkset.ttmap_out==NULL) && (linkset.ttmap_out_name.length > 0))
+        if((linkset.called_ttmap_out==NULL) && (linkset.called_ttmap_out_name.length > 0))
         {
-            linkset.ttmap_out = [_appContext getTTMap:linkset.ttmap_out_name];
+            linkset.called_ttmap_out = [_appContext getTTMap:linkset.called_ttmap_out_name];
         }
+
+        if((linkset.calling_ttmap_in==NULL) && (linkset.calling_ttmap_in_name.length > 0))
+        {
+            linkset.calling_ttmap_in = [_appContext getTTMap:linkset.calling_ttmap_in_name];
+        }
+
+        if((linkset.calling_ttmap_out==NULL) && (linkset.calling_ttmap_out_name.length > 0))
+        {
+            linkset.calling_ttmap_out = [_appContext getTTMap:linkset.calling_ttmap_out_name];
+        }
+
         id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
         if(inst)
         {
@@ -1673,9 +1684,10 @@
                           sls:sls
                   linksetName:linksetName
                       options:options
-                        ttmap:linkset.ttmap_in
-             cgaTranslationIn:linkset.cga_number_translation_in
-             cdaTranslationIn:linkset.cda_number_translation_in];
+                 called_ttmap:linkset.called_ttmap_in
+                calling_ttmap:linkset.calling_ttmap_in
+           called_translation:linkset.called_number_translation_in
+          calling_translation:linkset.calling_number_translation_in];
         }
         else if(_problematicPacketDumper)
         {
