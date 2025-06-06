@@ -1270,9 +1270,63 @@
     return _userPart[@(upid)];
 }
 
+- (void)updateUpperLayerMtp3RoutingTable:(id<UMLayerMTP3UserProtocol>)user si:(int)upid
+{
+    UMSynchronizedSortedDictionary *d = [_routingTable dictionaryOfRouteStatus];
+    NSArray *allKeys = [d allKeys];
+    for(NSNumber *key in allKeys)
+    {
+        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:key.intValue variant:UMMTP3Variant_Undefined];
+        NSNumber *status = d[key];
+        switch(status.intValue)
+        {
+            case UMMTP3_ROUTE_UNUSED:
+                break;
+            case UMMTP3_ROUTE_UNKNOWN:
+                [user mtpResume:NULL
+                   callingLayer:self
+                     affectedPc:pc
+                             si:upid
+                             ni:_networkIndicator
+                            sls:-1
+                        options:@{}];
+                break;
+            case UMMTP3_ROUTE_PROHIBITED:
+                [user mtpPause:NULL
+                  callingLayer:self
+                    affectedPc:pc
+                            si:upid
+                            ni:_networkIndicator
+                           sls:-1
+                       options:@{}];
+                break;
+            case UMMTP3_ROUTE_RESTRICTED:
+                [user mtpStatus:NULL
+                   callingLayer:self
+                     affectedPc:pc
+                             si:upid
+                             ni:_networkIndicator
+                            sls:-1
+                         status:1 /* FIXME: we could use congestion levels here but its national specific */
+                        options:@{}];
+                break;
+            case UMMTP3_ROUTE_ALLOWED:
+                [user mtpResume:NULL
+                   callingLayer:self
+                     affectedPc:pc
+                             si:upid
+                             ni:_networkIndicator
+                            sls:-1
+                        options:@{}];
+                break;
+        }
+    }
+}
+
 - (void)setUserPart:(int)upid user:(id<UMLayerMTP3UserProtocol>)user
 {
     _userPart[@(upid)] = user;
+    [self updateUpperLayerMtp3RoutingTable:user si:upid];
 }
 
 
@@ -1674,7 +1728,6 @@
         id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
         if(inst)
         {
-
             [inst mtpTransfer:data
                  callingLayer:self
                           opc:label.opc
@@ -2242,6 +2295,7 @@
                            weight:weight
                   localPreference:localpref];
     _propagatingPointcodes[@(pc.pc)] = @(pc.pc);
+    [self updateUpperLevelPointCodeAvailable: pc];
     return r;
 }
 @end

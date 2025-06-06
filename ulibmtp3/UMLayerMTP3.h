@@ -386,4 +386,6 @@ typedef enum UMMTP3_Error
 - (SccpNumberTranslation *) callingPartyAddressTranslationOutForLinkset:(NSString *)linksetName;
 - (SccpNumberTranslation *) calledPartyAddressTranslationOutForLinkset:(NSString *)linkset;
 
+- (void)updateUpperLayerMtp3RoutingTable:(id<UMLayerMTP3UserProtocol>)user si:(int)upid;
+
 @end

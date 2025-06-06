@@ -5977,4 +5977,62 @@
     [_mtp3 updateRoutingTableLinksetUnavailable:_name];
 }
 
+
+- (SccpNumberTranslation *)cga_number_translation_in
+{
+    if((_cga_number_translation_in_name) && (_cga_number_translation_in==NULL))
+    {
+        _cga_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_cga_number_translation_in_name];
+    }
+    return _cga_number_translation_in;
+}
+
+- (void)setCga_number_translation_in:(SccpNumberTranslation *)nt
+{
+    _cga_number_translation_in = nt;
+}
+
+- (SccpNumberTranslation *)cda_number_translation_in
+{
+    if((_cda_number_translation_in_name) && (_cda_number_translation_in==NULL))
+    {
+        _cda_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_cda_number_translation_in_name];
+    }
+    return _cda_number_translation_in;
+}
+
+- (void)setCda_number_translation_in:(SccpNumberTranslation *)nt
+{
+    _cda_number_translation_in = nt;
+}
+
+
+- (SccpNumberTranslation *)cga_number_translation_out
+{
+    if((_cga_number_translation_out_name) && (_cga_number_translation_out==NULL))
+    {
+        _cga_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_cga_number_translation_out_name];
+    }
+    return _cga_number_translation_out;
+}
+
+- (void)setCga_number_translation_out:(SccpNumberTranslation *)nt
+{
+    _cga_number_translation_out = nt;
+}
+
+- (SccpNumberTranslation *)cda_number_translation_out
+{
+    if((_cda_number_translation_out_name) && (_cda_number_translation_out==NULL))
+    {
+        _cda_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_cda_number_translation_out_name];
+    }
+    return _cda_number_translation_out;
+}
+
+- (void)setCda_number_translation_out:(SccpNumberTranslation *)nt
+{
+    _cda_number_translation_out = nt;
+}
+
 @end
