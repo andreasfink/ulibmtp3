@@ -1717,7 +1717,6 @@
         id<UMLayerMTP3UserProtocol> inst = [self findUserPart:si];
         if(inst)
         {
-
             [inst mtpTransfer:data
                  callingLayer:self
                           opc:label.opc
