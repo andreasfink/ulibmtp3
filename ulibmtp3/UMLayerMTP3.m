@@ -2230,6 +2230,7 @@
                            weight:weight
                   localPreference:localpref];
     _propagatingPointcodes[@(pc.pc)] = @(pc.pc);
+    [self updateUpperLevelPointCodeAvailable: pc];
     return r;
 }
 @end
