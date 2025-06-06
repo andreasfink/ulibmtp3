@@ -103,6 +103,8 @@
                  staticOrDirectOnly:(BOOL)staticOrDirectOnly
                    excludingLinkset:(NSString *)ls;
 
+- (UMSynchronizedSortedDictionary *)dictionaryOfRouteStatus;
+
 @end
 
 

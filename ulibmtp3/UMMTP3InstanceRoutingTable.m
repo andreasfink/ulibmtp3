@@ -598,6 +598,7 @@
         staticOrDirectOnly:NO
           excludingLinkset:NULL];
 }
+
 - (UMMTP3InstanceRoute *) bestRoute:(UMMTP3PointCode *)pc
                          routeArray:(NSMutableArray<UMMTP3InstanceRoute *> *)r
                  staticOrDirectOnly:(BOOL)staticOrDirectOnly
@@ -761,6 +762,29 @@
         }
     }
     return NO;
+}
+
+- (UMSynchronizedSortedDictionary *)dictionaryOfRouteStatus
+{
+    UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc]init];
+    ummutex_lock(_routingTableLock);
+    NSArray *pointcodes = [_routesByPointCode allKeys];
+    pointcodes = [pointcodes sortedArrayUsingSelector:@selector(compare:)];
+    for(NSNumber *pointcode in pointcodes)
+    {
+        UMMTP3PointCode *pc = [[UMMTP3PointCode alloc]initWitPc:pointcode.intValue variant:UMMTP3Variant_Undefined];
+        UMMTP3InstanceRoute *route = [self bestRoute:pc routeArray:NULL];
+        if(route == NULL)
+        {
+            dict[pointcode] = @(UMMTP3_ROUTE_UNKNOWN);
+        }
+        else
+        {
+            dict[pointcode] = @(route.status);
+        }
+    }
+    ummutex_unlock(_routingTableLock);
+    return dict;
 }
 
 - (UMSynchronizedSortedDictionary *)objectValue
