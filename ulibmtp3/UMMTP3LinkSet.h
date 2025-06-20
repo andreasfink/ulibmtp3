@@ -86,6 +86,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     double                      _speed;
     int                         _last_sls;
     BOOL                        _sendExtendedAttributes;
+    
     NSString                    *_called_ttmap_in_name;
     UMMTP3TranslationTableMap   *_called_ttmap_in;
     NSString                    *_called_ttmap_out_name;

@@ -13,7 +13,6 @@
 #import "UMMTP3LinkSet.h"
 #import "UMLayerMTP3.h"
 #import "UMLayerMTP3ApplicationContextProtocol.h"
-
 #define MTP3_LINK_REOPEN_TIMER1_DEFAULT   6.0 /* if link goes down, we restart it in 6 seconds */
 #define MTP3_LINK_REOPEN_TIMER2_DEFAULT   180 /* if link doesnt come up within 3 minutes, we kill it and after restarttimer1 restart it */
 #define	MTP3_LINK_TEST_TIMER_DEFAULT		30.0	/* T2 of MTP2 30...90 sec*/
