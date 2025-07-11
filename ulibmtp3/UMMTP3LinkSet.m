@@ -3819,6 +3819,28 @@
             }
         }
     }
+    
+    a = cfg[@"tcap-sharing-inside"];
+    if([a isKindOfClass:[NSString class]])
+    {
+        _tcapSharingInsideName = (NSString *)a;
+    }
+
+    a = cfg[@"tcap-sharing-outside"];
+    if([a isKindOfClass:[NSString class]])
+    {
+        _tcapSharingOutsideName = (NSString *)a;
+    }
+    a = cfg[@"tcap-sharing-priority"];
+    if([a isKindOfClass:[NSString class]])
+    {
+        _tcapSharingPriority = @([((NSString *)a) integerValue]);
+    }
+    else if([a isKindOfClass:[NSNumber class]])
+    {
+        _tcapSharingPriority = (NSNumber *)a;
+    }
+
     [self removeAllLinks];
     _prometheusMetrics = [[UMMTP3LinkSetPrometheusData alloc]initWithPrometheus:_mtp3.prometheus
                                                                     linksetName:_name

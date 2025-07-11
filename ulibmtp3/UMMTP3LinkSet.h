@@ -150,12 +150,20 @@ typedef enum UMMTP3ScreeningTraceLevel
     UMThroughputCounter *_outboundThroughputPackets;
     UMThroughputCounter *_inboundThroughputBytes;
     UMThroughputCounter *_outboundThroughputBytes;
+    
+    NSString *_tcapSharingInsideName;
+    NSString *_tcapSharingOutsideName;
+    NSNumber *_tcapSharingPriority;
 }
 
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
 @property(readwrite,strong)     UMThroughputCounter *outboundThroughputPackets;
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputBytes;
 @property(readwrite,strong)     UMThroughputCounter *outboundThroughputBytes;
+
+@property(readwrite,strong)     NSString *tcapSharingInsideName;
+@property(readwrite,strong)     NSString *tcapSharingOutsideName;
+@property(readwrite,strong)     NSNumber *tcapSharingPriority;
 
 - (void)addToLayerHistoryLog:(NSString *)s;
 
