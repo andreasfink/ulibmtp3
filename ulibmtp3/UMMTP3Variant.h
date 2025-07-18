@@ -18,4 +18,7 @@ typedef enum  UMMTP3Variant
     UMMTP3Variant_Japan     = 4,
 } UMMTP3Variant;
 
+NSString *ummtp3_variant_to_string(UMMTP3Variant v);
+UMMTP3Variant ummtp3_string_toVariant(NSString *s);
+
 #define     UMMTP3_NATIONAL_OPTION_MESSAGE_PRIORITY 0x01

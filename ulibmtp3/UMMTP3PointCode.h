@@ -40,4 +40,5 @@
 - (UMMTP3PointCode *)maskedPointcode:(int)mask;
 - (NSString *)maskedPointcodeString:(int)mask;
 - (int)maxmask;
+- (UMSynchronizedSortedDictionary *)objectValue;
 @end

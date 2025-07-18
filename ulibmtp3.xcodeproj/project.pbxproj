@@ -19,6 +19,8 @@
 		A618677928AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = A618677728AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m */; };
 		A618677C28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h in Headers */ = {isa = PBXBuildFile; fileRef = A618677A28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A618677D28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.m in Sources */ = {isa = PBXBuildFile; fileRef = A618677B28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.m */; };
+		A64994FD2E28D587006873AC /* UMMTP3Variant.m in Sources */ = {isa = PBXBuildFile; fileRef = A64994FC2E28D57F006873AC /* UMMTP3Variant.m */; };
+		A64994FE2E28D587006873AC /* UMMTP3Variant.m in Sources */ = {isa = PBXBuildFile; fileRef = A64994FC2E28D57F006873AC /* UMMTP3Variant.m */; };
 		A65270F825C33580007CF832 /* UMM3UAApplicationServerMode.h in Headers */ = {isa = PBXBuildFile; fileRef = A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A691E59F237001A800589718 /* UMMTP3PointCodeTranslationTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A691E59D237001A800589718 /* UMMTP3PointCodeTranslationTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A691E5A0237001A800589718 /* UMMTP3PointCodeTranslationTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A691E59E237001A800589718 /* UMMTP3PointCodeTranslationTable.m */; };
@@ -196,6 +198,7 @@
 		A62851401A46E4010090FC94 /* UMMTP3BlackList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3BlackList.m; sourceTree = "<group>"; };
 		A629F27C25B86C2E00C209E5 /* File */ = {isa = PBXFileReference; lastKnownFileType = text; path = File; sourceTree = "<group>"; };
 		A643580A27AFD7D500540A2D /* RELEASE-NOTES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "RELEASE-NOTES.txt"; sourceTree = "<group>"; };
+		A64994FC2E28D57F006873AC /* UMMTP3Variant.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3Variant.m; sourceTree = "<group>"; };
 		A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM3UAApplicationServerMode.h; sourceTree = "<group>"; };
 		A666EF681E89C4AF004804CB /* UMSyntaxToken_Pointcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMSyntaxToken_Pointcode.h; sourceTree = "<group>"; };
 		A666EF691E89C4AF004804CB /* UMSyntaxToken_Pointcode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMSyntaxToken_Pointcode.m; sourceTree = "<group>"; };
@@ -453,6 +456,7 @@
 				A6AD89F121CD73F300F40945 /* UMMTP3TranslationTableMap.h */,
 				A6AD89F221CD73F300F40945 /* UMMTP3TranslationTableMap.m */,
 				A6B717E41A31B3000090FC94 /* UMMTP3Variant.h */,
+				A64994FC2E28D57F006873AC /* UMMTP3Variant.m */,
 				A628513B1A46E3F40090FC94 /* UMMTP3WhiteList.h */,
 				A628513C1A46E3F40090FC94 /* UMMTP3WhiteList.m */,
 				A666EF681E89C4AF004804CB /* UMSyntaxToken_Pointcode.h */,
@@ -703,6 +707,7 @@
 				A6F178F921AF044B0084D972 /* UMMTP3Link.m in Sources */,
 				A6F1791221AF044B0084D972 /* UMMTP3Task_stop.m in Sources */,
 				A6AA23CA24854164008D5A57 /* UMMTP3StatisticDbRecord.m in Sources */,
+				A64994FE2E28D587006873AC /* UMMTP3Variant.m in Sources */,
 				A6AD89F421CD73F300F40945 /* UMMTP3TranslationTableMap.m in Sources */,
 				A6F1791021AF044B0084D972 /* UMMTP3Task_m2paStatusIndication.m in Sources */,
 				A6D7826B28ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.m in Sources */,
@@ -759,6 +764,7 @@
 				A60A36E51A305DCF0090FC94 /* UMMTP3LinkSet.m in Sources */,
 				A60A36EA1A305DDC0090FC94 /* UMMTP3Link.m in Sources */,
 				A6E3090823AAF32400783116 /* mtp3routeTests.m in Sources */,
+				A64994FD2E28D587006873AC /* UMMTP3Variant.m in Sources */,
 				A6F1793021AF044B0084D972 /* UMMTP3WhiteList.m in Sources */,
 				A6F1791721AF044B0084D972 /* UMM3UAApplicationServerProcess.m in Sources */,
 				A6F1792021AF044B0084D972 /* UMMTP3SyslogClient.m in Sources */,
