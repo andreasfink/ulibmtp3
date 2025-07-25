@@ -6,7 +6,7 @@
 //  Copyright © 2017 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <ulib/ulib.h>
 #import <ulibsctp/ulibsctp.h>
 #import <ulibmtp3/UMMTP3Variant.h>
 #import <ulibmtp3/UMMTP3PointCode.h>
