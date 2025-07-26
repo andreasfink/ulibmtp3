@@ -81,7 +81,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     NSMutableArray *_currentActiveLinks;
     NSMutableArray *_currentReadyLinks;
     NSMutableArray *_currentProcessorOutageLinks;
-
+    
     int                         _congestionLevel;
     double                      _speed;
     int                         _last_sls;
@@ -99,7 +99,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     SccpNumberTranslation       *_cda_number_translation_in;
     SccpNumberTranslation       *_cga_number_translation_out;
     SccpNumberTranslation       *_cda_number_translation_out;
-
+    
     NSString                    *_linkNamesBySlc[16];
     UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableBidi;
     UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableIn;
@@ -107,7 +107,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     NSString                    *_pointcodeTranslationTableNameBidi;
     NSString                    *_pointcodeTranslationTableNameIn;
     NSString                    *_pointcodeTranslationTableNameOut;
-    id<UMLayerMTP3ApplicationContextProtocol>  _appdel; 
+    id<UMLayerMTP3ApplicationContextProtocol>  _appdel;
     UMSynchronizedSortedDictionary *_advertizedPointcodes;
     BOOL                        _dontAdvertizeRoutes;
     NSString                    *_lastError;
@@ -115,29 +115,29 @@ typedef enum UMMTP3ScreeningTraceLevel
     UMThroughputCounter         *_speedometerTx;
     UMThroughputCounter         *_speedometerRxBytes;
     UMThroughputCounter         *_speedometerTxBytes;
-
+    
     UMPlugin<UMMTP3ScreeningPluginProtocol> *_mtp3_screeningPlugin;
     NSString                                *_mtp3_screeningPluginName;
     NSString                                *_mtp3_screeningPluginConfigFileName;
     NSString                                *_mtp3_screeningPluginTraceFileName;
     FILE                                    *_mtp3_screeningPluginTraceFile;
-
+    
     UMPlugin<UMMTP3SCCPScreeningPluginProtocol>*_sccp_screeningPlugin;
     NSString                                *_sccp_screeningPluginName;
     NSString                                *_sccp_screeningPluginConfigFileName;
     NSString                                *_sccp_screeningPluginTraceFileName;
     FILE                                    *_sccp_screeningPluginTraceFile;
-
+    
     UMMutex                                 *_mtp3_traceLock;
     UMMutex                                 *_sccp_traceLock;
-
+    
     NSArray                     *_permittedPointcodesInRoutingUpdates;
     NSArray                     *_deniedPointcodesInRoutingUpdates;
     BOOL                        _permittedPointcodesInRoutingUpdatesAll;
     BOOL                        _deniedPointcodesInRoutingUpdatesAll;
     NSArray                     *_allowedAdvertizedPointcodes;
     NSArray                     *_deniedAdvertizedPointcodes;
-
+    
     UMMTP3ScreeningTraceLevel _sccpScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
     UMMTP3ScreeningTraceLevel _mtp3ScreeningTraceLevel;  /* 0 = dont log. 1 = log blocked, 2 = log all */
     UMMTP3LinkSetPrometheusData *_prometheusMetrics;
@@ -154,6 +154,9 @@ typedef enum UMMTP3ScreeningTraceLevel
     NSString *_tcapSharingInsideName;
     NSString *_tcapSharingOutsideName;
     NSNumber *_tcapSharingPriority;
+    
+    id _tcapSharingInsideInstance;
+    id _tcapSharingOutsideInstance;
 }
 
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
@@ -164,6 +167,8 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong)     NSString *tcapSharingInsideName;
 @property(readwrite,strong)     NSString *tcapSharingOutsideName;
 @property(readwrite,strong)     NSNumber *tcapSharingPriority;
+@property(readwrite,strong)     id tcapSharingInsideInstance;
+@property(readwrite,strong)     id tcapSharingOutsideInstance;
 
 - (void)addToLayerHistoryLog:(NSString *)s;
 
