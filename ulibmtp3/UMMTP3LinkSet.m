@@ -3437,7 +3437,7 @@
     {
         _dontAdvertizeRoutes = YES;
     }
-   
+    
     
     if(cfg[@"mtp3"])
     {
@@ -3445,7 +3445,7 @@
         _mtp3 = [appContext getMTP3:mtp3_name];
         _prometheusMetrics.prometheus = _mtp3.prometheus;
     }
-
+    
     if(cfg[@"apc"])
     {
         apcString  = [cfg[@"apc"] stringValue];
@@ -3458,13 +3458,13 @@
     {
         _speed =  [cfg[@"speed"] doubleValue];
     }
-
+    
     if(cfg[@"opc"]) /* optional */
     {
         opcString = [cfg[@"opc"] stringValue];
     }
-
-
+    
+    
     if(cfg[@"tt-map-in"]) /* optional */
     {
         _ttmap_in_name = [cfg[@"tt-map-in"] stringValue];
@@ -3475,32 +3475,32 @@
         _ttmap_out_name = [cfg[@"tt-map-out"] stringValue];
         _ttmap_out = [appContext getTTMap:_ttmap_in_name];
     }
-
+    
     if(cfg[@"cga-number-translation-in"]) /* optional */
     {
         _cga_number_translation_in_name = [cfg[@"cga-number-translation-in"] stringValue];
         _cga_number_translation_in = [appContext getSccpNumberTransationByName:_cga_number_translation_in_name];
     }
-
+    
     if(cfg[@"cga-number-translation-out"]) /* optional */
     {
         _cga_number_translation_out_name = [cfg[@"cga-number-translation-out"] stringValue];
         _cga_number_translation_out = [appContext getSccpNumberTransationByName:_cga_number_translation_out_name];
     }
-
+    
     if(cfg[@"cda-number-translation-in"]) /* optional */
     {
         _cda_number_translation_in_name = [cfg[@"cda-number-translation-in"] stringValue];
         _cda_number_translation_in = [appContext getSccpNumberTransationByName:_cda_number_translation_in_name];
-
+        
     }
-
+    
     if(cfg[@"cda-number-translation-out"]) /* optional */
     {
         _cda_number_translation_out_name = [cfg[@"cda-number-translation-out"] stringValue];
         _cda_number_translation_out = [appContext getSccpNumberTransationByName:_cda_number_translation_out_name];
     }
-
+    
     if(cfg[@"pointcode-translation-table"]) /* optional */
     {
         _pointcodeTranslationTableNameBidi = [cfg[@"pointcode-translation-table"] stringValue];
@@ -3513,7 +3513,7 @@
     {
         _pointcodeTranslationTableNameOut = [cfg[@"pointcode-translation-table-out"] stringValue];
     }
-
+    
     _overrideNetworkIndicator = NULL;
     if (cfg[@"override-network-indicator"])
     {
@@ -3550,7 +3550,7 @@
             _overrideNetworkIndicator = 0;
         }
     }
-
+    
     if(cfg[@"mtp3"])
     {
         NSString *attachTo = [cfg[@"mtp3"] stringValue];
@@ -3561,22 +3561,22 @@
             [self logMajorError:s];
             @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
                                            reason:s
-                                          userInfo:@{
-                                                        @"sysmsg" : @"configuration error",
-                                                        @"func": @(__func__),
-                                                        @"line": @(__LINE__),
-                                                        @"file": @(__FILE__),
-                                                        @"obj":self
-                                          }]);
+                                         userInfo:@{
+                @"sysmsg" : @"configuration error",
+                @"func": @(__func__),
+                @"line": @(__LINE__),
+                @"file": @(__FILE__),
+                @"obj":self
+            }]);
         }
         else
         {
             [_mtp3 addLinkSet:self];
         }
     }
-
+    
     _variant = _mtp3.variant;
-
+    
     if (cfg[@"variant"])
     {
         NSString *s = [cfg[@"variant"] stringValue];
@@ -3601,19 +3601,19 @@
             [self logMajorError:[NSString stringWithFormat:@"Unknown M3UA variant '%@'",s]];
         }
     }
-
+    
     if(_variant == UMMTP3Variant_Undefined)
     {
         @throw([NSException exceptionWithName:[NSString stringWithFormat:@"CONFIG_ERROR FILE %s line:%ld",__FILE__,(long)__LINE__]
                                        reason:@"Can not figure out mtp3 variant"
                                      userInfo:
-                                        @{
-                                            @"func": @(__func__),
-                                            @"line": @(__LINE__),
-                                            @"file": @(__FILE__),
-                                     }]);
+                @{
+            @"func": @(__func__),
+            @"line": @(__LINE__),
+            @"file": @(__FILE__),
+        }]);
     }
-
+    
     _adjacentPointCode = [[UMMTP3PointCode alloc]initWithString:apcString variant:_variant];
     if(opcString)
     {
@@ -3657,7 +3657,7 @@
                 [self logMajorError:@"Invalid value for screening-mtp3-plugin-trace-level. Should be 0...2"];
         }
     }
-
+    
     if (cfg[@"screening-sccp-plugin-name"])
     {
         _sccp_screeningPluginName = [cfg[@"screening-sccp-plugin-name"] stringValue];
@@ -3673,7 +3673,7 @@
         _sccp_screeningPluginTraceFileName = [cfg[@"screening-sccp-plugin-trace-file"] stringValue];
         _sccp_screeningPlugin = NULL; /* forces reload of plugin if config change occurs */
     }
-
+    
     if (cfg[@"screening-sccp-plugin-trace-level"])
     {
         NSNumber *n = cfg[@"screening-sccp-plugin-trace-level"];
@@ -3693,7 +3693,7 @@
                 [self logMajorError:@"Invalid value for screening-sccp-plugin-trace-level. Should be 0...2"];
         }
     }
-
+    
     if(cfg[@"routing-update-allow"])
     {
         id p = cfg[@"routing-update-allow"];
@@ -3728,7 +3728,7 @@
             }
         }
     }
-
+    
     if(cfg[@"routing-update-deny"])
     {
         id p = cfg[@"routing-update-deny"];
@@ -3791,7 +3791,7 @@
             }
         }
     }
-
+    
     a = cfg[@"routing-advertisement-deny"];
     if([a isKindOfClass:[NSString class]])
     {
@@ -3821,26 +3821,36 @@
     }
     
     a = cfg[@"tcap-sharing-inside"];
-    if([a isKindOfClass:[NSString class]])
+    if(a)
     {
-        _tcapSharingInsideName = (NSString *)a;
+        NSLog(@"link: %@ tcap-sharing-inside: %@",self.name,a);
+        if([a isKindOfClass:[NSString class]])
+        {
+            _tcapSharingInsideName = (NSString *)a;
+        }
     }
-
     a = cfg[@"tcap-sharing-outside"];
-    if([a isKindOfClass:[NSString class]])
+    if(a)
     {
-        _tcapSharingOutsideName = (NSString *)a;
+        NSLog(@"link: %@ tcap-sharing-outside: %@",self.name,a);
+        if([a isKindOfClass:[NSString class]])
+        {
+            _tcapSharingOutsideName = (NSString *)a;
+        }
     }
     a = cfg[@"tcap-sharing-priority"];
-    if([a isKindOfClass:[NSString class]])
+    if(a)
     {
-        _tcapSharingPriority = @([((NSString *)a) integerValue]);
+        NSLog(@"link: %@ tcap-sharing-priority: %@",self.name,a);
+        if([a isKindOfClass:[NSString class]])
+        {
+            _tcapSharingPriority = @([((NSString *)a) integerValue]);
+        }
+        else if([a isKindOfClass:[NSNumber class]])
+        {
+            _tcapSharingPriority = (NSNumber *)a;
+        }
     }
-    else if([a isKindOfClass:[NSNumber class]])
-    {
-        _tcapSharingPriority = (NSNumber *)a;
-    }
-
     [self removeAllLinks];
     _prometheusMetrics = [[UMMTP3LinkSetPrometheusData alloc]initWithPrometheus:_mtp3.prometheus
                                                                     linksetName:_name
