@@ -3823,7 +3823,6 @@
     a = cfg[@"tcap-sharing-inside"];
     if(a)
     {
-        NSLog(@"link: %@ tcap-sharing-inside: %@",self.name,a);
         if([a isKindOfClass:[NSString class]])
         {
             _tcapSharingInsideName = (NSString *)a;
@@ -3832,7 +3831,6 @@
     a = cfg[@"tcap-sharing-outside"];
     if(a)
     {
-        NSLog(@"link: %@ tcap-sharing-outside: %@",self.name,a);
         if([a isKindOfClass:[NSString class]])
         {
             _tcapSharingOutsideName = (NSString *)a;
