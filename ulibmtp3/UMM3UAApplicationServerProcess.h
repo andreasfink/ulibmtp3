@@ -23,7 +23,8 @@
 
 @interface UMM3UAApplicationServerProcess : UMLayer<UMLayerSctpUserProtocol>
 {
-    UMLayerSctp                 *_sctpOrTcpLink;
+    UMLayerSctp                 *_sctpLink;
+    //UMLayerTcp                  *_tcpLink;
     UMM3UAApplicationServer     *_as;
     BOOL                        _congested;
     UMM3UA_Status               _m3ua_asp_status;

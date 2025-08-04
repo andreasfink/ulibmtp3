@@ -474,4 +474,12 @@
     }
     return d;
 }
+
+- (UMSynchronizedSortedDictionary *)objectValue
+{
+    UMSynchronizedSortedDictionary *dict = [[UMSynchronizedSortedDictionary alloc]init];
+    dict[@"pc"] = @(_pc);
+    dict[@"variant"] = ummtp3_variant_to_string(_variant);
+    return dict;
+}
 @end
