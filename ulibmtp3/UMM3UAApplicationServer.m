@@ -741,7 +741,39 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void) addAsp:(UMM3UAApplicationServerProcess *)asp
 {
     asp.as = self;
-    _applicationServerProcesses[asp.layerName] = asp;
+    if(asp.config[@"attach-to"] == 0)
+    {
+        switch(self.mode)
+        {
+            case UMM3UAApplicationServerMode_peer:
+                asp.m3uaMode = M3UAMode_SCTP_Peer;
+                break;
+            case UMM3UAApplicationServerMode_client:
+                asp.m3uaMode = M3UAMode_SCTP_Client;
+                break;
+            case UMM3UAApplicationServerMode_server:
+                asp.m3uaMode = M3UAMode_SCTP_Server;
+                break;
+            default:
+                asp.m3uaMode = M3UAMode_Undefined;
+                break;
+        }
+    }
+    else
+    {
+        switch(self.mode)
+        {
+            case UMM3UAApplicationServerMode_client:
+                asp.m3uaMode = M3UAMode_TCP_Client;
+                break;
+            case UMM3UAApplicationServerMode_server:
+                asp.m3uaMode = M3UAMode_TCP_Server;
+                break;
+            default:
+                asp.m3uaMode = M3UAMode_Undefined;
+                break;
+        }
+    }
 }
 
 - (void) adminAttachConfirm:(UMLayer *)attachedLayer

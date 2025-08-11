@@ -38,6 +38,7 @@
 #import "UMMTP3SyslogClient.h"
 #import "UMMTP3StatisticDb.h"
 #import "UMMTP3RoutingUpdateDb.h"
+#import "UMM3UATcpRegistry.h"
 
 @implementation UMLayerMTP3
 
@@ -82,7 +83,7 @@
     _outboundThroughputPackets  =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
     _inboundThroughputBytes     =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
     _outboundThroughputBytes    =  [[UMThroughputCounter alloc]initWithResolutionInSeconds: 1.0 maxDuration: 1260.0];
-
+    _m3ua_tcp_registry = [[UMM3UATcpRegistry alloc]init];
 }
 
 -(NSString *)layerType
