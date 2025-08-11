@@ -20,6 +20,9 @@
 #import "UMM3UATcpRegistry.h"
 #import "UMM3UATcpReceiver.h"
 
+#define M3UA_TCP_DEBUG  1
+
+
 #define	M3UA_CLASS_TYPE_ERR			0x0000
 #define M3UA_CLASS_TYPE_NTFY		0x0001
 #define	M3UA_CLASS_TYPE_DATA		0x0101
@@ -2369,6 +2372,10 @@ static const char *get_tcp_status_string(UMSocketStatus status)
     _config = [cfg copy];
     @autoreleasepool
     {
+#ifdef M3UA_TCP_DEBUG
+        NSLog(@"Config:%@",cfg);
+#endif
+
         [UMUtil randomFrom:M3UA_DEFAULT_REOPEN1_TIMER to:M3UA_DEFAULT_REOPEN1_TIMER+3];
         _reopen_timer1_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN1_TIMER to:M3UA_DEFAULT_REOPEN1_TIMER+3];;
         _reopen_timer2_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN2_TIMER to:M3UA_DEFAULT_REOPEN2_TIMER+3];
@@ -2411,20 +2418,30 @@ static const char *get_tcp_status_string(UMSocketStatus status)
         if(cfg[@"tcp-remote-address"])
         {
             _tcpRemoteAddress = [cfg[@"tcp-remote-address"] stringValue];
+#ifdef M3UA_TCP_DEBUG
+            NSLog(@"_tcpRemoteAddress=%@",_tcpRemoteAddress);
+#endif
         }
         if(cfg[@"tcp-local-address"])
         {
             _tcpLocalAddress = [cfg[@"tcp-local-address"] stringValue];
+#ifdef M3UA_TCP_DEBUG
+#endif
         }
         if(cfg[@"tcp-remote-port"])
         {
             _tcpRemotePort = [cfg[@"tcp-remote-port"] intValue];
+#ifdef M3UA_TCP_DEBUG
+            NSLog(@"_tcpRemotePort=%d",_tcpRemotePort);
+#endif
         }
         if(cfg[@"tcp-local-port"])
         {
             _tcpLocalPort = [cfg[@"tcp-local-port"] intValue];
+#ifdef M3UA_TCP_DEBUG
+            NSLog(@"_tcpLocalPort=%d",_tcpLocalPort);
+#endif
         }
-
 
         if(cfg[@"attach-to"])
         {
@@ -2534,6 +2551,9 @@ static const char *get_tcp_status_string(UMSocketStatus status)
             [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
             if(_m3uaMode == M3UAMode_TCP_Server)
             {
+#ifdef M3UA_TCP_DEBUG
+                NSLog(@"[registry getOrCreateListener:<%@> port:<%d> ..]",_tcpLocalAddress,_tcpLocalPort);
+#endif
                 _listener = [registry getOrCreateListener:_tcpLocalAddress port:_tcpLocalPort logFeed:_logFeed logLevel:_logLevel];
                 [_listener startListening];
             }
@@ -2541,6 +2561,10 @@ static const char *get_tcp_status_string(UMSocketStatus status)
         else if(_m3uaMode == M3UAMode_TCP_Client)
         {
             UMM3UATcpRegistry *registry = _as.mtp3.m3ua_tcp_registry;
+            
+#ifdef M3UA_TCP_DEBUG
+                NSLog(@"[registry addConnection:<%@> port:<%d> ..]",_tcpRemoteAddress,_tcpRemotePort);
+#endif
             [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
         }
     }
