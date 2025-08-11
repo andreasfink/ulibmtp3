@@ -57,36 +57,77 @@
     if(_dscp)
     {
         [_umsocket setDscpString:_dscp];
+        if(_logLevel <= UMLOG_DEBUG)
+        {
+            [_logFeed debugText:[NSString stringWithFormat:@"%@ setDscpString:%@",_name,_dscp]];
+        }
     }
     [self setBufferSizes];
+    if(_logLevel <= UMLOG_DEBUG)
+    {
+        [_logFeed debugText:[NSString stringWithFormat:@"%@ setBufferSizes",_name]];
+    }
+
     [_umsocket switchToNonBlocking];
+    if(_logLevel <= UMLOG_DEBUG)
+    {
+        [_logFeed debugText:[NSString stringWithFormat:@"%@ switchToNonBlocking",_name]];
+    }
 #define     LOG_MINOR_ERROR(err,area)  if(err) { NSString *s = [NSString stringWithFormat:@"ERROR in %@: %d %@",area,err,[UMSocket getSocketErrorString:err]]; [self logMinorError:s]; }
 #define     LOG_MAYOR_ERROR(err,area)  if(err) { NSString *s = [NSString stringWithFormat:@"ERROR in %@: %d %@",area,err,[UMSocket getSocketErrorString:err]]; [self logMajorError:s]; }
     
     UMSocketError err;
     
     err = [_umsocket setIPDualStack];
+    if(_logLevel <= UMLOG_DEBUG)
+    {
+        [_logFeed debugText:[NSString stringWithFormat:@"%@ setIPDualStack",_name]];
+    }
     LOG_MINOR_ERROR(err,@"setIPDualStack");
     
     err = [_umsocket setLinger];
+    if(_logLevel <= UMLOG_DEBUG)
+    {
+        [_logFeed debugText:[NSString stringWithFormat:@"%@ setLinger",_name]];
+    }
     LOG_MINOR_ERROR(err,@"setLinger");
     
     err = [_umsocket setReuseAddr];
+    if(_logLevel <= UMLOG_DEBUG)
+    {
+        [_logFeed debugText:[NSString stringWithFormat:@"%@ setReuseAddr",_name]];
+    }
     LOG_MINOR_ERROR(err,@"setReuseAddr");
     
     err = [_umsocket setPathMtuDiscovery:YES];
+    if(_logLevel <= UMLOG_DEBUG)
+    {
+        [_logFeed debugText:[NSString stringWithFormat:@"%@ setPathMtuDiscovery:YES",_name]];
+    }
     LOG_MINOR_ERROR(err,@"setPathMtuDiscovery");
     
     err = [_umsocket bind];
+    if(_logLevel <= UMLOG_DEBUG)
+    {
+        [_logFeed debugText:[NSString stringWithFormat:@"%@ bind",_name]];
+    }
     LOG_MAYOR_ERROR(err,@"bind");
     if(err==UMSocketError_no_error)
     {
         _isBound = YES;
         err = [_umsocket listen:128];
+        if(_logLevel <= UMLOG_DEBUG)
+        {
+            [_logFeed debugText:[NSString stringWithFormat:@"%@ listen:128",_name]];
+        }
         LOG_MAYOR_ERROR(err,@"listen");
         
         if(err!=UMSocketError_no_error)
         {
+            if(_logLevel <= UMLOG_DEBUG)
+            {
+                [_logFeed debugText:[NSString stringWithFormat:@"%@ _mustListen=YES _isListening=YES",_name]];
+            }
             _mustListen = YES;
             _isListening = YES;
         }
@@ -98,6 +139,10 @@
     int returnValue = 0;
     if(_mustListen == NO)
     {
+        if(_logLevel <= UMLOG_DEBUG)
+        {
+            [_logFeed debugText:[NSString stringWithFormat:@"%@ _mustListen=NO. Exiting",_name]];
+        }
         return -1;
     }
     @autoreleasepool
@@ -111,28 +156,49 @@
         }
         else if (pollResult == UMSocketError_has_data)
         {
+            if(_logLevel <= UMLOG_DEBUG)
+            {
+                [_logFeed debugText:[NSString stringWithFormat:@"%@ pollResult=UMSocketError_has_data",_name]];
+            }
+
             returnValue = 1;
             /* we get new inbound connection request */
             UMSocketError ret1=UMSocketError_no_error;
             UMSocket *clientSocket = [_umsocket accept:&ret1];
             if(clientSocket)
             {
+                if(_logLevel <= UMLOG_DEBUG)
+                {
+                    [_logFeed debugText:[NSString stringWithFormat:@"%@ _umsocket accept returns socket %@",_name,clientSocket.description]];
+                }
                 clientSocket.useSSL                 = _enableSSL;
                 clientSocket.serverSideKeyFilename  = _privateKeyFile;
                 clientSocket.serverSideKeyData      = _privateKeyFileData;
                 clientSocket.serverSideCertFilename = _certFile;
                 clientSocket.serverSideCertData     = _certFileData;
                 
-                UMM3UAApplicationServerProcess *asp = [_registry getAspForRemoteAddress:_umsocket.connectedRemoteAddress port:_umsocket.connectedRemotePort];
+                UMM3UAApplicationServerProcess *asp = [_registry getAspForRemoteAddress:clientSocket.connectedRemoteAddress port:clientSocket.connectedRemotePort];
                 if (asp)
                 {
+                    if(_logLevel <= UMLOG_DEBUG)
+                    {
+                        [_logFeed debugText:[NSString stringWithFormat:@"%@ found in registry: %@",_name,asp.description]];
+                    }
                     UMM3UATcpReceiver *con = [[UMM3UATcpReceiver alloc] initWithSocket:clientSocket registry:_registry asp:asp logFeed:_logFeed logLevel:_logLevel];
+                    if(_logLevel <= UMLOG_DEBUG)
+                    {
+                        [_logFeed debugText:[NSString stringWithFormat:@"%@ starting receiver %@",_name,con.description]];
+                    }
                     [con startBackgroundTask];
                     asp.tcpReceiver = con;
                     asp.tcpSocket = clientSocket;
                 }
                 else
                 {
+                    if(_logLevel <= UMLOG_DEBUG)
+                    {
+                        [_logFeed debugText:[NSString stringWithFormat:@"%@ not found in registry closing",_name]];
+                    }
                     [clientSocket close];
                 }
             }
