@@ -741,6 +741,7 @@ static const char *m3ua_param_name(uint16_t param_type)
 - (void) addAsp:(UMM3UAApplicationServerProcess *)asp
 {
     asp.as = self;
+    _applicationServerProcesses[asp.layerName] = asp;
     if(asp.config[@"attach-to"] == 0)
     {
         switch(self.mode)

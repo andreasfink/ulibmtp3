@@ -15,7 +15,8 @@
 
 - (UMM3UATcpReceiver *)initWithSocket:(UMSocket *)socket registry:(UMM3UATcpRegistry *)registry asp:(UMM3UAApplicationServerProcess *)asp logFeed:(UMLogFeed *)feed logLevel:(UMLogLevel)level
 {
-    self = [super init];
+    NSString *name = [NSString stringWithFormat:@"TCP-RECEIVER-ASP[%@]",asp.name];
+    self = [super initWithName:name];
     if(self)
     {
         _socket = socket;
