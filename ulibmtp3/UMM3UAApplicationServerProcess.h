@@ -114,6 +114,7 @@ typedef enum    M3UAMode
 @property(readwrite,strong,atomic)  UMM3UAApplicationServer *as;
 @property(readwrite,strong,atomic)  UMLayerSctp *sctpLink;
 @property(readwrite,strong,atomic)  UMM3UATcpReceiver *tcpReceiver;
+@property(readwrite,strong,atomic)  UMSocket *tcpSocket;
 
 @property(readwrite,strong,atomic)  NSString *name;
 @property (readonly) BOOL sctp_connecting;

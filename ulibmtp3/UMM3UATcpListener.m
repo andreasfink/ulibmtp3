@@ -10,6 +10,7 @@
 #import "UMLayerMTP3.h"
 #import "UMM3UATcpRegistry.h"
 #import "UMM3UATcpReceiver.h"
+#import "UMM3UAApplicationServerProcess.h"
 
 #include <poll.h>
 
@@ -127,6 +128,8 @@
                 {
                     UMM3UATcpReceiver *con = [[UMM3UATcpReceiver alloc] initWithSocket:clientSocket registry:_registry asp:asp logFeed:_logFeed logLevel:_logLevel];
                     [con startBackgroundTask];
+                    asp.tcpReceiver = con;
+                    asp.tcpSocket = clientSocket;
                 }
                 else
                 {
@@ -208,7 +211,6 @@
 {
     return _name;
 }
-
 
 - (void)startListening
 {

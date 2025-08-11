@@ -18,6 +18,7 @@
 #import "UMMTP3RoutingUpdateDb.h"
 #import "UMM3UATcpListener.h"
 #import "UMM3UATcpRegistry.h"
+#import "UMM3UATcpReceiver.h"
 
 #define	M3UA_CLASS_TYPE_ERR			0x0000
 #define M3UA_CLASS_TYPE_NTFY		0x0001
@@ -1871,7 +1872,38 @@ static const char *get_tcp_status_string(UMSocketStatus status)
     [_submission_speed clear];
     _speed_within_limit = YES;
     [self stopReopenTimer1];
-    [_sctpLink openFor:self sendAbortFirst:NO reason:(reason ? reason : @"m3ua-poweron")];
+    if(_m3uaMode == M3UAMode_TCP_Client)
+    {
+        UMM3UATcpRegistry *registry = _as.mtp3.m3ua_tcp_registry;
+        [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
+        _tcpSocket = [[UMSocket alloc]initWithType:UMSOCKET_TYPE_TCP name:[NSString stringWithFormat:@"tcp(%@)",_layerName]];
+        _tcpSocket.requestedLocalAddress    = _tcpLocalAddress;
+        _tcpSocket.localHost                = [[UMHost alloc]initWithAddress:_tcpLocalAddress];
+        _tcpSocket.remoteHost               = [[UMHost alloc]initWithAddress:_tcpRemoteAddress];
+        _tcpSocket.requestedLocalPort       = _tcpLocalPort;
+        _tcpSocket.requestedRemotePort      = _tcpRemotePort;
+        UMSocketError err = [_tcpSocket connect];
+        if(err == UMSocketError_no_error)
+        {
+            _tcpReceiver = [[UMM3UATcpReceiver alloc]initWithSocket:_tcpSocket registry:registry asp:self logFeed:_logFeed logLevel:_logLevel];
+            [_tcpReceiver startBackgroundTask];
+        }
+    }
+    else if(_m3uaMode == M3UAMode_TCP_Server)
+    {
+        UMM3UATcpRegistry *registry = _as.mtp3.m3ua_tcp_registry;
+        if(_listener == NULL)
+        {
+            _listener = [registry getOrCreateListener:_tcpLocalAddress port:_tcpLocalPort logFeed:_logFeed logLevel:_logLevel];
+        }
+        [_listener startListening];
+        [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
+        _tcpSocket = NULL;
+    }
+    else
+    {
+        [_sctpLink openFor:self sendAbortFirst:NO reason:(reason ? reason : @"m3ua-poweron")];
+    }
     [self startReopenTimer2];
     ummutex_unlock(_aspLock);
 }
@@ -2503,6 +2535,7 @@ static const char *get_tcp_status_string(UMSocketStatus status)
             if(_m3uaMode == M3UAMode_TCP_Server)
             {
                 _listener = [registry getOrCreateListener:_tcpLocalAddress port:_tcpLocalPort logFeed:_logFeed logLevel:_logLevel];
+                [_listener startListening];
             }
         }
         else if(_m3uaMode == M3UAMode_TCP_Client)

@@ -67,5 +67,9 @@
                             logFeed:(UMLogFeed *)feed
                            logLevel:(UMLogLevel)level;
 
+
+- (void)startListening;
+- (void)stopListening;
+
 @end
 
