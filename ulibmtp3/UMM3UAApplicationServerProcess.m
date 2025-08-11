@@ -2589,6 +2589,8 @@ static const char *get_tcp_status_string(UMSocketStatus status)
             NSLog(@"_tcpLocalPort: %d",_tcpLocalPort);
             NSLog(@"_tcpRemoteAddress: %@",_tcpRemoteAddress);
             NSLog(@"_tcpRemotePort: %d",_tcpRemotePort);
+            NSLog(@"_config: %@",_config);
+            
             UMAssert(0,@"Undefined M3UA-ASP configuration. Either attach-to and as mode client/server/peer must be set ot tcp-local-address,tcp-remote-address,tcp-local-port,tcp-remote-port and as mode client or server.");
         }
         if((_m3uaMode == M3UAMode_SCTP_Server) || (_m3uaMode == M3UAMode_SCTP_Client) || (_m3uaMode == M3UAMode_SCTP_Peer))
