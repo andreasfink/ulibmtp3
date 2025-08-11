@@ -10,6 +10,8 @@
 #import "UMM3UATcpListener.h"
 #import "UMM3UAApplicationServerProcess.h"
 #import "UMM3UATcpListener.h"
+
+#define REGISTRY_DEBUG  1
 @implementation UMM3UATcpRegistry
 
 - (UMM3UATcpRegistry *)init
@@ -48,20 +50,31 @@
 
 - (UMM3UATcpListener *)getOrCreateListener:(NSString *)address port:(int)port logFeed:(UMLogFeed *)feed logLevel:(UMLogLevel)level
 {
+#if defined(REGISTRY_DEBUG)
+    NSLog(@"getOrCreateListener %@ %d",address,port);
+#endif
     NSString *key = [NSString stringWithFormat:@"%@:%d",address,port];
     ummutex_lock(_lock);
     UMM3UATcpListener *listener = _listeners[key];
     if(listener == NULL)
     {
+#if defined(REGISTRY_DEBUG)
+        NSLog(@"  creating new listener");
+#endif
        listener = [[UMM3UATcpListener alloc]initWithPort:port
                                           localIpAddress:address
-                                                registry:self
+                                                registry:NULL
                                                  logFeed:feed
                                                 logLevel:level];
         [listener startBackgroundTask];
         _listeners[key] = listener;
     }
     ummutex_unlock(_lock);
+    listener.registry = self; /* we cant do that in the creation as we are already locked */
+#if defined(REGISTRY_DEBUG)
+    NSLog(@"  returning %@",listener.name);
+#endif
+
     return listener;
 }
 
