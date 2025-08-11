@@ -55,6 +55,7 @@
     {
        listener = [[UMM3UATcpListener alloc]initWithPort:port
                                           localIpAddress:address
+                                                registry:self
                                                  logFeed:feed
                                                 logLevel:level];
         [listener startBackgroundTask];

@@ -26,8 +26,10 @@
 
 - (UMM3UATcpListener *)initWithPort:(int)localPort
                       localIpAddress:(NSString *)address
+                           registry:(UMM3UATcpRegistry *)registry
                              logFeed:(UMLogFeed *)feed
                             logLevel:(UMLogLevel)level
+
 {
     NSString *name = [NSString stringWithFormat:@"M3UA-TCP-LISTENER(%@:%d)",address,localPort];
     self = [super initWithName: name];
@@ -40,6 +42,7 @@
         _port           = localPort;
         _localIpAddress = address;
         _pollTimeoutInMs    = 500;
+        _registry       = registry;
     }
     return self;
 }

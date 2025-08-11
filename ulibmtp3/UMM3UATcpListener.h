@@ -64,9 +64,10 @@
 
 - (UMM3UATcpListener *)initWithPort:(int)localPort
                      localIpAddress:(NSString *)address
+                           registry:(UMM3UATcpRegistry *)registry
                             logFeed:(UMLogFeed *)feed
                            logLevel:(UMLogLevel)level;
-
+    
 
 - (void)startListening;
 - (void)stopListening;
