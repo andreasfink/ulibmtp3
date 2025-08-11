@@ -128,6 +128,9 @@
             {
                 [_logFeed debugText:[NSString stringWithFormat:@"%@ _mustListen=YES _isListening=YES",_name]];
             }
+        }
+        else
+        {
             _mustListen = YES;
             _isListening = YES;
         }
