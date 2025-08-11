@@ -201,6 +201,7 @@
                     if(_logLevel <= UMLOG_DEBUG)
                     {
                         [_logFeed debugText:[NSString stringWithFormat:@"%@ not found in registry closing",_name]];
+                        NSLog(@"registry content %@",_registry.contentText);
                     }
                     [clientSocket close];
                 }
@@ -312,6 +313,12 @@
     {
         ummutex_unlock(_listenerLock);
     }
+}
+
+- (NSString *)name
+{
+    NSString *name = [NSString stringWithFormat:@"TCP-LISTENER[%@:%d]",_localIpAddress,_port];
+    return name;
 }
 
 @end

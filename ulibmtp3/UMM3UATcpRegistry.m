@@ -81,7 +81,7 @@
 {
     NSString *key = [NSString stringWithFormat:@"%@:%d",address,port];
     ummutex_lock(_lock);
-    UMM3UATcpListener *old = _connections[key];
+    UMM3UAApplicationServerProcess *old = _connections[key];
     _connections[key]=asp;
     old = NULL;
     ummutex_unlock(_lock);
@@ -104,4 +104,33 @@
     ummutex_unlock(_lock);
     return asp;
 }
+
+- (NSString *)contentText
+{
+    NSMutableString *s = [[NSMutableString alloc]init];
+    [s appendString:@"\n"];
+    [s appendString:@"--------------------------------------------------\n"];
+    [s appendString:@"M3UA TCP Registry\n"];
+    [s appendString:@"--------------------------------------------------\n"];
+    [s appendString:@"Listeners\n"];
+    NSArray *allKeys = _listeners.allKeys;
+    for(NSString *key in allKeys)
+    {
+        UMM3UATcpListener *listener = _listeners[key];
+        [s appendFormat:@"%@ -> %@\n",key,listener.name];
+    }
+    [s appendString:@"--------------------------------------------------\n"];
+    [s appendString:@"Connections\n"];
+
+    NSArray *allKeys2 = _connections.allKeys;
+    for(NSString *key in allKeys2)
+    {
+        UMM3UAApplicationServerProcess *connection = _connections[key];
+        [s appendFormat:@"%@ -> %@\n",key,connection.layerName];
+    }
+    [s appendString:@"--------------------------------------------------\n"];
+
+    return s;
+}
+
 @end

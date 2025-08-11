@@ -13,7 +13,7 @@
 
 @interface UMM3UATcpRegistry : UMObject
 {
-    UMMutex                                                             *_lock;
+    UMMutex                      *_lock;
     UMSynchronizedDictionary     *_listeners; /* key is "local address:port" */
     UMSynchronizedDictionary     *_connections; /* key is "remote address:remote port where remote port can be 0" */
 }
@@ -27,5 +27,6 @@
 - (void) removeConnectionForRemoteAddress:(NSString *)address remotePort:(int)port;
 
 - (UMM3UAApplicationServerProcess *)getAspForRemoteAddress:(NSString *)address port:(int)port;
+- (NSString *)contentText;
 
 @end

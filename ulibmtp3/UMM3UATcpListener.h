@@ -70,6 +70,6 @@
 
 - (void)startListening;
 - (void)stopListening;
-
+- (NSString *)name;
 @end
 
