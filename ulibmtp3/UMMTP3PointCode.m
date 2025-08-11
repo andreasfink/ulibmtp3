@@ -83,7 +83,10 @@
                     sscanf(in,"%ld",&res);
                 }
             }
-
+        }
+        if(var==UMMTP3Variant_Undefined)
+        {
+            var=UMMTP3Variant_ITU;
         }
         if((_variant == UMMTP3Variant_China)  || (_variant == UMMTP3Variant_ANSI))
         {
@@ -110,30 +113,28 @@
         _variant = var;
         switch(var)
         {
-            case UMMTP3Variant_ITU:
-            {
-                _pc  = data[(*p)++];
-                _pc +=  (data[(*p)++] << 8 );
-                _pc  = _pc & 0x3F;
-            }
-                break;
             case UMMTP3Variant_ANSI:
             {
                 _pc = data[(*p)++];
                 _pc +=  (data[(*p)++] << 8 );
                 _pc +=  (data[(*p)++] << 16 );
-            }
                 break;
+            }
             case UMMTP3Variant_China:
             {
                 _pc = data[(*p)++];
                 _pc +=  (data[(*p)++] << 8 );
                 _pc +=  (data[(*p)++] << 16 );
+                break;
             }
-                break;
+            case UMMTP3Variant_ITU:
             default:
-                UMAssert(0,@"Unknown Pointcode Variant %d", var);
+            {
+                _pc  = data[(*p)++];
+                _pc +=  (data[(*p)++] << 8 );
+                _pc  = _pc & 0x3F;
                 break;
+            }
         }
     }
     return self;
@@ -148,24 +149,6 @@
         _variant = var;
         switch(var)
         {
-            case UMMTP3Variant_ITU:
-            {
-                if((*p+2) >maxlen)
-                {
-                    @throw([NSException exceptionWithName:@"MTP_DECODE"
-                                                   reason:NULL
-                                                 userInfo:@{
-                                                            @"sysmsg" : @"not-enough-bytes",
-                                                            @"func": @(__func__),
-                                                            @"obj":self
-                                                            }
-                            ]);
-                }
-                *s = data[*p] >> 6;
-                _pc = data[(*p)++];
-                _pc |=  (data[(*p)++] & 0x3F) << 8;
-            }
-                break;
             case UMMTP3Variant_ANSI:
             case UMMTP3Variant_China:
             case UMMTP3Variant_Japan:
@@ -175,21 +158,37 @@
                     @throw([NSException exceptionWithName:@"MTP_DECODE"
                                                    reason:NULL
                                                  userInfo:@{
-                                                            @"sysmsg" : @"not-enough-bytes",
-                                                            @"func": @(__func__),
-                                                            @"obj":self
-                                                            }
-                            ]);
+                        @"sysmsg" : @"not-enough-bytes",
+                        @"func": @(__func__),
+                        @"obj":self
+                    }
+                           ]);
                 }
                 *s = data[(*p)++] & 0x03;
                 _pc = data[(*p)++];
                 _pc |=  (data[(*p)++] << 8 );
                 _pc |=  (data[(*p)++] << 16 );
+                break;
             }
-                break;
+            case UMMTP3Variant_ITU:
             default:
-                UMAssert(0,@"Unknown Pointcode Variant %d", var);
+            {
+                if((*p+2) >maxlen)
+                {
+                    @throw([NSException exceptionWithName:@"MTP_DECODE"
+                                                   reason:NULL
+                                                 userInfo:@{
+                        @"sysmsg" : @"not-enough-bytes",
+                        @"func": @(__func__),
+                        @"obj":self
+                    }
+                           ]);
+                }
+                *s = data[*p] >> 6;
+                _pc = data[(*p)++];
+                _pc |=  (data[(*p)++] & 0x3F) << 8;
                 break;
+            }
         }
     }
     return self;
@@ -203,7 +202,29 @@
         _variant = var;
         switch(var)
         {
+                
+            case UMMTP3Variant_ANSI:
+            case UMMTP3Variant_China:
+            case UMMTP3Variant_Japan:
+            {
+                if((*p+3) >maxlen)
+                {
+                    @throw([NSException exceptionWithName:@"MTP_DECODE"
+                                                   reason:NULL
+                                                 userInfo:@{
+                        @"sysmsg" : @"not-enough-bytes",
+                        @"func": @(__func__),
+                        @"obj":self
+                    }
+                           ]);
+                }
+                _pc = data[(*p)++];
+                _pc |=  (data[(*p)++] << 8 );
+                _pc |=  (data[(*p)++] << 16 );
+                break;
+            }
             case UMMTP3Variant_ITU:
+            default:
             {
                 if((*p+2) >maxlen)
                 {
@@ -218,31 +239,8 @@
                 }
                 _pc = data[(*p)++];
                 _pc |=  (data[(*p)++] & 0x3F) << 8;
+                break;
             }
-                break;
-            case UMMTP3Variant_ANSI:
-            case UMMTP3Variant_China:
-            case UMMTP3Variant_Japan:
-            {
-                if((*p+3) >maxlen)
-                {
-                    @throw([NSException exceptionWithName:@"MTP_DECODE"
-                                                   reason:NULL
-                                                 userInfo:@{
-                                                            @"sysmsg" : @"not-enough-bytes",
-                                                            @"func": @(__func__),
-                                                            @"obj":self
-                                                            }
-                            ]);
-                }
-                _pc = data[(*p)++];
-                _pc |=  (data[(*p)++] << 8 );
-                _pc |=  (data[(*p)++] << 16 );
-            }
-                break;
-            default:
-                UMAssert(0,@"Unknown Pointcode Variant %d", var);
-                break;
         }
     }
     return self;
@@ -359,16 +357,15 @@
         }
             break;
         case UMMTP3Variant_ITU:
+        default:
         {
             char buf[2];
             
             buf[0]= _pc & 0xFF;
             buf[1]= (_pc >> 8) & 0x3F;
             return [NSData dataWithBytes:buf length:2];
-        }
             break;
-        default:
-            UMAssert(0,@"Undefined variant");
+        }
     }
     return NULL;
 }
@@ -390,6 +387,7 @@
         }
             break;
         case UMMTP3Variant_ITU:
+        default:
         {
             char buf[2];
             
@@ -397,9 +395,6 @@
             buf[1]= (_pc >> 8) & 0x3F;
             return [NSData dataWithBytes:buf length:2];
         }
-            break;
-        default:
-            UMAssert(0,@"Undefined variant");
     }
     return NULL;
 }

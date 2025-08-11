@@ -2538,7 +2538,7 @@ static const char *get_tcp_status_string(UMSocketStatus status)
         if((_as.mode == UMM3UAApplicationServerMode_client)
             && (_sctpLink==NULL)
             && (_tcpLocalAddress.length > 0)
-            && (_tcpLocalPort > 0)
+         // && (_tcpLocalPort > 0)
             && (_tcpRemoteAddress.length > 0)
             && (_tcpRemotePort > 0))
         {
@@ -2549,7 +2549,8 @@ static const char *get_tcp_status_string(UMSocketStatus status)
             && (_tcpLocalAddress.length > 0)
             && (_tcpLocalPort > 0)
             && (_tcpRemoteAddress.length > 0)
-            && (_tcpRemotePort > 0))
+            //&& (_tcpRemotePort > 0)
+                )
         {
             _m3uaMode = M3UAMode_TCP_Server;
         }

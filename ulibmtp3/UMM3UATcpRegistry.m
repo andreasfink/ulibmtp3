@@ -113,8 +113,14 @@
 - (UMM3UAApplicationServerProcess *)getAspForRemoteAddress:(NSString *)address port:(int)port
 {
     NSString *key = [NSString stringWithFormat:@"%@:%d",address,port];
+    NSString *key2 = [NSString stringWithFormat:@"%@:%d",address,0];
+
     ummutex_lock(_lock);
     UMM3UAApplicationServerProcess *asp = _connections[key];
+    if(asp==NULL)
+    {
+        asp = _connections[key2];
+    }
     ummutex_unlock(_lock);
     return asp;
 }

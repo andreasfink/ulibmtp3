@@ -43,6 +43,7 @@
                 }
                 break;
                 
+            case UMMTP3Variant_ITU:
             default:
             {
                 unsigned int label;
@@ -99,6 +100,7 @@
         }
             break;
         case UMMTP3Variant_ITU:
+        default:
         {
             char buf[4];
             
@@ -111,11 +113,7 @@
             buf[2]= (label>>16) & 0xFF;
             buf[3]= (label>>24) & 0xFF;
             [d appendBytes:buf length:4];
-            
         }
-            break;
-        default:
-            UMAssert(0,@"Undefined variant");
     }
 }
 - (NSString *)opc_dpc
