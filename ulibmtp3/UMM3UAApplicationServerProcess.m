@@ -2425,6 +2425,7 @@ static const char *get_tcp_status_string(UMSocketStatus status)
         {
             _tcpLocalAddress = [cfg[@"tcp-local-address"] stringValue];
 #ifdef M3UA_TCP_DEBUG
+            NSLog(@"_tcpLocalAddress=%@",_tcpLocalAddress);
 #endif
         }
         if(cfg[@"tcp-remote-port"])
