@@ -2369,6 +2369,7 @@ static const char *get_tcp_status_string(UMSocketStatus status)
     _config = [cfg copy];
     @autoreleasepool
     {
+			NSLog(@"CONFIG: %@",cfg);
         [UMUtil randomFrom:M3UA_DEFAULT_REOPEN1_TIMER to:M3UA_DEFAULT_REOPEN1_TIMER+3];
         _reopen_timer1_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN1_TIMER to:M3UA_DEFAULT_REOPEN1_TIMER+3];;
         _reopen_timer2_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN2_TIMER to:M3UA_DEFAULT_REOPEN2_TIMER+3];
