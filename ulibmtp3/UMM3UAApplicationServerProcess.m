@@ -2534,7 +2534,55 @@ static const char *get_tcp_status_string(UMSocketStatus status)
             }
             [_as addAsp:self];
         }
-
+        if((_as.mode == UMM3UAApplicationServerMode_client)
+            && (_sctpLink==NULL)
+            && (_tcpLocalAddress.length > 0)
+            && (_tcpLocalPort > 0)
+            && (_tcpRemoteAddress.length > 0)
+            && (_tcpRemotePort > 0))
+        {
+            _m3uaMode = M3UAMode_TCP_Client;
+        }
+        else if((_as.mode == UMM3UAApplicationServerMode_server)
+            && (_sctpLink==NULL)
+            && (_tcpLocalAddress.length > 0)
+            && (_tcpLocalPort > 0)
+            && (_tcpRemoteAddress.length > 0)
+            && (_tcpRemotePort > 0))
+        {
+            _m3uaMode = M3UAMode_TCP_Server;
+        }
+        else if((_as.mode == UMM3UAApplicationServerMode_server)
+            && (_sctpLink)
+            && (_tcpLocalAddress.length == 0)
+            && (_tcpLocalPort == 0)
+            && (_tcpRemoteAddress.length == 0)
+            && (_tcpRemotePort == 0))
+        {
+            _m3uaMode = M3UAMode_SCTP_Server;
+        }
+        else if((_as.mode == UMM3UAApplicationServerMode_client)
+            && (_sctpLink)
+            && (_tcpLocalAddress.length == 0)
+            && (_tcpLocalPort == 0)
+            && (_tcpRemoteAddress.length == 0)
+            && (_tcpRemotePort == 0))
+        {
+            _m3uaMode = M3UAMode_SCTP_Client;
+        }
+        else if((_as.mode == UMM3UAApplicationServerMode_peer)
+            && (_sctpLink)
+            && (_tcpLocalAddress.length == 0)
+            && (_tcpLocalPort == 0)
+            && (_tcpRemoteAddress.length == 0)
+            && (_tcpRemotePort == 0))
+        {
+            _m3uaMode = M3UAMode_SCTP_Peer;
+        }
+        else
+        {
+            UMAssert(0,@"Undefined M3UA-ASP configuration. Either attach-to and as mode client/server/peer must be set ot tcp-local-address,tcp-remote-address,tcp-local-port,tcp-remote-port and as mode client or server.");
+        }
         if((_m3uaMode == M3UAMode_SCTP_Server) || (_m3uaMode == M3UAMode_SCTP_Client) || (_m3uaMode == M3UAMode_SCTP_Peer))
         {
             UMLayerSctpUserProfile *profile = [[UMLayerSctpUserProfile alloc]init];
@@ -2545,8 +2593,10 @@ static const char *get_tcp_status_string(UMSocketStatus status)
         }
         if((_m3uaMode == M3UAMode_TCP_Server) || (_m3uaMode == M3UAMode_TCP_Client))
         {
-        
             UMM3UATcpRegistry *registry = _as.mtp3.m3ua_tcp_registry;
+#ifdef M3UA_TCP_DEBUG
+            NSLog(@"[registry addConnection:<%@> port:<%d> ..]",_tcpRemoteAddress,_tcpRemotePort);
+#endif
             [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
             if(_m3uaMode == M3UAMode_TCP_Server)
             {
@@ -2556,15 +2606,6 @@ static const char *get_tcp_status_string(UMSocketStatus status)
                 _listener = [registry getOrCreateListener:_tcpLocalAddress port:_tcpLocalPort logFeed:_logFeed logLevel:_logLevel];
                 [_listener startListening];
             }
-        }
-        else if(_m3uaMode == M3UAMode_TCP_Client)
-        {
-            UMM3UATcpRegistry *registry = _as.mtp3.m3ua_tcp_registry;
-            
-#ifdef M3UA_TCP_DEBUG
-                NSLog(@"[registry addConnection:<%@> port:<%d> ..]",_tcpRemoteAddress,_tcpRemotePort);
-#endif
-            [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
         }
     }
 }
