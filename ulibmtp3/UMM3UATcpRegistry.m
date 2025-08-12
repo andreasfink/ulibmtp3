@@ -91,7 +91,8 @@
     ummutex_unlock(_lock);
 }
 
-- (void) addConnection:(UMM3UAApplicationServerProcess *)asp remoteAddress:(NSString *)address remotePort:(int)port
+- (void) addConnection:(UMM3UAApplicationServerProcess *)asp
+         remoteAddress:(NSString *)address remotePort:(int)port
 {
     NSString *key = [NSString stringWithFormat:@"%@:%d",address,port];
     ummutex_lock(_lock);
@@ -113,13 +114,12 @@
 - (UMM3UAApplicationServerProcess *)getAspForRemoteAddress:(NSString *)address port:(int)port
 {
     NSString *key = [NSString stringWithFormat:@"%@:%d",address,port];
-    NSString *key2 = [NSString stringWithFormat:@"%@:%d",address,0];
-
     ummutex_lock(_lock);
     UMM3UAApplicationServerProcess *asp = _connections[key];
-    if(asp==NULL)
+    if((asp==NULL) && (port!=0))
     {
-        asp = _connections[key2];
+        key = [NSString stringWithFormat:@"%@:%d",address,0];
+        asp = _connections[key];
     }
     ummutex_unlock(_lock);
     return asp;
