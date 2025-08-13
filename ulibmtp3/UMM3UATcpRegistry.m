@@ -120,6 +120,7 @@
 {
     NSString *key = [self connectionsKeyForAddress:address port:port];
     NSLog(@"getAspForRemoteAddress for key=%@",key);
+    NSLog(@"%@",[self contentText]);
     ummutex_lock(_lock);
     UMM3UAApplicationServerProcess *asp = _connections[key];
     if((asp==NULL) && (port!=0))
@@ -128,7 +129,9 @@
         asp = _connections[key];
     }
     ummutex_unlock(_lock);
+    NSLog(@"returning %@",asp);
     return asp;
+    
 }
 
 - (NSString *)contentText
