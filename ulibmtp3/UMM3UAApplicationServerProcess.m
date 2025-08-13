@@ -1890,6 +1890,11 @@ static const char *get_tcp_status_string(UMSocketStatus status)
         {
             _tcpReceiver = [[UMM3UATcpReceiver alloc]initWithSocket:_tcpSocket registry:registry asp:self logFeed:_logFeed logLevel:_logLevel];
             [_tcpReceiver startBackgroundTask];
+            [self tcpReportsUp];
+        }
+        else
+        {
+            NSLog(@"error: %@",[UMSocket getSocketErrorString:err]);
         }
     }
     else if(_m3uaMode == M3UAMode_TCP_Server)
