@@ -181,7 +181,7 @@
                 if(asp==NULL)
                 {
                     asp = [_registry getAspForRemoteAddress:clientSocket.connectedRemoteAddress port:0];
-                    NSLog(@"[_registry getAspForRemoteAddress:%@ port:%d] returns %@",clientSocket.connectedRemoteAddress,clientSocket.connectedRemotePort,asp.layerName);
+                    NSLog(@"[_registry getAspForRemoteAddress:%@ port:%d] returns %@",clientSocket.connectedRemoteAddress,0,asp.layerName);
                 }
                 if(asp)
                 {
