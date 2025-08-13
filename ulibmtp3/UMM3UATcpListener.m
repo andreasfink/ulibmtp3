@@ -177,7 +177,11 @@
                 clientSocket.serverSideCertData     = _certFileData;
                 
                 UMM3UAApplicationServerProcess *asp = [_registry getAspForRemoteAddress:clientSocket.connectedRemoteAddress port:clientSocket.connectedRemotePort];
-                if (asp)
+                if(asp==NULL)
+                {
+                    asp = [_registry getAspForRemoteAddress:clientSocket.connectedRemoteAddress port:0];
+                }
+                if(asp)
                 {
                     if(_logLevel <= UMLOG_DEBUG)
                     {
