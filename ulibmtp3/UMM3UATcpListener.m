@@ -176,13 +176,8 @@
                 clientSocket.serverSideCertFilename = _certFile;
                 clientSocket.serverSideCertData     = _certFileData;
                 
-                UMM3UAApplicationServerProcess *asp = [_registry getAspForRemoteAddress:clientSocket.connectedRemoteAddress port:clientSocket.connectedRemotePort];
-                NSLog(@"[_registry getAspForRemoteAddress:%@ port:%d] returns %@",clientSocket.connectedRemoteAddress,clientSocket.connectedRemotePort,asp.layerName);
-                if(asp==NULL)
-                {
-                    asp = [_registry getAspForRemoteAddress:clientSocket.connectedRemoteAddress port:0];
-                    NSLog(@"[_registry getAspForRemoteAddress:%@ port:%d] returns %@",clientSocket.connectedRemoteAddress,0,asp.layerName);
-                }
+                NSString *ip = [UMSocket deunifyIp:clientSocket.connectedRemoteAddress];
+                UMM3UAApplicationServerProcess *asp = [_registry getAspForRemoteAddress:ip port:clientSocket.connectedRemotePort];
                 if(asp)
                 {
                     if(_logLevel <= UMLOG_DEBUG)
