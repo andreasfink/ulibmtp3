@@ -66,7 +66,7 @@
                                                 registry:NULL
                                                  logFeed:feed
                                                 logLevel:level];
-        [listener startBackgroundTask];
+        [listener startListener];
         _listeners[key] = listener;
     }
     ummutex_unlock(_lock);

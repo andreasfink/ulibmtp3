@@ -1899,7 +1899,7 @@ static const char *get_tcp_status_string(UMSocketStatus status)
         {
             _listener = [registry getOrCreateListener:_tcpLocalAddress port:_tcpLocalPort logFeed:_logFeed logLevel:_logLevel];
         }
-        [_listener startListening];
+        [_listener startListener];
         [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
         _tcpSocket = NULL;
     }
@@ -2615,7 +2615,7 @@ static const char *get_tcp_status_string(UMSocketStatus status)
                 NSLog(@"[registry getOrCreateListener:<%@> port:<%d> ..]",_tcpLocalAddress,_tcpLocalPort);
 #endif
                 _listener = [registry getOrCreateListener:_tcpLocalAddress port:_tcpLocalPort logFeed:_logFeed logLevel:_logLevel];
-                [_listener startListening];
+                [_listener startListener];
             }
         }
     }

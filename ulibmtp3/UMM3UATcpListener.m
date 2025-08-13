@@ -70,7 +70,7 @@
     {
         [_logFeed debugText:[NSString stringWithFormat:@"%@ setBufferSizes",_name]];
     }
-
+    
     [_umsocket switchToNonBlocking];
     if(_logLevel <= UMLOG_DEBUG)
     {
@@ -101,14 +101,7 @@
         [_logFeed debugText:[NSString stringWithFormat:@"%@ setReuseAddr",_name]];
     }
     LOG_MINOR_ERROR(err,@"setReuseAddr");
-    
-    err = [_umsocket setPathMtuDiscovery:YES];
-    if(_logLevel <= UMLOG_DEBUG)
-    {
-        [_logFeed debugText:[NSString stringWithFormat:@"%@ setPathMtuDiscovery:YES",_name]];
-    }
-    LOG_MINOR_ERROR(err,@"setPathMtuDiscovery");
-    
+
     err = [_umsocket bind];
     if(_logLevel <= UMLOG_DEBUG)
     {
@@ -224,7 +217,6 @@
             _mustListen=NO;
         }
     }
-    _isListening = NO;
     return returnValue;
 }
 
@@ -285,8 +277,12 @@
     return _name;
 }
 
-- (void)startListening
+- (void)startListener
 {
+    if(_isListening)
+    {
+        return;
+    }
     _mustListen = YES;
     ummutex_lock(_listenerLock);
     @try
@@ -301,10 +297,9 @@
     {
         ummutex_unlock(_listenerLock);
     }
-
 }
 
-- (void)stopListening
+- (void)stopListener
 {
     _mustListen = NO;
     ummutex_lock(_listenerLock);

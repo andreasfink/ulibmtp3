@@ -69,8 +69,8 @@
                            logLevel:(UMLogLevel)level;
     
 
-- (void)startListening;
-- (void)stopListening;
+- (void)startListener;
+- (void)stopListener;
 - (NSString *)name;
 @end
 
