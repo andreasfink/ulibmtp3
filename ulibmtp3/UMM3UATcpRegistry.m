@@ -94,7 +94,7 @@
 - (void) addConnection:(UMM3UAApplicationServerProcess *)asp
          remoteAddress:(NSString *)address remotePort:(int)port
 {
-    NSString *key = [NSString stringWithFormat:@"%@:%d",address,port];
+    NSString *key = [self connectionsKeyForAddress:address port:port];
     ummutex_lock(_lock);
     UMM3UAApplicationServerProcess *old = _connections[key];
     _connections[key]=asp;
@@ -104,22 +104,27 @@
 
 - (void) removeConnectionForRemoteAddress:(NSString *)address remotePort:(int)port
 {
-    NSString *key = [NSString stringWithFormat:@"%@:%d",address,port];
+    NSString *key = [self connectionsKeyForAddress:address port:port];
     ummutex_lock(_lock);
     [_connections removeObjectForKey:key];
     ummutex_unlock(_lock);
 }
 
+- (NSString *)connectionsKeyForAddress:(NSString *)address port:(int)port
+{
+    NSString *key = [NSString stringWithFormat:@"%@:%d",address,port];
+    return key;
+}
 
 - (UMM3UAApplicationServerProcess *)getAspForRemoteAddress:(NSString *)address port:(int)port
 {
-    NSString *key = [NSString stringWithFormat:@"%@:%d",address,port];
+    NSString *key = [self connectionsKeyForAddress:address port:port];
     NSLog(@"getAspForRemoteAddress for key=%@",key);
     ummutex_lock(_lock);
     UMM3UAApplicationServerProcess *asp = _connections[key];
     if((asp==NULL) && (port!=0))
     {
-        key = [NSString stringWithFormat:@"%@:%d",address,0];
+        key = [self connectionsKeyForAddress:address port:0];
         asp = _connections[key];
     }
     ummutex_unlock(_lock);
@@ -138,7 +143,7 @@
     for(NSString *key in allKeys)
     {
         UMM3UATcpListener *listener = _listeners[key];
-        [s appendFormat:@"%@ -> %@\n",key,listener.name];
+        [s appendFormat:@"'%@' -> '%@'\n",key,listener.name];
     }
     [s appendString:@"--------------------------------------------------\n"];
     [s appendString:@"Connections\n"];
@@ -147,7 +152,7 @@
     for(NSString *key in allKeys2)
     {
         UMM3UAApplicationServerProcess *connection = _connections[key];
-        [s appendFormat:@"%@ -> %@\n",key,connection.layerName];
+        [s appendFormat:@"'%@' -> '%@'\n",key,connection.layerName];
     }
     [s appendString:@"--------------------------------------------------\n"];
 
