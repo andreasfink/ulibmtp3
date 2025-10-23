@@ -87,6 +87,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     int                         _last_sls;
     BOOL                        _sendExtendedAttributes;
     
+
     NSString                    *_cga_number_translation_in_name;
     NSString                    *_cda_number_translation_in_name;
     NSString                    *_cga_number_translation_out_name;
@@ -96,6 +97,15 @@ typedef enum UMMTP3ScreeningTraceLevel
     SccpNumberTranslation       *_cga_number_translation_out;
     SccpNumberTranslation       *_cda_number_translation_out;
     
+    NSString                    *_called_ttmap_in_name;
+    UMMTP3TranslationTableMap   *_called_ttmap_in;
+    NSString                    *_called_ttmap_out_name;
+    UMMTP3TranslationTableMap   *_called_ttmap_out;
+    NSString                    *_calling_ttmap_in_name;
+    UMMTP3TranslationTableMap   *_calling_ttmap_in;
+    NSString                    *_calling_ttmap_out_name;
+    UMMTP3TranslationTableMap   *_calling_ttmap_out;
+
     NSString                    *_linkNamesBySlc[16];
     UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableBidi;
     UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableIn;
@@ -260,6 +270,16 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong,atomic) UMMTP3LinkSetPrometheusData *prometheusMetrics;
 @property(readwrite,strong,atomic) NSDate                      *lastLinksetUp;
 @property(readwrite,strong,atomic) NSDate                      *lastLinksetDown;
+
+/* These names are aliases to the cga */
+@property(readwrite,strong,atomic) NSString                    *calling_number_translation_in_name;
+@property(readwrite,strong,atomic) NSString                    *called_number_translation_in_name;
+@property(readwrite,strong,atomic) NSString                    *calling_number_translation_out_name;
+@property(readwrite,strong,atomic) NSString                    *called_number_translation_out_name;
+@property(readwrite,strong,atomic) SccpNumberTranslation       *calling_number_translation_in;
+@property(readwrite,strong,atomic) SccpNumberTranslation       *called_number_translation_in;
+@property(readwrite,strong,atomic) SccpNumberTranslation       *calling_number_translation_out;
+@property(readwrite,strong,atomic) SccpNumberTranslation       *called_number_translation_out;
 
 - (int)nextSLS;
 - (void)addLink:(UMMTP3Link *)lnk;
