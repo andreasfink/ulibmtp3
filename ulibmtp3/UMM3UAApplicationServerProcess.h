@@ -19,12 +19,30 @@
 #define M3UA_DEFAULT_MAX_BEAT_OUTSTANDING      3
 
 @class UMM3UAApplicationServer;
+@class UMM3UATcpReceiver;
+@class UMM3UATcpListener;
 
+typedef enum    M3UAMode
+{
+    M3UAMode_Undefined = 0,
+    M3UAMode_SCTP_Server = 1,
+    M3UAMode_SCTP_Client = 2,
+    M3UAMode_SCTP_Peer = 3,
+    M3UAMode_TCP_Server = 101,
+    M3UAMode_TCP_Client = 102,
+ } M3UAMode;
 
 @interface UMM3UAApplicationServerProcess : UMLayer<UMLayerSctpUserProtocol>
 {
+    M3UAMode                    _m3uaMode;
     UMLayerSctp                 *_sctpLink;
-    //UMLayerTcp                  *_tcpLink;
+    UMSocket                    *_tcpSocket;
+    UMM3UATcpReceiver           *_tcpReceiver;
+    NSString                    *_tcpRemoteAddress;
+    NSString                    *_tcpLocalAddress;
+    int                         _tcpRemotePort;
+    int                         _tcpLocalPort;
+        
     UMM3UAApplicationServer     *_as;
     BOOL                        _congested;
     UMM3UA_Status               _m3ua_asp_status;
@@ -37,20 +55,17 @@
     BOOL                        _aspup_received;
     BOOL                        _standby_mode;
     BOOL                        _doSendRoutingUpdates;
-    NSMutableData       *_incomingStream0;
-    NSMutableData       *_incomingStream1;
-    UMMutex             *_incomingStreamLock;
+    NSMutableData               *_incomingStream0;
+    NSMutableData               *_incomingStream1;
+    UMMutex                     *_incomingStreamLock;
 
-    UMTimer             *_linktest_timer;
-    UMTimer             *_reopen_timer1;
-    UMTimer             *_reopen_timer2;
-    //int                 sltm_serial;
-
-
-    NSTimeInterval      _linktest_timer_value;
-    NSTimeInterval      _reopen_timer1_value;
-    NSTimeInterval      _reopen_timer2_value;
-    double              _speed;
+    UMTimer                     *_linktest_timer;
+    UMTimer                     *_reopen_timer1;
+    UMTimer                     *_reopen_timer2;
+    NSTimeInterval              _linktest_timer_value;
+    NSTimeInterval              _reopen_timer1_value;
+    NSTimeInterval              _reopen_timer2_value;
+    double                      _speed;
 
     UMThroughputCounter	*_speedometer;
     UMThroughputCounter	*_submission_speed;
@@ -88,10 +103,18 @@
     UMM3UAApplicationServerStatusRecords *_lastDown;
     UMM3UAApplicationServerStatusRecords *_lastLinkActive;
     UMM3UAApplicationServerStatusRecords *_lastLinkInactive;
+    UMSocketStatus                 _sctp_status;
+    UMSocketStatus                 _tcp_status;
+    NSDictionary    *_config;
+    UMM3UATcpListener *_listener;
 }
 
+
+@property(readwrite,assign,atomic)  M3UAMode m3uaMode;
 @property(readwrite,strong,atomic)  UMM3UAApplicationServer *as;
 @property(readwrite,strong,atomic)  UMLayerSctp *sctpLink;
+@property(readwrite,strong,atomic)  UMM3UATcpReceiver *tcpReceiver;
+@property(readwrite,strong,atomic)  UMSocket *tcpSocket;
 
 @property(readwrite,strong,atomic)  NSString *name;
 @property (readonly) BOOL sctp_connecting;
@@ -102,6 +125,7 @@
 
 
 @property(readonly)    UMSocketStatus                 sctp_status;
+@property(readonly)    UMSocketStatus                 tcp_status;
 @property(readwrite,assign,atomic)   UMM3UA_Status m3ua_asp_status;
 
 @property(readwrite,strong,atomic)  NSDate *lastBeatReceived;
@@ -212,5 +236,9 @@
                        status:(UMSocketStatus)new_status
                        reason:(NSString *)reason
                        socket:(NSNumber *)socketNumber;
+
+- (void) tcpDataIndication:(NSData *)data;
+- (void) tcpStatusIndication:(UMSocketStatus)new_status reason:(NSString *)reason;
+
 
 @end

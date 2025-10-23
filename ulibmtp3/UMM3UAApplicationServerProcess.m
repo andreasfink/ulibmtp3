@@ -16,6 +16,12 @@
 #import "UMLayerMTP3.h"
 #import "UMMTP3LinkSetPrometheusData.h"
 #import "UMMTP3RoutingUpdateDb.h"
+#import "UMM3UATcpListener.h"
+#import "UMM3UATcpRegistry.h"
+#import "UMM3UATcpReceiver.h"
+
+#define M3UA_TCP_DEBUG  1
+
 
 #define	M3UA_CLASS_TYPE_ERR			0x0000
 #define M3UA_CLASS_TYPE_NTFY		0x0001
@@ -234,6 +240,24 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 }
 
 
+static const char *get_tcp_status_string(UMSocketStatus status)
+{
+    switch(status)
+    {
+        case UMSOCKET_STATUS_FOOS:
+            return "FOOS";
+        case UMSOCKET_STATUS_OFF:
+            return "OFF";
+        case UMSOCKET_STATUS_OOS:
+            return "OOS";
+        case UMSOCKET_STATUS_IS:
+            return "IS";
+        default:
+            return "TCP_UNKNOWN";
+    }
+}
+
+
 @implementation UMM3UAApplicationServerProcess
 - (NSString *)layerType
 {
@@ -312,6 +336,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         self.logLevel = UMLOG_MAJOR;
         _aspLock = [[UMMutex alloc]initWithName:@"m3ua-asp-lock"];
         _sctp_status = UMSOCKET_STATUS_OFF;
+        _tcp_status = UMSOCKET_STATUS_OFF;
         _m3ua_asp_status = M3UA_STATUS_OFF;
         _incomingStreamLock =  [[UMMutex alloc]initWithName:@"m3ua-incomingStreamLock"];
         _houseKeepingTimer = [[UMTimer alloc]initWithTarget:self
@@ -542,7 +567,7 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
     NSLog(@"%@",msg);
     [self addToLayerHistoryLog:msg];
-    self.lastError = msg;
+    _lastError = msg;
 }
 
 - (void)processNTFY:(UMSynchronizedSortedDictionary *)params
@@ -1052,13 +1077,13 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (void)processBEAT:(UMSynchronizedSortedDictionary *)params
 {
-    self.lastBeatReceived = [NSDate date];
+    _lastBeatReceived = [NSDate date];
     [self sendBEAT_ACK:params];
 }
 
 - (void)processBEAT_ACK:(UMSynchronizedSortedDictionary *)params
 {
-    self.lastBeatAckReceived = [NSDate date];
+    _lastBeatAckReceived = [NSDate date];
     _unacknowledgedBeats = 0;
 }
 
@@ -1395,15 +1420,22 @@ static const char *get_sctp_status_string(UMSocketStatus status)
         [self logDebug:[[NSString alloc]initWithFormat:@" pdu: %@",[pdu hexString]]];
         [self logDebug:[[NSString alloc]initWithFormat:@" stream: %d",streamId ]];
     }
-    if(_sctpLink==NULL)
+    if(_tcpSocket)
     {
-        [self logMajorError:@"trying to send packet on _sctpLink==NULL"];
+        [_tcpSocket sendData:data];
     }
-    [_sctpLink dataFor:self
-                  data:data
-              streamId:streamId
-            protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
-            ackRequest:NULL];
+    else
+    {
+        if(_sctpLink==NULL)
+        {
+            [self logMajorError:@"trying to send packet on _sctpLink==NULL"];
+        }
+        [_sctpLink dataFor:self
+                      data:data
+                  streamId:streamId
+                protocolId:SCTP_PROTOCOL_IDENTIFIER_M3UA
+                ackRequest:NULL];
+    }
 }
 
 -(void)sendASPUP:(UMSynchronizedSortedDictionary *)params
@@ -1655,6 +1687,39 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     old_status = _sctp_status;
     if(self.logLevel <= UMLOG_DEBUG)
     {
+        NSString *s = [NSString stringWithFormat:@"tcpStatusIndication: %s->%s Reason %@",
+                       get_tcp_status_string(old_status),
+                       get_tcp_status_string(new_status),
+                       (reason ? reason : @"undefined")];
+        [self logDebug:s];
+    }
+    if(old_status == new_status)
+    {
+        return;
+    }
+    _tcp_status = new_status;
+    switch(_sctp_status)
+    {
+        case UMSOCKET_STATUS_FOOS:
+        case UMSOCKET_STATUS_OFF:
+            [self sctpReportsDown];
+            break;
+        case UMSOCKET_STATUS_OOS:
+            break;
+        case UMSOCKET_STATUS_IS:
+            [self sctpReportsUp];
+            break;
+        case UMSOCKET_STATUS_LISTENING:
+            break;
+    }
+}
+
+- (void) tcpStatusIndication:(UMSocketStatus)new_status reason:(NSString *)reason
+{
+    UMSocketStatus    old_status;
+    old_status = _tcp_status;
+    if(self.logLevel <= UMLOG_DEBUG)
+    {
         NSString *s = [NSString stringWithFormat:@"sctpStatusIndication: %s->%s Reason %@",
                        get_sctp_status_string(old_status),
                        get_sctp_status_string(new_status),
@@ -1665,25 +1730,26 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     {
         return;
     }
-    _sctp_status = new_status;
+    _tcp_status = new_status;
     if(old_status !=new_status)
     {
-        switch(_sctp_status)
+        switch(_tcp_status)
         {
             case UMSOCKET_STATUS_FOOS:
             case UMSOCKET_STATUS_OFF:
-                [self sctpReportsDown];
+                [self tcpReportsDown];
                 break;
             case UMSOCKET_STATUS_OOS:
                 break;
             case UMSOCKET_STATUS_IS:
-                [self sctpReportsUp];
+                [self tcpReportsUp];
                 break;
             case UMSOCKET_STATUS_LISTENING:
                 break;
         }
     }
 }
+
 
 /* start is called if the SCTP link is confirmed to be up */
 - (void)start
@@ -1809,7 +1875,43 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     [_submission_speed clear];
     _speed_within_limit = YES;
     [self stopReopenTimer1];
-    [_sctpLink openFor:self sendAbortFirst:NO reason:(reason ? reason : @"m3ua-poweron")];
+    if(_m3uaMode == M3UAMode_TCP_Client)
+    {
+        UMM3UATcpRegistry *registry = _as.mtp3.m3ua_tcp_registry;
+        [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
+        _tcpSocket = [[UMSocket alloc]initWithType:UMSOCKET_TYPE_TCP name:[NSString stringWithFormat:@"tcp(%@)",_layerName]];
+        _tcpSocket.requestedLocalAddress    = _tcpLocalAddress;
+        _tcpSocket.localHost                = [[UMHost alloc]initWithAddress:_tcpLocalAddress];
+        _tcpSocket.remoteHost               = [[UMHost alloc]initWithAddress:_tcpRemoteAddress];
+        _tcpSocket.requestedLocalPort       = _tcpLocalPort;
+        _tcpSocket.requestedRemotePort      = _tcpRemotePort;
+        UMSocketError err = [_tcpSocket connect];
+        if(err == UMSocketError_no_error)
+        {
+            _tcpReceiver = [[UMM3UATcpReceiver alloc]initWithSocket:_tcpSocket registry:registry asp:self logFeed:_logFeed logLevel:_logLevel];
+            [_tcpReceiver startBackgroundTask];
+            [self tcpReportsUp];
+        }
+        else
+        {
+            NSLog(@"error: %@",[UMSocket getSocketErrorString:err]);
+        }
+    }
+    else if(_m3uaMode == M3UAMode_TCP_Server)
+    {
+        UMM3UATcpRegistry *registry = _as.mtp3.m3ua_tcp_registry;
+        if(_listener == NULL)
+        {
+            _listener = [registry getOrCreateListener:_tcpLocalAddress port:_tcpLocalPort logFeed:_logFeed logLevel:_logLevel];
+        }
+        [_listener startListener];
+        [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
+        _tcpSocket = NULL;
+    }
+    else
+    {
+        [_sctpLink openFor:self sendAbortFirst:NO reason:(reason ? reason : @"m3ua-poweron")];
+    }
     [self startReopenTimer2];
     ummutex_unlock(_aspLock);
 }
@@ -2177,6 +2279,33 @@ static const char *get_sctp_status_string(UMSocketStatus status)
     }
 }
 
+- (void) tcpDataIndication:(NSData *)data
+{
+    @autoreleasepool
+    {
+        ummutex_lock(_incomingStreamLock);
+        @try
+        {
+            if(self.logLevel <= UMLOG_DEBUG)
+            {
+                [self logDebug:@"tcpDataIndication"];
+                [self logDebug:[NSString stringWithFormat:@" rx-data: %@",[data hexString]]];
+            }
+            if(_incomingStream0 == NULL)
+            {
+                _incomingStream0 = [[NSMutableData alloc]init];
+            }
+            [_incomingStream0 appendData:data];
+            [self lookForIncomingPdu:0];
+        }
+        @finally
+        {
+            ummutex_unlock(_incomingStreamLock);
+        }
+    }
+}
+
+
 - (void) sctpMonitorIndication:(UMLayer *)caller
                         userId:(id)uid
                       streamId:(uint16_t)sid
@@ -2239,16 +2368,18 @@ static const char *get_sctp_status_string(UMSocketStatus status)
 
 - (NSDictionary *)config
 {
-    NSMutableDictionary *config = [[NSMutableDictionary alloc]init];
-    config[@"dpc"] = [_adjacentPointCode stringValue];
-    return config;
+    return [_config copy];
 }
 
 
 - (void)setConfig:(NSDictionary *)cfg applicationContext:(id<UMLayerMTP3ApplicationContextProtocol>)appContext
 {
+    _config = [cfg copy];
     @autoreleasepool
     {
+#ifdef M3UA_TCP_DEBUG
+        NSLog(@"Config:%@",cfg);
+#endif
         [UMUtil randomFrom:M3UA_DEFAULT_REOPEN1_TIMER to:M3UA_DEFAULT_REOPEN1_TIMER+3];
         _reopen_timer1_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN1_TIMER to:M3UA_DEFAULT_REOPEN1_TIMER+3];;
         _reopen_timer2_value  = [UMUtil randomFrom:M3UA_DEFAULT_REOPEN2_TIMER to:M3UA_DEFAULT_REOPEN2_TIMER+3];
@@ -2288,6 +2419,35 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [self logDebug:[NSString stringWithFormat:@"M3UA-ASP: setConfig: \n%@",cfg]];
         }
 
+        if(cfg[@"tcp-remote-address"])
+        {
+            _tcpRemoteAddress = [cfg[@"tcp-remote-address"] stringValue];
+#ifdef M3UA_TCP_DEBUG
+            NSLog(@"_tcpRemoteAddress=%@",_tcpRemoteAddress);
+#endif
+        }
+        if(cfg[@"tcp-local-address"])
+        {
+            _tcpLocalAddress = [cfg[@"tcp-local-address"] stringValue];
+#ifdef M3UA_TCP_DEBUG
+            NSLog(@"_tcpLocalAddress=%@",_tcpLocalAddress);
+#endif
+        }
+        if(cfg[@"tcp-remote-port"])
+        {
+            _tcpRemotePort = [cfg[@"tcp-remote-port"] intValue];
+#ifdef M3UA_TCP_DEBUG
+            NSLog(@"_tcpRemotePort=%d",_tcpRemotePort);
+#endif
+        }
+        if(cfg[@"tcp-local-port"])
+        {
+            _tcpLocalPort = [cfg[@"tcp-local-port"] intValue];
+#ifdef M3UA_TCP_DEBUG
+            NSLog(@"_tcpLocalPort=%d",_tcpLocalPort);
+#endif
+        }
+
         if(cfg[@"attach-to"])
         {
             NSString *attachTo =  [cfg[@"attach-to"] stringValue];
@@ -2296,16 +2456,6 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             {
                 [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to SCTP '%@' failed. layer not found",attachTo]];
             }
-        }
-        if(cfg[@"m3ua-as"])
-        {
-            NSString *as_name =  [cfg[@"m3ua-as"] stringValue];
-            _as = [appContext getM3UAAS:as_name];
-            if(_as==NULL)
-            {
-                [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to M3UA-AS '%@' failed. layer not found",as_name]];
-            }
-            [_as addAsp:self];
         }
         if (cfg[@"speed"])
         {
@@ -2380,11 +2530,99 @@ static const char *get_sctp_status_string(UMSocketStatus status)
                 _beatTimer.seconds = _beatTime;
             }
         }
-        UMLayerSctpUserProfile *profile = [[UMLayerSctpUserProfile alloc]init];
-        profile.statusUpdates = YES;
-        [_sctpLink adminAttachFor:self
-                         profile:profile
-                          userId:self.layerName];
+        if(cfg[@"m3ua-as"])
+        {
+            NSString *as_name =  [cfg[@"m3ua-as"] stringValue];
+            _as = [appContext getM3UAAS:as_name];
+            if(_as==NULL)
+            {
+                [self logMajorError:[NSString stringWithFormat:@"M3UA-ASP: attaching to M3UA-AS '%@' failed. layer not found",as_name]];
+            }
+            [_as addAsp:self];
+        }
+        if((_as.mode == UMM3UAApplicationServerMode_client)
+            && (_sctpLink==NULL)
+            && (_tcpLocalAddress.length > 0)
+         // && (_tcpLocalPort > 0)
+            && (_tcpRemoteAddress.length > 0)
+            && (_tcpRemotePort > 0))
+        {
+            _m3uaMode = M3UAMode_TCP_Client;
+        }
+        else if((_as.mode == UMM3UAApplicationServerMode_server)
+            && (_sctpLink==NULL)
+            && (_tcpLocalAddress.length > 0)
+            && (_tcpLocalPort > 0)
+            && (_tcpRemoteAddress.length > 0)
+            //&& (_tcpRemotePort > 0)
+                )
+        {
+            _m3uaMode = M3UAMode_TCP_Server;
+        }
+        else if((_as.mode == UMM3UAApplicationServerMode_server)
+            && (_sctpLink)
+            && (_tcpLocalAddress.length == 0)
+            && (_tcpLocalPort == 0)
+            && (_tcpRemoteAddress.length == 0)
+            && (_tcpRemotePort == 0))
+        {
+            _m3uaMode = M3UAMode_SCTP_Server;
+        }
+        else if((_as.mode == UMM3UAApplicationServerMode_client)
+            && (_sctpLink)
+            && (_tcpLocalAddress.length == 0)
+            && (_tcpLocalPort == 0)
+            && (_tcpRemoteAddress.length == 0)
+            && (_tcpRemotePort == 0))
+        {
+            _m3uaMode = M3UAMode_SCTP_Client;
+        }
+        else if((_as.mode == UMM3UAApplicationServerMode_peer)
+            && (_sctpLink)
+            && (_tcpLocalAddress.length == 0)
+            && (_tcpLocalPort == 0)
+            && (_tcpRemoteAddress.length == 0)
+            && (_tcpRemotePort == 0))
+        {
+            _m3uaMode = M3UAMode_SCTP_Peer;
+        }
+        else
+        {
+            NSLog(@"_m3ua-asp: %@",_layerName);
+            NSLog(@"_m3ua-as: %@",_as.layerName);
+            NSLog(@"_sctpLink: %@",_sctpLink.layerName);
+            NSLog(@"_tcpLocalAddress: %@",_tcpLocalAddress);
+            NSLog(@"_tcpLocalPort: %d",_tcpLocalPort);
+            NSLog(@"_tcpRemoteAddress: %@",_tcpRemoteAddress);
+            NSLog(@"_tcpRemotePort: %d",_tcpRemotePort);
+            NSLog(@"_config: %@",_config);
+            
+            UMAssert(0,@"Undefined M3UA-ASP configuration. Either attach-to and as mode client/server/peer must be set ot tcp-local-address,tcp-remote-address,tcp-local-port,tcp-remote-port and as mode client or server.");
+        }
+        if((_m3uaMode == M3UAMode_SCTP_Server) || (_m3uaMode == M3UAMode_SCTP_Client) || (_m3uaMode == M3UAMode_SCTP_Peer))
+        {
+            UMLayerSctpUserProfile *profile = [[UMLayerSctpUserProfile alloc]init];
+            profile.statusUpdates = YES;
+            [_sctpLink adminAttachFor:self
+                              profile:profile
+                               userId:self.layerName];
+        }
+        if((_m3uaMode == M3UAMode_TCP_Server) || (_m3uaMode == M3UAMode_TCP_Client))
+        {
+            UMM3UATcpRegistry *registry = _as.mtp3.m3ua_tcp_registry;
+#ifdef M3UA_TCP_DEBUG
+            NSLog(@"[registry addConnection:<%@> port:<%d> ..]",_tcpRemoteAddress,_tcpRemotePort);
+#endif
+            [registry addConnection:self remoteAddress:_tcpRemoteAddress remotePort:_tcpRemotePort];
+            if(_m3uaMode == M3UAMode_TCP_Server)
+            {
+#ifdef M3UA_TCP_DEBUG
+                NSLog(@"[registry getOrCreateListener:<%@> port:<%d> ..]",_tcpLocalAddress,_tcpLocalPort);
+#endif
+                _listener = [registry getOrCreateListener:_tcpLocalAddress port:_tcpLocalPort logFeed:_logFeed logLevel:_logLevel];
+                [_listener startListener];
+            }
+        }
     }
 }
 
@@ -2433,6 +2671,50 @@ static const char *get_sctp_status_string(UMSocketStatus status)
             [self startReopenTimer1];
             [self stopReopenTimer2];
             [_as aspDown:self reason:@"sctpReportsDown"];
+        }
+    }
+}
+
+- (void)tcpReportsUp
+{
+    @autoreleasepool
+    {
+        /***************************************************************************
+         **
+         ** called upon TCP reporting a connection to be up
+         */
+        
+        [self logInfo:@"tcpReportsUp"];
+        [_layerHistory addLogEntry:@"tcpReportsUp"];
+        UMM3UA_Status oldStatus = self.m3ua_asp_status;
+        self.m3ua_asp_status = M3UA_STATUS_BUSY;
+        if(oldStatus == M3UA_STATUS_OFF)
+        {
+            [_lastLinkUps addEvent:@"tcpReportsUp"];
+            [_as.mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"ASP %@ TCP-UP",self.layerName]];
+        }
+        _aspup_received = 0;
+        _unacknowledgedBeats = 0;
+        [self start];
+    }
+}
+
+- (void)tcpReportsDown
+{
+    @autoreleasepool
+    {
+        UMM3UA_Status oldStatus = self.m3ua_asp_status;
+        if(oldStatus!= M3UA_STATUS_OFF)
+        {
+            self.m3ua_asp_status= M3UA_STATUS_OFF;
+            [self logInfo:@"tcpReportsDown"];
+            [_layerHistory addLogEntry:@"tcpReportsDown"];
+            [_as.mtp3 writeRouteStatusEventToLog:[NSString stringWithFormat:@"ASP %@ TCP-DOWN",self.layerName]];
+            [_lastLinkDown addEvent:@"sctpReportsDown"];
+            self.m3ua_asp_status = M3UA_STATUS_OFF;
+            [self startReopenTimer1];
+            [self stopReopenTimer2];
+            [_as aspDown:self reason:@"tcpReportsDown"];
         }
     }
 }

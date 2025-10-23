@@ -41,6 +41,7 @@
 @class UMMTP3StatisticDb;
 @class UMMTP3RoutingUpdateDb;
 @class SccpNumberTranslation;
+@class UMM3UATcpRegistry;
 
 #import <ulibmtp3/UMLayerMTP3UserProtocol.h>
 typedef enum UMMTP3_Error
@@ -97,6 +98,7 @@ typedef enum UMMTP3_Error
     UMThroughputCounter *_outboundThroughputPackets;
     UMThroughputCounter *_inboundThroughputBytes;
     UMThroughputCounter *_outboundThroughputBytes;
+    UMM3UATcpRegistry   *_m3ua_tcp_registry;
 }
 
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
@@ -127,6 +129,7 @@ typedef enum UMMTP3_Error
 @property (readwrite,strong,atomic) UMMutex             *mtp3Lock;
 @property (readwrite,strong,atomic) UMSynchronizedDictionary *propagatingPointcodes; /* key and value is NSNumber */
 @property (readonly,strong,atomic) UMMTP3RoutingUpdateDb           *routingUpdateDb;
+@property (readwrite,strong,atomic) UMM3UATcpRegistry   *m3ua_tcp_registry;
 
 - (UMLayerMTP3 *)initWithTaskQueueMulti:(UMTaskQueueMulti *)tq name:(NSString *)name;
 
