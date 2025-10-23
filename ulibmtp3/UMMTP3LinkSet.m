@@ -6035,66 +6035,61 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
 
 
 
-<<<<<<< HEAD
 - (SccpNumberTranslation *)cga_number_translation_in
-=======
-- (SccpNumberTranslation *)calling_number_translation_in
->>>>>>> b461623 (wip)
 {
-    if((_calling_number_translation_in_name) && (_calling_number_translation_in==NULL))
+    if((_cga_number_translation_in_name) && (_cga_number_translation_in==NULL))
     {
-        _calling_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_calling_number_translation_in_name];
+        _cga_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_cga_number_translation_in_name];
     }
-    return _calling_number_translation_in;
+    return _cga_number_translation_in;
 }
 
-- (void)setCalling_number_translation_in:(SccpNumberTranslation *)nt
+- (void)setCga_number_translation_in:(SccpNumberTranslation *)nt
 {
-    _calling_number_translation_in = nt;
+    _cga_number_translation_in = nt;
 }
 
-- (SccpNumberTranslation *)called_number_translation_in
+- (SccpNumberTranslation *)cda_number_translation_in
 {
-    if((_called_number_translation_in_name) && (_called_number_translation_in==NULL))
+    if((_cda_number_translation_in_name) && (_cda_number_translation_in==NULL))
     {
-        _called_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_in_name];
+        _cda_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_cda_number_translation_in_name];
     }
-    return _called_number_translation_in;
+    return _cda_number_translation_in;
 }
 
-- (void)setCalled_number_translation_in:(SccpNumberTranslation *)nt
+- (void)setCda_number_translation_in:(SccpNumberTranslation *)nt
 {
-    _called_number_translation_in = nt;
+    _cda_number_translation_in = nt;
 }
-
 
 - (SccpNumberTranslation *)calling_number_translation_out
 {
-    if((_calling_number_translation_out_name) && (_calling_number_translation_out==NULL))
+    if((_cga_number_translation_out_name) && (_cga_number_translation_out==NULL))
     {
-        _calling_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_calling_number_translation_out_name];
+        _cga_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_cga_number_translation_out_name];
     }
-    return _calling_number_translation_out;
+    return _cga_number_translation_out;
 }
 
 
 - (void)setCalling_number_translation_out:(SccpNumberTranslation *)nt
 {
-    _calling_number_translation_out = nt;
+    _cga_number_translation_out = nt;
 }
 
 - (SccpNumberTranslation *)called_number_translation_out
 {
-    if((_called_number_translation_out_name) && (_called_number_translation_out==NULL))
+    if((_cda_number_translation_out_name) && (_cda_number_translation_out==NULL))
     {
-        _called_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_out_name];
+        _cda_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_cda_number_translation_out_name];
     }
-    return _called_number_translation_out;
+    return _cda_number_translation_out;
 }
 
 - (void)setCalled_number_translation_out:(SccpNumberTranslation *)nt
 {
-    _called_number_translation_out = nt;
+    _cda_number_translation_out = nt;
 }
 
 @end
