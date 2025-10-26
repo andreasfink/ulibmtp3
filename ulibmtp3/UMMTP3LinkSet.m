@@ -42,17 +42,92 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
 
 @implementation UMMTP3LinkSet
 
-/* These names are aliases to the cga_... names */
+/* glue code */
 
-@synthesize calling_number_translation_in_name  = _cga_number_translation_in_name;
-@synthesize called_number_translation_in_name   = _cda_number_translation_in_name;
-@synthesize calling_number_translation_out_name = _cga_number_translation_out_name;
-@synthesize called_number_translation_out_name  = _cda_number_translation_out_name;
+- (NSString *)calling_number_translation_in_name
+{
+    return self.cga_number_translation_in_name;
+}
 
-@synthesize calling_number_translation_in        = _cga_number_translation_in;
-@synthesize called_number_translation_in         = _cda_number_translation_in;
-@synthesize calling_number_translation_out       = _cga_number_translation_out;
-@synthesize called_number_translation_out        = _cga_number_translation_out;
+- (void)setCalling_number_translation_in_name:(NSString *)name
+{
+    self.cga_number_translation_in_name = name;
+}
+/**/
+- (NSString *)called_number_translation_in_name
+{
+    return self.cda_number_translation_in_name;
+}
+
+- (void)setCalled_number_translation_in_name:(NSString *)name
+{
+    self.cda_number_translation_in_name = name;
+}
+/**/
+- (NSString *)calling_number_translation_out_name
+{
+    return self.cga_number_translation_out_name;
+}
+- (void)setCalling_number_translation_out_name:(NSString *)name
+{
+    self.cga_number_translation_out_name = name;
+}
+/**/
+
+- (NSString *)called_number_translation_out_name
+{
+    return self.cda_number_translation_out_name;
+}
+
+- (void)setCalled_number_translation_out_name:(NSString *)name
+{
+    self.cda_number_translation_out_name = name;
+}
+
+/**/
+
+- (SccpNumberTranslation *)calling_number_translation_in
+{
+    return self.cga_number_translation_in;
+}
+
+- (void)setCalling_number_translation_in:(SccpNumberTranslation *)t
+{
+    self.cga_number_translation_in = t;
+}
+/**/
+
+- (SccpNumberTranslation *)called_number_translation_in
+{
+    return self.cda_number_translation_in;
+}
+- (void)setCalled_number_translation_in:(SccpNumberTranslation *)t
+{
+    self.cda_number_translation_in = t;
+}
+/**/
+- (SccpNumberTranslation *)calling_number_translation_out
+{
+    return self.cga_number_translation_out;
+}
+
+- (void)setCaing_number_translation_out:(SccpNumberTranslation *)t
+{
+    self.cga_number_translation_out = t;
+}
+/**/
+
+- (SccpNumberTranslation *)called_number_translation_out
+{
+    return self.cda_number_translation_out;
+}
+
+- (void)setCalled_number_translation_out:(SccpNumberTranslation *)t
+{
+    self.cda_number_translation_out = t;
+}
+
+/***/
 
 - (int)networkIndicator
 {
@@ -6063,7 +6138,7 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
     _cda_number_translation_in = nt;
 }
 
-- (SccpNumberTranslation *)calling_number_translation_out
+- (SccpNumberTranslation *)cga_number_translation_out
 {
     if((_cga_number_translation_out_name) && (_cga_number_translation_out==NULL))
     {
@@ -6073,12 +6148,12 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
 }
 
 
-- (void)setCalling_number_translation_out:(SccpNumberTranslation *)nt
+- (void)setCga_number_translation_out:(SccpNumberTranslation *)nt
 {
     _cga_number_translation_out = nt;
 }
 
-- (SccpNumberTranslation *)called_number_translation_out
+- (SccpNumberTranslation *)cda_number_translation_out
 {
     if((_cda_number_translation_out_name) && (_cda_number_translation_out==NULL))
     {
@@ -6087,7 +6162,7 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
     return _cda_number_translation_out;
 }
 
-- (void)setCalled_number_translation_out:(SccpNumberTranslation *)nt
+- (void)setCda_number_translation_out:(SccpNumberTranslation *)nt
 {
     _cda_number_translation_out = nt;
 }
