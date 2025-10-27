@@ -66,15 +66,15 @@ typedef enum UMMTP3ScreeningTraceLevel
     NSNumber                        *_overrideNetworkIndicator;
     int                             _linkSelector;
     unsigned long                   _nationalOptions;
-    UMMTP3WhiteList             *_incomingWhiteList;
-    UMMTP3BlackList             *_incomingBlackList;
-    int                         _tra_sent;
-    int                         _trw_received;
-    NSUInteger                  _activeLinksCount;
-    NSUInteger                  _inactiveLinksCount;
-    NSUInteger                  _readyLinksCount;
-    NSUInteger                  _processorOutageLinksCount;
-    NSUInteger                  _totalLinksCount;
+    UMMTP3WhiteList                 *_incomingWhiteList;
+    UMMTP3BlackList                 *_incomingBlackList;
+    int                             _tra_sent;
+    int                             _trw_received;
+    NSUInteger                      _activeLinksCount;
+    NSUInteger                      _inactiveLinksCount;
+    NSUInteger                      _readyLinksCount;
+    NSUInteger                      _processorOutageLinksCount;
+    NSUInteger                      _totalLinksCount;
     
     UMMutex         *_currentLinksMutex;
     NSMutableArray *_currentInactiveLinks;
@@ -88,14 +88,14 @@ typedef enum UMMTP3ScreeningTraceLevel
     BOOL                        _sendExtendedAttributes;
     
 
-    NSString                    *_cga_number_translation_in_name;
-    NSString                    *_cda_number_translation_in_name;
-    NSString                    *_cga_number_translation_out_name;
-    NSString                    *_cda_number_translation_out_name;
-    SccpNumberTranslation       *_cga_number_translation_in;
-    SccpNumberTranslation       *_cda_number_translation_in;
-    SccpNumberTranslation       *_cga_number_translation_out;
-    SccpNumberTranslation       *_cda_number_translation_out;
+    NSString                    *_calling_number_translation_in_name;
+    NSString                    *_called_number_translation_in_name;
+    NSString                    *_calling_number_translation_out_name;
+    NSString                    *_called_number_translation_out_name;
+    SccpNumberTranslation       *_calling_number_translation_in;
+    SccpNumberTranslation       *_called_number_translation_in;
+    SccpNumberTranslation       *_calling_number_translation_out;
+    SccpNumberTranslation       *_called_number_translation_out;
     
     NSString                    *_called_ttmap_in_name;
     UMMTP3TranslationTableMap   *_called_ttmap_in;
@@ -165,6 +165,25 @@ typedef enum UMMTP3ScreeningTraceLevel
     id _tcapSharingOutsideInstance;
 }
 
+@property(readwrite,strong)     NSString                    *calling_number_translation_in_name;
+@property(readwrite,strong)     NSString                    *called_number_translation_in_name;
+@property(readwrite,strong)     NSString                    *calling_number_translation_out_name;
+@property(readwrite,strong)     NSString                    *called_number_translation_out_name;
+@property(readwrite,strong)     SccpNumberTranslation       *calling_number_translation_in;
+@property(readwrite,strong)     SccpNumberTranslation       *called_number_translation_in;
+@property(readwrite,strong)     SccpNumberTranslation       *calling_number_translation_out;
+@property(readwrite,strong)     SccpNumberTranslation       *called_number_translation_out;
+
+/* glue */
+@property(readwrite,strong)     NSString                    *cga_number_translation_in_name;
+@property(readwrite,strong)     NSString                    *cda_number_translation_in_name;
+@property(readwrite,strong)     NSString                    *cganumber_translation_out_name;
+@property(readwrite,strong)     NSString                    *cda_number_translation_out_name;
+@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_in;
+@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_in;
+@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_out;
+@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_out;
+
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
 @property(readwrite,strong)     UMThroughputCounter *outboundThroughputPackets;
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputBytes;
@@ -232,16 +251,6 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong) NSString                    *calling_ttmap_out_name;
 @property(readwrite,strong) UMMTP3TranslationTableMap   *calling_ttmap_out;
 
-
-@property(readwrite,strong) NSString                    *cga_number_translation_in_name;
-@property(readwrite,strong) NSString                    *cda_number_translation_in_name;
-@property(readwrite,strong) NSString                    *cga_number_translation_out_name;
-@property(readwrite,strong) NSString                    *cda_number_translation_out_name;
-@property(readwrite,strong) SccpNumberTranslation       *cga_number_translation_in;
-@property(readwrite,strong) SccpNumberTranslation       *cda_number_translation_in;
-@property(readwrite,strong) SccpNumberTranslation       *cga_number_translation_out;
-@property(readwrite,strong) SccpNumberTranslation       *cda_number_translation_out;
-
 @property(readwrite,strong) NSString                    *lastError;
 
 
@@ -270,16 +279,6 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong,atomic) UMMTP3LinkSetPrometheusData *prometheusMetrics;
 @property(readwrite,strong,atomic) NSDate                      *lastLinksetUp;
 @property(readwrite,strong,atomic) NSDate                      *lastLinksetDown;
-
-/* These names are aliases to the cga */
-@property(readwrite,strong,atomic) NSString                    *calling_number_translation_in_name;
-@property(readwrite,strong,atomic) NSString                    *called_number_translation_in_name;
-@property(readwrite,strong,atomic) NSString                    *calling_number_translation_out_name;
-@property(readwrite,strong,atomic) NSString                    *called_number_translation_out_name;
-@property(readwrite,strong,atomic) SccpNumberTranslation       *calling_number_translation_in;
-@property(readwrite,strong,atomic) SccpNumberTranslation       *called_number_translation_in;
-@property(readwrite,strong,atomic) SccpNumberTranslation       *calling_number_translation_out;
-@property(readwrite,strong,atomic) SccpNumberTranslation       *called_number_translation_out;
 
 - (int)nextSLS;
 - (void)addLink:(UMMTP3Link *)lnk;

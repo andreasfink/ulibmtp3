@@ -972,8 +972,8 @@
     if(rte.linksetName.length > 0)
     {
         UMMTP3LinkSet *linkset = _linksets[rte.linksetName];
-        rte.cga_number_translation_out = linkset.cga_number_translation_in;
-        rte.cda_number_translation_out = linkset.cda_number_translation_out;
+        rte.calling_number_translation_out = linkset.calling_number_translation_in;
+        rte.called_number_translation_out  = linkset.called_number_translation_out;
     }
     return rte;
 }
@@ -981,13 +981,13 @@
 - (SccpNumberTranslation *) callingPartyAddressTranslationOutForLinkset:(NSString *)linksetName
 {
     UMMTP3LinkSet *linkset = _linksets[linksetName];
-    return linkset.cda_number_translation_out;
+    return linkset.called_number_translation_out;
 }
 
 - (SccpNumberTranslation *) calledPartyAddressTranslationOutForLinkset:(NSString *)linksetName
 {
     UMMTP3LinkSet *linkset = _linksets[linksetName];
-    return linkset.cda_number_translation_out;
+    return linkset.called_number_translation_out;
 }
 
 
@@ -1740,8 +1740,8 @@
                       options:options
                  called_ttmap:linkset.called_ttmap_in
                 calling_ttmap:linkset.calling_ttmap_in
-           called_translation:linkset.cda_number_translation_in
-          calling_translation:linkset.cga_number_translation_in];
+           called_translation:linkset.called_number_translation_in
+          calling_translation:linkset.calling_number_translation_in];
         }
         else if(_problematicPacketDumper)
         {

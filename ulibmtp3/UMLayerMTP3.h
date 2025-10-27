@@ -82,9 +82,7 @@ typedef enum UMMTP3_Error
     NSString                        *_routingUpdateDbTable;
     NSNumber                        *_routingUpdateDbAutoCreate;
     NSString                        *_routingUpdateDbInstance;
-    UMMTP3RoutingUpdateDb           *_routingUpdateDb;
-
-  
+    UMMTP3RoutingUpdateDb           *_routingUpdateDb;  
     UMTimer                         *_housekeepingTimer;
     UMPrometheus                    *_prometheus;
     NSTimeInterval                  _routeRetestTime;
