@@ -1687,9 +1687,9 @@ static const char *get_tcp_status_string(UMSocketStatus status)
     old_status = _sctp_status;
     if(self.logLevel <= UMLOG_DEBUG)
     {
-        NSString *s = [NSString stringWithFormat:@"tcpStatusIndication: %s->%s Reason %@",
-                       get_tcp_status_string(old_status),
-                       get_tcp_status_string(new_status),
+        NSString *s = [NSString stringWithFormat:@"sctpStatusIndication: %s->%s Reason %@",
+                       get_sctp_status_string(old_status),
+                       get_sctp_status_string(new_status),
                        (reason ? reason : @"undefined")];
         [self logDebug:s];
     }
@@ -1720,9 +1720,10 @@ static const char *get_tcp_status_string(UMSocketStatus status)
     old_status = _tcp_status;
     if(self.logLevel <= UMLOG_DEBUG)
     {
-        NSString *s = [NSString stringWithFormat:@"sctpStatusIndication: %s->%s Reason %@",
-                       get_sctp_status_string(old_status),
-                       get_sctp_status_string(new_status),
+        
+        NSString *s = [NSString stringWithFormat:@"tcpStatusIndication: %s->%s Reason %@",
+                       get_tcp_status_string(old_status),
+                       get_tcp_status_string(new_status),
                        (reason ? reason : @"undefined")];
         [self logDebug:s];
     }
