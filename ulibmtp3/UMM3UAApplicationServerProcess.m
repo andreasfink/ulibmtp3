@@ -1697,7 +1697,7 @@ static const char *get_tcp_status_string(UMSocketStatus status)
     {
         return;
     }
-    _tcp_status = new_status;
+    _sctp_status = new_status;
     switch(_sctp_status)
     {
         case UMSOCKET_STATUS_FOOS:
