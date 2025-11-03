@@ -89,7 +89,6 @@ typedef enum UMMTP3ScreeningTraceLevel
     BOOL                        _sendExtendedAttributes;
     
 
-<<<<<<< HEAD
     NSString                    *_calling_number_translation_in_name;
     NSString                    *_called_number_translation_in_name;
     NSString                    *_calling_number_translation_out_name;
@@ -98,26 +97,6 @@ typedef enum UMMTP3ScreeningTraceLevel
     SccpNumberTranslation       *_called_number_translation_in;
     SccpNumberTranslation       *_calling_number_translation_out;
     SccpNumberTranslation       *_called_number_translation_out;
-    
-    NSString                    *_called_ttmap_in_name;
-    UMMTP3TranslationTableMap   *_called_ttmap_in;
-    NSString                    *_called_ttmap_out_name;
-    UMMTP3TranslationTableMap   *_called_ttmap_out;
-    NSString                    *_calling_ttmap_in_name;
-    UMMTP3TranslationTableMap   *_calling_ttmap_in;
-    NSString                    *_calling_ttmap_out_name;
-    UMMTP3TranslationTableMap   *_calling_ttmap_out;
-
-=======
-    NSString                    *_cga_number_translation_in_name;
-    NSString                    *_cda_number_translation_in_name;
-    NSString                    *_cga_number_translation_out_name;
-    NSString                    *_cda_number_translation_out_name;
-    SccpNumberTranslation       *_cga_number_translation_in;
-    SccpNumberTranslation       *_cda_number_translation_in;
-    SccpNumberTranslation       *_cga_number_translation_out;
-    SccpNumberTranslation       *_cda_number_translation_out;
->>>>>>> 233a451 (wip)
     
     NSString                    *_called_ttmap_in_name;
     UMMTP3TranslationTableMap   *_called_ttmap_in;
@@ -197,14 +176,14 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong)     SccpNumberTranslation       *called_number_translation_out;
 
 /* glue */
-@property(readwrite,strong)     NSString                    *cga_number_translation_in_name     DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     NSString                    *cda_number_translation_in_name     DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     NSString                    *cganumber_translation_out_name     DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     NSString                    *cda_number_translation_out_name    DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_in          DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_in          DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_out         DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_out         DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     NSString                    *cga_number_translation_in_name     UM_DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     NSString                    *cda_number_translation_in_name     UM_DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     NSString                    *cganumber_translation_out_name     UM_DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     NSString                    *cda_number_translation_out_name    UM_DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_in          UM_DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_in          UM_DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_out         UM_DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_out         UM_DEPRECATED_ATTRIBUTE;
 
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
 @property(readwrite,strong)     UMThroughputCounter *outboundThroughputPackets;
@@ -302,15 +281,6 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong,atomic) NSDate                      *lastLinksetUp;
 @property(readwrite,strong,atomic) NSDate                      *lastLinksetDown;
 
-/* These names are aliases to the cga */
-@property(readwrite,strong,atomic) NSString                    *calling_number_translation_in_name;
-@property(readwrite,strong,atomic) NSString                    *called_number_translation_in_name;
-@property(readwrite,strong,atomic) NSString                    *calling_number_translation_out_name;
-@property(readwrite,strong,atomic) NSString                    *called_number_translation_out_name;
-@property(readwrite,strong,atomic) SccpNumberTranslation       *calling_number_translation_in;
-@property(readwrite,strong,atomic) SccpNumberTranslation       *called_number_translation_in;
-@property(readwrite,strong,atomic) SccpNumberTranslation       *calling_number_translation_out;
-@property(readwrite,strong,atomic) SccpNumberTranslation       *called_number_translation_out;
 
 - (int)nextSLS;
 - (void)addLink:(UMMTP3Link *)lnk;
