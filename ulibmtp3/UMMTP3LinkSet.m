@@ -42,20 +42,7 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
 
 @implementation UMMTP3LinkSet
 
-<<<<<<< HEAD
-=======
 /* These names are aliases to the cga_... names */
-
-@synthesize calling_number_translation_in_name  = _cga_number_translation_in_name;
-@synthesize called_number_translation_in_name   = _cda_number_translation_in_name;
-@synthesize calling_number_translation_out_name = _cga_number_translation_out_name;
-@synthesize called_number_translation_out_name  = _cda_number_translation_out_name;
-
-@synthesize calling_number_translation_in        = _cga_number_translation_in;
-@synthesize called_number_translation_in         = _cda_number_translation_in;
-@synthesize calling_number_translation_out       = _cga_number_translation_out;
-@synthesize called_number_translation_out        = _cga_number_translation_out;
->>>>>>> 233a451 (wip)
 
 - (int)networkIndicator
 {
@@ -6061,15 +6048,22 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
     [_mtp3 updateRoutingTableLinksetUnavailable:_name];
 }
 
+<<<<<<< HEAD
 - (SccpNumberTranslation *)calling_number_translation_in
+=======
+
+
+- (SccpNumberTranslation *)cga_number_translation_in
+>>>>>>> 28539f0 (renaming)
 {
-    if((_calling_number_translation_in_name) && (_calling_number_translation_in==NULL))
+    if((_cga_number_translation_in_name) && (_cga_number_translation_in==NULL))
     {
-        _calling_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_calling_number_translation_in_name];
+        _cga_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_cga_number_translation_in_name];
     }
-    return _calling_number_translation_in;
+    return _cga_number_translation_in;
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 /* old glue code*/
 =======
@@ -6131,26 +6125,35 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
     self.called_number_translation_in =  nt;
 =======
     _calling_number_translation_in = nt;
+=======
+- (void)setCga_number_translation_in:(SccpNumberTranslation *)nt
+{
+    _cga_number_translation_in = nt;
+>>>>>>> 28539f0 (renaming)
 }
 
-- (SccpNumberTranslation *)called_number_translation_in
+- (SccpNumberTranslation *)cda_number_translation_in
 {
-    if((_called_number_translation_in_name) && (_called_number_translation_in==NULL))
+    if((_cda_number_translation_in_name) && (_cda_number_translation_in==NULL))
     {
-        _called_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_in_name];
+        _cda_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_cda_number_translation_in_name];
     }
-    return _called_number_translation_in;
+    return _cda_number_translation_in;
 }
 
-- (void)setCalled_number_translation_in:(SccpNumberTranslation *)nt
+- (void)setCda_number_translation_in:(SccpNumberTranslation *)nt
 {
+<<<<<<< HEAD
     _called_number_translation_in = nt;
 >>>>>>> 233a451 (wip)
+=======
+    _cda_number_translation_in = nt;
+>>>>>>> 28539f0 (renaming)
 }
-
 
 - (SccpNumberTranslation *)calling_number_translation_out
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
     if((_called_number_translation_out_name) && (_called_number_translation_out==NULL))
     {
@@ -6159,11 +6162,18 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
     return _called_number_translation_out;
 =======
     if((_calling_number_translation_out_name) && (_calling_number_translation_out==NULL))
+=======
+    if((_cga_number_translation_out_name) && (_cga_number_translation_out==NULL))
+>>>>>>> 28539f0 (renaming)
     {
-        _calling_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_calling_number_translation_out_name];
+        _cga_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_cga_number_translation_out_name];
     }
+<<<<<<< HEAD
     return _calling_number_translation_out;
 >>>>>>> 233a451 (wip)
+=======
+    return _cga_number_translation_out;
+>>>>>>> 28539f0 (renaming)
 }
 
 - (SccpNumberTranslation *)cga_number_translation_out
@@ -6173,7 +6183,7 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
 
 - (void)setCalling_number_translation_out:(SccpNumberTranslation *)nt
 {
-    _calling_number_translation_out = nt;
+    _cga_number_translation_out = nt;
 }
 
 /* glue */
@@ -6186,16 +6196,16 @@ UMMTP3TranslationTableMap   *_calling_ttmap_out;
 
 - (SccpNumberTranslation *)called_number_translation_out
 {
-    if((_called_number_translation_out_name) && (_called_number_translation_out==NULL))
+    if((_cda_number_translation_out_name) && (_cda_number_translation_out==NULL))
     {
-        _called_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_out_name];
+        _cda_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_cda_number_translation_out_name];
     }
-    return _called_number_translation_out;
+    return _cda_number_translation_out;
 }
 
 - (void)setCalled_number_translation_out:(SccpNumberTranslation *)nt
 {
-    _called_number_translation_out = nt;
+    _cda_number_translation_out = nt;
 }
 
 @end
