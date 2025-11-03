@@ -275,4 +275,25 @@
     return r;
 }
 
+/* backwards compatibility */
+ -(SccpNumberTranslation *)cga_number_translation_out
+{
+    return _calling_number_translation_out;
+}
+
+-(void)setCga_number_translation_out:(SccpNumberTranslation *)t
+{
+    self.calling_number_translation_out = t;
+}
+
+ -(SccpNumberTranslation *)cda_number_translation_out
+{
+    return _called_number_translation_out;
+}
+
+-(void)setCda_number_translation_out:(SccpNumberTranslation *)t
+{
+    self.called_number_translation_out = t;
+}
+
 @end

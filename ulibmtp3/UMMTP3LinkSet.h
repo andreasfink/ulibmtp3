@@ -16,6 +16,7 @@
 #import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
 #import <ulibmtp3/UMMTP3RoutePriority.h>
 #import <ulibmtp3/UMMTP3LinkSetPrometheusData.h>
+#import <ulib/UMDeprecatedMacros.h>
 
 @class UMMTP3Link;
 @class UMLayerMTP3;
@@ -106,6 +107,7 @@ typedef enum UMMTP3ScreeningTraceLevel
     NSString                    *_calling_ttmap_out_name;
     UMMTP3TranslationTableMap   *_calling_ttmap_out;
 
+    
     NSString                    *_linkNamesBySlc[16];
     UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableBidi;
     UMMTP3PointCodeTranslationTable *_pointcodeTranslationTableIn;
@@ -175,14 +177,14 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong)     SccpNumberTranslation       *called_number_translation_out;
 
 /* glue */
-@property(readwrite,strong)     NSString                    *cga_number_translation_in_name;
-@property(readwrite,strong)     NSString                    *cda_number_translation_in_name;
-@property(readwrite,strong)     NSString                    *cganumber_translation_out_name;
-@property(readwrite,strong)     NSString                    *cda_number_translation_out_name;
-@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_in;
-@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_in;
-@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_out;
-@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_out;
+@property(readwrite,strong)     NSString                    *cga_number_translation_in_name     DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     NSString                    *cda_number_translation_in_name     DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     NSString                    *cganumber_translation_out_name     DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     NSString                    *cda_number_translation_out_name    DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_in          DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_in          DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_out         DEPRECATED_ATTRIBUTE;
+@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_out         DEPRECATED_ATTRIBUTE;
 
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
 @property(readwrite,strong)     UMThroughputCounter *outboundThroughputPackets;

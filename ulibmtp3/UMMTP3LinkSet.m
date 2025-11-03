@@ -3488,30 +3488,55 @@
         _calling_ttmap_out = [appContext getTTMap:_calling_ttmap_out_name];
     }
 
-    if(cfg[@"cga-number-translation-in"]) /* optional */
+    if(cfg[@"cga-number-translation-in"]) /* old naming */
     {
         _calling_number_translation_in_name = [cfg[@"cga-number-translation-in"] stringValue];
         _calling_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_calling_number_translation_in_name];
     }
-    
-    if(cfg[@"cga-number-translation-out"]) /* optional */
+    if(cfg[@"calling-number-translation-in"]) /* new naming */
+    {
+        _calling_number_translation_in_name = [cfg[@"calling-number-translation-in"] stringValue];
+        _calling_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_calling_number_translation_in_name];
+    }
+
+    if(cfg[@"cga-number-translation-out"]) /* old naming */
     {
         _calling_number_translation_out_name = [cfg[@"cga-number-translation-out"] stringValue];
         _calling_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_calling_number_translation_out_name];
     }
-    
-    if(cfg[@"cda-number-translation-in"]) /* optional */
+    if(cfg[@"calling-number-translation-out"]) /* new naming */
+    {
+        _calling_number_translation_out_name = [cfg[@"calling-number-translation-out"] stringValue];
+        _calling_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_calling_number_translation_out_name];
+    }
+
+    if(cfg[@"cda-number-translation-in"]) /* old name */
     {
         _called_number_translation_in_name = [cfg[@"cda-number-translation-in"] stringValue];
         _called_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_in_name];
     }
-    
-    if(cfg[@"cda-number-translation-out"]) /* optional */
+
+    if(cfg[@"called-number-translation-in"]) /* new name */
+    {
+        _called_number_translation_in_name = [cfg[@"called-number-translation-in"] stringValue];
+        _called_number_translation_in = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_in_name];
+    }
+
+    if(cfg[@"cda-number-translation-out"]) /* old name */
     {
         _called_number_translation_out_name = [cfg[@"cda-number-translation-out"] stringValue];
         _called_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_out_name];
     }
-    
+    if(cfg[@"called-number-translation-out"]) /* new name */
+    {
+        _called_number_translation_out_name = [cfg[@"called-number-translation-out"] stringValue];
+        _called_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_out_name];
+    }    if(cfg[@"cda-number-translation-out"]) /* old name */
+    {
+        _called_number_translation_out_name = [cfg[@"cda-number-translation-out"] stringValue];
+        _called_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_out_name];
+    }
+
     if(cfg[@"pointcode-translation-table"]) /* optional */
     {
         _pointcodeTranslationTableNameBidi = [cfg[@"pointcode-translation-table"] stringValue];
@@ -6027,10 +6052,9 @@
     _calling_number_translation_in = nt;
 }
 
-/* glue code */
 - (void)setCga_number_translation_in:(SccpNumberTranslation *)nt
 {
-    [self setCalling_number_translation_in:nt];
+    self.calling_number_translation_in =nt;
 }
 
 
@@ -6057,22 +6081,22 @@
 /* glue code */
 - (void)setCda_number_translation_in:(SccpNumberTranslation *)nt
 {
-    return [self setCalled_number_translation_in:nt];
+    self.called_number_translation_in =  nt;
 }
 
 
 - (SccpNumberTranslation *)calling_number_translation_out
 {
-    if((_calling_number_translation_out_name) && (_calling_number_translation_out==NULL))
+    if((_called_number_translation_out_name) && (_called_number_translation_out==NULL))
     {
-        _calling_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_calling_number_translation_out_name];
+        _called_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_out_name];
     }
-    return _calling_number_translation_out;
+    return _called_number_translation_out;
 }
 
 - (SccpNumberTranslation *)cga_number_translation_out
 {
-    return [self calling_number_translation_out];
+    return self.calling_number_translation_out;
 }
 
 - (void)setCalling_number_translation_out:(SccpNumberTranslation *)nt
@@ -6083,23 +6107,23 @@
 /* glue */
 - (void)setCga_number_translation_out:(SccpNumberTranslation *)nt
 {
-    [self setCalling_number_translation_out:nt];
+    self.calling_number_translation_out = nt;
 }
 
 
 
 - (SccpNumberTranslation *)called_number_translation_out
 {
-    if((_called_number_translation_out_name) && (_called_number_translation_out==NULL))
+    if((_cda_number_translation_out_name) && (_cda_number_translation_out==NULL))
     {
-        _called_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_called_number_translation_out_name];
+        _cda_number_translation_out = [_mtp3.appContext getSccpNumberTransationByName:_cda_number_translation_out_name];
     }
-    return _called_number_translation_out;
+    return _cda_number_translation_out;
 }
 
 - (void)setCalled_number_translation_out:(SccpNumberTranslation *)nt
 {
-    _called_number_translation_out = nt;
+    _cda_number_translation_out = nt;
 }
 
 @end

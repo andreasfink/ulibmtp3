@@ -62,6 +62,9 @@
 @property(readwrite,strong) SccpNumberTranslation       *calling_number_translation_out;
 @property(readwrite,strong) SccpNumberTranslation       *called_number_translation_out;
 
+@property(readwrite,strong) SccpNumberTranslation       *cga_number_translation_out;
+@property(readwrite,strong) SccpNumberTranslation       *cda_number_translation_out;
+
 - (NSComparisonResult)routingPreference:(UMMTP3InstanceRoute *)other;
 
 - (UMMTP3InstanceRoute *)initWithPc:(UMMTP3PointCode *)pc
