@@ -1010,7 +1010,6 @@
                      sls:-1];
 }
 
-
 - (UMMTP3_Error)sendPDU:(NSData *)pdu
                     opc:(UMMTP3PointCode *)fopc
                     dpc:(UMMTP3PointCode *)fdpc
