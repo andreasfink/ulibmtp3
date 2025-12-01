@@ -894,7 +894,7 @@
 				INSTALL_PATH = /FinkTelecomServices/frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				ONLY_ACTIVE_ARCH = NO;
-				SDKROOT = auto;
+				SDKROOT = macosx;
 				WARNING_CFLAGS = "-Wimplicit-fallthrough";
 			};
 			name = Debug;
@@ -953,7 +953,7 @@
 				INSTALL_PATH = /FinkTelecomServices/frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				ONLY_ACTIVE_ARCH = NO;
-				SDKROOT = auto;
+				SDKROOT = macosx;
 				WARNING_CFLAGS = "-Wimplicit-fallthrough";
 			};
 			name = Release;
