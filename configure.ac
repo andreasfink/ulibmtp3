@@ -40,6 +40,7 @@ MAJORVER=`echo $VERSION | cut -f1 -d.`
 MINORVER=`echo $VERSION | cut -f2 -d.`
 REVISION=`echo $VERSION | cut -f3 -d.`
 ULIBMTP3_VERSION=`head -n 1 VERSION`
+./make_version
 
 dnl -----------------------------------------
 dnl Set user who runs ./configure
