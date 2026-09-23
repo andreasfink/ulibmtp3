@@ -52,7 +52,7 @@ LIBTOOL="ar rc"
 RANLIB="ranlib"
 LIBRARY_NAME=$PROJECT_NAME
 BUILD_DIR=.
-FRAMEWORKS="-framework ulib -framework ulibsctp -framework ulibm2pa"
+FRAMEWORKS="-framework ulib"
 
 dnl Apply system specific rules.
 dnl Executable extension for systems that need one, i.e. Cygwin

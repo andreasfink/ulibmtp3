@@ -10,13 +10,12 @@
 // the author.
 
 #import <ulib/ulib.h>
-#import <ulibm2pa/ulibm2pa.h>
+#import <ulibmtp3/ulibm2pa.h>
 #import <ulibmtp3/UMMTP3Variant.h>
 #import <ulibmtp3/UMMTP3TransitPermission.h>
 #import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
 #import <ulibmtp3/UMMTP3RoutePriority.h>
 #import <ulibmtp3/UMMTP3LinkSetPrometheusData.h>
-#import <ulib/UMDeprecatedMacros.h>
 
 @class UMMTP3Link;
 @class UMLayerMTP3;

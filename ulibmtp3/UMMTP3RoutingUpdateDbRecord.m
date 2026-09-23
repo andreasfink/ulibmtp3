@@ -6,7 +6,7 @@
 //  Copyright © 2023 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import <ulibdb/ulibdb.h>
+#import <ulib/ulib.h>
 #import "UMMTP3RoutingUpdateDbRecord.h"
 
 @implementation UMMTP3RoutingUpdateDbRecord

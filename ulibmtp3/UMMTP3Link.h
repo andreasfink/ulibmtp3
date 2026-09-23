@@ -10,8 +10,7 @@
 // the author.
 
 #import <ulib/ulib.h>
-#import <ulibsctp/ulibsctp.h>
-#import <ulibm2pa/ulibm2pa.h>
+#import <ulibmtp3/ulibm2pa.h>
 #import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
 
 @class UMMTP3LinkSet;

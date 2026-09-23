@@ -19,6 +19,101 @@
 		A618677928AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = A618677728AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.m */; };
 		A618677C28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h in Headers */ = {isa = PBXBuildFile; fileRef = A618677A28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A618677D28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.m in Sources */ = {isa = PBXBuildFile; fileRef = A618677B28AACB5600A42677 /* UMM3UAApplicationServerStatusRecords.m */; };
+		A643D6E03063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D33063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.m */; };
+		A643D6E13063A0C100F9798D /* UMM2PATask_PowerOn.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6CF3063A0C100F9798D /* UMM2PATask_PowerOn.m */; };
+		A643D6E23063A0C100F9798D /* UMLayerM2PAUserProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6A73063A0C100F9798D /* UMLayerM2PAUserProfile.m */; };
+		A643D6E33063A0C100F9798D /* UMM2PAState_AlignedReady.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6AE3063A0C100F9798D /* UMM2PAState_AlignedReady.m */; };
+		A643D6E43063A0C100F9798D /* UMM2PAUnackedPdu.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6DF3063A0C100F9798D /* UMM2PAUnackedPdu.m */; };
+		A643D6E53063A0C100F9798D /* UMM2PATask_sctpStatusIndication.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D53063A0C100F9798D /* UMM2PATask_sctpStatusIndication.m */; };
+		A643D6E63063A0C100F9798D /* UMM2PATask_Data.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C73063A0C100F9798D /* UMM2PATask_Data.m */; };
+		A643D6E73063A0C100F9798D /* UMM2PAState_AlignedNotReady.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6AC3063A0C100F9798D /* UMM2PAState_AlignedNotReady.m */; };
+		A643D6E83063A0C100F9798D /* UMM2PATask_AdminSetConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C53063A0C100F9798D /* UMM2PATask_AdminSetConfig.m */; };
+		A643D6E93063A0C100F9798D /* UMM2PAState_Connecting.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B13063A0C100F9798D /* UMM2PAState_Connecting.m */; };
+		A643D6EA3063A0C100F9798D /* UMM2PAState_Disconnected.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B33063A0C100F9798D /* UMM2PAState_Disconnected.m */; };
+		A643D6EB3063A0C100F9798D /* UMM2PATask_SetSlc.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D73063A0C100F9798D /* UMM2PATask_SetSlc.m */; };
+		A643D6EC3063A0C100F9798D /* UMLayerM2PA.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6A13063A0C100F9798D /* UMLayerM2PA.m */; };
+		A643D6ED3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6BF3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.m */; };
+		A643D6EE3063A0C100F9798D /* UMM2PAState_InitialAlignment.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B53063A0C100F9798D /* UMM2PAState_InitialAlignment.m */; };
+		A643D6EF3063A0C100F9798D /* UMM2PATask_AdminInit.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C33063A0C100F9798D /* UMM2PATask_AdminInit.m */; };
+		A643D6F03063A0C100F9798D /* UMM2PATask_Emergency.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C93063A0C100F9798D /* UMM2PATask_Emergency.m */; };
+		A643D6F13063A0C100F9798D /* UMM2PATask_PowerOff.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6CD3063A0C100F9798D /* UMM2PATask_PowerOff.m */; };
+		A643D6F23063A0C100F9798D /* UMLayerM2PAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6A53063A0C100F9798D /* UMLayerM2PAUser.m */; };
+		A643D6F33063A0C100F9798D /* UMM2PAState.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6AA3063A0C100F9798D /* UMM2PAState.m */; };
+		A643D6F43063A0C100F9798D /* UMM2PATask_AdminAttach.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6BD3063A0C100F9798D /* UMM2PATask_AdminAttach.m */; };
+		A643D6F53063A0C100F9798D /* UMM2PATask_TimerEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6DD3063A0C100F9798D /* UMM2PATask_TimerEvent.m */; };
+		A643D6F63063A0C100F9798D /* UMM2PATask_Stop.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6DB3063A0C100F9798D /* UMM2PATask_Stop.m */; };
+		A643D6F73063A0C100F9798D /* UMM2PATask_sctpDataIndication.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D13063A0C100F9798D /* UMM2PATask_sctpDataIndication.m */; };
+		A643D6F83063A0C100F9798D /* UMM2PAState_OutOfService.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B93063A0C100F9798D /* UMM2PAState_OutOfService.m */; };
+		A643D6F93063A0C100F9798D /* UMM2PAState_ProcessorOutage.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6BB3063A0C100F9798D /* UMM2PAState_ProcessorOutage.m */; };
+		A643D6FA3063A0C100F9798D /* UMM2PAState_InService.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B73063A0C100F9798D /* UMM2PAState_InService.m */; };
+		A643D6FB3063A0C100F9798D /* UMM2PATask_AdminDetachOrder.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C13063A0C100F9798D /* UMM2PATask_AdminDetachOrder.m */; };
+		A643D6FC3063A0C100F9798D /* UMM2PATask_EmergencyCheases.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6CB3063A0C100F9798D /* UMM2PATask_EmergencyCheases.m */; };
+		A643D6FD3063A0C100F9798D /* UMM2PATask_Start.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D93063A0C100F9798D /* UMM2PATask_Start.m */; };
+		A643D6FE3063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D33063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.m */; };
+		A643D6FF3063A0C100F9798D /* UMM2PATask_PowerOn.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6CF3063A0C100F9798D /* UMM2PATask_PowerOn.m */; };
+		A643D7003063A0C100F9798D /* UMLayerM2PAUserProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6A73063A0C100F9798D /* UMLayerM2PAUserProfile.m */; };
+		A643D7013063A0C100F9798D /* UMM2PAState_AlignedReady.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6AE3063A0C100F9798D /* UMM2PAState_AlignedReady.m */; };
+		A643D7023063A0C100F9798D /* UMM2PAUnackedPdu.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6DF3063A0C100F9798D /* UMM2PAUnackedPdu.m */; };
+		A643D7033063A0C100F9798D /* UMM2PATask_sctpStatusIndication.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D53063A0C100F9798D /* UMM2PATask_sctpStatusIndication.m */; };
+		A643D7043063A0C100F9798D /* UMM2PATask_Data.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C73063A0C100F9798D /* UMM2PATask_Data.m */; };
+		A643D7053063A0C100F9798D /* UMM2PAState_AlignedNotReady.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6AC3063A0C100F9798D /* UMM2PAState_AlignedNotReady.m */; };
+		A643D7063063A0C100F9798D /* UMM2PATask_AdminSetConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C53063A0C100F9798D /* UMM2PATask_AdminSetConfig.m */; };
+		A643D7073063A0C100F9798D /* UMM2PAState_Connecting.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B13063A0C100F9798D /* UMM2PAState_Connecting.m */; };
+		A643D7083063A0C100F9798D /* UMM2PAState_Disconnected.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B33063A0C100F9798D /* UMM2PAState_Disconnected.m */; };
+		A643D7093063A0C100F9798D /* UMM2PATask_SetSlc.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D73063A0C100F9798D /* UMM2PATask_SetSlc.m */; };
+		A643D70A3063A0C100F9798D /* UMLayerM2PA.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6A13063A0C100F9798D /* UMLayerM2PA.m */; };
+		A643D70B3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6BF3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.m */; };
+		A643D70C3063A0C100F9798D /* UMM2PAState_InitialAlignment.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B53063A0C100F9798D /* UMM2PAState_InitialAlignment.m */; };
+		A643D70D3063A0C100F9798D /* UMM2PATask_AdminInit.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C33063A0C100F9798D /* UMM2PATask_AdminInit.m */; };
+		A643D70E3063A0C100F9798D /* UMM2PATask_Emergency.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C93063A0C100F9798D /* UMM2PATask_Emergency.m */; };
+		A643D70F3063A0C100F9798D /* UMM2PATask_PowerOff.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6CD3063A0C100F9798D /* UMM2PATask_PowerOff.m */; };
+		A643D7103063A0C100F9798D /* UMLayerM2PAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6A53063A0C100F9798D /* UMLayerM2PAUser.m */; };
+		A643D7113063A0C100F9798D /* UMM2PAState.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6AA3063A0C100F9798D /* UMM2PAState.m */; };
+		A643D7123063A0C100F9798D /* UMM2PATask_AdminAttach.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6BD3063A0C100F9798D /* UMM2PATask_AdminAttach.m */; };
+		A643D7133063A0C100F9798D /* UMM2PATask_TimerEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6DD3063A0C100F9798D /* UMM2PATask_TimerEvent.m */; };
+		A643D7143063A0C100F9798D /* UMM2PATask_Stop.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6DB3063A0C100F9798D /* UMM2PATask_Stop.m */; };
+		A643D7153063A0C100F9798D /* UMM2PATask_sctpDataIndication.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D13063A0C100F9798D /* UMM2PATask_sctpDataIndication.m */; };
+		A643D7163063A0C100F9798D /* UMM2PAState_OutOfService.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B93063A0C100F9798D /* UMM2PAState_OutOfService.m */; };
+		A643D7173063A0C100F9798D /* UMM2PAState_ProcessorOutage.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6BB3063A0C100F9798D /* UMM2PAState_ProcessorOutage.m */; };
+		A643D7183063A0C100F9798D /* UMM2PAState_InService.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6B73063A0C100F9798D /* UMM2PAState_InService.m */; };
+		A643D7193063A0C100F9798D /* UMM2PATask_AdminDetachOrder.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6C13063A0C100F9798D /* UMM2PATask_AdminDetachOrder.m */; };
+		A643D71A3063A0C100F9798D /* UMM2PATask_EmergencyCheases.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6CB3063A0C100F9798D /* UMM2PATask_EmergencyCheases.m */; };
+		A643D71B3063A0C100F9798D /* UMM2PATask_Start.m in Sources */ = {isa = PBXBuildFile; fileRef = A643D6D93063A0C100F9798D /* UMM2PATask_Start.m */; };
+		A643D71C3063A0C100F9798D /* UMM2PATask_PowerOn.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6CE3063A0C100F9798D /* UMM2PATask_PowerOn.h */; };
+		A643D71D3063A0C100F9798D /* UMM2PATask_Data.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6C63063A0C100F9798D /* UMM2PATask_Data.h */; };
+		A643D71E3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6BE3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.h */; };
+		A643D71F3063A0C100F9798D /* UMM2PAState_allStates.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6AF3063A0C100F9798D /* UMM2PAState_allStates.h */; };
+		A643D7203063A0C100F9798D /* UMM2PAState_OutOfService.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6B83063A0C100F9798D /* UMM2PAState_OutOfService.h */; };
+		A643D7213063A0C100F9798D /* UMM2PATask_AdminInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6C23063A0C100F9798D /* UMM2PATask_AdminInit.h */; };
+		A643D7223063A0C100F9798D /* UMM2PATask_AdminDetachOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6C03063A0C100F9798D /* UMM2PATask_AdminDetachOrder.h */; };
+		A643D7233063A0C100F9798D /* UMLayerM2PA.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6A03063A0C100F9798D /* UMLayerM2PA.h */; };
+		A643D7243063A0C100F9798D /* UMM2PATask_sctpDataIndication.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6D03063A0C100F9798D /* UMM2PATask_sctpDataIndication.h */; };
+		A643D7253063A0C100F9798D /* UMM2PAState_ProcessorOutage.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6BA3063A0C100F9798D /* UMM2PAState_ProcessorOutage.h */; };
+		A643D7263063A0C100F9798D /* UMM2PATask_AdminAttach.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6BC3063A0C100F9798D /* UMM2PATask_AdminAttach.h */; };
+		A643D7273063A0C100F9798D /* UMM2PAState_AlignedNotReady.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6AB3063A0C100F9798D /* UMM2PAState_AlignedNotReady.h */; };
+		A643D7283063A0C100F9798D /* UMLayerM2PAUserProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6A83063A0C100F9798D /* UMLayerM2PAUserProtocol.h */; };
+		A643D7293063A0C100F9798D /* UMM2PAState_InitialAlignment.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6B43063A0C100F9798D /* UMM2PAState_InitialAlignment.h */; };
+		A643D72A3063A0C100F9798D /* UMM2PATask_Start.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6D83063A0C100F9798D /* UMM2PATask_Start.h */; };
+		A643D72B3063A0C100F9798D /* UMM2PATask_TimerEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6DC3063A0C100F9798D /* UMM2PATask_TimerEvent.h */; };
+		A643D72C3063A0C100F9798D /* UMM2PAUnackedPdu.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6DE3063A0C100F9798D /* UMM2PAUnackedPdu.h */; };
+		A643D72D3063A0C100F9798D /* UMM2PATask_sctpStatusIndication.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6D43063A0C100F9798D /* UMM2PATask_sctpStatusIndication.h */; };
+		A643D72E3063A0C100F9798D /* UMM2PATask_AdminSetConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6C43063A0C100F9798D /* UMM2PATask_AdminSetConfig.h */; };
+		A643D72F3063A0C100F9798D /* UMM2PATask_SetSlc.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6D63063A0C100F9798D /* UMM2PATask_SetSlc.h */; };
+		A643D7303063A0C100F9798D /* UMM2PATask_PowerOff.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6CC3063A0C100F9798D /* UMM2PATask_PowerOff.h */; };
+		A643D7313063A0C100F9798D /* UMM2PAState_AlignedReady.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6AD3063A0C100F9798D /* UMM2PAState_AlignedReady.h */; };
+		A643D7323063A0C100F9798D /* UMLayerM2PAStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6A33063A0C100F9798D /* UMLayerM2PAStatus.h */; };
+		A643D7333063A0C100F9798D /* UMLayerM2PAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6A43063A0C100F9798D /* UMLayerM2PAUser.h */; };
+		A643D7343063A0C100F9798D /* UMM2PAState_Connecting.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6B03063A0C100F9798D /* UMM2PAState_Connecting.h */; };
+		A643D7353063A0C100F9798D /* UMLayerM2PAUserProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6A63063A0C100F9798D /* UMLayerM2PAUserProfile.h */; };
+		A643D7363063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6D23063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.h */; };
+		A643D7373063A0C100F9798D /* UMLayerM2PAApplicationContextProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6A23063A0C100F9798D /* UMLayerM2PAApplicationContextProtocol.h */; };
+		A643D7383063A0C100F9798D /* UMM2PATask_Stop.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6DA3063A0C100F9798D /* UMM2PATask_Stop.h */; };
+		A643D7393063A0C100F9798D /* UMM2PAState.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6A93063A0C100F9798D /* UMM2PAState.h */; };
+		A643D73A3063A0C100F9798D /* UMM2PATask_Emergency.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6C83063A0C100F9798D /* UMM2PATask_Emergency.h */; };
+		A643D73B3063A0C100F9798D /* UMM2PAState_InService.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6B63063A0C100F9798D /* UMM2PAState_InService.h */; };
+		A643D73C3063A0C100F9798D /* UMM2PAState_Disconnected.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6B23063A0C100F9798D /* UMM2PAState_Disconnected.h */; };
+		A643D73D3063A0C100F9798D /* UMM2PATask_EmergencyCheases.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D6CA3063A0C100F9798D /* UMM2PATask_EmergencyCheases.h */; };
+		A643D73F3063A2A300F9798D /* ulibm2pa.h in Headers */ = {isa = PBXBuildFile; fileRef = A643D73E3063A2A300F9798D /* ulibm2pa.h */; };
 		A64994FD2E28D587006873AC /* UMMTP3Variant.m in Sources */ = {isa = PBXBuildFile; fileRef = A64994FC2E28D57F006873AC /* UMMTP3Variant.m */; };
 		A64994FE2E28D587006873AC /* UMMTP3Variant.m in Sources */ = {isa = PBXBuildFile; fileRef = A64994FC2E28D57F006873AC /* UMMTP3Variant.m */; };
 		A65270F825C33580007CF832 /* UMM3UAApplicationServerMode.h in Headers */ = {isa = PBXBuildFile; fileRef = A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -207,6 +302,71 @@
 		A62851401A46E4010090FC94 /* UMMTP3BlackList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UMMTP3BlackList.m; sourceTree = "<group>"; };
 		A629F27C25B86C2E00C209E5 /* File */ = {isa = PBXFileReference; lastKnownFileType = text; path = File; sourceTree = "<group>"; };
 		A643580A27AFD7D500540A2D /* RELEASE-NOTES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "RELEASE-NOTES.txt"; sourceTree = "<group>"; };
+		A643D6A03063A0C100F9798D /* UMLayerM2PA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMLayerM2PA.h; sourceTree = "<group>"; };
+		A643D6A13063A0C100F9798D /* UMLayerM2PA.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMLayerM2PA.m; sourceTree = "<group>"; };
+		A643D6A23063A0C100F9798D /* UMLayerM2PAApplicationContextProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMLayerM2PAApplicationContextProtocol.h; sourceTree = "<group>"; };
+		A643D6A33063A0C100F9798D /* UMLayerM2PAStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMLayerM2PAStatus.h; sourceTree = "<group>"; };
+		A643D6A43063A0C100F9798D /* UMLayerM2PAUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMLayerM2PAUser.h; sourceTree = "<group>"; };
+		A643D6A53063A0C100F9798D /* UMLayerM2PAUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMLayerM2PAUser.m; sourceTree = "<group>"; };
+		A643D6A63063A0C100F9798D /* UMLayerM2PAUserProfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMLayerM2PAUserProfile.h; sourceTree = "<group>"; };
+		A643D6A73063A0C100F9798D /* UMLayerM2PAUserProfile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMLayerM2PAUserProfile.m; sourceTree = "<group>"; };
+		A643D6A83063A0C100F9798D /* UMLayerM2PAUserProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMLayerM2PAUserProtocol.h; sourceTree = "<group>"; };
+		A643D6A93063A0C100F9798D /* UMM2PAState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState.h; sourceTree = "<group>"; };
+		A643D6AA3063A0C100F9798D /* UMM2PAState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAState.m; sourceTree = "<group>"; };
+		A643D6AB3063A0C100F9798D /* UMM2PAState_AlignedNotReady.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState_AlignedNotReady.h; sourceTree = "<group>"; };
+		A643D6AC3063A0C100F9798D /* UMM2PAState_AlignedNotReady.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAState_AlignedNotReady.m; sourceTree = "<group>"; };
+		A643D6AD3063A0C100F9798D /* UMM2PAState_AlignedReady.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState_AlignedReady.h; sourceTree = "<group>"; };
+		A643D6AE3063A0C100F9798D /* UMM2PAState_AlignedReady.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAState_AlignedReady.m; sourceTree = "<group>"; };
+		A643D6AF3063A0C100F9798D /* UMM2PAState_allStates.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState_allStates.h; sourceTree = "<group>"; };
+		A643D6B03063A0C100F9798D /* UMM2PAState_Connecting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState_Connecting.h; sourceTree = "<group>"; };
+		A643D6B13063A0C100F9798D /* UMM2PAState_Connecting.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAState_Connecting.m; sourceTree = "<group>"; };
+		A643D6B23063A0C100F9798D /* UMM2PAState_Disconnected.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState_Disconnected.h; sourceTree = "<group>"; };
+		A643D6B33063A0C100F9798D /* UMM2PAState_Disconnected.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAState_Disconnected.m; sourceTree = "<group>"; };
+		A643D6B43063A0C100F9798D /* UMM2PAState_InitialAlignment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState_InitialAlignment.h; sourceTree = "<group>"; };
+		A643D6B53063A0C100F9798D /* UMM2PAState_InitialAlignment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAState_InitialAlignment.m; sourceTree = "<group>"; };
+		A643D6B63063A0C100F9798D /* UMM2PAState_InService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState_InService.h; sourceTree = "<group>"; };
+		A643D6B73063A0C100F9798D /* UMM2PAState_InService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAState_InService.m; sourceTree = "<group>"; };
+		A643D6B83063A0C100F9798D /* UMM2PAState_OutOfService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState_OutOfService.h; sourceTree = "<group>"; };
+		A643D6B93063A0C100F9798D /* UMM2PAState_OutOfService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAState_OutOfService.m; sourceTree = "<group>"; };
+		A643D6BA3063A0C100F9798D /* UMM2PAState_ProcessorOutage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAState_ProcessorOutage.h; sourceTree = "<group>"; };
+		A643D6BB3063A0C100F9798D /* UMM2PAState_ProcessorOutage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAState_ProcessorOutage.m; sourceTree = "<group>"; };
+		A643D6BC3063A0C100F9798D /* UMM2PATask_AdminAttach.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_AdminAttach.h; sourceTree = "<group>"; };
+		A643D6BD3063A0C100F9798D /* UMM2PATask_AdminAttach.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_AdminAttach.m; sourceTree = "<group>"; };
+		A643D6BE3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_AdminAttachOrder.h; sourceTree = "<group>"; };
+		A643D6BF3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_AdminAttachOrder.m; sourceTree = "<group>"; };
+		A643D6C03063A0C100F9798D /* UMM2PATask_AdminDetachOrder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_AdminDetachOrder.h; sourceTree = "<group>"; };
+		A643D6C13063A0C100F9798D /* UMM2PATask_AdminDetachOrder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_AdminDetachOrder.m; sourceTree = "<group>"; };
+		A643D6C23063A0C100F9798D /* UMM2PATask_AdminInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_AdminInit.h; sourceTree = "<group>"; };
+		A643D6C33063A0C100F9798D /* UMM2PATask_AdminInit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_AdminInit.m; sourceTree = "<group>"; };
+		A643D6C43063A0C100F9798D /* UMM2PATask_AdminSetConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_AdminSetConfig.h; sourceTree = "<group>"; };
+		A643D6C53063A0C100F9798D /* UMM2PATask_AdminSetConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_AdminSetConfig.m; sourceTree = "<group>"; };
+		A643D6C63063A0C100F9798D /* UMM2PATask_Data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_Data.h; sourceTree = "<group>"; };
+		A643D6C73063A0C100F9798D /* UMM2PATask_Data.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_Data.m; sourceTree = "<group>"; };
+		A643D6C83063A0C100F9798D /* UMM2PATask_Emergency.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_Emergency.h; sourceTree = "<group>"; };
+		A643D6C93063A0C100F9798D /* UMM2PATask_Emergency.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_Emergency.m; sourceTree = "<group>"; };
+		A643D6CA3063A0C100F9798D /* UMM2PATask_EmergencyCheases.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_EmergencyCheases.h; sourceTree = "<group>"; };
+		A643D6CB3063A0C100F9798D /* UMM2PATask_EmergencyCheases.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_EmergencyCheases.m; sourceTree = "<group>"; };
+		A643D6CC3063A0C100F9798D /* UMM2PATask_PowerOff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_PowerOff.h; sourceTree = "<group>"; };
+		A643D6CD3063A0C100F9798D /* UMM2PATask_PowerOff.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_PowerOff.m; sourceTree = "<group>"; };
+		A643D6CE3063A0C100F9798D /* UMM2PATask_PowerOn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_PowerOn.h; sourceTree = "<group>"; };
+		A643D6CF3063A0C100F9798D /* UMM2PATask_PowerOn.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_PowerOn.m; sourceTree = "<group>"; };
+		A643D6D03063A0C100F9798D /* UMM2PATask_sctpDataIndication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_sctpDataIndication.h; sourceTree = "<group>"; };
+		A643D6D13063A0C100F9798D /* UMM2PATask_sctpDataIndication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_sctpDataIndication.m; sourceTree = "<group>"; };
+		A643D6D23063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_sctpMonitorIndication.h; sourceTree = "<group>"; };
+		A643D6D33063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_sctpMonitorIndication.m; sourceTree = "<group>"; };
+		A643D6D43063A0C100F9798D /* UMM2PATask_sctpStatusIndication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_sctpStatusIndication.h; sourceTree = "<group>"; };
+		A643D6D53063A0C100F9798D /* UMM2PATask_sctpStatusIndication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_sctpStatusIndication.m; sourceTree = "<group>"; };
+		A643D6D63063A0C100F9798D /* UMM2PATask_SetSlc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_SetSlc.h; sourceTree = "<group>"; };
+		A643D6D73063A0C100F9798D /* UMM2PATask_SetSlc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_SetSlc.m; sourceTree = "<group>"; };
+		A643D6D83063A0C100F9798D /* UMM2PATask_Start.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_Start.h; sourceTree = "<group>"; };
+		A643D6D93063A0C100F9798D /* UMM2PATask_Start.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_Start.m; sourceTree = "<group>"; };
+		A643D6DA3063A0C100F9798D /* UMM2PATask_Stop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_Stop.h; sourceTree = "<group>"; };
+		A643D6DB3063A0C100F9798D /* UMM2PATask_Stop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_Stop.m; sourceTree = "<group>"; };
+		A643D6DC3063A0C100F9798D /* UMM2PATask_TimerEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PATask_TimerEvent.h; sourceTree = "<group>"; };
+		A643D6DD3063A0C100F9798D /* UMM2PATask_TimerEvent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PATask_TimerEvent.m; sourceTree = "<group>"; };
+		A643D6DE3063A0C100F9798D /* UMM2PAUnackedPdu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM2PAUnackedPdu.h; sourceTree = "<group>"; };
+		A643D6DF3063A0C100F9798D /* UMM2PAUnackedPdu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMM2PAUnackedPdu.m; sourceTree = "<group>"; };
+		A643D73E3063A2A300F9798D /* ulibm2pa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ulibm2pa.h; sourceTree = "<group>"; };
 		A64994FC2E28D57F006873AC /* UMMTP3Variant.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMMTP3Variant.m; sourceTree = "<group>"; };
 		A65270F625C33580007CF832 /* UMM3UAApplicationServerMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UMM3UAApplicationServerMode.h; sourceTree = "<group>"; };
 		A666EF681E89C4AF004804CB /* UMSyntaxToken_Pointcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UMSyntaxToken_Pointcode.h; sourceTree = "<group>"; };
@@ -386,6 +546,71 @@
 				A68B88B61E36A89D00CE0B05 /* ulibmtp3_version.h */,
 				A68B88B21E36A21F00CE0B05 /* ulibmtp3_version.h.in */,
 				A604D10919B999AA0090FC94 /* ulibmtp3.h */,
+				A643D73E3063A2A300F9798D /* ulibm2pa.h */,
+				A643D6A03063A0C100F9798D /* UMLayerM2PA.h */,
+				A643D6A13063A0C100F9798D /* UMLayerM2PA.m */,
+				A643D6A23063A0C100F9798D /* UMLayerM2PAApplicationContextProtocol.h */,
+				A643D6A33063A0C100F9798D /* UMLayerM2PAStatus.h */,
+				A643D6A43063A0C100F9798D /* UMLayerM2PAUser.h */,
+				A643D6A53063A0C100F9798D /* UMLayerM2PAUser.m */,
+				A643D6A63063A0C100F9798D /* UMLayerM2PAUserProfile.h */,
+				A643D6A73063A0C100F9798D /* UMLayerM2PAUserProfile.m */,
+				A643D6A83063A0C100F9798D /* UMLayerM2PAUserProtocol.h */,
+				A643D6A93063A0C100F9798D /* UMM2PAState.h */,
+				A643D6AA3063A0C100F9798D /* UMM2PAState.m */,
+				A643D6AB3063A0C100F9798D /* UMM2PAState_AlignedNotReady.h */,
+				A643D6AC3063A0C100F9798D /* UMM2PAState_AlignedNotReady.m */,
+				A643D6AD3063A0C100F9798D /* UMM2PAState_AlignedReady.h */,
+				A643D6AE3063A0C100F9798D /* UMM2PAState_AlignedReady.m */,
+				A643D6AF3063A0C100F9798D /* UMM2PAState_allStates.h */,
+				A643D6B03063A0C100F9798D /* UMM2PAState_Connecting.h */,
+				A643D6B13063A0C100F9798D /* UMM2PAState_Connecting.m */,
+				A643D6B23063A0C100F9798D /* UMM2PAState_Disconnected.h */,
+				A643D6B33063A0C100F9798D /* UMM2PAState_Disconnected.m */,
+				A643D6B43063A0C100F9798D /* UMM2PAState_InitialAlignment.h */,
+				A643D6B53063A0C100F9798D /* UMM2PAState_InitialAlignment.m */,
+				A643D6B63063A0C100F9798D /* UMM2PAState_InService.h */,
+				A643D6B73063A0C100F9798D /* UMM2PAState_InService.m */,
+				A643D6B83063A0C100F9798D /* UMM2PAState_OutOfService.h */,
+				A643D6B93063A0C100F9798D /* UMM2PAState_OutOfService.m */,
+				A643D6BA3063A0C100F9798D /* UMM2PAState_ProcessorOutage.h */,
+				A643D6BB3063A0C100F9798D /* UMM2PAState_ProcessorOutage.m */,
+				A643D6BC3063A0C100F9798D /* UMM2PATask_AdminAttach.h */,
+				A643D6BD3063A0C100F9798D /* UMM2PATask_AdminAttach.m */,
+				A643D6BE3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.h */,
+				A643D6BF3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.m */,
+				A643D6C03063A0C100F9798D /* UMM2PATask_AdminDetachOrder.h */,
+				A643D6C13063A0C100F9798D /* UMM2PATask_AdminDetachOrder.m */,
+				A643D6C23063A0C100F9798D /* UMM2PATask_AdminInit.h */,
+				A643D6C33063A0C100F9798D /* UMM2PATask_AdminInit.m */,
+				A643D6C43063A0C100F9798D /* UMM2PATask_AdminSetConfig.h */,
+				A643D6C53063A0C100F9798D /* UMM2PATask_AdminSetConfig.m */,
+				A643D6C63063A0C100F9798D /* UMM2PATask_Data.h */,
+				A643D6C73063A0C100F9798D /* UMM2PATask_Data.m */,
+				A643D6C83063A0C100F9798D /* UMM2PATask_Emergency.h */,
+				A643D6C93063A0C100F9798D /* UMM2PATask_Emergency.m */,
+				A643D6CA3063A0C100F9798D /* UMM2PATask_EmergencyCheases.h */,
+				A643D6CB3063A0C100F9798D /* UMM2PATask_EmergencyCheases.m */,
+				A643D6CC3063A0C100F9798D /* UMM2PATask_PowerOff.h */,
+				A643D6CD3063A0C100F9798D /* UMM2PATask_PowerOff.m */,
+				A643D6CE3063A0C100F9798D /* UMM2PATask_PowerOn.h */,
+				A643D6CF3063A0C100F9798D /* UMM2PATask_PowerOn.m */,
+				A643D6D03063A0C100F9798D /* UMM2PATask_sctpDataIndication.h */,
+				A643D6D13063A0C100F9798D /* UMM2PATask_sctpDataIndication.m */,
+				A643D6D23063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.h */,
+				A643D6D33063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.m */,
+				A643D6D43063A0C100F9798D /* UMM2PATask_sctpStatusIndication.h */,
+				A643D6D53063A0C100F9798D /* UMM2PATask_sctpStatusIndication.m */,
+				A643D6D63063A0C100F9798D /* UMM2PATask_SetSlc.h */,
+				A643D6D73063A0C100F9798D /* UMM2PATask_SetSlc.m */,
+				A643D6D83063A0C100F9798D /* UMM2PATask_Start.h */,
+				A643D6D93063A0C100F9798D /* UMM2PATask_Start.m */,
+				A643D6DA3063A0C100F9798D /* UMM2PATask_Stop.h */,
+				A643D6DB3063A0C100F9798D /* UMM2PATask_Stop.m */,
+				A643D6DC3063A0C100F9798D /* UMM2PATask_TimerEvent.h */,
+				A643D6DD3063A0C100F9798D /* UMM2PATask_TimerEvent.m */,
+				A643D6DE3063A0C100F9798D /* UMM2PAUnackedPdu.h */,
+				A643D6DF3063A0C100F9798D /* UMM2PAUnackedPdu.m */,
 				A60A36DC1A305C240090FC94 /* UMLayerMTP3.h */,
 				A60A36DD1A305C240090FC94 /* UMLayerMTP3.m */,
 				A6827E141E380E6100F3048B /* UMLayerMTP3ApplicationContextProtocol.h */,
@@ -555,6 +780,7 @@
 				A6F178D021AF03B00084D972 /* UMMTP3Filter_Result.h in Headers */,
 				A6AA23C924854164008D5A57 /* UMMTP3StatisticDbRecord.h in Headers */,
 				A6F178DE21AF03B00084D972 /* UMMTP3RoutePriority.h in Headers */,
+				A643D73F3063A2A300F9798D /* ulibm2pa.h in Headers */,
 				A6F178E921AF03B00084D972 /* UMMTP3Task_m2paSctpStatusIndication.h in Headers */,
 				A618677828AAC9C300A42677 /* UMM3UAApplicationServerStatusRecord.h in Headers */,
 				A6F178D121AF03B00084D972 /* UMMTP3HeadingCode.h in Headers */,
@@ -599,6 +825,40 @@
 				A6F178C721AF03B00084D972 /* UMLayerMTP3.h in Headers */,
 				A6F178D621AF03B00084D972 /* UMMTP3LinkSet.h in Headers */,
 				A6F178C821AF03B00084D972 /* UMLayerMTP3ApplicationContextProtocol.h in Headers */,
+				A643D71C3063A0C100F9798D /* UMM2PATask_PowerOn.h in Headers */,
+				A643D71D3063A0C100F9798D /* UMM2PATask_Data.h in Headers */,
+				A643D71E3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.h in Headers */,
+				A643D71F3063A0C100F9798D /* UMM2PAState_allStates.h in Headers */,
+				A643D7203063A0C100F9798D /* UMM2PAState_OutOfService.h in Headers */,
+				A643D7213063A0C100F9798D /* UMM2PATask_AdminInit.h in Headers */,
+				A643D7223063A0C100F9798D /* UMM2PATask_AdminDetachOrder.h in Headers */,
+				A643D7233063A0C100F9798D /* UMLayerM2PA.h in Headers */,
+				A643D7243063A0C100F9798D /* UMM2PATask_sctpDataIndication.h in Headers */,
+				A643D7253063A0C100F9798D /* UMM2PAState_ProcessorOutage.h in Headers */,
+				A643D7263063A0C100F9798D /* UMM2PATask_AdminAttach.h in Headers */,
+				A643D7273063A0C100F9798D /* UMM2PAState_AlignedNotReady.h in Headers */,
+				A643D7283063A0C100F9798D /* UMLayerM2PAUserProtocol.h in Headers */,
+				A643D7293063A0C100F9798D /* UMM2PAState_InitialAlignment.h in Headers */,
+				A643D72A3063A0C100F9798D /* UMM2PATask_Start.h in Headers */,
+				A643D72B3063A0C100F9798D /* UMM2PATask_TimerEvent.h in Headers */,
+				A643D72C3063A0C100F9798D /* UMM2PAUnackedPdu.h in Headers */,
+				A643D72D3063A0C100F9798D /* UMM2PATask_sctpStatusIndication.h in Headers */,
+				A643D72E3063A0C100F9798D /* UMM2PATask_AdminSetConfig.h in Headers */,
+				A643D72F3063A0C100F9798D /* UMM2PATask_SetSlc.h in Headers */,
+				A643D7303063A0C100F9798D /* UMM2PATask_PowerOff.h in Headers */,
+				A643D7313063A0C100F9798D /* UMM2PAState_AlignedReady.h in Headers */,
+				A643D7323063A0C100F9798D /* UMLayerM2PAStatus.h in Headers */,
+				A643D7333063A0C100F9798D /* UMLayerM2PAUser.h in Headers */,
+				A643D7343063A0C100F9798D /* UMM2PAState_Connecting.h in Headers */,
+				A643D7353063A0C100F9798D /* UMLayerM2PAUserProfile.h in Headers */,
+				A643D7363063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.h in Headers */,
+				A643D7373063A0C100F9798D /* UMLayerM2PAApplicationContextProtocol.h in Headers */,
+				A643D7383063A0C100F9798D /* UMM2PATask_Stop.h in Headers */,
+				A643D7393063A0C100F9798D /* UMM2PAState.h in Headers */,
+				A643D73A3063A0C100F9798D /* UMM2PATask_Emergency.h in Headers */,
+				A643D73B3063A0C100F9798D /* UMM2PAState_InService.h in Headers */,
+				A643D73C3063A0C100F9798D /* UMM2PAState_Disconnected.h in Headers */,
+				A643D73D3063A0C100F9798D /* UMM2PATask_EmergencyCheases.h in Headers */,
 				A694AC1029E8143800CD21F1 /* UMMTP3RoutingUpdateDb.h in Headers */,
 				A6F178C921AF03B00084D972 /* UMLayerMTP3ProviderProtocol.h in Headers */,
 				A6F178CA21AF03B00084D972 /* UMLayerMTP3UserProtocol.h in Headers */,
@@ -736,6 +996,36 @@
 				A64994FE2E28D587006873AC /* UMMTP3Variant.m in Sources */,
 				A6AD89F421CD73F300F40945 /* UMMTP3TranslationTableMap.m in Sources */,
 				A6F1791021AF044B0084D972 /* UMMTP3Task_m2paStatusIndication.m in Sources */,
+				A643D6FE3063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.m in Sources */,
+				A643D6FF3063A0C100F9798D /* UMM2PATask_PowerOn.m in Sources */,
+				A643D7003063A0C100F9798D /* UMLayerM2PAUserProfile.m in Sources */,
+				A643D7013063A0C100F9798D /* UMM2PAState_AlignedReady.m in Sources */,
+				A643D7023063A0C100F9798D /* UMM2PAUnackedPdu.m in Sources */,
+				A643D7033063A0C100F9798D /* UMM2PATask_sctpStatusIndication.m in Sources */,
+				A643D7043063A0C100F9798D /* UMM2PATask_Data.m in Sources */,
+				A643D7053063A0C100F9798D /* UMM2PAState_AlignedNotReady.m in Sources */,
+				A643D7063063A0C100F9798D /* UMM2PATask_AdminSetConfig.m in Sources */,
+				A643D7073063A0C100F9798D /* UMM2PAState_Connecting.m in Sources */,
+				A643D7083063A0C100F9798D /* UMM2PAState_Disconnected.m in Sources */,
+				A643D7093063A0C100F9798D /* UMM2PATask_SetSlc.m in Sources */,
+				A643D70A3063A0C100F9798D /* UMLayerM2PA.m in Sources */,
+				A643D70B3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.m in Sources */,
+				A643D70C3063A0C100F9798D /* UMM2PAState_InitialAlignment.m in Sources */,
+				A643D70D3063A0C100F9798D /* UMM2PATask_AdminInit.m in Sources */,
+				A643D70E3063A0C100F9798D /* UMM2PATask_Emergency.m in Sources */,
+				A643D70F3063A0C100F9798D /* UMM2PATask_PowerOff.m in Sources */,
+				A643D7103063A0C100F9798D /* UMLayerM2PAUser.m in Sources */,
+				A643D7113063A0C100F9798D /* UMM2PAState.m in Sources */,
+				A643D7123063A0C100F9798D /* UMM2PATask_AdminAttach.m in Sources */,
+				A643D7133063A0C100F9798D /* UMM2PATask_TimerEvent.m in Sources */,
+				A643D7143063A0C100F9798D /* UMM2PATask_Stop.m in Sources */,
+				A643D7153063A0C100F9798D /* UMM2PATask_sctpDataIndication.m in Sources */,
+				A643D7163063A0C100F9798D /* UMM2PAState_OutOfService.m in Sources */,
+				A643D7173063A0C100F9798D /* UMM2PAState_ProcessorOutage.m in Sources */,
+				A643D7183063A0C100F9798D /* UMM2PAState_InService.m in Sources */,
+				A643D7193063A0C100F9798D /* UMM2PATask_AdminDetachOrder.m in Sources */,
+				A643D71A3063A0C100F9798D /* UMM2PATask_EmergencyCheases.m in Sources */,
+				A643D71B3063A0C100F9798D /* UMM2PATask_Start.m in Sources */,
 				A6D7826B28ECD6B300A9A5BF /* UMMTP3LinkSetRoutingTableEntry.m in Sources */,
 				A6F178F821AF044B0084D972 /* UMMTP3Label.m in Sources */,
 				A6F1790521AF044B0084D972 /* UMMTP3Task_adminAttachOrder.m in Sources */,
@@ -775,6 +1065,36 @@
 				A6E8D01B2E49B81600E7E918 /* UMM3UATcpListener.m in Sources */,
 				A6F1792921AF044B0084D972 /* UMMTP3Task_m2paSctpStatusIndication.m in Sources */,
 				A6F1792E21AF044B0084D972 /* UMMTP3Task_stop.m in Sources */,
+				A643D6E03063A0C100F9798D /* UMM2PATask_sctpMonitorIndication.m in Sources */,
+				A643D6E13063A0C100F9798D /* UMM2PATask_PowerOn.m in Sources */,
+				A643D6E23063A0C100F9798D /* UMLayerM2PAUserProfile.m in Sources */,
+				A643D6E33063A0C100F9798D /* UMM2PAState_AlignedReady.m in Sources */,
+				A643D6E43063A0C100F9798D /* UMM2PAUnackedPdu.m in Sources */,
+				A643D6E53063A0C100F9798D /* UMM2PATask_sctpStatusIndication.m in Sources */,
+				A643D6E63063A0C100F9798D /* UMM2PATask_Data.m in Sources */,
+				A643D6E73063A0C100F9798D /* UMM2PAState_AlignedNotReady.m in Sources */,
+				A643D6E83063A0C100F9798D /* UMM2PATask_AdminSetConfig.m in Sources */,
+				A643D6E93063A0C100F9798D /* UMM2PAState_Connecting.m in Sources */,
+				A643D6EA3063A0C100F9798D /* UMM2PAState_Disconnected.m in Sources */,
+				A643D6EB3063A0C100F9798D /* UMM2PATask_SetSlc.m in Sources */,
+				A643D6EC3063A0C100F9798D /* UMLayerM2PA.m in Sources */,
+				A643D6ED3063A0C100F9798D /* UMM2PATask_AdminAttachOrder.m in Sources */,
+				A643D6EE3063A0C100F9798D /* UMM2PAState_InitialAlignment.m in Sources */,
+				A643D6EF3063A0C100F9798D /* UMM2PATask_AdminInit.m in Sources */,
+				A643D6F03063A0C100F9798D /* UMM2PATask_Emergency.m in Sources */,
+				A643D6F13063A0C100F9798D /* UMM2PATask_PowerOff.m in Sources */,
+				A643D6F23063A0C100F9798D /* UMLayerM2PAUser.m in Sources */,
+				A643D6F33063A0C100F9798D /* UMM2PAState.m in Sources */,
+				A643D6F43063A0C100F9798D /* UMM2PATask_AdminAttach.m in Sources */,
+				A643D6F53063A0C100F9798D /* UMM2PATask_TimerEvent.m in Sources */,
+				A643D6F63063A0C100F9798D /* UMM2PATask_Stop.m in Sources */,
+				A643D6F73063A0C100F9798D /* UMM2PATask_sctpDataIndication.m in Sources */,
+				A643D6F83063A0C100F9798D /* UMM2PAState_OutOfService.m in Sources */,
+				A643D6F93063A0C100F9798D /* UMM2PAState_ProcessorOutage.m in Sources */,
+				A643D6FA3063A0C100F9798D /* UMM2PAState_InService.m in Sources */,
+				A643D6FB3063A0C100F9798D /* UMM2PATask_AdminDetachOrder.m in Sources */,
+				A643D6FC3063A0C100F9798D /* UMM2PATask_EmergencyCheases.m in Sources */,
+				A643D6FD3063A0C100F9798D /* UMM2PATask_Start.m in Sources */,
 				A60A36E01A305C240090FC94 /* UMLayerMTP3.m in Sources */,
 				A60A36FE1A306B710090FC94 /* UMMTP3RouteMetrics.m in Sources */,
 				A6F1791621AF044B0084D972 /* UMM3UAApplicationServer.m in Sources */,
@@ -874,7 +1194,6 @@
 				DYLIB_CURRENT_VERSION = 2.1.1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"/Library/Application Support/FinkTelecomServices/frameworks\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -891,10 +1210,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /FinkTelecomServices/frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
+				SYSTEM_HEADER_SEARCH_PATHS = /usr/local/include;
 				WARNING_CFLAGS = "-Wimplicit-fallthrough";
 			};
 			name = Debug;
@@ -940,7 +1261,6 @@
 				DYLIB_CURRENT_VERSION = 2.1.1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"/Library/Application Support/FinkTelecomServices/frameworks\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -950,10 +1270,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /FinkTelecomServices/frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
+				SYSTEM_HEADER_SEARCH_PATHS = /usr/local/include;
 				WARNING_CFLAGS = "-Wimplicit-fallthrough";
 			};
 			name = Release;

@@ -10,7 +10,7 @@
 // the author.
 
 #import <ulib/ulib.h>
-#import <ulibm2pa/ulibm2pa.h>
+#import <ulibmtp3/ulibm2pa.h>
 @class UMLayerMTP3;
 @class UMMTP3Link;
 @interface UMMTP3Task_m2paDataIndication : UMLayerTask

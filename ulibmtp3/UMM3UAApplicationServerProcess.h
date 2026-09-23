@@ -7,7 +7,6 @@
 //
 
 #import <ulib/ulib.h>
-#import <ulibsctp/ulibsctp.h>
 #import <ulibmtp3/UMMTP3Variant.h>
 #import <ulibmtp3/UMMTP3PointCode.h>
 #import <ulibmtp3/UMM3UAStatus.h>

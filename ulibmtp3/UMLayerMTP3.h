@@ -10,8 +10,7 @@
 // the author.
 
 #import <ulib/ulib.h>
-#import <ulibsctp/ulibsctp.h>
-#import <ulibm2pa/ulibm2pa.h>
+#import <ulibmtp3/ulibm2pa.h>
 
 #define    MTP3_ROUTE_RETEST_TIMER_DEFAULT    40        /* T10 30..60 sec*/
 
