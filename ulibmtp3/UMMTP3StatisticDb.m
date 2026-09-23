@@ -6,9 +6,9 @@
 //  Copyright © 2020 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMMTP3StatisticDb.h"
+#import <ulibmtp3/UMMTP3StatisticDb.h>
 
-#import "UMMTP3StatisticDbRecord.h"
+#import <ulibmtp3/UMMTP3StatisticDbRecord.h>
 
 // #define UMMTP3_STATISTICS_DEBUG 1
 

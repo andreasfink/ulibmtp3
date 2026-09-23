@@ -7,7 +7,7 @@
 //
 
 #import <ulib/ulib.h>
-#import "UMMTP3RoutingUpdateDbRecord.h"
+#import <ulibmtp3/UMMTP3RoutingUpdateDbRecord.h>
 
 @implementation UMMTP3RoutingUpdateDbRecord
 

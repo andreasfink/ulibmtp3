@@ -6,11 +6,11 @@
 //  Copyright © 2020 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMMTP3InstanceRoute.h"
-#import "UMMTP3PointCode.h"
-#import "UMMTP3LinkSet.h"
-#import "UMMTP3RouteMetrics.h"
-#import "UMLayerMTP3.h"
+#import <ulibmtp3/UMMTP3InstanceRoute.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
+#import <ulibmtp3/UMMTP3LinkSet.h>
+#import <ulibmtp3/UMMTP3RouteMetrics.h>
+#import <ulibmtp3/UMLayerMTP3.h>
 
 @implementation UMMTP3InstanceRoute
 

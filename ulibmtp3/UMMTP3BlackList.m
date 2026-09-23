@@ -9,9 +9,9 @@
 // Version 3 from 29 June 2007 and other commercial licenses available by
 // the author.
 
-#import "UMMTP3BlackList.h"
-#import "UMMTP3TransitPermission.h"
-#import "UMMTP3Label.h"
+#import <ulibmtp3/UMMTP3BlackList.h>
+#import <ulibmtp3/UMMTP3TransitPermission.h>
+#import <ulibmtp3/UMMTP3Label.h>
 
 
 @implementation UMMTP3BlackList

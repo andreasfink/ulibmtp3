@@ -9,8 +9,8 @@
 // Version 3 from 29 June 2007 and other commercial licenses available by
 // the author.
 
-#import "UMM2PATask_AdminInit.h"
-#import "UMLayerM2PA.h"
+#import <ulibmtp3/UMM2PATask_AdminInit.h>
+#import <ulibmtp3/UMLayerM2PA.h>
 
 @implementation UMM2PATask_AdminInit
 

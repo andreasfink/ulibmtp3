@@ -7,7 +7,7 @@
 //
 #import <ulib/ulib.h>
 
-#import "UMMTP3StatisticDbRecord.h"
+#import <ulibmtp3/UMMTP3StatisticDbRecord.h>
 
 
 @implementation UMMTP3StatisticDbRecord

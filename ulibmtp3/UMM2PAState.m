@@ -6,9 +6,9 @@
 //  Copyright © 2020 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMM2PAState.h"
-#import "UMLayerM2PA.h"
-#import "UMM2PAState_allStates.h"
+#import <ulibmtp3/UMM2PAState.h>
+#import <ulibmtp3/UMLayerM2PA.h>
+#import <ulibmtp3/UMM2PAState_allStates.h>
 
 static inline NSString *UMM2PAState_currentMethodName(const char *funcName);
 

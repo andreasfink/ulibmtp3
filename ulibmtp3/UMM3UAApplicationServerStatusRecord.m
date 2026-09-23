@@ -6,7 +6,7 @@
 //  Copyright © 2022 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMM3UAApplicationServerStatusRecord.h"
+#import <ulibmtp3/UMM3UAApplicationServerStatusRecord.h>
 
 @implementation UMM3UAApplicationServerStatusRecord
 

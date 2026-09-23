@@ -6,9 +6,9 @@
 //  Copyright © 2020 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMM2PAState_InitialAlignment.h"
-#import "UMM2PAState_allStates.h"
-#import "UMLayerM2PA.h"
+#import <ulibmtp3/UMM2PAState_InitialAlignment.h>
+#import <ulibmtp3/UMM2PAState_allStates.h>
+#import <ulibmtp3/UMLayerM2PA.h>
 
 @implementation UMM2PAState_InitialAlignment
 - (UMM2PAState *)initWithLink:(UMLayerM2PA *)link status:(M2PA_Status)statusCode

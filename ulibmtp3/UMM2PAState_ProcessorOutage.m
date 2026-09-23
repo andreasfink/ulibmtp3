@@ -6,9 +6,9 @@
 //  Copyright © 2022 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#include "UMM2PAState_ProcessorOutage.h"
-#import "UMM2PAState_allStates.h"
-#import "UMLayerM2PA.h"
+#import <ulibmtp3/UMM2PAState_ProcessorOutage.h>
+#import <ulibmtp3/UMM2PAState_allStates.h>
+#import <ulibmtp3/UMLayerM2PA.h>
 
 
 @implementation UMM2PAState_ProcessorOutage

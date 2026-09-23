@@ -6,7 +6,7 @@
 //  Copyright © 2017 Andreas Fink. All rights reserved.
 //
 
-#import "UMSyntaxToken_Pointcode.h"
+#import <ulibmtp3/UMSyntaxToken_Pointcode.h>
 
 @implementation UMSyntaxToken_Pointcode
 

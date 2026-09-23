@@ -100,12 +100,25 @@ case "$host" in
 	then
 	    ARCH="-arch arm64 -arch x86_64"
 	fi
-   	CFLAGS="$CFLAGS `pkg-config  --cflags ${DEPENDENT_PKGCONFIGS}`"
-	LDFLAGS="$LDFLAGS `pkg-config --libs ${DEPENDENT_PKGCONFIGS}`"
+	if [[ "${MACOSX_DEPLOYMENT_TARGET}" == "" ]]
+	then
+		MACOSX_DEPLOYMENT_TARGET=12.4
+	fi
+   	CFLAGS="${CFLAGS} `pkg-config  --cflags ${DEPENDENT_PKGCONFIGS}`"
+	LDFLAGS="${LDFLAGS} `pkg-config --libs ${DEPENDENT_PKGCONFIGS}`"
     UR="`uname -r | cut -f1 -d.`"
     DONE=0
-
-    CFLAGS="$CFLAGS -fobjc-arc -D_REENTRANT=1 -DDARWIN=1 -Iinclude ${ARCH}"
+	if [[ -d "${SDK}" ]]
+    then
+		CFLAGS="${CFLAGS} --sysroot ${SDK} ${CFLAGS}"
+		LDFLAGS="${LDFLAGS} -L ${SDK}/usr/lib"
+	fi
+	if [[ "${MACOSX_DEPLOYMENT_TARGET}" != "" ]]
+	then
+		CFLAGS="${CFLAGS} -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET}"
+		LDFLAGS="${LDFLAGS} -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET}"
+	fi
+	CFLAGS="$CFLAGS -fobjc-arc -D_REENTRANT=1 -DDARWIN=1 -Iinclude ${ARCH}"
     LDFLAGS="${LDFLAGS} -F/Library/Frameworks -framework Foundation -framework Security -framework IOKit"
     BUILD_DIR="build/osx"
     SHARED_LIBRARY_EXTENSION="dylib"

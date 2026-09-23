@@ -603,8 +603,8 @@ REVISION
 MINORVER
 MAJORVER
 VERSION
-PROJECT_NAME
 AUTHOR
+PROJECT_NAME
 COPYRIGHT
 CONFIGURATION
 INSTALL_DATA
@@ -2577,12 +2577,25 @@ case "$host" in
 	then
 	    ARCH="-arch arm64 -arch x86_64"
 	fi
-   	CFLAGS="$CFLAGS `pkg-config  --cflags ${DEPENDENT_PKGCONFIGS}`"
-	LDFLAGS="$LDFLAGS `pkg-config --libs ${DEPENDENT_PKGCONFIGS}`"
+	if [ "${MACOSX_DEPLOYMENT_TARGET}" == "" ]
+	then
+		MACOSX_DEPLOYMENT_TARGET=12.4
+	fi
+   	CFLAGS="${CFLAGS} `pkg-config  --cflags ${DEPENDENT_PKGCONFIGS}`"
+	LDFLAGS="${LDFLAGS} `pkg-config --libs ${DEPENDENT_PKGCONFIGS}`"
     UR="`uname -r | cut -f1 -d.`"
     DONE=0
-
-    CFLAGS="$CFLAGS -fobjc-arc -D_REENTRANT=1 -DDARWIN=1 -Iinclude ${ARCH}"
+	if [ -d "${SDK}" ]
+    then
+		CFLAGS="${CFLAGS} --sysroot ${SDK} ${CFLAGS}"
+		LDFLAGS="${LDFLAGS} -L ${SDK}/usr/lib"
+	fi
+	if [ "${MACOSX_DEPLOYMENT_TARGET}" != "" ]
+	then
+		CFLAGS="${CFLAGS} -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET}"
+		LDFLAGS="${LDFLAGS} -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET}"
+	fi
+	CFLAGS="$CFLAGS -fobjc-arc -D_REENTRANT=1 -DDARWIN=1 -Iinclude ${ARCH}"
     LDFLAGS="${LDFLAGS} -F/Library/Frameworks -framework Foundation -framework Security -framework IOKit"
     BUILD_DIR="build/osx"
     SHARED_LIBRARY_EXTENSION="dylib"
@@ -4059,8 +4072,6 @@ ac_config_files="$ac_config_files Makefile"
 
 ac_config_files="$ac_config_files ulibmtp3.pc"
 
-ac_config_files="$ac_config_files ${PROJECT_NAME}/ulibmtp3_version.h"
-
 ac_config_files="$ac_config_files make_buildnr.sh"
 
 cat >confcache <<\_ACEOF
@@ -4719,7 +4730,6 @@ do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "ulibmtp3.pc") CONFIG_FILES="$CONFIG_FILES ulibmtp3.pc" ;;
-    "${PROJECT_NAME}/ulibmtp3_version.h") CONFIG_FILES="$CONFIG_FILES ${PROJECT_NAME}/ulibmtp3_version.h" ;;
     "make_buildnr.sh") CONFIG_FILES="$CONFIG_FILES make_buildnr.sh" ;;
 
   *) as_fn_error $? "invalid argument: '$ac_config_target'" "$LINENO" 5;;

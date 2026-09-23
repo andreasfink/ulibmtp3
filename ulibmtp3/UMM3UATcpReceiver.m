@@ -6,9 +6,9 @@
 //  Copyright © 2025 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMM3UATcpReceiver.h"
-#import "UMM3UAApplicationServerProcess.h"
-#import "UMM3UATcpRegistry.h"
+#import <ulibmtp3/UMM3UATcpReceiver.h>
+#import <ulibmtp3/UMM3UAApplicationServerProcess.h>
+#import <ulibmtp3/UMM3UATcpRegistry.h>
 
 @implementation UMM3UATcpReceiver
 

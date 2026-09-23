@@ -6,11 +6,11 @@
 //  Copyright © 2025 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMM3UATcpListener.h"
-#import "UMLayerMTP3.h"
-#import "UMM3UATcpRegistry.h"
-#import "UMM3UATcpReceiver.h"
-#import "UMM3UAApplicationServerProcess.h"
+#import <ulibmtp3/UMM3UATcpListener.h>
+#import <ulibmtp3/UMLayerMTP3.h>
+#import <ulibmtp3/UMM3UATcpRegistry.h>
+#import <ulibmtp3/UMM3UATcpReceiver.h>
+#import <ulibmtp3/UMM3UAApplicationServerProcess.h>
 
 #include <poll.h>
 

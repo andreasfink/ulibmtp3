@@ -9,36 +9,36 @@
 // Version 3 from 29 June 2007 and other commercial licenses available by
 // the author.
 
-#import "UMLayerMTP3.h"
-#import "UMMTP3LinkSet.h"
-#import "UMMTP3Link.h"
-#import "UMMTP3PointCode.h"
+#import <ulibmtp3/UMLayerMTP3.h>
+#import <ulibmtp3/UMMTP3LinkSet.h>
+#import <ulibmtp3/UMMTP3Link.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
 
-#import "UMMTP3Task_m2paStatusIndication.h"
-#import "UMMTP3Task_m2paSctpStatusIndication.h"
-#import "UMMTP3Task_m2paDataIndication.h"
-#import "UMMTP3Task_m2paCongestion.h"
-#import "UMMTP3Task_m2paCongestionCleared.h"
-#import "UMMTP3Task_m2paProcessorOutage.h"
-#import "UMMTP3Task_m2paProcessorRestored.h"
-#import "UMMTP3Task_m2paSpeedLimitReached.h"
-#import "UMMTP3Task_m2paSpeedLimitReachedCleared.h"
-#import "UMMTP3Task_adminAttachOrder.h"
-#import "UMMTP3Task_adminCreateLinkSet.h"
-#import "UMMTP3Task_adminCreateLink.h"
-#import "UMMTP3Label.h"
-#import "UMMTP3HeadingCode.h"
-#import "UMMTP3InstanceRoute.h"
-#import "UMM3UAApplicationServer.h"
-#import "UMMTP3Task_start.h"
-#import "UMMTP3Task_stop.h"
-#import "UMLayerMTP3UserProtocol.h"
-#import "UMMTP3InstanceRoutingTable.h"
-#import "UMM3UAApplicationServerProcess.h"
-#import "UMMTP3SyslogClient.h"
-#import "UMMTP3StatisticDb.h"
-#import "UMMTP3RoutingUpdateDb.h"
-#import "UMM3UATcpRegistry.h"
+#import <ulibmtp3/UMMTP3Task_m2paStatusIndication.h>
+#import <ulibmtp3/UMMTP3Task_m2paSctpStatusIndication.h>
+#import <ulibmtp3/UMMTP3Task_m2paDataIndication.h>
+#import <ulibmtp3/UMMTP3Task_m2paCongestion.h>
+#import <ulibmtp3/UMMTP3Task_m2paCongestionCleared.h>
+#import <ulibmtp3/UMMTP3Task_m2paProcessorOutage.h>
+#import <ulibmtp3/UMMTP3Task_m2paProcessorRestored.h>
+#import <ulibmtp3/UMMTP3Task_m2paSpeedLimitReached.h>
+#import <ulibmtp3/UMMTP3Task_m2paSpeedLimitReachedCleared.h>
+#import <ulibmtp3/UMMTP3Task_adminAttachOrder.h>
+#import <ulibmtp3/UMMTP3Task_adminCreateLinkSet.h>
+#import <ulibmtp3/UMMTP3Task_adminCreateLink.h>
+#import <ulibmtp3/UMMTP3Label.h>
+#import <ulibmtp3/UMMTP3HeadingCode.h>
+#import <ulibmtp3/UMMTP3InstanceRoute.h>
+#import <ulibmtp3/UMM3UAApplicationServer.h>
+#import <ulibmtp3/UMMTP3Task_start.h>
+#import <ulibmtp3/UMMTP3Task_stop.h>
+#import <ulibmtp3/UMLayerMTP3UserProtocol.h>
+#import <ulibmtp3/UMMTP3InstanceRoutingTable.h>
+#import <ulibmtp3/UMM3UAApplicationServerProcess.h>
+#import <ulibmtp3/UMMTP3SyslogClient.h>
+#import <ulibmtp3/UMMTP3StatisticDb.h>
+#import <ulibmtp3/UMMTP3RoutingUpdateDb.h>
+#import <ulibmtp3/UMM3UATcpRegistry.h>
 
 @implementation UMLayerMTP3
 

@@ -6,24 +6,24 @@
 //  Copyright © 2017 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMM3UAApplicationServer.h"
-#import "UMMTP3PointCode.h"
-#import "UMMTP3Label.h"
-#import "UMMTP3InstanceRoute.h"
-#import "ulibmtp3_version.h"
-#import "UMLayerMTP3ApplicationContextProtocol.h"
-#import "UMM3UAApplicationServerProcess.h"
-#import "UMMTP3HeadingCode.h"
-#import "UMMTP3RouteStatus.h"
-#import "UMMTP3LinkSetPrometheusData.h"
+#import <ulibmtp3/UMM3UAApplicationServer.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
+#import <ulibmtp3/UMMTP3Label.h>
+#import <ulibmtp3/UMMTP3InstanceRoute.h>
+#import <ulibmtp3/ulibmtp3_version.h>
+#import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
+#import <ulibmtp3/UMM3UAApplicationServerProcess.h>
+#import <ulibmtp3/UMMTP3HeadingCode.h>
+#import <ulibmtp3/UMMTP3RouteStatus.h>
+#import <ulibmtp3/UMMTP3LinkSetPrometheusData.h>
 /* for arc4random */
 #if defined(__APPLE__) || defined(FREEBSD)
 #include <stdlib.h>
 #else
 #include <bsd/stdlib.h>
 #endif
-#import "UMM3UAApplicationServerStatusRecord.h"
-#import "UMM3UAApplicationServerStatusRecords.h"
+#import <ulibmtp3/UMM3UAApplicationServerStatusRecord.h>
+#import <ulibmtp3/UMM3UAApplicationServerStatusRecords.h>
 
 
 #define	M3UA_CLASS_TYPE_ERR			0x0000
@@ -80,7 +80,7 @@
 
 #define SOURCE_POS_DICT @{ @"file": @(__FILE__) , @"line":@(__LINE__) , @"func":@(__func__) }
 
-#import "UMLayerMTP3.h"
+#import <ulibmtp3/UMLayerMTP3.h>
 
 static const char *m3ua_param_name(uint16_t param_type);
 

@@ -10,8 +10,8 @@
 // the author.
 //
 
-#import "UMLayerM2PAUser.h"
-#import "UMLayerM2PAUserProfile.h"
+#import <ulibmtp3/UMLayerM2PAUser.h>
+#import <ulibmtp3/UMLayerM2PAUserProfile.h>
 
 @implementation UMLayerM2PAUser
 

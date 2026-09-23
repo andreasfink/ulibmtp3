@@ -6,9 +6,9 @@
 //  Copyright © 2017 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMMTP3SyslogClient.h"
-#import "UMMTP3PointCode.h"
-#import "UMMTP3Label.h"
+#import <ulibmtp3/UMMTP3SyslogClient.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
+#import <ulibmtp3/UMMTP3Label.h>
 #include <time.h>
 
 @implementation UMMTP3SyslogClient

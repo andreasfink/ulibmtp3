@@ -6,7 +6,7 @@
 //  Copyright © 2017 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMMTP3PduFilter.h"
+#import <ulibmtp3/UMMTP3PduFilter.h>
 
 @implementation UMMTP3PduFilter
 

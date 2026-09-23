@@ -10,9 +10,9 @@
 // the author.
 
 #import <ulib/ulib.h>
-#import "UMM2PATask_AdminAttachOrder.h"
-#import "UMLayerM2PA.h"
-#import "UMLayerM2PAUserProtocol.h"
+#import <ulibmtp3/UMM2PATask_AdminAttachOrder.h>
+#import <ulibmtp3/UMLayerM2PA.h>
+#import <ulibmtp3/UMLayerM2PAUserProtocol.h>
 
 
 @implementation UMM2PATask_AdminAttachOrder
