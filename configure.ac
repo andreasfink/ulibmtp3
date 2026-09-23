@@ -126,11 +126,6 @@ case "$host" in
     SHARED_FLAGS="-dynamiclib -Wl,-dylib"
     LDFLAGS="$LDFLAGS ${ARCH}"
     LIBTOOL="libtool -static -o"
-   	#echo CFLAGS=$CFLAGS
-   	#echo LDFLAGS=$LDFLAGS
-    #echo SDK=$SDK
-    #echo ARCH=$ARCH
-    #exit
     ;;
 
   *-linux-*)
