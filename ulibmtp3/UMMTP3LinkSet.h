@@ -174,16 +174,6 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong)     SccpNumberTranslation       *calling_number_translation_out;
 @property(readwrite,strong)     SccpNumberTranslation       *called_number_translation_out;
 
-/* glue */
-@property(readwrite,strong)     NSString                    *cga_number_translation_in_name     UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     NSString                    *cda_number_translation_in_name     UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     NSString                    *cganumber_translation_out_name     UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     NSString                    *cda_number_translation_out_name    UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_in          UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_in          UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_out         UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_out         UM_DEPRECATED_ATTRIBUTE;
-
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
 @property(readwrite,strong)     UMThroughputCounter *outboundThroughputPackets;
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputBytes;

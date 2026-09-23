@@ -1960,7 +1960,7 @@ static const char *get_tcp_status_string(UMSocketStatus status)
                 break;
         }
         ummutex_unlock(_aspLock);
-        usleep(0.5);
+        usleep(500000);
         ummutex_lock(_aspLock);
         if(_forcedOutOfService == NO)
         {

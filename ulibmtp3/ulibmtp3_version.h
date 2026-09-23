@@ -7,4 +7,4 @@
 //
 
 
-#define ULIBMTP3_VERSION "2.1.1"
+#define ULIBMTP3_VERSION "@ULIBMTP3_VERSION@"
