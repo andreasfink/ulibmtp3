@@ -2231,7 +2231,9 @@ static const char *get_tcp_status_string(UMSocketStatus status)
 {
     @autoreleasepool
     {
-        if(pid != SCTP_PROTOCOL_IDENTIFIER_M3UA)
+        /*RC 4666 says pid should be 3 (M3UA) but 0 (unspecified) is
+         also allowd (but makes debugging more difficult */
+        if((pid != SCTP_PROTOCOL_IDENTIFIER_M3UA) && (pid != 0))
         {
             NSMutableString *s = [[NSMutableString alloc]init];
             [s appendString:@"----PROTOCOL IDENTIFIER IS NOT M3UA----"];
@@ -2243,7 +2245,6 @@ static const char *get_tcp_status_string(UMSocketStatus status)
             [self protocolViolation:s];
             return;
         }
-        
         ummutex_lock(_incomingStreamLock);
         @try 
         {
