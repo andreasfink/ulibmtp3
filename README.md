@@ -32,4 +32,5 @@ ulibm4p3 is the base class of a family of libraries and applications .It gets us
 # Merged functionalities #
 
 Release 6.0 (2026) merged in some functionality which where previously in separately libraries
-ulibm3pa   m2pa functions 
+
+* **ulibm2pa**   m2pa functions 
