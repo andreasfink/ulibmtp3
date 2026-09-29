@@ -7,8 +7,6 @@
 //
 
 #import <ulib/ulib.h>
-#import <ulibsctp/ulibsctp.h>
-
 
 #import <ulibmtp3/UMMTP3LinkSet.h>
 #import <ulibmtp3/UMM3UATrafficMode.h>

@@ -6,11 +6,11 @@ libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Cflags: -I${includedir} 
-Libs: -L${libdir} -l:libulibmtp3.@SHARED_LIBRARY_EXTENSION@.@MAJORVER@.@MINORVER@
+Libs: -L${libdir} -lulibmtp3
 
 Name: ulibmtp3
 Description: universal SS7 MTP3 library
 Version: @VERSION@
-Requires: ulib ulibm2pa ulibdb ulibsctp
+Requires: ulib
 
 

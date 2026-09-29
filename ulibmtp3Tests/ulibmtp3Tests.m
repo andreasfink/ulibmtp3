@@ -10,7 +10,7 @@
 // the author.
 
 #import <XCTest/XCTest.h>
-#import "UMMTP3InstanceRoute.h"
+#import <ulibmtp3/UMMTP3InstanceRoute.h"
 
 @interface ulibmtp3Tests : XCTestCase
 

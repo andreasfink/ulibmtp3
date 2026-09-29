@@ -9,8 +9,8 @@
 // Version 3 from 29 June 2007 and other commercial licenses available by
 // the author.
 
-#import "UMMTP3Task_m2paProcessorOutage.h"
-#import "UMLayerMTP3.h"
+#import <ulibmtp3/UMMTP3Task_m2paProcessorOutage.h>
+#import <ulibmtp3/UMLayerMTP3.h>
 
 @implementation UMMTP3Task_m2paProcessorOutage
 

@@ -6,7 +6,7 @@
 //  Copyright © 2017 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMMTP3PointcodeFilter.h"
+#import <ulibmtp3/UMMTP3PointcodeFilter.h>
 
 @implementation UMMTP3PointcodeFilter
 

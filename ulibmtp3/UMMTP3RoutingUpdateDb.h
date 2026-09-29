@@ -6,7 +6,7 @@
 //  Copyright © 2023 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import <ulibdb/ulibdb.h>
+#import <ulib/ulib.h>
 #import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
 #import <ulibmtp3/UMMTP3PointCode.h>
 

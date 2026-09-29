@@ -6,10 +6,10 @@
 //  Copyright © 2025 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMM3UATcpRegistry.h"
-#import "UMM3UATcpListener.h"
-#import "UMM3UAApplicationServerProcess.h"
-#import "UMM3UATcpListener.h"
+#import <ulibmtp3/UMM3UATcpRegistry.h>
+#import <ulibmtp3/UMM3UATcpListener.h>
+#import <ulibmtp3/UMM3UAApplicationServerProcess.h>
+#import <ulibmtp3/UMM3UATcpListener.h>
 
 #define REGISTRY_DEBUG  1
 @implementation UMM3UATcpRegistry

@@ -6,19 +6,19 @@
 //  Copyright © 2017 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMM3UAApplicationServerProcess.h"
-#import "UMM3UAApplicationServer.h"
-#import "UMMTP3PointCode.h"
-#import "UMMTP3Label.h"
-#import "UMMTP3InstanceRoute.h"
-#import "ulibmtp3_version.h"
-#import "UMM3UATrafficMode.h"
-#import "UMLayerMTP3.h"
-#import "UMMTP3LinkSetPrometheusData.h"
-#import "UMMTP3RoutingUpdateDb.h"
-#import "UMM3UATcpListener.h"
-#import "UMM3UATcpRegistry.h"
-#import "UMM3UATcpReceiver.h"
+#import <ulibmtp3/UMM3UAApplicationServerProcess.h>
+#import <ulibmtp3/UMM3UAApplicationServer.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
+#import <ulibmtp3/UMMTP3Label.h>
+#import <ulibmtp3/UMMTP3InstanceRoute.h>
+#import <ulibmtp3/ulibmtp3_version.h>
+#import <ulibmtp3/UMM3UATrafficMode.h>
+#import <ulibmtp3/UMLayerMTP3.h>
+#import <ulibmtp3/UMMTP3LinkSetPrometheusData.h>
+#import <ulibmtp3/UMMTP3RoutingUpdateDb.h>
+#import <ulibmtp3/UMM3UATcpListener.h>
+#import <ulibmtp3/UMM3UATcpRegistry.h>
+#import <ulibmtp3/UMM3UATcpReceiver.h>
 
 #define M3UA_TCP_DEBUG  1
 
@@ -1960,7 +1960,7 @@ static const char *get_tcp_status_string(UMSocketStatus status)
                 break;
         }
         ummutex_unlock(_aspLock);
-        usleep(0.5);
+        usleep(500000);
         ummutex_lock(_aspLock);
         if(_forcedOutOfService == NO)
         {
@@ -2231,7 +2231,9 @@ static const char *get_tcp_status_string(UMSocketStatus status)
 {
     @autoreleasepool
     {
-        if(pid != SCTP_PROTOCOL_IDENTIFIER_M3UA)
+        /*RC 4666 says pid should be 3 (M3UA) but 0 (unspecified) is
+         also allowd (but makes debugging more difficult */
+        if((pid != SCTP_PROTOCOL_IDENTIFIER_M3UA) && (pid != 0))
         {
             NSMutableString *s = [[NSMutableString alloc]init];
             [s appendString:@"----PROTOCOL IDENTIFIER IS NOT M3UA----"];
@@ -2243,7 +2245,6 @@ static const char *get_tcp_status_string(UMSocketStatus status)
             [self protocolViolation:s];
             return;
         }
-        
         ummutex_lock(_incomingStreamLock);
         @try 
         {

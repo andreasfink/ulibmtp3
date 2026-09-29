@@ -6,8 +6,8 @@
 //  Copyright © 2022 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMMTP3LinkSetRoutingTable.h"
-#import "UMMTP3PointCode.h"
+#import <ulibmtp3/UMMTP3LinkSetRoutingTable.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
 
 
 @implementation UMMTP3LinkSetRoutingTable

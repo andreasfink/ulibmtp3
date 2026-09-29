@@ -7,7 +7,7 @@
 //
 
 #import <ulib/ulib.h>
-#import "UMMTP3Variant.h"
+#import <ulibmtp3/UMMTP3Variant.h>
 
 NSString *ummtp3_variant_to_string(UMMTP3Variant v)
 {

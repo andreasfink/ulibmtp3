@@ -10,13 +10,12 @@
 // the author.
 
 #import <ulib/ulib.h>
-#import <ulibm2pa/ulibm2pa.h>
+#import <ulibmtp3/ulibm2pa.h>
 #import <ulibmtp3/UMMTP3Variant.h>
 #import <ulibmtp3/UMMTP3TransitPermission.h>
 #import <ulibmtp3/UMLayerMTP3ApplicationContextProtocol.h>
 #import <ulibmtp3/UMMTP3RoutePriority.h>
 #import <ulibmtp3/UMMTP3LinkSetPrometheusData.h>
-#import <ulib/UMDeprecatedMacros.h>
 
 @class UMMTP3Link;
 @class UMLayerMTP3;
@@ -174,16 +173,6 @@ typedef enum UMMTP3ScreeningTraceLevel
 @property(readwrite,strong)     SccpNumberTranslation       *called_number_translation_in;
 @property(readwrite,strong)     SccpNumberTranslation       *calling_number_translation_out;
 @property(readwrite,strong)     SccpNumberTranslation       *called_number_translation_out;
-
-/* glue */
-@property(readwrite,strong)     NSString                    *cga_number_translation_in_name     UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     NSString                    *cda_number_translation_in_name     UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     NSString                    *cganumber_translation_out_name     UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     NSString                    *cda_number_translation_out_name    UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_in          UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_in          UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cga_number_translation_out         UM_DEPRECATED_ATTRIBUTE;
-@property(readwrite,strong)     SccpNumberTranslation       *cda_number_translation_out         UM_DEPRECATED_ATTRIBUTE;
 
 @property(readwrite,strong)     UMThroughputCounter *inboundThroughputPackets;
 @property(readwrite,strong)     UMThroughputCounter *outboundThroughputPackets;

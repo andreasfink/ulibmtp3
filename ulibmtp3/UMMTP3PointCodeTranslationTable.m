@@ -6,7 +6,7 @@
 //  Copyright © 2019 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMMTP3PointCodeTranslationTable.h"
+#import <ulibmtp3/UMMTP3PointCodeTranslationTable.h>
 
 @implementation UMMTP3PointCodeTranslationTable
 

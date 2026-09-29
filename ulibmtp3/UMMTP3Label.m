@@ -9,8 +9,8 @@
 // Version 3 from 29 June 2007 and other commercial licenses available by
 // the author.
 
-#import "UMMTP3Label.h"
-#import "UMMTP3PointCode.h"
+#import <ulibmtp3/UMMTP3Label.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
 
 @implementation UMMTP3Label
 

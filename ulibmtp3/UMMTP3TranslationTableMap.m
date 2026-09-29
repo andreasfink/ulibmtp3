@@ -6,7 +6,7 @@
 //  Copyright © 2018 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMMTP3TranslationTableMap.h"
+#import <ulibmtp3/UMMTP3TranslationTableMap.h>
 
 @implementation UMMTP3TranslationTableMap
 

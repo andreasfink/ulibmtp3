@@ -6,7 +6,7 @@
 //  Copyright © 2021 Andreas Fink (andreas@fink.org). All rights reserved.
 //
 
-#import "UMMTP3LinkSetPrometheusData.h"
+#import <ulibmtp3/UMMTP3LinkSetPrometheusData.h>
 
 @implementation UMMTP3LinkSetPrometheusData
 

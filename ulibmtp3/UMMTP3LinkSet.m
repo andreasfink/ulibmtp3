@@ -9,20 +9,20 @@
 // Version 3 from 29 June 2007 and other commercial licenses available by
 // the author.
 
-#import "UMMTP3LinkSet.h"
-#import "UMMTP3Link.h"
-#import "UMMTP3Variant.h"
-#import "UMMTP3Label.h"
-#import "UMMTP3HeadingCode.h"
-#import "UMMTP3PointCode.h"
-#import "UMLayerMTP3.h"
-#import "UMMTP3Label.h"
-#import "UMMTP3WhiteList.h"
-#import "UMMTP3BlackList.h"
-#import "UMMTP3TransitPermission.h"
-#import "UMMTP3InstanceRoutingTable.h"
-#import "UMMTP3PointCodeTranslationTable.h"
-#import "UMMTP3RoutingUpdateDb.h"
+#import <ulibmtp3/UMMTP3LinkSet.h>
+#import <ulibmtp3/UMMTP3Link.h>
+#import <ulibmtp3/UMMTP3Variant.h>
+#import <ulibmtp3/UMMTP3Label.h>
+#import <ulibmtp3/UMMTP3HeadingCode.h>
+#import <ulibmtp3/UMMTP3PointCode.h>
+#import <ulibmtp3/UMLayerMTP3.h>
+#import <ulibmtp3/UMMTP3Label.h>
+#import <ulibmtp3/UMMTP3WhiteList.h>
+#import <ulibmtp3/UMMTP3BlackList.h>
+#import <ulibmtp3/UMMTP3TransitPermission.h>
+#import <ulibmtp3/UMMTP3InstanceRoutingTable.h>
+#import <ulibmtp3/UMMTP3PointCodeTranslationTable.h>
+#import <ulibmtp3/UMMTP3RoutingUpdateDb.h>
 
 
 /*
