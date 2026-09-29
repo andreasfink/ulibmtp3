@@ -1,4 +1,4 @@
-#ulib
+#ulibmtp3
 # The Universal Libary MTP3 library
 
 ulibmtp3 is a implementation of the SS7 MTP3 protocol as well as M3UA, M2PA
@@ -13,7 +13,7 @@ Under MacOS Foundation is used.
 
 # Related #
 
-ulibm4p3 is the base class of a family of libraries and applications .It gets used and extended by
+ulibmtp3 is the base class of a family of libraries and applications .It gets used and extended by
 
 * **ulib**     a universal library 
 * **ulibsccp** a library implementing the SS7 SCCP protocol
