@@ -92,8 +92,8 @@
     {
         _lastActivity = now;
         NSData *incomingData = NULL;
-        err = [_socket receiveEverythingTo:&incomingData];
-        if(incomingData.length>0)
+        UMSocketError err = [_socket receiveEverythingTo:&incomingData];
+        if((incomingData.length>0) && (err == UMSocketError_no_error))
         {
             dataReceived = YES;
             [_asp tcpDataIndication:incomingData];
