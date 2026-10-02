@@ -96,9 +96,7 @@
 {
     NSString *key = [self connectionsKeyForAddress:address port:port];
     ummutex_lock(_lock);
-    UMM3UAApplicationServerProcess *old = _connections[key];
     _connections[key]=asp;
-    old = NULL;
     ummutex_unlock(_lock);
 }
 

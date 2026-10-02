@@ -60,7 +60,6 @@
 
 - (int)work
 {
-    UMSocketError   err;
     BOOL dataReceived = NO;
     
     
