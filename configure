@@ -2445,6 +2445,7 @@ MAJORVER=`echo $VERSION | cut -f1 -d.`
 MINORVER=`echo $VERSION | cut -f2 -d.`
 REVISION=`echo $VERSION | cut -f3 -d.`
 ULIBMTP3_VERSION=`head -n 1 VERSION`
+./make_version
 
 
 CUSER=`id -un`
@@ -2568,11 +2569,7 @@ case "$host" in
   	then
 		SDK=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
 	fi
-	if [ -d "${SDK}" ]
-    then
-		CFLAGS="--sysroot ${SDK} ${CFLAGS}"
-		LDFLAGS="${LDFLAGS} -L ${SDK}/usr/lib"
-	fi
+
 	if [ "${ARCH}" == "" ]
 	then
 	    ARCH="-arch arm64 -arch x86_64"
@@ -2602,12 +2599,7 @@ case "$host" in
     INSTALL_NAME_TOOL="install_name_tool"
     SHARED_FLAGS="-dynamiclib -Wl,-dylib"
     LDFLAGS="$LDFLAGS ${ARCH}"
-    LIBTOOL="libtool -static -o"
-   	#echo CFLAGS=$CFLAGS
-   	#echo LDFLAGS=$LDFLAGS
-    #echo SDK=$SDK
-    #echo ARCH=$ARCH
-    #exit
+    LIBTOOL="libtool -static -no_warning_for_no_symbols -o"
     ;;
 
   *-linux-*)

@@ -53,7 +53,8 @@ install: ${SLIB} ${LIB} ${PKGCONFIGFILE}
 
 clean:
 	rm -f $(LIB) $(OFILES) ${SLIB}
-
+	rm -rf build/
+	
 .SUFFIXES: .m.o .o .m .c
 
 %.m.o:	%.m

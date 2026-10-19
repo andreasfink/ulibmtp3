@@ -17,7 +17,6 @@ dnl -----------------------------------------
 
 AC_PREREQ([2.69])
 AC_INIT([ulibmtp3],[1.0],[afink])
-dnl not used: AC_CONFIG_HEADERS([ulibmtp3/ulibmtp3_config.h])
 AC_SUBST(SHELL)
 AC_CONFIG_AUX_DIR(.)
 AC_SET_TERMINAL_SEQUENCES()
@@ -92,11 +91,7 @@ case "$host" in
   	then
 		SDK=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
 	fi
-	if [[ -d "${SDK}" ]]
-    then
-		CFLAGS="--sysroot ${SDK} ${CFLAGS}"
-		LDFLAGS="${LDFLAGS} -L ${SDK}/usr/lib"
-	fi
+
 	if [[ "${ARCH}" == "" ]]
 	then
 	    ARCH="-arch arm64 -arch x86_64"
@@ -126,7 +121,7 @@ case "$host" in
     INSTALL_NAME_TOOL="install_name_tool"
     SHARED_FLAGS="-dynamiclib -Wl,-dylib"
     LDFLAGS="$LDFLAGS ${ARCH}"
-    LIBTOOL="libtool -static -o"
+    LIBTOOL="libtool -static -no_warning_for_no_symbols -o"
     ;;
 
   *-linux-*)
